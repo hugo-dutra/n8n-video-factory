@@ -14,6 +14,7 @@ if [ -d /home/n8n_workflow ]; then
   /usr/local/bin/n8n import:workflow --separate --input=/home/n8n_workflow || true
 fi
 
+
 # Sobe o n8n
 if [ "$#" -gt 0 ]; then
   exec n8n "$@"

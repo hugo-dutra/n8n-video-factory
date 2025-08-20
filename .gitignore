@@ -255,3 +255,6 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,node
+
+env/n8n_data/**
+env/n8n_download/**
