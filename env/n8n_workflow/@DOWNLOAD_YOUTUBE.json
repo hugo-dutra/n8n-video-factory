@@ -4,12 +4,12 @@
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"CHANNEL_ID\": \"a string\"\n}"
+        "jsonExample": "{\n  \"VIDEO_ID\": \"a string\"\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -416,
+        -208,
         -112
       ],
       "id": "49b0b1a0-e648-424d-9de3-b912a03babe9",
@@ -21,8 +21,8 @@
           "assignments": [
             {
               "id": "dff10386-aac1-4bf2-a53e-24e2e7441381",
-              "name": "CHANNEL_ID",
-              "value": "={{ $json.CHANNEL_ID }}",
+              "name": "VIDEO_ID",
+              "value": "={{ $json.VIDEO_ID }}",
               "type": "string"
             }
           ]
@@ -40,7 +40,7 @@
     },
     {
       "parameters": {
-        "command": "=yt-dlp -o \"/home/node/download/%(title)s.%(ext)s\" \"https://www.youtube.com/watch?v={{ $json.CHANNEL_ID }}\"\n"
+        "command": "=yt-dlp -o \"/home/node/download/{{ $json.VIDEO_ID }}.%(ext)s\" \"https://www.youtube.com/watch?v={{ $json.VIDEO_ID }}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -65,7 +65,7 @@
           "conditions": [
             {
               "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
-              "leftValue": "={{ $json.CHANNEL_ID }}",
+              "leftValue": "={{ $json.VIDEO_ID }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -128,7 +128,7 @@
     "START": [
       {
         "json": {
-          "CHANNEL_ID": ""
+          "VIDEO_ID": "_LMpN6o26E0"
         }
       }
     ]
@@ -190,9 +190,9 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "5de2a1c8-da22-485a-b046-1ce4bbffb4cf",
+  "versionId": "d76e07db-1240-4020-9fd0-06bcc17631b2",
   "meta": {
-    "instanceId": "2116cd8c5b550057a616d53f0669df623461c56c6a884b2aa718610b7dc8924a"
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
   },
   "id": "UjPnRRupZJq5pbs0",
   "tags": []
