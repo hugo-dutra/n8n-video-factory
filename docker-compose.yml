@@ -24,6 +24,7 @@ services:
     volumes:
       - ./env/n8n_data:/home/node/.n8n
       - ./env/n8n_download:/home/node/download
+      - ./env/n8n_processing:/home/node/processing
       - ./env/n8n_workflow:/home/n8n_workflow:ro
     restart: unless-stopped
     networks:
