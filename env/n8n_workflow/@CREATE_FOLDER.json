@@ -1,0 +1,69 @@
+{
+  "name": "@CREATE_FOLDER",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "path"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "18de450b-fe8f-4407-af02-4d33245ccc74",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "={{ 'mkdir -p ' + JSON.stringify($json.path) }}\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fd5ee07a-ac26-4a40-b369-1a8fb15cdff4",
+      "name": "PATH_CREATOR"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "path": "/home/node/download/new_path"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "PATH_CREATOR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d884be5-295a-4b51-afae-5a4641127070",
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  },
+  "id": "DOfnd0M834V8kbv2",
+  "tags": []
+}
