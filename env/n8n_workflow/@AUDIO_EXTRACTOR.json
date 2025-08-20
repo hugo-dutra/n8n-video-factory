@@ -1,5 +1,5 @@
 {
-  "name": "@DOWNLOAD_YOUTUBE",
+  "name": "@AUDIO_EXTRACTOR",
   "nodes": [
     {
       "parameters": {
@@ -9,10 +9,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -176,
+        -160,
         -112
       ],
-      "id": "49b0b1a0-e648-424d-9de3-b912a03babe9",
+      "id": "9e0b6a69-2afd-4de2-93be-ae1722498e13",
       "name": "START"
     },
     {
@@ -35,23 +35,8 @@
         -16,
         -112
       ],
-      "id": "0fffbeda-d25d-4856-b062-bf278e2408d4",
+      "id": "8d3ccd10-b282-4ec0-b2f7-ff7f5c99e3ee",
       "name": "VAR"
-    },
-    {
-      "parameters": {
-        "command": "=yt-dlp -o \"/home/node/download/{{$('START').item.json.VIDEO_ID}}/{{$('START').item.json.VIDEO_ID}}.%(ext)s\" \"https://www.youtube.com/watch?v={{$('START').item.json.VIDEO_ID}}\"\n"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        496,
-        -208
-      ],
-      "id": "ab27704d-0092-4dab-b19c-9997bfda51b0",
-      "name": "DOWNLOAD",
-      "alwaysOutputData": true,
-      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -65,7 +50,7 @@
           "conditions": [
             {
               "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
-              "leftValue": "={{ $('START').item.json.VIDEO_ID }}",
+              "leftValue": "={{ $json.VIDEO_ID }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -84,7 +69,7 @@
         128,
         -112
       ],
-      "id": "64d44e62-f377-41a9-ad29-28aead1ca2a2",
+      "id": "e4d164e0-ecf0-4583-aa99-cf083a30b149",
       "name": "HAS_CHANNEL_ID"
     },
     {
@@ -97,7 +82,7 @@
         336,
         0
       ],
-      "id": "c3566a88-2c58-4c6e-a10b-0d196c28ce1a",
+      "id": "03b9359b-2915-486a-bfc7-dad60717b764",
       "name": "ERROR"
     },
     {
@@ -117,11 +102,26 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        640,
+        672,
         -208
       ],
-      "id": "bd87c33a-787a-4100-bd52-98f5848c4b4c",
+      "id": "525dc60b-0f7f-4be9-90f6-0c0d45cd1623",
       "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "command": "=IN=\"/home/node/download/{{ $('START').first().json.VIDEO_ID }}/{{ $('START').first().json.VIDEO_ID }}.mp4\"; EXT=\"${EXT:-mp3}\"; \\\nDIR=\"$(dirname \"$IN\")\"; BASE=\"$(basename \"$IN\")\"; NAME=\"${BASE%.*}\"; \\\nffmpeg -y -i \"$IN\" -vn -c:a libmp3lame -q:a 2 \"$DIR/$NAME.$EXT\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -208
+      ],
+      "id": "ca219805-248e-4a2d-9ea8-c983dab5af66",
+      "name": "EXTRACT",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -134,7 +134,7 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "path": "=/home/node/download/{{ $('START').item.json.VIDEO_ID}}"
+            "path": "=/home/node/download/{{ $('START').first().json.VIDEO_ID }}"
           },
           "matchingColumns": [
             "path"
@@ -162,8 +162,8 @@
         336,
         -208
       ],
-      "id": "1975e7f3-bd3e-4974-81f8-cef196c51f8e",
-      "name": "Execute Workflow"
+      "id": "f83cf0ca-34b7-4b64-a11a-7ebe5966c5e9",
+      "name": "CREATE_FOLDER"
     }
   ],
   "pinData": {
@@ -202,7 +202,7 @@
       "main": [
         [
           {
-            "node": "Execute Workflow",
+            "node": "CREATE_FOLDER",
             "type": "main",
             "index": 0
           }
@@ -216,7 +216,7 @@
         ]
       ]
     },
-    "DOWNLOAD": {
+    "EXTRACT": {
       "main": [
         [
           {
@@ -227,11 +227,11 @@
         ]
       ]
     },
-    "Execute Workflow": {
+    "CREATE_FOLDER": {
       "main": [
         [
           {
-            "node": "DOWNLOAD",
+            "node": "EXTRACT",
             "type": "main",
             "index": 0
           }
@@ -243,10 +243,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "f3c6a547-37a4-4c4b-bd89-06b487f219b1",
+  "versionId": "2a1f2470-eb86-490a-9040-ead8eedb0eab",
   "meta": {
     "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
   },
-  "id": "UjPnRRupZJq5pbs0",
+  "id": "sk6qHDqmsTEMLNsp",
   "tags": []
 }

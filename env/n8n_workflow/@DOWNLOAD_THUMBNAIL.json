@@ -1,5 +1,5 @@
 {
-  "name": "@DOWNLOAD_YOUTUBE",
+  "name": "@DOWNLOAD_THUMBNAIL",
   "nodes": [
     {
       "parameters": {
@@ -12,7 +12,7 @@
         -176,
         -112
       ],
-      "id": "49b0b1a0-e648-424d-9de3-b912a03babe9",
+      "id": "5f014126-2e95-4fc6-9188-dda3926bfb6c",
       "name": "START"
     },
     {
@@ -35,12 +35,12 @@
         -16,
         -112
       ],
-      "id": "0fffbeda-d25d-4856-b062-bf278e2408d4",
+      "id": "5f484c24-ae6f-4d58-9234-d88e5d6c44fb",
       "name": "VAR"
     },
     {
       "parameters": {
-        "command": "=yt-dlp -o \"/home/node/download/{{$('START').item.json.VIDEO_ID}}/{{$('START').item.json.VIDEO_ID}}.%(ext)s\" \"https://www.youtube.com/watch?v={{$('START').item.json.VIDEO_ID}}\"\n"
+        "command": "=yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg \\\n  -o \"/home/node/download/{{$('START').item.json.VIDEO_ID}}/{{$('START').item.json.VIDEO_ID}}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{$('START').item.json.VIDEO_ID}}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -48,7 +48,7 @@
         496,
         -208
       ],
-      "id": "ab27704d-0092-4dab-b19c-9997bfda51b0",
+      "id": "0205c871-0d3c-4c8f-b77f-c7e4bd1a02ca",
       "name": "DOWNLOAD",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput"
@@ -84,7 +84,7 @@
         128,
         -112
       ],
-      "id": "64d44e62-f377-41a9-ad29-28aead1ca2a2",
+      "id": "9c902417-8535-4642-8b25-3def674fc71a",
       "name": "HAS_CHANNEL_ID"
     },
     {
@@ -97,7 +97,7 @@
         336,
         0
       ],
-      "id": "c3566a88-2c58-4c6e-a10b-0d196c28ce1a",
+      "id": "205b1023-fd4a-4adc-a9f9-75546ff113ce",
       "name": "ERROR"
     },
     {
@@ -120,7 +120,7 @@
         640,
         -208
       ],
-      "id": "bd87c33a-787a-4100-bd52-98f5848c4b4c",
+      "id": "b1dd7f55-910e-4421-a43d-c3d5fdb171e6",
       "name": "RESULT"
     },
     {
@@ -162,7 +162,7 @@
         336,
         -208
       ],
-      "id": "1975e7f3-bd3e-4974-81f8-cef196c51f8e",
+      "id": "35469c71-f6d4-4ac3-a907-5ece472c0b32",
       "name": "Execute Workflow"
     }
   ],
@@ -170,7 +170,7 @@
     "START": [
       {
         "json": {
-          "VIDEO_ID": "_LMpN6o26E0"
+          "VIDEO_ID": "1tNpw8a_kRw"
         }
       }
     ]
@@ -243,10 +243,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "f3c6a547-37a4-4c4b-bd89-06b487f219b1",
+  "versionId": "b973bdbb-0b4e-4a08-bdcf-6d3a41a11dab",
   "meta": {
     "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
   },
-  "id": "UjPnRRupZJq5pbs0",
+  "id": "BQu7fXvxcZR1av6F",
   "tags": []
 }
