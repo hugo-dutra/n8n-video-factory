@@ -1,0 +1,225 @@
+{
+  "name": "@VIDEO_SPLIT",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"VIDEO_ID\": \"_LMpN6o26E0\",\n  \"START_TIME\": \"00:00:00\",\n  \"END_TIME\": \"00:00:13\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        -112
+      ],
+      "id": "bfe03852-475f-45a9-803d-27f66d322928",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dff10386-aac1-4bf2-a53e-24e2e7441381",
+              "name": "VIDEO_ID",
+              "value": "={{ $json.VIDEO_ID }}",
+              "type": "string"
+            },
+            {
+              "id": "33aa6889-88db-458a-884c-f4d2c8fba03d",
+              "name": "START_TIME",
+              "value": "={{ $json.START_TIME }}",
+              "type": "string"
+            },
+            {
+              "id": "2d342576-6c10-423c-86ce-f5f8cdcc8cef",
+              "name": "END_TIME",
+              "value": "={{ $json.END_TIME }}",
+              "type": "string"
+            },
+            {
+              "id": "ab7f91b9-a7d9-4a5a-b5a6-189685e0bf2d",
+              "name": "FILENAME",
+              "value": "={{ $json.VIDEO_ID }}_{{ $json.START_TIME.replaceAll(\":\", \"_\") }}_{{ $json.END_TIME.replaceAll(\":\", \"_\") }}.mp4",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        -112
+      ],
+      "id": "7902aef1-9770-47bd-b237-132e22ec63c5",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4aa43995-1d25-4eac-949f-6ed21d4ab940",
+              "name": "=RESULT",
+              "value": "={{ $json.exitCode === 0? \"SUCCESS\":\"ERROR\"}}",
+              "type": "string"
+            },
+            {
+              "id": "9f2ff60c-73ff-49b8-993b-437ec8110df2",
+              "name": "FILENAME",
+              "value": "={{ $('VAR').item.json.FILENAME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        -176
+      ],
+      "id": "e44da930-7925-4dd3-9694-6aa3a484339b",
+      "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -y -i /home/node/download/{{ $json.VIDEO_ID }} -ss {{ $json.START_TIME }} -to {{ $json.END_TIME }} -c copy /home/node/processing/{{ $json.FILENAME }}\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -176
+      ],
+      "id": "189611d2-d798-4dc2-8278-817724aa8356",
+      "name": "DOWNLOAD",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "errorMessage": "CHANNEL ID NOT FOUND"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -16
+      ],
+      "id": "c99123d1-05fb-4b33-a2f4-328ab8221397",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "={{ $json.VIDEO_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -112
+      ],
+      "id": "7a92881b-91af-4b50-8592-e483ee55e19f",
+      "name": "HAS_CHANNEL_ID"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "VIDEO_ID": "_LMpN6o26E0",
+          "START_TIME": "00:00:00",
+          "END_TIME": "00:00:13"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "HAS_CHANNEL_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_CHANNEL_ID": {
+      "main": [
+        [
+          {
+            "node": "DOWNLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d20e9b0-64fe-4b4e-bd2c-5d4aacd7eb4e",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "bPkDY1rLEosPYyck",
+  "tags": []
+}
