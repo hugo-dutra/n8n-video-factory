@@ -1,0 +1,152 @@
+{
+  "name": "@EFFECTS_VIGNETTE",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILENAME\": \"_LMpN6o26E0_00_00_00_00_00_06.mp4\",\n  \"V_STRENGTH\": 0.7,\n  \"V_ANGLE\": \"PI/4\"\n}\n"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1168,
+        -112
+      ],
+      "id": "87a27919-c826-4f14-9f53-913ba113ab9f",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "c6ebb11f-0fbb-442b-a793-647b5def81aa",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "410ffb87-1f42-4ae3-90e3-575d9ff4698b",
+              "name": "FILENAME",
+              "value": "={{ $json.FILENAME }}",
+              "type": "string"
+            },
+            {
+              "id": "ade1e25b-20c7-4d2e-a5d4-44dec66a2a26",
+              "name": "V_STRENGTH",
+              "value": "={{ $json.V_STRENGTH }}",
+              "type": "number"
+            },
+            {
+              "id": "dad16ac2-ecef-44cd-b7bf-101a5a9c299e",
+              "name": "V_ANGLE",
+              "value": "={{ $json.V_ANGLE }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "1ef3260b-1c87-4d1a-b21d-849cf1a11e8b",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inputs esperados:\n// FILENAME   -> ex: \"_LMpN6o26E0_00_00_00_00_00_06.mp4\" (em /home/node/processing)\n// V_STRENGTH -> intensidade da vinheta (0.0–1.0, padrão 0.5)\n// V_ANGLE    -> ângulo/formato da queda (string matemática, padrão \"PI/3\")\n//               exemplos: \"PI/2\" (suave), \"PI/3\" (médio), \"PI/4\" (forte)\n\nconst file = $json.FILENAME;\nconst V_STRENGTH = Number($json.V_STRENGTH ?? 0.5);\nconst V_ANGLE = ($json.V_ANGLE ?? \"PI/3\").toString();\n\nconst BASE = \"/home/node/processing\";\n\n// nome de saída seguro\nconst safe = s => s.replace(/\\.[A-Za-z0-9]+$/,\"\").replace(/[^A-Za-z0-9_\\-]/g,\"_\");\nconst outFile = `${safe(file)}_VIGNETTE_str${V_STRENGTH}_ang${V_ANGLE.replace(/\\W+/g,\"\")}.mp4`;\n\n// Forma compatível: vignette=<angle>:<strength> (posicional)\nconst vf = `vignette=${V_ANGLE}:${V_STRENGTH},format=yuv420p`;\n\nconst cmd =\n  `ffmpeg -y -i \"${BASE}/${file}\" ` +\n  `-vf \"${vf}\" ` +\n  `-c:v libx264 -preset veryfast -crf 20 -movflags +faststart ` +\n  `-c:a copy ` +\n  `\"${BASE}/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "9420bdcd-63b9-4943-bd54-2c46f561ca0d",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "content": "## 🎬 Parâmetros do efeito Vignette\n\n- **FILENAME** → vídeo de entrada  \n  - Exemplo: `_LMpN6o26E0_00_00_00_00_00_06.mp4`  \n  - Local: `/home/node/processing`\n\n- **V_STRENGTH** → intensidade da vinheta  \n  - Tipo: número decimal  \n  - Faixa: `0.0` (sem efeito) até `1.0` (vinheta forte)  \n  - Padrão: `0.5`\n\n- **V_ANGLE** → ângulo de queda (quanto mais fechado, mais rápida a escuridão aparece nas bordas)  \n  - Tipo: expressão matemática  \n  - Exemplos:  \n    - `\"PI/2\"` → vinheta suave  \n    - `\"PI/3\"` → vinheta média (padrão)  \n    - `\"PI/4\"` → vinheta forte\n",
+        "height": 448,
+        "width": 672,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1024,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "39295e3c-b947-441c-9d18-2e3df5890ca8",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILENAME": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "V_STRENGTH": 0.7,
+          "V_ANGLE": "PI/4"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "98196155-65fe-4b27-b7fa-403de4b16810",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "Jshs7r6SSdPi8nSp",
+  "tags": []
+}

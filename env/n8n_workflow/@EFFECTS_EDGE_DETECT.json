@@ -1,0 +1,166 @@
+{
+  "name": "@EFFECTS_EDGE_DETECT",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILENAME\": \"_LMpN6o26E0_00_00_00_00_00_06.mp4\",\n  \"EDGE_MODE\": \"edgedetect\",\n  \"EDGE_LOW\": 0.05,\n  \"EDGE_HIGH\": 0.3,\n  \"INVERT\": true\n}\n"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1168,
+        -112
+      ],
+      "id": "d0362cee-8981-43d2-a822-5bd1c70dd27b",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "7c6888a2-970b-4f68-b76a-19e35251d535",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2faaec50-4d50-4390-ad6a-b88db9428c47",
+              "name": "FILENAME",
+              "value": "={{ $json.FILENAME }}",
+              "type": "string"
+            },
+            {
+              "id": "38a42802-3a03-49c3-93aa-2351f11d24ad",
+              "name": "EDGE_MODE",
+              "value": "={{ $json.EDGE_MODE }}",
+              "type": "string"
+            },
+            {
+              "id": "2bd6c489-f7e3-4d4a-aa40-cb3ab94515ca",
+              "name": "EDGE_LOW",
+              "value": "={{ $json.EDGE_LOW }}",
+              "type": "number"
+            },
+            {
+              "id": "416a374f-a134-4966-9b37-8b0cebf60520",
+              "name": "EDGE_HIGH",
+              "value": "={{ $json.EDGE_HIGH }}",
+              "type": "number"
+            },
+            {
+              "id": "b42613fb-6ba8-4897-b5a0-25a57a607d58",
+              "name": "INVERT",
+              "value": "={{ $json.INVERT }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "d4d48b75-4dc2-4676-9637-ec12e2a06e6a",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inputs esperados:\n// FILENAME   -> \"_LMpN6o26E0_00_00_00_00_00_06.mp4\" (em /home/node/processing)\n// EDGE_MODE  -> \"edgedetect\" | \"sobel\" | \"prewitt\"  (padrão: \"edgedetect\")\n//              - \"edgedetect\": aceita low/high (recomendado)\n//              - \"sobel\" / \"prewitt\": não aceitam low/high nesta build\n// EDGE_LOW   -> limiar inferior (0.0–1.0)  [só para edgedetect] (padrão: 0.1)\n// EDGE_HIGH  -> limiar superior (0.0–1.0)  [só para edgedetect] (padrão: 0.4)\n// INVERT     -> true/false (inverte as cores do resultado)\n\nconst file      = $json.FILENAME;\nconst EDGE_MODE = ($json.EDGE_MODE ?? \"edgedetect\").toString();\nconst EDGE_LOW  = Number($json.EDGE_LOW ?? 0.1);\nconst EDGE_HIGH = Number($json.EDGE_HIGH ?? 0.4);\nconst INVERT    = Boolean($json.INVERT ?? false);\n\nconst BASE = \"/home/node/processing\";\nconst safe = s => s.replace(/\\.[A-Za-z0-9]+$/, \"\").replace(/[^A-Za-z0-9_\\-]/g, \"_\");\n\nlet vf;\nlet tag;\n\n// Monta o filtro conforme o modo\nif (EDGE_MODE === \"sobel\" || EDGE_MODE === \"prewitt\") {\n  // sem low/high nesta build\n  vf  = `${EDGE_MODE}`;\n  tag = `${EDGE_MODE}`;\n} else {\n  // edgedetect com limiares\n  vf  = `edgedetect=low=${EDGE_LOW}:high=${EDGE_HIGH}`;\n  tag = `edgedetect_low${EDGE_LOW}_high${EDGE_HIGH}`;\n}\n\n// Inversão opcional\nif (INVERT) vf += \",negate\";\n\n// Força formato compatível\nvf += \",format=yuv420p\";\n\nconst outFile = `${safe(file)}_EDGE_${tag}${INVERT ? \"_INV\" : \"\"}.mp4`;\n\nconst cmd =\n  `ffmpeg -y -i \"${BASE}/${file}\" ` +\n  `-vf \"${vf}\" ` +\n  `-c:v libx264 -preset veryfast -crf 20 -movflags +faststart ` +\n  `-c:a copy ` +\n  `\"${BASE}/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "419ddbe1-cac0-4f56-9bdd-7f90ce495999",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "content": "## 🎬 Parâmetros do efeito de bordas (Edge Detect)\n\n- **FILENAME** → vídeo de entrada  \n  - Ex.: `_LMpN6o26E0_00_00_00_00_00_06.mp4` (em `/home/node/processing`)\n\n- **EDGE_MODE** *(opcional)* → algoritmo\n  - `\"edgedetect\"` (recomendado; aceita limiares)\n  - `\"sobel\"` (sem `low/high` nesta build)\n  - `\"prewitt\"` (sem `low/high` nesta build)\n  - Padrão: `\"edgedetect\"`\n\n- **EDGE_LOW** *(opcional; só `edgedetect`)* → limiar inferior  \n  - Faixa: `0.0` a `1.0`  \n  - Padrão: `0.1`\n\n- **EDGE_HIGH** *(opcional; só `edgedetect`)* → limiar superior  \n  - Faixa: `0.0` a `1.0`  \n  - Padrão: `0.4`\n\n- **INVERT** *(opcional)* → inverter cores do resultado  \n  - `false` (padrão) | `true`\n\n**Compatibilidade:** Se precisar usar `sobel`/`prewitt`, não passe `EDGE_LOW/EDGE_HIGH`. Use `edgedetect` para configurar limiares.\n",
+        "height": 608,
+        "width": 688,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1024,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "fc46b594-7f6e-4ba1-b146-89a0a76d3f69",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILENAME": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "EDGE_MODE": "edgedetect",
+          "EDGE_LOW": 0.05,
+          "EDGE_HIGH": 0.3,
+          "INVERT": true
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ab5afda4-9ab0-43ba-b247-77dbd8285005",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "pQ5OSc5KlKMRgd8z",
+  "tags": []
+}
