@@ -1,0 +1,194 @@
+{
+  "name": "@CHROMAKEY",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"MAIN_VIDEO\": \"FILENAME_1\",\n  \"CHROMA_VIDEO\": \"FILENAME_2\",\n  \"START\":1,\n  \"END\" : 20,\n  \"KEY_COLOR\": \"0x00FF00\",\n  \"TOL\" :0.3,\n  \"SOFT\" : 0.2,\n  \"X\" :100,\n  \"Y\" :0\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        -80
+      ],
+      "id": "cd654e16-a580-4000-814f-94ae564d3d39",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -80
+      ],
+      "id": "e8eb29f1-8251-4f2b-9f8b-9dca2e3a98f4",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d29754d0-e6ad-43cc-80d5-80a90a726a16",
+              "name": "MAIN_VIDEO",
+              "value": "={{ $json.MAIN_VIDEO }}",
+              "type": "string"
+            },
+            {
+              "id": "b74ac4bc-c067-4069-8d28-53097a71c8a2",
+              "name": "CHROMA_VIDEO",
+              "value": "={{ $json.CHROMA_VIDEO }}",
+              "type": "string"
+            },
+            {
+              "id": "fd76496b-a714-44cb-b8dd-faf525a9ad32",
+              "name": "START",
+              "value": "={{ $json.START }}",
+              "type": "number"
+            },
+            {
+              "id": "bb9db54e-7eb5-42a1-ba22-53ca3bd7e813",
+              "name": "END",
+              "value": "={{ $json.END }}",
+              "type": "number"
+            },
+            {
+              "id": "40752876-bd74-434f-bdb2-cfc6bbd89ac2",
+              "name": "KEY_COLOR",
+              "value": "={{ $json.KEY_COLOR }}",
+              "type": "string"
+            },
+            {
+              "id": "6ec48bb9-846a-4f00-8a6c-a55bfd99c7ae",
+              "name": "TOL",
+              "value": "={{ $json.TOL }}",
+              "type": "number"
+            },
+            {
+              "id": "a03bad01-2c67-4648-9d77-cfb9303f094f",
+              "name": "SOFT",
+              "value": "={{ $json.SOFT }}",
+              "type": "number"
+            },
+            {
+              "id": "11436d5d-b212-423d-9d5e-42223f979170",
+              "name": "X",
+              "value": "={{ $json.X }}",
+              "type": "number"
+            },
+            {
+              "id": "3f397228-7464-4dcb-aa2d-716578bc3418",
+              "name": "Y",
+              "value": "={{ $json.Y }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        -80
+      ],
+      "id": "4a74e055-cec1-44d1-a8d4-a1bfcfcbb380",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "jsCode": "const principal = $input.first().json.MAIN_VIDEO;   // ex: \"video.mp4\"\nconst animacao  = $input.first().json.CHROMA_VIDEO; // ex: \"inscreva.mp4\"\n\nconst START = Number($input.first().json.START ?? 0);\nconst END   = $input.first().json.END;\n\nconst KEY_COLOR = ($input.first().json.KEY_COLOR ?? '0x00FF00').toString();\nconst TOL       = Number($input.first().json.TOL ?? 0.3);\nconst SOFT      = Number($input.first().json.SOFT ?? 0.2);\n\n// Posição opcional\nlet posX = $input.first().json.X;\nlet posY = $input.first().json.Y;\n\n// Se não informar X/Y → canto inferior direito com margem\nif (!posX) posX = 'W-w-20';\nif (!posY) posY = 'H-h-20';\n\n// Nome seguro p/ saída\nconst safe = f => f.replace(/\\.mp4$/i, '').replace(/[^A-Za-z0-9_\\-]/g, '_');\nconst stamp = END != null ? `${START}_${END}` : `${START}`;\nconst outFile = `MERGED_${safe(principal)}_${safe(animacao)}_${stamp}.mp4`;\n\n// enable entre start/end\nconst enableExpr = (END != null)\n  ? `between(t\\\\,${START}\\\\,${END})`\n  : `gte(t\\\\,${START})`;\n\nconst cmd =\n  `ffmpeg -y ` +\n  `-i \"/home/node/processing/${principal}\" -i \"/home/node/assets/${animacao}\" ` +\n  `-filter_complex \"` +\n    `[1:v]colorkey=${KEY_COLOR}:${TOL}:${SOFT}[ck];` +\n    `[0:v][ck]overlay=${posX}:${posY}:enable='${enableExpr}'[vout]\" ` +\n  `-map \"[vout]\" -map 0:a ` +\n  `-c:v libx264 -pix_fmt yuv420p -profile:v high -level:v 4.1 -movflags +faststart ` +\n  `-c:a copy ` +\n  `\"/home/node/processing/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -80
+      ],
+      "id": "81ca2fd0-c643-4155-af8a-3b71fdafa965",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "content": "## 📌 Parâmetros para sobreposição com FFmpeg\n\n- **MAIN_VIDEO** → vídeo principal (ex.: `video.mp4`)  \n- **CHROMA_VIDEO** → vídeo com fundo verde/animado (ex.: `inscreva.mp4`)  \n- **START** → tempo em segundos para iniciar o overlay (ex.: `5`)  \n- **END** → tempo em segundos para encerrar o overlay (ex.: `12`)  \n   - se não for informado, o overlay vai do `START` até o fim do vídeo  \n- **X** → posição horizontal do overlay  \n   - valores possíveis: número fixo (`50`) ou fórmula (`W-w-20`)  \n   - se não informado → `W-w-20` (canto inferior direito)  \n- **Y** → posição vertical do overlay  \n   - valores possíveis: número fixo (`100`) ou fórmula (`H-h-20`)  \n   - se não informado → `H-h-20` (canto inferior direito)  \n- **KEY_COLOR** → cor do chroma key (padrão: `0x00FF00` = verde)  \n- **TOL** → tolerância da remoção da cor (padrão: `0.3`)  \n- **SOFT** → suavização das bordas do recorte (padrão: `0.2`)  \n\n### 🖼️ Exemplos de posições (X,Y)\n- **Canto inferior direito** → `X=W-w-20`, `Y=H-h-20`  \n- **Centro** → `X=(W-w)/2`, `Y=(H-h)/2`  \n- **Canto superior esquerdo** → `X=20`, `Y=20`  \n",
+        "height": 528,
+        "width": 592,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -784,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "60ed30b8-fb4c-44b9-8a83-299693ac0991",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "MAIN_VIDEO": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "CHROMA_VIDEO": "overlay_02.mp4",
+          "START": 0,
+          "END": 200,
+          "KEY_COLOR": "0x00FF00",
+          "TOL": 0.3,
+          "SOFT": 0.2,
+          "X": 100,
+          "Y": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "16929ecd-54df-4f91-82f3-4d78a0d88383",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "6nUIHD7vPkpzpiWg",
+  "tags": []
+}
