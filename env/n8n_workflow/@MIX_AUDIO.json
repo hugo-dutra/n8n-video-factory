@@ -1,0 +1,187 @@
+{
+  "name": "@MIX_AUDIO",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"MAIN_VIDEO\": \"FILENAME_1\",\n  \"AUDIO1\": \"AUDIO1\",\n  \"AUDIO2\":\"AUDIO2\",\n  \"A1_START \" : 1,\n  \"XFADE_START \": 10,\n  \"XFADE_DUR \" :2,\n  \"VOL1 \" : 1.0,\n  \"VOL2 \" :1.0\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        -112
+      ],
+      "id": "e1de1249-1318-4960-8e33-7b50f82ff940",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -112
+      ],
+      "id": "6a3db503-748f-4a97-be33-46a31c396dcc",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d29754d0-e6ad-43cc-80d5-80a90a726a16",
+              "name": "MAIN_VIDEO",
+              "value": "={{ $json.MAIN_VIDEO }}",
+              "type": "string"
+            },
+            {
+              "id": "42732ad8-5f1a-4c4e-a6d8-bce540791ac7",
+              "name": "AUDIO1",
+              "value": "={{ $json.AUDIO1 }}",
+              "type": "string"
+            },
+            {
+              "id": "2d19cc44-722a-43ad-aa49-7f51273a9b45",
+              "name": "AUDIO2",
+              "value": "={{ $json.AUDIO2 }}",
+              "type": "string"
+            },
+            {
+              "id": "546b45d0-a5b8-42ea-aaae-beaa90d58b90",
+              "name": "A1_START ",
+              "value": "={{ $json['A1_START '] }}",
+              "type": "number"
+            },
+            {
+              "id": "0c6e0232-ce58-4949-9192-5ac6f6824542",
+              "name": "XFADE_START ",
+              "value": "={{ $json['XFADE_START '] }}",
+              "type": "number"
+            },
+            {
+              "id": "5572d1cc-2a95-4b8b-b892-a9cd843201bf",
+              "name": "XFADE_DUR ",
+              "value": "={{ $json['XFADE_DUR '] }}",
+              "type": "number"
+            },
+            {
+              "id": "49fbf4bc-5cae-4179-a68e-eb2120975e75",
+              "name": "VOL1 ",
+              "value": "={{ $json['VOL1 '] }}",
+              "type": "number"
+            },
+            {
+              "id": "566ad56c-8ee7-4db1-9b33-5e91974ffb43",
+              "name": "VOL2 ",
+              "value": "={{ $json['VOL2 '] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "e40f0171-a3f0-4fe7-9775-146c03ca0707",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inputs esperados no item atual:\n// MAIN_VIDEO : ex. \"video.mp4\"            (em /home/node/processing)\n// AUDIO1     : ex. \"nar1.mp3\"             (em /home/node/assets ou processing; ajuste os paths abaixo se quiser)\n// AUDIO2     : ex. \"nar2.mp3\"\n// A1_START   : início da narração 1 (segundos) - ex: 5\n// XFADE_START: quando começa a transição para o áudio 2 (segundos) - ex: 20\n// XFADE_DUR  : duração do crossfade (segundos) - ex: 2\n// (opcional) VOL1, VOL2: ganho de volume (ex.: 1.0 = 0 dB, 0.8 = -1.9 dB, 1.5 = +3.5 dB)\n\nconst vMain   = $input.first().json.MAIN_VIDEO;\nconst a1      = $input.first().json.AUDIO1;\nconst a2      = $input.first().json.AUDIO2;\n\nconst A1_START    = Number($input.first().json.A1_START ?? 0);\nconst XFADE_START = Number($input.first().json.XFADE_START ?? 10);\nconst XFADE_DUR   = Number($input.first().json.XFADE_DUR ?? 2);\n\n// Ganhos opcionais (1.0 = sem mudança)\nconst VOL1 = Number($input.first().json.VOL1 ?? 1.0);\nconst VOL2 = Number($input.first().json.VOL2 ?? 1.0);\n\n// Paths base (ajuste se necessário)\nconst BASE_VIDEO = '/home/node/processing';\nconst BASE_AUD   = '/home/node/assets';\n\n// Nome de saída seguro\nconst safe = f => f.replace(/\\.[A-Za-z0-9]+$/,'').replace(/[^A-Za-z0-9_\\-]/g,'_');\nconst outFile = `NARR_TRANS_${safe(vMain)}_${safe(a1)}_${safe(a2)}_${A1_START}_${XFADE_START}_${XFADE_DUR}.mp4`;\n\n// Observação importante para acrossfade:\n// Para o crossfade começar em XFADE_START, o PRIMEIRO fluxo (a1) deve terminar em (XFADE_START + XFADE_DUR).\n// Por isso, após o adelay de a1 (A1_START), aplicamos atrim até (XFADE_START + XFADE_DUR).\n// O a2 é apenas atrasado para começar em XFADE_START.\n\nconst filterComplex =\n  // vídeo principal -> só passa, o áudio dele será ignorado (mutado pela seleção de mapas)\n  // a1: delay + volume + trim para encerrar no ponto correto (XFADE_START + XFADE_DUR)\n  `[1:a]volume=${VOL1},aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,` +\n  `adelay=${Math.max(0, Math.round(A1_START*1000))}|${Math.max(0, Math.round(A1_START*1000))},` +\n  `atrim=0:${(XFADE_START + XFADE_DUR).toFixed(3)},asetpts=N/SR/TB[a1p];` +\n\n  // a2: delay para começar no XFADE_START + volume\n  `[2:a]volume=${VOL2},aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,` +\n  `adelay=${Math.max(0, Math.round(XFADE_START*1000))}|${Math.max(0, Math.round(XFADE_START*1000))},` +\n  `asetpts=N/SR/TB[a2p];` +\n\n  // crossfade entre a1p (termina em XFADE_START+XFADE_DUR) e a2p (começa em XFADE_START)\n  `[a1p][a2p]acrossfade=d=${XFADE_DUR}:curve1=tri:curve2=tri[aout];` +\n\n  // vídeo: manter compatibilidade ampla (yuv420p); áudio final vem de [aout]\n  ``;\n\n// Monta o comando FFmpeg:\n// -i0: vídeo principal (com áudio, mas não será utilizado)\n// -i1: áudio 1\n// -i2: áudio 2\nconst cmd =\n  `ffmpeg -y ` +\n  `-i \"${BASE_VIDEO}/${vMain}\" ` +\n  `-i \"${BASE_AUD}/${a1}\" ` +\n  `-i \"${BASE_AUD}/${a2}\" ` +\n  `-filter_complex \"${filterComplex}\" ` +\n  `-map 0:v:0 -map \"[aout]\" ` + // usa o vídeo do arquivo principal e o áudio processado (muta o áudio original do vídeo)\n  `-c:v libx264 -pix_fmt yuv420p -profile:v high -level:v 4.1 -movflags +faststart ` +\n  `-c:a aac -b:a 192k ` +\n  `\"${BASE_VIDEO}/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -112
+      ],
+      "id": "a0245215-e999-463a-9b18-558d95416954",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "content": "## 🎤 Parâmetros para adicionar narração e transição de áudio\n\n- **MAIN_VIDEO** → nome do vídeo principal  \n  - Exemplo: `video.mp4`  \n  - Local: `/home/node/processing`\n\n- **AUDIO1** → primeiro arquivo de áudio (narração 1)  \n  - Exemplo: `nar1.mp3`  \n  - Local: `/home/node/assets`\n\n- **AUDIO2** → segundo arquivo de áudio (narração 2)  \n  - Exemplo: `nar2.mp3`  \n  - Local: `/home/node/assets`\n\n- **A1_START** → instante em segundos para iniciar a narração 1  \n  - Exemplo: `5` (narração 1 começa aos 5s do vídeo)\n\n- **XFADE_START** → instante em segundos para iniciar a transição do áudio 1 para o áudio 2  \n  - Exemplo: `20` (aos 20s começa o crossfade para o áudio 2)\n\n- **XFADE_DUR** → duração da transição (crossfade) em segundos  \n  - Exemplo: `2` (a transição dura 2s)\n\n- **VOL1** *(opcional)* → ganho de volume para o **áudio 1**  \n  - Valor padrão: `1.0` (sem alteração)  \n  - Exemplo: `0.8` (mais baixo), `1.5` (mais alto)\n\n- **VOL2** *(opcional)* → ganho de volume para o **áudio 2**  \n  - Valor padrão: `1.0` (sem alteração)  \n  - Exemplo: `0.8` (mais baixo), `1.5` (mais alto)\n\n---\n\n## 🔎 Funcionamento resumido\n1. O áudio original do vídeo é **mutado**.  \n2. O **áudio 1** entra no tempo definido em `A1_START`.  \n3. No tempo `XFADE_START`, o **áudio 1** começa a sumir enquanto o **áudio 2** começa a entrar.  \n4. O crossfade entre os dois áudios dura `XFADE_DUR` segundos.  \n5. O resultado final é um vídeo em H.264 (yuv420p) com o áudio processado em AAC.\n\n---\n\n",
+        "height": 896,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -768,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "3d9c5cdc-5967-4d8d-8014-64f9e69d286c",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "MAIN_VIDEO": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "AUDIO1": "Fn9adh4HWUU.mp3",
+          "AUDIO2": "SiArv5Y1xJc.mp3",
+          "A1_START ": 1,
+          "XFADE_START ": 10,
+          "XFADE_DUR ": 2,
+          "VOL1 ": 1,
+          "VOL2 ": 1
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6426ebc5-4665-4558-9e96-f6f5c1f7633a",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "YoOOXTuF3tKqMBy9",
+  "tags": []
+}
