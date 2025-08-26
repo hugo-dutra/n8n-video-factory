@@ -26,7 +26,7 @@ services:
       - ./env/n8n_download:/home/node/download
       - ./env/n8n_processing:/home/node/processing
       - ./env/n8n_workflow:/home/node/n8n_workflow:ro
-      - ./env/n8n_assets:/home/node/assets:ro
+      - ./env/n8n_assets:/home/node/assets
     restart: unless-stopped
     networks:
       - default
