@@ -1,0 +1,131 @@
+{
+  "name": "@JOIN_VIDEO",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILE_1\": \"FILENAME_1\",\n  \"FILE_2\": \"FILENAME_2\",\n  \"EFFECT\": \"fade\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -544,
+        -80
+      ],
+      "id": "ac9b3b67-b70e-46e1-a8c3-af1da29e734f",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "content": "## 🎬 Efeitos de transição no FFmpeg (xfade)\n\n- **fade** → crossfade clássico (dissolve)\n- **fadeblack** → fade para preto\n- **fadewhite** → fade para branco\n- **distance** → efeito de zoom/distância\n\n### Wipes\n- **wipeleft**\n- **wiperight**\n- **wipeup**\n- **wipedown**\n\n### Slides\n- **slideleft**\n- **slideright**\n- **slideup**\n- **slidedown**\n\n### Formas geométricas\n- **circleopen** → abre em círculo\n- **circleclose** → fecha em círculo\n- **rectcrop** → abre/fecha em retângulo\n\n### Efeitos especiais\n- **dissolve**\n- **pixelize**\n- **radial**\n",
+        "height": 720,
+        "width": 512,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "197b6d65-d230-4948-8720-2d953eaabe6d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entradas vindas do JSON/nodes do n8n\nconst file1  = $('START').first().json.FILE_1;     // ex: \"video1.mp4\"\nconst file2  = $('START').first().json.FILE_2;      // ex: \"video2.mp4\"\nconst effect = ($('START').first().json.EFFECT || 'fade').toString(); // ex: \"fade\", \"fadeblack\", \"wipeleft\"...\nconst fadeDur =2;        // opcional (padrão 2s)\nconst offset  = 5;      // opcional (padrão 5s)\n\n// Funções auxiliares p/ nome do arquivo de saída\nconst baseName = f => f.replace(/\\.mp4$/i, '');\nconst safe = s => baseName(s).replace(/[^A-Za-z0-9_\\-]/g, '_');\n\n// Nome de saída\nconst outFile = `CROSSFADE_${effect}_${safe(file1)}_${safe(file2)}.mp4`;\n\n// Comando FFmpeg (crossfade de vídeo + áudio)\nconst cmd =\n  `ffmpeg -y ` +\n  `-i \"/home/node/processing/${file1}\" -i \"/home/node/processing/${file2}\" ` +\n  `-filter_complex \"` +\n    `[0:v]format=yuv420p,setsar=1[v0]; ` +\n    `[1:v]format=yuv420p,setsar=1[v1]; ` +\n    `[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a0]; ` +\n    `[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a1]; ` +\n    `[v0][v1]xfade=transition=${effect}:duration=${fadeDur}:offset=${offset}[v]; ` +\n    `[a0][a1]acrossfade=d=${fadeDur}[a]\" ` +\n  `-map \"[v]\" -map \"[a]\" ` +\n  `-c:v libx264 -pix_fmt yuv420p -profile:v high -level:v 4.1 -movflags +faststart ` +\n  `-c:a aac -b:a 192k ` +\n  `\"/home/node/processing/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "cbaebc04-d4ec-4ad6-a083-19735e8d3d7e",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -80
+      ],
+      "id": "28881484-e96a-414b-853a-1564cb944894",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -80
+      ],
+      "id": "d2e5ef82-de3a-4614-ad6f-0f267dddad31",
+      "name": "Wait",
+      "webhookId": "1982499d-410a-4032-826b-5924d19e4b4a"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILE_1": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "FILE_2": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "EFFECT": "fade"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "START": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "048fed01-bee8-475c-bebe-4aadef3b141f",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "9gtSZfrTHOD0gYJb",
+  "tags": []
+}
