@@ -1,0 +1,3 @@
+curl --location 'http://localhost:8000/transcribe/' \
+--header 'accept: text/plain' \
+--form 'file=@"/D:/_PROJETOS/_BotCutter/api/downloads/audios/_Audio_1740884132257.mp3"'

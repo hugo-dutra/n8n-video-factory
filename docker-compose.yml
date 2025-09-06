@@ -21,6 +21,7 @@ services:
       N8N_ENDPOINT_WEBHOOK_TEST: n8n-test
       N8N_LOG_LEVEL: debug
       N8N_USER_MANAGEMENT_DISABLED: "true"
+      WHISPER_API_URL: http://whisper-api:8000
     volumes:
       - ./env/n8n_data:/home/node/.n8n
       - ./env/n8n_download:/home/node/download
@@ -30,6 +31,28 @@ services:
     restart: unless-stopped
     networks:
       - default
+
+  whisper-api:
+    build:
+      context: ./whisper
+      dockerfile: Dockerfile
+    container_name: whisper-api
+    ports:
+      - "8000:8000"
+    environment:
+      - WHISPER_MODEL=large
+      - XDG_CACHE_HOME=/root/.cache
+    volumes:
+      - whisper_cache:/root/.cache/whisper
+    restart: unless-stopped
+    networks:
+      - default
+    depends_on:
+      - whisper-api
+
+
+volumes:
+  whisper_cache:
 
 networks:
   default:
