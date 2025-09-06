@@ -1,0 +1,10 @@
+FROM python:3.8-slim
+
+# Install Coqui TTS with server support
+RUN pip install --no-cache-dir "TTS[server]"
+
+# Expose the port for the TTS server
+EXPOSE 5002
+
+# Start the TTS server with a Brazilian Portuguese model
+CMD ["tts", "--model_name", "tts_models/pt/tacotron2-DDC", "--server"]
