@@ -1,0 +1,346 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ee2vyA9GjQWfLSET",
+          "mode": "list",
+          "cachedResultName": "@LIST_VIDEOS_YOUTUBE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MIN_DURATION": "182",
+            "MAX_DURATION": "1800",
+            "LAST_N_HOURS": "24",
+            "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CHANNEL_ID",
+              "displayName": "CHANNEL_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "LAST_N_HOURS",
+              "displayName": "LAST_N_HOURS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "MIN_DURATION",
+              "displayName": "MIN_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "MAX_DURATION",
+              "displayName": "MAX_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -48
+      ],
+      "id": "33a9404c-f8fe-416e-828a-9f46171c368e",
+      "name": "@FIND_NEW_VIDEOS"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        -48
+      ],
+      "id": "7d047811-9fd3-4901-a8f4-bce8f95f8200",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -384,
+        -48
+      ],
+      "id": "9148e440-59fe-4eab-b2cc-20dbec7d7d6c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BQu7fXvxcZR1av6F",
+          "mode": "list",
+          "cachedResultName": "@DOWNLOAD_THUMBNAIL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.videoId }}"
+          },
+          "matchingColumns": [
+            "VIDEO_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -32
+      ],
+      "id": "7b13fc1d-7610-4844-9aff-2e6a7a11eca6",
+      "name": "Download Thumbnail"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "UjPnRRupZJq5pbs0",
+          "mode": "list",
+          "cachedResultName": "@DOWNLOAD_YOUTUBE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.videoId }}"
+          },
+          "matchingColumns": [
+            "VIDEO_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -192
+      ],
+      "id": "82e27bc0-7bf4-4069-aaa0-5adfe4333a35",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "sk6qHDqmsTEMLNsp",
+          "mode": "list",
+          "cachedResultName": "@AUDIO_EXTRACTOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.videoId }}"
+          },
+          "matchingColumns": [
+            "VIDEO_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        128
+      ],
+      "id": "66162901-955f-4d49-8d88-bb4bd3c15371",
+      "name": "Extract Audio"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -336
+      ],
+      "id": "dfdfd3c8-9d8b-4693-aa90-597cd3d2c927",
+      "name": "DONE"
+    }
+  ],
+  "connections": {
+    "@FIND_NEW_VIDEOS": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "START": {
+      "main": [
+        [
+          {
+            "node": "@FIND_NEW_VIDEOS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "DONE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "@FIND_NEW_VIDEOS": [
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_1_N7Iri0xhs",
+        "title": "GERAÇÃO Z é só \"FICANTE\" com o EMPREGO, NÃO QUER se COMPROMETER com a EMPRESA: ESTÃO CERTOS!",
+        "duration": "12:43",
+        "durationSeconds": 763,
+        "publishedAt": "2025-09-07 09:15:01",
+        "publishedAtISO": "2025-09-07T09:15:01Z",
+        "publishedAtEpoch": 1757236501,
+        "url": "https://www.youtube.com/watch?v=1_N7Iri0xhs",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "1_N7Iri0xhs",
+        "processed": false
+      },
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_48Ekr0MCyjI",
+        "title": "LULA faz PRONUNCIAMENTO na TELEVISÃO com PANELAÇO que BASICAMENTE REPETE \"SOBERANÍIIA, SOBERANÍIIA\"",
+        "duration": "9:02",
+        "durationSeconds": 542,
+        "publishedAt": "2025-09-07 00:24:44",
+        "publishedAtISO": "2025-09-07T00:24:44Z",
+        "publishedAtEpoch": 1757204684,
+        "url": "https://www.youtube.com/watch?v=48Ekr0MCyjI",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "48Ekr0MCyjI",
+        "processed": false
+      },
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_hP6M4oIdnGU",
+        "title": "BRASIL pode ser CLASSIFICADO como \"PATROCINADOR de PRISÕES ARBITRÁRIAS\" e receber MAIS SANÇÕES",
+        "duration": "12:24",
+        "durationSeconds": 744,
+        "publishedAt": "2025-09-06 23:15:02",
+        "publishedAtISO": "2025-09-06T23:15:02Z",
+        "publishedAtEpoch": 1757200502,
+        "url": "https://www.youtube.com/watch?v=hP6M4oIdnGU",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "hP6M4oIdnGU",
+        "processed": false
+      },
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_GtvV1alzCjs",
+        "title": "GOVERNO e STF APAVORADOS com MANIFESTAÇÕES AMANHÃ, dia 7 de SETEMBRO, que PROMETEM ser ENORMES",
+        "duration": "9:50",
+        "durationSeconds": 590,
+        "publishedAt": "2025-09-06 22:15:00",
+        "publishedAtISO": "2025-09-06T22:15:00Z",
+        "publishedAtEpoch": 1757196900,
+        "url": "https://www.youtube.com/watch?v=GtvV1alzCjs",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "GtvV1alzCjs",
+        "processed": false
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}
