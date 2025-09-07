@@ -1,5 +1,4 @@
 {
-  "name": "@DOWNLOAD_YOUTUBE",
   "nodes": [
     {
       "parameters": {
@@ -40,7 +39,7 @@
     },
     {
       "parameters": {
-        "command": "=yt-dlp -o \"/home/node/download/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.%(ext)s\" \"https://www.youtube.com/watch?v={{ $json.VIDEO_ID }}\"\n"
+        "command": "=yt-dlp \\\n  --recode-video mp4 \\\n  -o \"/home/node/download/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{ $json.VIDEO_ID }}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -130,15 +129,6 @@
       "name": "RESULT"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "VIDEO_ID": "_LMpN6o26E0"
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
@@ -162,6 +152,17 @@
         ]
       ]
     },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "HAS_CHANNEL_ID": {
       "main": [
         [
@@ -179,27 +180,16 @@
           }
         ]
       ]
-    },
-    "DOWNLOAD": {
-      "main": [
-        [
-          {
-            "node": "RESULT",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "_LMpN6o26E0"
+      }
+    ]
   },
-  "versionId": "c6a18982-2109-4427-beb6-17429132e17d",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "UjPnRRupZJq5pbs0",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }

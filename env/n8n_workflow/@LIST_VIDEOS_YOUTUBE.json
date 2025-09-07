@@ -1,0 +1,452 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"CHANNEL_ID\": \"a string\",\n  \"LAST_N_HOURS\": \"a string\",\n  \"MIN_DURATION\": \"a string\",\n  \"MAX_DURATION\": \"a string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        -112
+      ],
+      "id": "ce96d6b3-61a3-48b7-bb7b-7f86c0d53746",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b676ba59-4a9e-4c1b-9348-ae5174152a33",
+              "name": "CHANNEL_ID",
+              "value": "={{ $json['CHANNEL_ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "773580a0-eb6b-4fd6-8e1e-a74eefd32d9f",
+              "name": "LAST_N_HOURS",
+              "value": "={{ $json.LAST_N_HOURS }}",
+              "type": "string"
+            },
+            {
+              "id": "b00d291c-689a-4d03-beda-2e9780788c2b",
+              "name": "MIN_DURATION",
+              "value": "={{ $json.MIN_DURATION }}",
+              "type": "string"
+            },
+            {
+              "id": "4b63f9ca-d9bc-4db2-9bd1-1ea1bbad1bc0",
+              "name": "MAX_DURATION",
+              "value": "={{ $json.MAX_DURATION }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "cde5ebf5-6d0b-46ee-a846-df7882f284c9",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "command": "=# -------- Parâmetros (n8n) --------\nCHANNEL_ID=\"{{ $('VAR').item.json.CHANNEL_ID }}\"\nLAST_N_HOURS={{ $('VAR').item.json.LAST_N_HOURS || 24 }}\nMIN_DURATION={{ $('VAR').item.json.MIN_DURATION || 182 }}\nMAX_DURATION={{ $('VAR').item.json.MAX_DURATION || 1800 }}\nN={{ $json.LIMIT || 50 }}\n\n# -------- Cálculo do corte por epoch --------\nNOW_EPOCH=$(date -u +%s)\nCUTOFF_EPOCH=$(( NOW_EPOCH - LAST_N_HOURS*3600 ))\n\n# -------- Lista filtrando por epoch, duração e disponibilidade pública --------\nyt-dlp \"https://www.youtube.com/channel/${CHANNEL_ID}/videos\" \\\n  --skip-download \\\n  --ignore-errors \\\n  --no-abort-on-error \\\n  --no-warnings \\\n  --match-filter \"availability = public & timestamp != None & duration != None & timestamp >= ${CUTOFF_EPOCH} & duration >= ${MIN_DURATION} & duration <= ${MAX_DURATION}\" \\\n  --playlist-end \"$N\" \\\n  --print \"%(id)s | %(title)s | %(duration_string)s | %(timestamp>%Y-%m-%d %H:%M:%S)s | %(webpage_url)s\" \\\n  || true\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -176
+      ],
+      "id": "41d75754-e046-4275-bfa8-dcf238b5c2df",
+      "name": "DOWNLOAD",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "={{ $json['CHANNEL_ID'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -112
+      ],
+      "id": "d89593eb-65b0-4983-9941-04c31eb1380a",
+      "name": "HAS_CHANNEL_ID"
+    },
+    {
+      "parameters": {
+        "errorMessage": "CHANNEL ID NOT FOUND"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "cb9e4731-beed-4411-84cf-f642912cfa0c",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eda0068c-3a21-4b66-a868-bf8df525d0de",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -176
+      ],
+      "id": "8c6209be-891b-4fa3-a09d-2c456164b461",
+      "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lê a saída do node anterior (Execute Command)\nconst raw =\n  items?.[0]?.json?.stdout ??\n  items?.[0]?.stdout ??\n  '';\n\nconst channelId =\n  items?.[0]?.json?.CHANNEL_ID ??\n  items?.[0]?.CHANNEL_ID ??\n  null;\n\n// hh:mm[:ss] -> segundos\nfunction parseDurationToSeconds(s) {\n  if (!s) return null;\n  const parts = s.split(':').map((n) => Number(n));\n  if (parts.some(Number.isNaN)) return null;\n  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];\n  if (parts.length === 2) return parts[0] * 60 + parts[1];\n  if (parts.length === 1) return parts[0];\n  return null;\n}\n\n// \"YYYY-MM-DD HH:MM:SS\" -> ISO UTC\nfunction toISO(datetimeStr) {\n  if (!datetimeStr) return null;\n  return datetimeStr.replace(' ', 'T') + 'Z';\n}\n\nconst out = [];\n\nfor (const line of raw.split('\\n')) {\n  const trimmed = line.trim();\n  if (!trimmed) continue;\n\n  // Divide por \" | \" preservando pipes dentro do título:\n  // id | ...título (pode ter |) ... | duration | datetime | url\n  let parts = trimmed.split(' | ');\n  if (parts.length < 5) {\n    // fallback se não vier com espaços ao redor do pipe\n    parts = trimmed.split('|').map((p) => p.trim());\n  }\n  if (parts.length < 5) {\n    // linha malformada — retorna crua pra inspeção\n    out.push({ json: { raw: trimmed, parseError: 'Not enough parts' } });\n    continue;\n  }\n\n  const id = parts.shift();\n  const url = parts.pop();\n  const dateStr = parts.pop();\n  const durationStr = parts.pop();\n  const title = parts.join(' | '); // remonta o título preservando pipes internos\n\n  const durationSeconds = parseDurationToSeconds(durationStr);\n  const publishedAtISO = toISO(dateStr);\n  const publishedAtEpoch = publishedAtISO ? Math.floor(Date.parse(publishedAtISO) / 1000) : null;\n\n  out.push({\n    json: {\n      videoId: id,\n      title,\n      duration: durationStr,          \n      durationSeconds,                \n      publishedAt: dateStr,           \n      publishedAtISO,                 \n      publishedAtEpoch,               \n      url,\n      channelId: $('VAR').first().json.CHANNEL_ID,\n      processed: false\n    },\n  });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        -176
+      ],
+      "id": "d305a991-97ba-4099-92ba-52df2010ee8c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf15ebea-2a4c-4fc0-8abb-e6ea3171b8fc",
+              "leftValue": "={{ $json.video }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -160
+      ],
+      "id": "a4ff7309-65e7-45d7-8294-a2def1544b17",
+      "name": "If video not exists"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ 'video:' + $('Loop Over Items2').item.json.channelId + '_' + $('Loop Over Items2').item.json.videoId }}",
+        "value": "={{ JSON.stringify({\n  id: 'video:' + $('Loop Over Items2').item.json.channelId + '_' + $('Loop Over Items2').item.json.videoId,\n  title: $('Loop Over Items2').item.json.title,\n  duration: $('Loop Over Items2').item.json.duration,\n  durationSeconds: $('Loop Over Items2').item.json.durationSeconds,\n  publishedAt: $('Loop Over Items2').item.json.publishedAt,\n  publishedAtISO: $('Loop Over Items2').item.json.publishedAtISO,\n  publishedAtEpoch: $('Loop Over Items2').item.json.publishedAtEpoch,\n  url: $('Loop Over Items2').item.json.url,\n  channelId: $('Loop Over Items2').item.json.channelId,\n  videoId: $('Loop Over Items2').item.json.videoId,\n  processed: $('Loop Over Items2').item.json.processed\n}) }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -176
+      ],
+      "id": "f5c0252e-149d-4fd3-b852-10e4bb8c8096",
+      "name": "Create Data",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        464,
+        -176
+      ],
+      "id": "42a76de9-7328-4946-b79c-e3eaa8dbf566",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// Entrada: items = [{ json: { video: \"<string JSON>\" } }, ...]\n// Saída:   [{ json: { id, title, ... } }, ... ]\n\nfunction safeParse(s) {\n  try { return JSON.parse(s); } catch { return null; }\n}\n\nconst out = [];\n\nfor (const item of items) {\n  // aceita tanto item.json.video quanto item.video (defensivo)\n  let payload = item?.json?.video ?? item?.video ?? null;\n  let obj = null;\n\n  if (typeof payload === 'string') {\n    const s = payload.trim();\n\n    // 1) tenta parse direto (é o seu caso)\n    obj = safeParse(s);\n\n    // 2) fallback para JSON duplamente encodado: \"\\\"{...}\\\"\"\n    if (!obj && s.startsWith('\"') && s.endsWith('\"')) {\n      const unwrapped = safeParse(s);      // tira a casca externa\n      if (typeof unwrapped === 'string') {\n        obj = safeParse(unwrapped);        // parse do JSON interno\n      }\n    }\n  } else if (payload && typeof payload === 'object') {\n    // caso já venha como objeto (raro)\n    obj = payload;\n  }\n\n  if (!obj) {\n    out.push({ json: { _error: 'parse_failed', _raw: payload } });\n    continue;\n  }\n\n  // Garante ID no padrão video:<channelId>_<videoId>\n  if ((!obj.id || !/^video:/.test(obj.id)) && obj.channelId && obj.videoId) {\n    obj.id = `video:${obj.channelId}_${obj.videoId}`;\n  }\n\n  // Coerções de tipo (defensivas)\n  if (typeof obj.durationSeconds === 'string' && /^-?\\d+$/.test(obj.durationSeconds)) {\n    obj.durationSeconds = parseInt(obj.durationSeconds, 10);\n  }\n  if (typeof obj.publishedAtEpoch === 'string' && /^-?\\d+$/.test(obj.publishedAtEpoch)) {\n    obj.publishedAtEpoch = parseInt(obj.publishedAtEpoch, 10);\n  }\n  if (typeof obj.processed === 'string') {\n    obj.processed = obj.processed.toLowerCase() === 'true';\n  }\n\n  out.push({ json: obj });\n}\n\nreturn out.filter(value => value.json.processed==false);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        -320
+      ],
+      "id": "4b28b399-bb71-4cce-9c08-227dcd8623b7",
+      "name": "filter unprocesseds"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ 'video:' + $json.channelId + '_' + $json.videoId }}",
+        "keyType": "string",
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -160
+      ],
+      "id": "a3915f0c-a4fd-49db-9f3d-a9ee0de0e42d",
+      "name": "Check if video exists",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ 'video:' + $('Loop Over Items2').item.json.channelId + '_' + $('Loop Over Items2').item.json.videoId }}",
+        "keyType": "string",
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -176
+      ],
+      "id": "22208150-d8db-4b42-8384-9b4019e8587c",
+      "name": "Check if video exists1",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "HAS_CHANNEL_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_CHANNEL_ID": {
+      "main": [
+        [
+          {
+            "node": "DOWNLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RESULT": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If video not exists": {
+      "main": [
+        [
+          {
+            "node": "Create Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Data": {
+      "main": [
+        [
+          {
+            "node": "Check if video exists1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "filter unprocesseds",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check if video exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter unprocesseds": {
+      "main": [
+        []
+      ]
+    },
+    "Check if video exists": {
+      "main": [
+        [
+          {
+            "node": "If video not exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if video exists1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "START": [
+      {
+        "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "LAST_N_HOURS": "24",
+        "MIN_DURATION": "182",
+        "MAX_DURATION": "1800"
+      }
+    ]
+  },
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a",
+    "templateCredsSetupCompleted": true
+  }
+}
