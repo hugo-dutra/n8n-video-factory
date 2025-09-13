@@ -1,0 +1,537 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        -48
+      ],
+      "id": "7d047811-9fd3-4901-a8f4-bce8f95f8200",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -384,
+        -48
+      ],
+      "id": "9148e440-59fe-4eab-b2cc-20dbec7d7d6c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BQu7fXvxcZR1av6F",
+          "mode": "list",
+          "cachedResultName": "@DOWNLOAD_THUMBNAIL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.videoId }}"
+          },
+          "matchingColumns": [
+            "VIDEO_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -32
+      ],
+      "id": "7b13fc1d-7610-4844-9aff-2e6a7a11eca6",
+      "name": "Download Thumbnail"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "UjPnRRupZJq5pbs0",
+          "mode": "list",
+          "cachedResultName": "@DOWNLOAD_YOUTUBE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.videoId }}"
+          },
+          "matchingColumns": [
+            "VIDEO_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -192
+      ],
+      "id": "82e27bc0-7bf4-4069-aaa0-5adfe4333a35",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "sk6qHDqmsTEMLNsp",
+          "mode": "list",
+          "cachedResultName": "@AUDIO_EXTRACTOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.videoId }}"
+          },
+          "matchingColumns": [
+            "VIDEO_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        128
+      ],
+      "id": "66162901-955f-4d49-8d88-bb4bd3c15371",
+      "name": "Extract Audio"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -336
+      ],
+      "id": "dfdfd3c8-9d8b-4693-aa90-597cd3d2c927",
+      "name": "DONE"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1nQSE6xkyPf6lCyw",
+          "mode": "list",
+          "cachedResultName": "@SILENCE_DETECTOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FILE_PATH": "=/home/node/download/{{ $('Loop Over Items').item.json.videoId }}/{{ $('Loop Over Items').item.json.videoId }}.mp4"
+          },
+          "matchingColumns": [
+            "FILE_PATH"
+          ],
+          "schema": [
+            {
+              "id": "FILE_PATH",
+              "displayName": "FILE_PATH",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        128
+      ],
+      "id": "96ffe14f-94ae-4438-89e3-bc164abb68c0",
+      "name": "Silence Detector"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "b4Vww96hTTVhZRYC",
+          "mode": "list",
+          "cachedResultName": "@SILENCE_REMOVER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "periods": "={{ $json.periods }}",
+            "videoId": "={{ $('Loop Over Items').item.json.videoId }}"
+          },
+          "matchingColumns": [
+            "periods",
+            "videoId"
+          ],
+          "schema": [
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "periods",
+              "displayName": "periods",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        128
+      ],
+      "name": "Silence Remover",
+      "id": "5ff848e2-410b-452c-a14c-122a70b37cba"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ee2vyA9GjQWfLSET",
+          "mode": "list",
+          "cachedResultName": "@LIST_VIDEOS_YOUTUBE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MIN_DURATION": "182",
+            "MAX_DURATION": "1800",
+            "LAST_N_HOURS": "24",
+            "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CHANNEL_ID",
+              "displayName": "CHANNEL_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "LAST_N_HOURS",
+              "displayName": "LAST_N_HOURS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "MIN_DURATION",
+              "displayName": "MIN_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "MAX_DURATION",
+              "displayName": "MAX_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -48
+      ],
+      "id": "33a9404c-f8fe-416e-828a-9f46171c368e",
+      "name": "Find New Videos"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "amcgAf3oG1ZjUeER",
+          "mode": "list",
+          "cachedResultName": "@AUDIO_TO_WHISPER_LOCAL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videoId": "={{ $('Loop Over Items').item.json.videoId }}"
+          },
+          "matchingColumns": [
+            "videoId"
+          ],
+          "schema": [
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        128
+      ],
+      "id": "0a378c61-29eb-4069-9d71-90080e6aee45",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "eWSuR2lrNs25cJ8B",
+          "mode": "list",
+          "cachedResultName": "@VIDEO_CUT_AGENT_DETECTOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videoTranscription": "={{ $json.RESPONSE }}",
+            "videoUrl": "={{ $('Loop Over Items').item.json.videoId }}"
+          },
+          "matchingColumns": [
+            "videoTranscription"
+          ],
+          "schema": [
+            {
+              "id": "videoTranscription",
+              "displayName": "videoTranscription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "videoUrl",
+              "displayName": "videoUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        128
+      ],
+      "id": "d124763a-7fc4-4b9d-9e49-a85098928b44",
+      "name": "Video Cut Agent Detector"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "Find New Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "DONE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        []
+      ]
+    },
+    "Extract Audio": {
+      "main": [
+        [
+          {
+            "node": "Silence Detector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Silence Detector": {
+      "main": [
+        [
+          {
+            "node": "Silence Remover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Silence Remover": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find New Videos": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Video Cut Agent Detector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Execute Workflow": [
+      {
+        "RESPONSE": "1\n00:00:00,000 --> 00:00:08,480\n Esse é o Ancapso e nós vamos falar agora sobre o aluguel, cara, porque teremos problemas com aluguel com mais imposto devido à reforma tributária.\n\n2\n00:00:08,560 --> 00:00:14,120\n Eu acho engraçado porque o pessoal está descobrindo isso agora, mas na verdade isso já estava previsto.\n\n3\n00:00:14,220 --> 00:00:19,359\n O que eu falo para vocês, essa reforma tributária que foi aprovada no governo Lula é aumento de imposto puro.\n\n4\n00:00:19,980 --> 00:00:24,580\n É muito aumento de imposto mesmo que vai vir aí nos próximos anos com essa reforma tributária.\n\n5\n00:00:24,579 --> 00:00:31,019\n E enfim, o pessoal está percebendo isso agora, mas é exatamente isso, vai ter mais imposto no aluguel sim.\n\n6\n00:00:31,439 --> 00:00:43,280\n E também tem agora o tal do CIB, o tal do CPF de imóvel, que vai ser usado pelo governo evidentemente para cobrar mais caro os impostos sobre seus imóveis.\n\n7\n00:00:43,459 --> 00:00:44,539\n Vamos entender esse caso aqui.\n\n8\n00:00:44,980 --> 00:00:50,920\n Essa notícia foi sugerida por taxista que dormiu e impediu o golpe, Carmen Lúcia só para tiraninhos e várias outras pessoas.\n\n9\n00:00:51,320 --> 00:00:54,119\n Obrigado aí ao pessoal que sugeriu notícias lá no nosso site.\n\n10\n00:00:54,119 --> 00:00:55,539\n No visaonibertaria.com.\n\n11\n00:00:55,899 --> 00:00:57,619\n E obrigado a você que está assistindo o nosso vídeo.\n\n12\n00:00:57,719 --> 00:01:02,079\n Se você gosta do nosso conteúdo, por favor, deixe o seu like e se inscreva aqui no canal.\n\n13\n00:01:02,699 --> 00:01:06,939\n Pois bem, o imposto sobre aluguel, o que muda com a reforma tributária?\n\n14\n00:01:07,039 --> 00:01:10,739\n O pessoal agora descobriu que a nova reforma tributária é terrível.\n\n15\n00:01:10,879 --> 00:01:14,319\n Eu estou falando isso desde quando estava sendo votada essa reforma tributária.\n\n16\n00:01:14,739 --> 00:01:17,120\n Essa reforma tributária tira imposto de indústria.\n\n17\n00:01:17,739 --> 00:01:19,799\n É verdade, as indústrias vão pagar menos imposto.\n\n18\n00:01:19,859 --> 00:01:23,459\n Em compensação, o resto, toda a sociedade vai pagar muito mais.\n\n19\n00:01:23,459 --> 00:01:31,419\n Então, ou seja, a indústria que emprega meia dúzia de pessoas, muito pouco, a maior parte das pessoas do Brasil trabalha em comércio, trabalha em serviço,\n\n20\n00:01:32,179 --> 00:01:39,199\n vai acabar prejudicando muita gente para ajudar um pequeno grupo de pessoas.\n\n21\n00:01:39,280 --> 00:01:40,039\n A verdade é essa.\n\n22\n00:01:40,359 --> 00:01:42,159\n O pior dessa reforma nem é isso.\n\n23\n00:01:42,319 --> 00:01:45,199\n O pior dessa reforma é o imposto sobre PJ.\n\n24\n00:01:45,579 --> 00:01:50,399\n Vocês sabem, hoje, quem é PJ paga muito menos de imposto do que quem paga imposto de renda.\n\n25\n00:01:51,339 --> 00:01:53,399\n Essa reforma vai praticamente acabar com essa reforma.\n\n26\n00:01:53,459 --> 00:01:53,939\n Essa é a vantagem.\n\n27\n00:01:54,039 --> 00:01:58,659\n Não vai fazer diferença mais ser PJ ou CLT aqui no Brasil com essa reforma aqui.\n\n28\n00:01:59,159 --> 00:02:01,959\n E CLT, vocês sabem, tem um custo muito maior no final das contas.\n\n29\n00:02:02,039 --> 00:02:03,699\n Vai piorar a situação para todo mundo.\n\n30\n00:02:03,759 --> 00:02:04,459\n A verdade é essa.\n\n31\n00:02:05,799 --> 00:02:10,459\n Mas também é ruim, evidentemente, com relação ao imposto sobre aluguel.\n\n32\n00:02:10,699 --> 00:02:16,019\n Hoje, quem aluga um apartamento, e muita gente vive de alugar apartamento, o pessoal não tem essa ideia.\n\n33\n00:02:16,579 --> 00:02:20,060\n O pessoal acha que dono de imóvel é sempre rico e coisa e tal.\n\n34\n00:02:20,060 --> 00:02:21,319\n E a verdade não é bem essa.\n\n35\n00:02:21,419 --> 00:02:23,060\n Você vê um monte de gente aí que vive de...\n\n36\n00:02:23,460 --> 00:02:25,460\n De alugar um imóvel ou outra coisa e tal.\n\n37\n00:02:26,000 --> 00:02:28,439\n E essas pessoas agora vão pagar impostos.\n\n38\n00:02:28,520 --> 00:02:33,260\n Porque agora os IBS e os CBS também vão ser cobrados dessas pessoas.\n\n39\n00:02:33,620 --> 00:02:37,600\n Quem tem um imóvel só alugado, em princípio, não vai ter problema.\n\n40\n00:02:37,780 --> 00:02:45,480\n Mas quem tem três imóveis e receita anual superior a 240 mil reais, vai ser impactado por esse imposto.\n\n41\n00:02:45,560 --> 00:02:47,200\n Vai ter mais esse imposto para pagar.\n\n42\n00:02:47,740 --> 00:02:49,960\n O que é realmente uma coisa bastante complicada.\n\n43\n00:02:49,960 --> 00:02:51,819\n O que acontece nesse caso?\n\n44\n00:02:51,920 --> 00:02:52,560\n Primeira coisa.\n\n45\n00:02:52,560 --> 00:02:53,900\n Muita gente está dizendo assim.\n\n46\n00:02:53,920 --> 00:02:57,099\n Ah, não, mas vai ser o locador que vai ter que pagar e não o locatário.\n\n47\n00:02:57,340 --> 00:03:00,800\n É o dono do imóvel que vai ter que pagar, não a pessoa que está alugando.\n\n48\n00:03:01,379 --> 00:03:03,379\n E você sabe que não funciona assim as coisas.\n\n49\n00:03:03,599 --> 00:03:07,479\n Como todas as vezes, o custo da lei, quem paga é a parte mais fraca.\n\n50\n00:03:07,599 --> 00:03:13,599\n Como geralmente a pessoa que está procurando aluguel é que está mais desesperado para conseguir um imóvel para alugar.\n\n51\n00:03:14,240 --> 00:03:16,439\n Ele acaba pagando esse valor a mais.\n\n52\n00:03:16,520 --> 00:03:18,900\n Vai ser essa a tendência nesse caso.\n\n53\n00:03:19,400 --> 00:03:22,140\n Então, lembrando, esse imposto aqui o pessoal está colocando.\n\n54\n00:03:22,139 --> 00:03:23,899\n Até tem um aviso aqui.\n\n55\n00:03:24,479 --> 00:03:26,839\n Olha a Receita Federal falando o aviso dela aqui.\n\n56\n00:03:26,919 --> 00:03:29,019\n Não há tributação nova sobre aluguéis.\n\n57\n00:03:29,500 --> 00:03:34,019\n Os tributos federais, estaduais e municipais foram unificados e passaram a se chamar IVA.\n\n58\n00:03:34,519 --> 00:03:36,959\n Quem quiser cobrar imposto extra está te enganando.\n\n59\n00:03:37,059 --> 00:03:39,279\n Estou querendo dizer que não, que não vai ter imposto não.\n\n60\n00:03:39,439 --> 00:03:42,759\n Então, mais uma vez o governo federal mentindo para as pessoas.\n\n61\n00:03:43,439 --> 00:03:48,939\n Sim, quem aluga mais de três imóveis e recebe acima de 240 mil reais por aluguéis irá pagar IVA.\n\n62\n00:03:48,939 --> 00:03:52,019\n Um imposto que hoje não existe para a pessoa física.\n\n63\n00:03:52,139 --> 00:03:54,139\n Então, é mentirosa isso aqui.\n\n64\n00:03:54,559 --> 00:03:58,059\n A Receita Federal e o Ministério da Fazenda estão fazendo fake news com essa notícia aqui,\n\n65\n00:03:58,119 --> 00:03:59,319\n dizendo que não vai ter imposto.\n\n66\n00:03:59,779 --> 00:04:00,059\n Vai.\n\n67\n00:04:00,179 --> 00:04:02,579\n E quem vai pagar vai ser quem está pagando aluguel.\n\n68\n00:04:03,419 --> 00:04:04,639\n Não vai ser o dono do imóvel.\n\n69\n00:04:04,699 --> 00:04:06,419\n O dono do imóvel vai botar esse preço aqui.\n\n70\n00:04:06,859 --> 00:04:07,159\n Tudo bem.\n\n71\n00:04:07,279 --> 00:04:12,619\n Eu sei que no contrato de aluguel que já está acontecendo, que já está ocorrendo agora,\n\n72\n00:04:13,079 --> 00:04:14,939\n ele não pode alterar o valor do aluguel.\n\n73\n00:04:15,139 --> 00:04:15,819\n Isso é verdade.\n\n74\n00:04:15,819 --> 00:04:21,099\n Então, no contrato que está agora, o dono do imóvel que vai acabar pagando esse imposto.\n\n75\n00:04:21,180 --> 00:04:21,819\n Mas quando ele for...\n\n76\n00:04:22,139 --> 00:04:27,959\n Terminar o contrato e for ou renegociar o contrato ou a pessoa sair e alugar para outra pessoa,\n\n77\n00:04:28,519 --> 00:04:29,579\n fatalmente o que ele vai fazer?\n\n78\n00:04:29,659 --> 00:04:32,680\n Ele vai incluir esse custo a mais nesse contrato novo.\n\n79\n00:04:33,139 --> 00:04:34,019\n É sempre o que acontece.\n\n80\n00:04:34,159 --> 00:04:34,620\n Não tem jeito.\n\n81\n00:04:34,699 --> 00:04:38,579\n Quem paga imposto é sempre o usuário final da coisa.\n\n82\n00:04:39,159 --> 00:04:44,099\n Mas isso não quer dizer que isso não seja ruim também para quem tem imóvel e pretende alugar.\n\n83\n00:04:44,259 --> 00:04:44,560\n Por quê?\n\n84\n00:04:44,560 --> 00:04:47,800\n Porque com o imposto o seu imóvel fica mais caro.\n\n85\n00:04:47,959 --> 00:04:50,360\n O valor do aluguel fica mais caro.\n\n86\n00:04:50,419 --> 00:04:52,120\n A chance de você alugar fica menor.\n\n87\n00:04:52,199 --> 00:04:56,279\n Então diminui o seu lucro no sentido de que fica mais difícil.\n\n88\n00:04:56,479 --> 00:04:58,699\n O seu imóvel vai ficar mais tempo parado sem alugar.\n\n89\n00:04:59,319 --> 00:05:00,959\n Então é um absurdo.\n\n90\n00:05:01,060 --> 00:05:03,219\n Isso sim vai ter imposto para imóvel de aluguel.\n\n91\n00:05:03,659 --> 00:05:11,860\n Um imposto significativo de 10%, pelo menos aqui 10,6% que deve subir esse imposto.\n\n92\n00:05:12,019 --> 00:05:14,240\n Repara, até a carta capital está falando aqui.\n\n93\n00:05:14,680 --> 00:05:18,939\n O governo está fazendo fake news dizendo que não, que não tem tributação nova sobre aluguéis.\n\n94\n00:05:18,939 --> 00:05:21,939\n Os tributos foram unificados e passaram a se chamar...\n\n95\n00:05:22,139 --> 00:05:22,639\n Mentira!\n\n96\n00:05:22,819 --> 00:05:24,120\n Aumentou o imposto sim.\n\n97\n00:05:24,399 --> 00:05:29,439\n Até que na carta capital que a revista de esquerda está falando aqui, vai para 10,6%.\n\n98\n00:05:29,439 --> 00:05:32,959\n Ou seja, o aumento seria um aumento significativo.\n\n99\n00:05:33,019 --> 00:05:35,879\n 10% do valor do aluguel é um aumento significativo.\n\n100\n00:05:36,300 --> 00:05:42,419\n A lei foi publicada em janeiro de 2025 e determina que contratos em vigor sejam ajustados até 31 de dezembro de 2025.\n\n101\n00:05:42,979 --> 00:05:47,860\n As empresas que alugam imóveis hoje pagam 3,65% do valor da alocação.\n\n102\n00:05:47,860 --> 00:05:50,399\n Com a nova regra, a coisa vai mais do que dobrar.\n\n103\n00:05:50,419 --> 00:05:50,860\n Vai para 10%.\n\n104\n00:05:50,860 --> 00:05:52,860\n E não é só isso não.\n\n105\n00:05:53,040 --> 00:05:57,759\n Também vai ter imposto sobre serviços condominiais.\n\n106\n00:05:58,240 --> 00:06:04,540\n Além disso, serviços de administração feitos por imobiliários também passarão a ser mais tributados, pressionando custos.\n\n107\n00:06:05,160 --> 00:06:11,180\n Em muitos condomínios e muitos prédios, o síndico não é um síndico do morador.\n\n108\n00:06:12,280 --> 00:06:15,860\n O pessoal contrata um síndico profissional para fazer o trabalho.\n\n109\n00:06:15,860 --> 00:06:19,819\n E esse síndico vai ficar mais caro. Vai ter que pagar mais imposto.\n\n110\n00:06:20,199 --> 00:06:20,860\n Mais uma observação.\n\n111\n00:06:20,860 --> 00:06:21,699\n É um absurdo completo.\n\n112\n00:06:22,439 --> 00:06:23,280\n E tem aqui.\n\n113\n00:06:23,340 --> 00:06:24,900\n Pessoas físicas serão incluídas.\n\n114\n00:06:25,520 --> 00:06:33,060\n Locadores com mais de 3 imóveis e receitas anuais acima de R$ 240 mil também serão considerados contribuintes e além do imposto de renda.\n\n115\n00:06:33,460 --> 00:06:37,639\n Então essa mudança amplia a base de arrecadação e alcança parte relevante dos proprietários.\n\n116\n00:06:38,280 --> 00:06:40,680\n Então repara que é um imposto novo sim.\n\n117\n00:06:40,800 --> 00:06:42,500\n Não tem esse negócio de que não tem imposto novo.\n\n118\n00:06:42,540 --> 00:06:42,900\n Não tem.\n\n119\n00:06:42,980 --> 00:06:43,980\n Tem imposto novo sim.\n\n120\n00:06:44,400 --> 00:06:45,660\n É um absurdo essa reforma.\n\n121\n00:06:45,660 --> 00:06:46,939\n Uma coisa terrível isso daí.\n\n122\n00:06:47,699 --> 00:06:48,819\n E aí está o pessoal aqui.\n\n123\n00:06:49,000 --> 00:06:50,780\n Com custos adicionais é provável.\n\n124\n00:06:50,860 --> 00:06:54,000\n Que proprietários e administradores repassem os valores aos locatários.\n\n125\n00:06:54,480 --> 00:06:56,480\n Isso pode gerar elevação no preço dos aluguéis.\n\n126\n00:06:56,620 --> 00:06:58,080\n Tanto residenciais quanto comerciais.\n\n127\n00:06:58,600 --> 00:07:01,660\n Mas fica tranquilo que aí a Janja vai poder passear mais de avião.\n\n128\n00:07:01,759 --> 00:07:03,879\n Vai poder ir para a Rússia com mais tranquilidade.\n\n129\n00:07:04,259 --> 00:07:06,620\n Vai poder ter mais malas no porta-malas do avião dela.\n\n130\n00:07:06,720 --> 00:07:08,860\n Vai estar tudo mais tranquilo para o pessoal lá para o Lula.\n\n131\n00:07:09,319 --> 00:07:11,259\n Para o Turminha dele lá.\n\n132\n00:07:11,520 --> 00:07:14,379\n Ou seja, mais imposto no rabo de todos nós.\n\n133\n00:07:14,840 --> 00:07:18,160\n Outra coisa que está preocupando muita gente é a questão do CIB.\n\n134\n00:07:18,360 --> 00:07:20,379\n O Cadastro Imobiliário Brasileiro.\n\n135\n00:07:20,860 --> 00:07:23,860\n Eles estão chamando de CPF dos Imóveis.\n\n136\n00:07:23,960 --> 00:07:24,860\n Na verdade isso daqui...\n\n137\n00:07:25,379 --> 00:07:27,460\n Os imóveis hoje no Brasil já tem registro.\n\n138\n00:07:27,540 --> 00:07:30,540\n Mas tem registro no cartório onde está.\n\n139\n00:07:30,720 --> 00:07:32,560\n Na cidade onde tem o cartório deles.\n\n140\n00:07:33,280 --> 00:07:37,660\n A ideia disso daqui é unificar os imóveis no Brasil inteiro.\n\n141\n00:07:38,220 --> 00:07:40,340\n E isso tem lado ruim e lado bom.\n\n142\n00:07:40,920 --> 00:07:43,740\n O lado bom é que realmente fica mais fácil você organizar.\n\n143\n00:07:43,780 --> 00:07:45,080\n Saber de quem pertence o imóvel.\n\n144\n00:07:45,520 --> 00:07:48,280\n Você não tem muito risco de ter um protesto em outro estado.\n\n145\n00:07:48,340 --> 00:07:49,819\n E você não está sabendo e coisa e tal.\n\n146\n00:07:50,300 --> 00:07:50,540\n Mas isso aqui é um lado ruim.\n\n147\n00:07:50,540 --> 00:07:50,840\n E o lado bom é que realmente fica mais fácil você organizar.\n\n148\n00:07:50,839 --> 00:07:52,919\n E isso daqui no final das contas pode piorar a situação.\n\n149\n00:07:53,099 --> 00:07:54,739\n No sentido de que o governo já definiu.\n\n150\n00:07:55,319 --> 00:07:56,919\n Que se a pessoa tiver alguma dívida.\n\n151\n00:07:57,060 --> 00:07:58,339\n Mesmo que não tenha sido cobrada.\n\n152\n00:07:58,399 --> 00:07:59,219\n Dívida com o governo.\n\n153\n00:08:00,560 --> 00:08:02,219\n Mesmo que ainda não tenha sido cobrada.\n\n154\n00:08:02,299 --> 00:08:03,679\n Se você comprou aquele imóvel.\n\n155\n00:08:04,099 --> 00:08:05,439\n Ele pode correr atrás daquilo.\n\n156\n00:08:05,560 --> 00:08:08,819\n Então, ou seja, não sei se isso aqui vai trazer alguma segurança jurídica.\n\n157\n00:08:08,879 --> 00:08:09,620\n No final das contas.\n\n158\n00:08:10,199 --> 00:08:12,019\n Provavelmente só tem lado ruim disso daqui.\n\n159\n00:08:13,679 --> 00:08:15,459\n Ou seja, o que está dizendo aqui.\n\n160\n00:08:15,559 --> 00:08:16,479\n É que a partir de agora.\n\n161\n00:08:16,839 --> 00:08:20,639\n Todos os imóveis no Brasil serão registrados nesse cadastro.\n\n162\n00:08:20,839 --> 00:08:22,219\n Imobiliário brasileiro.\n\n163\n00:08:22,219 --> 00:08:24,239\n E todo mundo vai poder acessar de todo mundo.\n\n164\n00:08:24,339 --> 00:08:27,439\n Então você não precisa mais ir na cidade onde está o imóvel.\n\n165\n00:08:27,539 --> 00:08:29,699\n Para saber se aquela pessoa tem imóvel em algum lugar.\n\n166\n00:08:31,039 --> 00:08:31,719\n De novo.\n\n167\n00:08:31,919 --> 00:08:32,959\n Simplifica algumas coisas.\n\n168\n00:08:33,039 --> 00:08:33,379\n É verdade.\n\n169\n00:08:33,620 --> 00:08:35,220\n Sob certo ponto é positivo.\n\n170\n00:08:35,740 --> 00:08:36,379\n Por outro lado.\n\n171\n00:08:36,500 --> 00:08:36,879\n É lógico.\n\n172\n00:08:36,959 --> 00:08:38,860\n Vai facilitar o governo cobrar imposto.\n\n173\n00:08:39,199 --> 00:08:40,019\n Já está aqui.\n\n174\n00:08:40,139 --> 00:08:42,459\n Um ponto central está na reforma tributária em custo.\n\n175\n00:08:42,600 --> 00:08:44,439\n Que introduz dois novos tributos.\n\n176\n00:08:44,879 --> 00:08:46,319\n O IBS e o CBFS.\n\n177\n00:08:47,000 --> 00:08:50,339\n Investidores e administradoras com quatro ou mais imóveis alugados.\n\n178\n00:08:50,340 --> 00:08:52,600\n Passarão a ser enquadrados nesse modelo.\n\n179\n00:08:52,920 --> 00:08:54,440\n Acumulando imposto de renda.\n\n180\n00:08:54,500 --> 00:08:55,300\n IBS e CBS.\n\n181\n00:08:56,040 --> 00:08:57,519\n Sobre o valor bruto dos aluguéis.\n\n182\n00:08:57,660 --> 00:08:58,580\n Pequenos locadores.\n\n183\n00:08:59,220 --> 00:09:01,060\n Com menos de três imóveis.\n\n184\n00:09:01,180 --> 00:09:02,420\n Permanecem no regime atual.\n\n185\n00:09:02,740 --> 00:09:04,060\n Sujeitos apenas ao imposto de renda.\n\n186\n00:09:04,100 --> 00:09:05,620\n Sobre atividade que não seja empresarial.\n\n187\n00:09:06,139 --> 00:09:07,500\n Mas há mais de três imóveis.\n\n188\n00:09:07,580 --> 00:09:09,360\n Também vão ter que pagar isso daqui.\n\n189\n00:09:09,820 --> 00:09:10,120\n Ou seja.\n\n190\n00:09:10,240 --> 00:09:11,259\n É um absurdo isso daqui.\n\n191\n00:09:11,480 --> 00:09:14,560\n É o governo querendo pagar mais viagem para Janja.\n\n192\n00:09:14,920 --> 00:09:16,259\n E sacaneando todos nós.\n\n193\n00:09:16,500 --> 00:09:17,280\n É o padrão.\n\n194\n00:09:17,379 --> 00:09:18,300\n O pessoal que fez o L.\n\n195\n00:09:18,379 --> 00:09:19,019\n Fizeram o L.\n\n196\n00:09:19,019 --> 00:09:19,720\n Fazer o que?\n\n197\n00:09:20,340 --> 00:09:21,000\n E prepara.\n\n198\n00:09:21,060 --> 00:09:21,840\n Porque vai piorar.\n\n199\n00:09:21,940 --> 00:09:23,160\n Como eu falo para vocês.\n\n200\n00:09:23,920 --> 00:09:25,660\n O grande problema dos governos.\n\n201\n00:09:25,680 --> 00:09:26,820\n É que à medida que a sociedade.\n\n202\n00:09:27,139 --> 00:09:30,080\n A informação for descentralizando cada vez mais.\n\n203\n00:09:30,800 --> 00:09:33,860\n Fica mais difícil para o governo cobrar imposto das pessoas.\n\n204\n00:09:34,000 --> 00:09:35,480\n As pessoas têm mais oportunidades.\n\n205\n00:09:35,480 --> 00:09:38,500\n De terem ganhos fora dos canais oficiais.\n\n206\n00:09:38,720 --> 00:09:39,639\n E com isso.\n\n207\n00:09:39,920 --> 00:09:42,759\n Fica mais difícil para o governo cobrar imposto dessas pessoas.\n\n208\n00:09:43,580 --> 00:09:45,040\n O que está acontecendo aqui?\n\n209\n00:09:45,080 --> 00:09:46,560\n O que pode acontecer nesse caso aqui?\n\n210\n00:09:46,660 --> 00:09:49,879\n Uma coisa que o governo consegue cobrar imposto com muita facilidade.\n\n211\n00:09:50,340 --> 00:09:51,440\n É em imóveis.\n\n212\n00:09:51,440 --> 00:09:53,660\n Então a tendência é que cada vez mais.\n\n213\n00:09:53,860 --> 00:09:56,600\n O governo foque em tributar imóvel.\n\n214\n00:09:56,600 --> 00:09:57,360\n Bem imóvel.\n\n215\n00:09:57,360 --> 00:09:59,560\n Acabe sendo cada vez mais tributado.\n\n216\n00:09:59,879 --> 00:10:00,580\n Pelo governo.\n\n217\n00:10:00,580 --> 00:10:03,840\n Justamente para compensar o fato de que ele não consegue tributar.\n\n218\n00:10:04,139 --> 00:10:04,940\n De outros lados.\n\n219\n00:10:04,940 --> 00:10:07,220\n Que ele tem dificuldade de tributar outras coisas.\n\n220\n00:10:07,220 --> 00:10:09,600\n Devido a informação descentralizada e distribuída.\n\n221\n00:10:10,100 --> 00:10:10,600\n Então.\n\n222\n00:10:11,399 --> 00:10:12,160\n Se prepara.\n\n223\n00:10:12,160 --> 00:10:13,320\n Isso daqui é só o começo.\n\n224\n00:10:13,320 --> 00:10:16,620\n A tendência é cada vez mais o governo colocar impostos em imóveis.\n\n225\n00:10:16,960 --> 00:10:18,420\n Aumentar imposto em imóvel.\n\n226\n00:10:18,420 --> 00:10:19,780\n É piorar a situação.\n\n227\n00:10:19,780 --> 00:10:20,180\n Para quem tem imóvel.\n\n228\n00:10:20,179 --> 00:10:20,679\n Praticamente.\n\n229\n00:10:20,679 --> 00:10:23,179\n Você vai chegar na situação que você não vai ter imóvel.\n\n230\n00:10:23,179 --> 00:10:25,179\n Você vai ter que pagar aluguel para o governo.\n\n231\n00:10:25,179 --> 00:10:27,179\n Qualquer lugar que você mora.\n\n232\n00:10:27,179 --> 00:10:29,179\n Você vai ter que estar pagando aluguel para o governo.\n\n233\n00:10:29,179 --> 00:10:30,179\n No final das contas.\n\n234\n00:10:30,179 --> 00:10:31,179\n Um absurdo esse tipo de coisa.\n\n235\n00:10:31,179 --> 00:10:33,179\n Mas é o caminho que a gente está seguindo.\n\n236\n00:10:33,179 --> 00:10:35,179\n Pode ter certeza.\n\n237\n00:10:35,179 --> 00:10:38,179\n Isso daqui é sinal de desespero do governo.\n\n238\n00:10:38,179 --> 00:10:40,179\n Com falta de arrecadação.\n\n239\n00:10:40,179 --> 00:10:42,179\n Querendo arrecadar mais e mais e mais.\n\n240\n00:10:42,179 --> 00:10:44,179\n O que não quer dizer que seja uma coisa boa.\n\n241\n00:10:44,179 --> 00:10:45,179\n Isso é uma coisa ruim.\n\n242\n00:10:45,179 --> 00:10:47,179\n O governo antes de morrer completamente.\n\n243\n00:10:47,179 --> 00:10:49,179\n Vai tentar roubar muito a sociedade.\n\n244\n00:10:51,079 --> 00:10:52,779\n .\n\n245\n00:10:52,779 --> 00:10:54,179\n .\n\n246\n00:10:54,179 --> 00:10:55,179\n .\n\n247\n00:10:55,179 --> 00:10:56,179\n .\n\n248\n00:10:56,179 --> 00:10:57,179\n .\n\n249\n00:10:57,179 --> 00:10:58,179\n .\n\n250\n00:10:58,179 --> 00:10:59,179\n .\n\n251\n00:10:59,179 --> 00:11:00,179\n .\n\n252\n00:11:00,179 --> 00:11:01,179\n .\n\n253\n00:11:01,179 --> 00:11:02,179\n .\n\n254\n00:11:02,179 --> 00:11:03,179\n .\n\n255\n00:11:03,179 --> 00:11:04,179\n .\n\n256\n00:11:04,179 --> 00:11:05,179\n .\n\n257\n00:11:05,179 --> 00:11:06,179\n .\n\n258\n00:11:06,179 --> 00:11:07,179\n .\n\n259\n00:11:08,179 --> 00:11:09,179\n .\n\n260\n00:11:09,179 --> 00:11:10,179\n .\n\n261\n00:11:10,179 --> 00:11:11,179\n .\n\n262\n00:11:11,179 --> 00:11:12,179\n .\n\n263\n00:11:12,179 --> 00:11:13,179\n .\n\n264\n00:11:13,179 --> 00:11:15,179\n .\n\n265\n00:11:15,179 --> 00:11:16,179\n .\n\n266\n00:11:16,179 --> 00:11:17,179\n .\n\n267\n00:11:17,179 --> 00:11:18,179\n .\n\n268\n00:11:18,179 --> 00:11:18,859\n .\n\n269\n00:11:18,859 --> 00:11:19,859\n .\n\n270\n00:11:19,859 --> 00:11:20,159\n .\n\n271\n00:11:20,159 --> 00:11:20,179\n .\n"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}
