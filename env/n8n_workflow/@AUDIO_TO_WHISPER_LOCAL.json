@@ -1,0 +1,138 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"videoId\": \"a string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        -96
+      ],
+      "id": "63ce0096-03a8-4b26-a03e-1c2d80531e4c",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b08217d3-fe5e-4286-a655-3e9caa5eb0d4",
+              "name": "RESPONSE",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -96
+      ],
+      "id": "235a89dd-5551-4f79-a779-7b64edb3d824",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/download/{{ $json.videoId }}/{{ $json.videoId }}.mp3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "ed575d5c-188c-434b-927d-b3b541c34260",
+      "name": "READ"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://whisper-api:8000/subtitle/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "text/plain"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 3600000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "5d3df726-265d-475a-8125-7a09b84b8135",
+      "name": "Subtitle Generator"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "READ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "READ": {
+      "main": [
+        [
+          {
+            "node": "Subtitle Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subtitle Generator": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "START": [
+      {
+        "videoId": "tugq5FUmPEI"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}
