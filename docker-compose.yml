@@ -56,25 +56,68 @@ services:
     image: redis:7-alpine
     container_name: redis
     command: >
-      /bin/sh -c 'exec redis-server --appendonly yes --save 60 1000 --loglevel warning'
-    # Deixe apenas na rede interna. Se quiser expor pro host, descomente a linha abaixo:
-    # ports:
-    #   - "6379:6379"
+      /bin/sh -c 'exec redis-server --appendonly yes --save 60 1000 --loglevel warning'    
     volumes:
       - redis_data:/data
     restart: unless-stopped
     networks:
-      - default
-    # (Opcional) healthcheck; com Compose V2, dá pra usar depends_on:condition=service_healthy
+      - default    
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5 
 
+  evolution-api:
+    image: atendai/evolution-api:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:    
+      AUTHENTICATION_API_KEY: "D5E14EBA3050-40E4-BF1F-DDAE98935CED"
+      CONFIG_SESSION_PHONE_VERSION: "2.3000.1025062854"
+      NODE_ENV: production
+      TZ: America/Sao_Paulo    
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: "postgresql"
+      DATABASE_CONNECTION_URI: "postgresql://hugo:123456@postgres:5432/mydatabase"    
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: "redis://redis:6379/0"
+      CACHE_LOCAL_ENABLED: "false"
+
+    depends_on:
+      - postgres
+      - redis
+
+    volumes:
+      - evolution_store:/evolution/store
+      - evolution_instances:/evolution/instances
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_db_videos
+    restart: always
+    environment:
+      POSTGRES_USER: hugo
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: mydatabase
+      TZ: America/Sao_Paulo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hugo -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
 volumes:
   whisper_cache:
   redis_data:
+  evolution_store:
+  evolution_instances:
+  postgres_data:
 
 networks:
   default:
