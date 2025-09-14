@@ -258,3 +258,4 @@ dist
 
 env/n8n_data/**
 env/n8n_download/**
+env/n8n_processing/**

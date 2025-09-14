@@ -1,5 +1,4 @@
 {
-  "name": "@VIDEO_FADEIN_FADEOUT",
   "nodes": [
     {
       "parameters": {
@@ -146,7 +145,7 @@
     },
     {
       "parameters": {
-        "command": "=ffmpeg -y -i /home/node/processing/{{ $json.FILENAME }} -vf \"fade=t=in:st=0:d=2,fade=t=out:st=11:d=2\" -c:a copy /home/node/processing/FADE_IN_FADE_OUT{{ $json.FILENAME }}\n"
+        "command": "=# Caminho do arquivo (n8n)\nIN=\"/home/node/processing/{{ $json.FILENAME }}\"\n\n# 1) Duração real do VÍDEO (stream v:0). Se vier N/A, cai no fallback do container.\nVDUR=\"$(ffprobe -v error -select_streams v:0 -show_entries stream=duration \\\n       -of default=nk=1:nw=1 \"$IN\")\"\nif [ -z \"$VDUR\" ] || [ \"$VDUR\" = \"N/A\" ]; then\n  VDUR=\"$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 \"$IN\")\"\nfi\n\n# 2) Calcula início do fade-out sem extrapolar o fim do VÍDEO\nEPS=\"0.05\"\nOUT_START=\"$(awk -v d=\"$VDUR\" -v od=\"{{ $json.OUT_DURATION }}\" -v os=\"{{ $json.OUT_SECOND }}\" -v eps=\"$EPS\" \\\n  'BEGIN{ max=d-od-eps; s=os; if(s>max) s=max; if(s<0) s=0; printf \"%.6f\", s }')\"\n\n# 3) Aplica fade in/out em VÍDEO e ÁUDIO, e aparo ambos a VDUR\nffmpeg -y \\\n  -fflags +genpts \\\n  -i \"$IN\" \\\n  -filter_complex \"\\\n    [0:v]setpts=PTS-STARTPTS, \\\n         fade=t=in:st={{ $json.IN_SECOND }}:d={{ $json.IN_DURATION }}, \\\n         fade=t=out:st=${OUT_START}:d={{ $json.OUT_DURATION }}, \\\n         trim=end=${VDUR},setpts=PTS-STARTPTS[v]; \\\n    [0:a]asetpts=PTS-STARTPTS, \\\n         afade=t=in:st={{ $json.IN_SECOND }}:d={{ $json.IN_DURATION }}, \\\n         afade=t=out:st=${OUT_START}:d={{ $json.OUT_DURATION }}, \\\n         atrim=end=${VDUR},asetpts=PTS-STARTPTS[a]\" \\\n  -map \"[v]\" -map \"[a]\" \\\n  -c:v libx264 -preset veryfast -crf 18 \\\n  -c:a aac -b:a 192k \\\n  -movflags +faststart -shortest \\\n  \"/home/node/processing/FADE_IN_FADE_OUT_{{ $json.FILENAME }}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -160,19 +159,6 @@
       "onError": "continueRegularOutput"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "FILE_NAME": "_LMpN6o26E0_00_00_00_00_00_13.mp4",
-          "IN_SECOND": 0,
-          "IN_DURATION": 2,
-          "OUT_SECOND": 11,
-          "OUT_DURATION": 2
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
@@ -226,14 +212,18 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "FILE_NAME": "F4nBHarrivE_0_525.mp4",
+        "IN_SECOND": 1,
+        "IN_DURATION": 4,
+        "OUT_SECOND": 521.066341,
+        "OUT_DURATION": 3
+      }
+    ]
   },
-  "versionId": "6a308660-64fb-4051-98e0-7cbabafce45c",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "3d92D6TV6oLVwDrh",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }
