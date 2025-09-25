@@ -117,7 +117,7 @@
     },
     {
       "parameters": {
-        "command": "=ffmpeg -y \\\n  -i \"/home/node/processing/{{ $json.VIDEO_FILENAME }}\" \\\n  -i \"/home/node/assets/{{ $json.OVERLAY_FILE_NAME }}\" \\\n  -filter_complex \\\n    \"[0:v]setpts=PTS-STARTPTS[main]; \\\n     [1:v]setpts=PTS-STARTPTS,chromakey=0x00FF00:0.28:0.10[overlay_alpha]; \\\n     [main][overlay_alpha]overlay=(W-w)/2:(H-h)/2:eof_action=pass[v]\" \\\n  -map \"[v]\" \\\n  -map \"0:a?\" \\\n  -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest \\\n  \"/home/node/processing/OVERLAY_{{ $json.VIDEO_FILENAME }}\""
+        "command": "=set -eu\n\nVFN=$(printf \"%s\" \"{{ $json.VIDEO_FILENAME }}\" | tr -d '\\r')\nOFN=$(printf \"%s\" \"{{ $json.OVERLAY_FILE_NAME }}\" | tr -d '\\r')\nX={{ $json.X_POS }}\nY={{ $json.Y_POS }}\nT={{ $json.START_OVERLAY }}\n\nOUT_DIR=\"/home/node/processing\"\nOUT=\"${OUT_DIR}/OVERLAY_${VFN}\"\nTMP=\"${OUT_DIR}/.__tmp_overlay_${VFN}\"\n\n# 1) Garante dir e testamos escrita real\nmkdir -p \"${OUT_DIR}\"\n: > \"${OUT_DIR}/.__write_test\" || { echo \"Sem permissão em ${OUT_DIR}\"; exit 1; }\nrm -f \"${OUT_DIR}/.__write_test\"\n\n# 2) Renderiza pro arquivo temporário\nffmpeg -y -fflags +genpts -probesize 5M -analyzeduration 100M \\\n  -i \"${OUT_DIR}/${VFN}\" \\\n  -i \"/home/node/assets/${OFN}\" \\\n  -filter_complex \"[0:v]split=2[vpre_src][vpost_src];[vpre_src]trim=start=0:end=${T},setpts=PTS-STARTPTS[vpre];[vpost_src]trim=start=${T},setpts=PTS-STARTPTS[vpost];[1:v]fps=30,chromakey=0x00FF00:0.28:0.10,format=rgba,setsar=1[ov];[vpost][ov]overlay=${X}:${Y}:eof_action=pass[vpost_ov];[vpre][vpost_ov]concat=n=2:v=1:a=0[v]\" \\\n  -map \"[v]\" -map \"0:a:0?\" \\\n  -c:v libx264 -preset veryfast -crf 22 -pix_fmt yuv420p \\\n  -c:a copy \\\n  -movflags +faststart \\\n  \"${TMP}\"\n\n# 3) Move atômico pro nome final\nmv -f \"${TMP}\" \"${OUT}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -228,19 +228,7 @@
       ]
     }
   },
-  "pinData": {
-    "START": [
-      {
-        "VIDEO_FILE_NAME": "TrQual1d5dU_0_540.mp4",
-        "OVERLAY_FILE_NAME": "overlay_03.mp4",
-        "IMAGE_X_POS": 0,
-        "IMAGE_Y_POS": 0,
-        "START_TIME_OVERLAY": 0,
-        "END_TIME_OVERLAY": 30,
-        "FADE_TIME": 5
-      }
-    ]
-  },
+  "pinData": {},
   "meta": {
     "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
   }

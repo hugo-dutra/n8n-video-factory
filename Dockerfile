@@ -2,20 +2,18 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Instala ffmpeg + yt-dlp + utilitário dos2unix
-RUN apk update \
- && apk add --no-cache ffmpeg yt-dlp dos2unix \
- && rm -rf /var/cache/apk/*
+# Pacotes essenciais
+RUN apk add --no-cache ffmpeg python3 curl bash ca-certificates dos2unix \
+  && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+       -o /usr/local/bin/yt-dlp \
+  && chmod a+rx /usr/local/bin/yt-dlp
 
-# Copia entrypoint e normaliza para LF
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN dos2unix /docker-entrypoint.sh \
- && chmod +x /docker-entrypoint.sh \
- && chown node:node /docker-entrypoint.sh
+RUN dos2unix /docker-entrypoint.sh || true \
+  && chmod +x /docker-entrypoint.sh \
+  && chown node:node /docker-entrypoint.sh
 
-# Diretório de trabalho
 WORKDIR /home/node
-
 ENV SHELL=/bin/sh
 
 USER node
