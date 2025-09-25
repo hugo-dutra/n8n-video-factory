@@ -1,0 +1,3 @@
+Comando para forçar update de containes e libs: docker compose build --pull --no-cache
+
+docker compose up -d --no-deps --build n8n
