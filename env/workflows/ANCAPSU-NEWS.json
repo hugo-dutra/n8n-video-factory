@@ -5,7 +5,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -704,
+        -736,
         -48
       ],
       "id": "7d047811-9fd3-4901-a8f4-bce8f95f8200",
@@ -148,7 +148,7 @@
       "typeVersion": 1.2,
       "position": [
         -160,
-        128
+        160
       ],
       "id": "66162901-955f-4d49-8d88-bb4bd3c15371",
       "name": "Extract Audio"
@@ -202,7 +202,7 @@
       "typeVersion": 1.2,
       "position": [
         32,
-        128
+        160
       ],
       "id": "96ffe14f-94ae-4438-89e3-bc164abb68c0",
       "name": "Silence Detector"
@@ -257,7 +257,7 @@
       "typeVersion": 1.2,
       "position": [
         224,
-        128
+        160
       ],
       "name": "Silence Remover",
       "id": "5ff848e2-410b-452c-a14c-122a70b37cba"
@@ -326,7 +326,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -544,
+        -576,
         -48
       ],
       "id": "33a9404c-f8fe-416e-828a-9f46171c368e",
@@ -381,7 +381,7 @@
       "typeVersion": 1.2,
       "position": [
         608,
-        128
+        160
       ],
       "id": "d124763a-7fc4-4b9d-9e49-a85098928b44",
       "name": "Video Cut Agent Detector"
@@ -424,7 +424,7 @@
       "typeVersion": 1.2,
       "position": [
         416,
-        128
+        160
       ],
       "id": "0a378c61-29eb-4069-9d71-90080e6aee45",
       "name": "AUDIO_TO_WHISPER_LOCAL"
@@ -484,7 +484,7 @@
       "typeVersion": 1.2,
       "position": [
         800,
-        128
+        160
       ],
       "id": "231b7372-afce-4c81-aafc-ae76b3867861",
       "name": "Video Splitter"
@@ -563,8 +563,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        608,
-        352
+        416,
+        384
       ],
       "id": "27ca8419-e979-4992-981b-087dc50af3b2",
       "name": "Fade In/out"
@@ -606,8 +606,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        416,
-        352
+        224,
+        384
       ],
       "id": "20ebad80-6f06-49ae-b619-0fe33b2f09c3",
       "name": "Video Meta Data"
@@ -686,8 +686,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        224,
-        352
+        32,
+        384
       ],
       "id": "88014289-79dc-43b7-8739-d98e92a0345f",
       "name": "Video Overlay"
@@ -700,8 +700,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        -160,
-        352
+        992,
+        160
       ],
       "id": "957a8d27-9029-4c98-8766-2e4e16ce3b36",
       "name": "List Overlays"
@@ -713,11 +713,206 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        32,
-        352
+        -160,
+        384
       ],
       "id": "69681ba6-067d-4b3a-8aa4-386759efe445",
       "name": "Select Overlay"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/home/node/assets/overlay_images/**/*.png",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        608,
+        384
+      ],
+      "id": "6003ad09-9de8-44fa-9582-fc82d1597663",
+      "name": "List Image Overlays"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ek3PyTSAC9oll7i9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ek3PyTSAC9oll7i9",
+          "cachedResultName": "@OVERLAY_IMAGE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "IMAGE_X_POS": 0,
+            "IMAGE_Y_POS": 0,
+            "START_TIME_OVERLAY": 0,
+            "END_TIME_OVERLAY": "={{ $('Video Meta Data').item.json.videoMetaData.durationSeconds }}",
+            "FADE_TIME": 3,
+            "IMAGE_FILE_NAME": "={{ $json.fileName }}",
+            "VIDEO_FILE_NAME": "=FADE_IN_FADE_OUT_{{ $('Fade In/out').item.json.FILENAME }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "VIDEO_FILE_NAME",
+              "displayName": "VIDEO_FILE_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "IMAGE_FILE_NAME",
+              "displayName": "IMAGE_FILE_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "IMAGE_X_POS",
+              "displayName": "IMAGE_X_POS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "IMAGE_Y_POS",
+              "displayName": "IMAGE_Y_POS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "START_TIME_OVERLAY",
+              "displayName": "START_TIME_OVERLAY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "END_TIME_OVERLAY",
+              "displayName": "END_TIME_OVERLAY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "FADE_TIME",
+              "displayName": "FADE_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        816,
+        384
+      ],
+      "id": "e30b9b1b-1336-4663-b47f-822dc3b72077",
+      "name": "@OVERLAY_IMAGE"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bRbAM3zoHUE6bMWh",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/bRbAM3zoHUE6bMWh",
+          "cachedResultName": "@JOIN_VIDEO"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "EFFECT": "fadeblack",
+            "FILE_1": "=OVERLAY_FADE_IN_FADE_OUT_{{ $('Fade In/out').item.json.FILENAME }}",
+            "FILE_2": "/home/node/assets/video_final/final.mp4",
+            "MAIN_VIDEO_DURATION": "={{ $('Video Meta Data').item.json.videoMetaData.durationSeconds }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "FILE_1",
+              "displayName": "FILE_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "FILE_2",
+              "displayName": "FILE_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "EFFECT",
+              "displayName": "EFFECT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "MAIN_VIDEO_DURATION",
+              "displayName": "MAIN_VIDEO_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        384
+      ],
+      "id": "d8a1ae96-86c3-4b01-a438-dc1b1024ccd4",
+      "name": "@JOIN_VIDEO"
     }
   ],
   "connections": {
@@ -849,7 +1044,13 @@
     },
     "Fade In/out": {
       "main": [
-        []
+        [
+          {
+            "node": "List Image Overlays",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Video Meta Data": {
@@ -895,44 +1096,69 @@
           }
         ]
       ]
+    },
+    "List Image Overlays": {
+      "main": [
+        [
+          {
+            "node": "@OVERLAY_IMAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@OVERLAY_IMAGE": {
+      "main": [
+        [
+          {
+            "node": "@JOIN_VIDEO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@JOIN_VIDEO": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {
-    "Download Thumbnail": [
-      {
-        "RESULT": "SUCCESS"
-      }
-    ],
-    "Download Video": [
-      {
-        "RESULT": "SUCCESS",
-        "FILENAME": "6lvqGv2LDF0.mp4"
-      }
-    ],
-    "Extract Audio": [
-      {
-        "RESULT": "SUCCESS"
-      }
-    ],
-    "Silence Detector": [
-      {
-        "periods": [
-          {
-            "startSilence": 262.248,
-            "endSilence": 264.714,
-            "duration": 2.46619
-          }
-        ]
-      }
-    ],
-    "Silence Remover": [
-      {
-        "RESULT": "SUCCESS",
-        "audio": "6lvqGv2LDF0.audio.mp3",
-        "video": "6lvqGv2LDF0.video.mp4"
-      }
-    ],
     "Find New Videos": [
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UUwDwsZnGtY",
+        "title": "CRISTINA GRAEML diz que \"NÃO é ANTI-SISTEMA\" e se filia ao UNIÃO BRASIL, para o SENADO em 2026",
+        "duration": "14:48",
+        "durationSeconds": 888,
+        "publishedAt": "2025-09-27 18:15:04",
+        "publishedAtISO": "2025-09-27T18:15:04Z",
+        "publishedAtEpoch": 1758996904,
+        "url": "https://www.youtube.com/watch?v=UUwDwsZnGtY",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "UUwDwsZnGtY",
+        "processed": false
+      },
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_mmg6Rh4WLqU",
+        "title": "SITE do ESCRITÓRIO de ALEXANDRE de MORAES volta a FUNCIONAR, mas ONDE ESTARÁ HOSPEDADO AGORA?",
+        "duration": "11:58",
+        "durationSeconds": 718,
+        "publishedAt": "2025-09-27 16:15:04",
+        "publishedAtISO": "2025-09-27T16:15:04Z",
+        "publishedAtEpoch": 1758989704,
+        "url": "https://www.youtube.com/watch?v=mmg6Rh4WLqU",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "mmg6Rh4WLqU",
+        "processed": false
+      },
       {
         "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_6lvqGv2LDF0",
         "title": "PETRO, amigo do LULA, pede que POLICIAIS de NY se REVOLTEM contra TRUMP: DESESPERO da ESQUERDA",
@@ -997,78 +1223,6 @@
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
         "videoId": "X-e1j2SbrXI",
         "processed": false
-      },
-      {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_EG7qAwnz394",
-        "title": "TRUMP pode VIR ao BRASIL para SE ENCONTRAR com BOLSONARO... EU ACHO extremamente IMPROVÁVEL",
-        "duration": "13:41",
-        "durationSeconds": 821,
-        "publishedAt": "2025-09-26 18:25:52",
-        "publishedAtISO": "2025-09-26T18:25:52Z",
-        "publishedAtEpoch": 1758911152,
-        "url": "https://www.youtube.com/watch?v=EG7qAwnz394",
-        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "EG7qAwnz394",
-        "processed": false
-      },
-      {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UdGMP-huxpo",
-        "title": "GABINETE do XANDÃO perde MAIS UM JUIZ-AUXILIAR: CADA vez mais DIFÍCIL o XANDÃO conseguir APOIO",
-        "duration": "9:07",
-        "durationSeconds": 547,
-        "publishedAt": "2025-09-26 16:23:39",
-        "publishedAtISO": "2025-09-26T16:23:39Z",
-        "publishedAtEpoch": 1758903819,
-        "url": "https://www.youtube.com/watch?v=UdGMP-huxpo",
-        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "UdGMP-huxpo",
-        "processed": false
-      }
-    ],
-    "Video Cut Agent Detector": [
-      {
-        "output": [
-          {
-            "videoCutStartTime": 40,
-            "videoCutEndTime": 350,
-            "videoCutTitle": "GUSTAVO PETRO INCITA REVOLTA: ESQUERDA EM DESESPERO - CORTE!",
-            "videoCutDescription": "Neste segmento, o autor expõe como Gustavo Petro incitou a revolta, convocando guardas americanos contra Trump e perdendo seu visto. A crítica ácida à ESQUERDA e as comparações com Lula reforçam o clima de desespero e polêmica. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=6lvqGv2LDF0.",
-            "videoHardHook": "Gustavo Petro ordenou revolta contra Trump – descubra o choque da verdade!",
-            "videoTags": [
-              "Gustavo Petro",
-              "Petro",
-              "incitação",
-              "revolta",
-              "Trump",
-              "esquerda",
-              "polêmica",
-              "visto revogado",
-              "ONU",
-              "Nova Iorque",
-              "Colômbia",
-              "desespero",
-              "convocação",
-              "voluntários",
-              "antissemitismo",
-              "Lula",
-              "revolução",
-              "política",
-              "análise política",
-              "ancap"
-            ],
-            "videoUrl": "https://www.youtube.com/watch?v=6lvqGv2LDF0",
-            "thumbTexts": "PETRO FURIA, CHAMOU A MUDANÇA, ESQUERDA ATONITA HOJE, TRUMP ALERTA MÁXIMO",
-            "playlist": {
-              "nome": "playlist 1",
-              "id": "playlist 1"
-            }
-          }
-        ]
-      }
-    ],
-    "AUDIO_TO_WHISPER_LOCAL": [
-      {
-        "RESPONSE": "1\n00:00:00,000 --> 00:00:05,560\n Esse é o Ancapso e nós vamos falar agora sobre o Gustavo Petro, que fez um showzinho lá em Nova Iorque.\n\n2\n00:00:05,660 --> 00:00:10,000\n Vocês sabem, o Gustavo Petro é o presidente da Colômbia, um esquerdista igual o Lula,\n\n3\n00:00:10,480 --> 00:00:14,160\n desesperado igual o Lula, sem apoio popular igual o Lula,\n\n4\n00:00:14,679 --> 00:00:17,500\n mais um da esquerda desesperada da América Latina.\n\n5\n00:00:17,620 --> 00:00:21,920\n Pois bem, o Gustavo Petro estava lá em Nova Iorque também para a cúpula da ONU.\n\n6\n00:00:22,440 --> 00:00:27,339\n E daí ele decidiu ir para um evento que estava tendo ali de protesto contra o Trump\n\n7\n00:00:27,339 --> 00:00:35,019\n e decidiu que ia convocar as pessoas, convocou os guardas para se revoltarem contra o Trump.\n\n8\n00:00:35,019 --> 00:00:42,600\n Olha a gravidade da coisa, um presidente da Colômbia convocou os guardas, os soldados americanos,\n\n9\n00:00:42,640 --> 00:00:44,239\n para se revoltarem contra Trump.\n\n10\n00:00:44,960 --> 00:00:50,420\n E o pessoal deve ter achado graça nisso, porque é desespero desse cara, só tem essa lógica.\n\n11\n00:00:51,140 --> 00:00:54,240\n E no final das contas ele acabou perdendo o visto dele.\n\n12\n00:00:54,439 --> 00:00:56,939\n Isso tem duas coisas interessantes nessa história.\n\n13\n00:00:56,939 --> 00:01:03,699\n A primeira coisa mostra o desespero da esquerda latino-americana com a perda de poder que eles estão tendo.\n\n14\n00:01:04,120 --> 00:01:07,459\n Mais uma vez o Gustavo Petro está tentando apelar para bater no Trump,\n\n15\n00:01:07,560 --> 00:01:10,939\n para ver se consegue um efeito Canadá de fazer realmente a coisa acontecer,\n\n16\n00:01:11,640 --> 00:01:13,939\n do Trump brigar com ele, ele conseguir melhorar.\n\n17\n00:01:14,159 --> 00:01:17,659\n Não vai conseguir, nem o Lula conseguiu, ninguém vai conseguir isso daí.\n\n18\n00:01:18,120 --> 00:01:23,840\n Mas enfim, a outra coisa é que, olha só, os chefes de Estado podem perder visto.\n\n19\n00:01:23,840 --> 00:01:26,599\n O Gustavo Petro perdeu o visto americano.\n\n20\n00:01:26,680 --> 00:01:26,840\n Vamos entender.\n\n21\n00:01:26,939 --> 00:01:27,719\n Vamos entender essa história aqui.\n\n22\n00:01:27,799 --> 00:01:33,200\n Essa notícia foi sugerida por Duroc, americano, oligofrenia fenilpirúvica e várias outras pessoas.\n\n23\n00:01:33,539 --> 00:01:38,019\n Obrigado aí ao pessoal que sugeriu notícias lá no nosso site, no visaolibertaria.com.\n\n24\n00:01:38,299 --> 00:01:40,039\n E obrigado a você que está assistindo o nosso vídeo.\n\n25\n00:01:40,140 --> 00:01:44,560\n Se você gosta do nosso conteúdo, por favor, deixe o seu like e se inscreva aqui no canal.\n\n26\n00:01:45,379 --> 00:01:49,259\n Pois bem, aqui no UOL está a manchete só dizendo que Petro virá,\n\n27\n00:01:49,459 --> 00:01:53,079\n convocará voluntários da Colômbia para lutar em Gaza.\n\n28\n00:01:53,079 --> 00:01:55,979\n O que por si só já é um absurdo completo.\n\n29\n00:01:56,939 --> 00:02:00,659\n Gaza é governada por terroristas, o grupo Ramais é um grupo terrorista,\n\n30\n00:02:00,759 --> 00:02:05,939\n e ele fazer isso aqui, ele está dizendo que vai chamar voluntários colombianos para lutar pelos terroristas de Gaza.\n\n31\n00:02:06,400 --> 00:02:08,900\n O que não faz absolutamente nenhum sentido, né?\n\n32\n00:02:09,259 --> 00:02:10,719\n Mas o pior não foi isso daqui, não.\n\n33\n00:02:10,840 --> 00:02:11,500\n O pior é aqui, olha.\n\n34\n00:02:11,759 --> 00:02:13,120\n É o momento da ação.\n\n35\n00:02:13,280 --> 00:02:20,099\n Falarei na Colômbia para abrir a lista de voluntários colombianos e colombianas que queiram ir lutar pela libertação da Palestina.\n\n36\n00:02:20,099 --> 00:02:25,680\n E se o presidente da República da Colômbia tiver que ir para esse combate, não me assusta, já estive em outros.\n\n37\n00:02:26,159 --> 00:02:26,919\n Sabe quais combates?\n\n38\n00:02:27,019 --> 00:02:27,679\n Que combates que ele teve, né?\n\n39\n00:02:27,719 --> 00:02:33,159\n Ele teve, ele já foi terrorista, ele já foi um guerrilheiro ali das FARC lá na Colômbia, né?\n\n40\n00:02:33,619 --> 00:02:37,279\n É essa turma da esquerda latino-americana, é o que eu falo para vocês.\n\n41\n00:02:37,659 --> 00:02:40,739\n Esse pessoal achou que ia conseguir convencer, né?\n\n42\n00:02:40,739 --> 00:02:42,379\n Que ia conseguir chegar pelo caminho bonitinho.\n\n43\n00:02:42,439 --> 00:02:43,119\n Não estão conseguindo.\n\n44\n00:02:43,379 --> 00:02:45,259\n Não conseguem mais conquistar corações e mentes.\n\n45\n00:02:45,339 --> 00:02:47,359\n Então agora partindo para a violência.\n\n46\n00:02:47,459 --> 00:02:49,479\n Eu temo muito pelo futuro da Colômbia, tá?\n\n47\n00:02:49,479 --> 00:02:53,699\n Eu espero sinceramente que a Colômbia consiga evitar o destino Venezuela.\n\n48\n00:02:53,899 --> 00:02:56,779\n Até porque se a Colômbia mergulhar no sentido da Venezuela,\n\n49\n00:02:56,919 --> 00:02:59,359\n é difícil o Brasil sair também, né?\n\n50\n00:02:59,780 --> 00:03:01,979\n A eleição na Colômbia é no início do ano que vem.\n\n51\n00:03:02,159 --> 00:03:03,919\n A do Brasil é no final do ano que vem.\n\n52\n00:03:04,739 --> 00:03:08,659\n Na juventude, o Pedro pertenceu à guerrilha urbana M19.\n\n53\n00:03:09,000 --> 00:03:09,959\n Nada, FARC.\n\n54\n00:03:10,099 --> 00:03:12,060\n Ele era dos terroristas lá da Colômbia, né?\n\n55\n00:03:12,699 --> 00:03:15,659\n Com o punho no alto, o vice-presidente colombiano, a Francia Marques,\n\n56\n00:03:15,699 --> 00:03:19,259\n e o restante da delegação colombiana deixaram o auditório das Nações Unidas\n\n57\n00:03:19,259 --> 00:03:21,239\n durante o discurso de Netanyahu.\n\n58\n00:03:21,619 --> 00:03:23,319\n Sempre esse negócio de antissemitismo.\n\n59\n00:03:23,379 --> 00:03:25,060\n Esse pessoal adora antissemitismo.\n\n60\n00:03:25,119 --> 00:03:26,039\n É impressionante, né?\n\n61\n00:03:26,139 --> 00:03:26,599\n É impressionante.\n\n62\n00:03:27,359 --> 00:03:28,839\n Bom, mas não foi só isso.\n\n63\n00:03:28,959 --> 00:03:32,199\n Eles falaram essa parte do discurso aqui, mas não foi só isso que ele falou.\n\n64\n00:03:32,799 --> 00:03:34,079\n Ele falou também, aqui, ó.\n\n65\n00:03:34,819 --> 00:03:36,219\n Desobedeçam a ordem de Trump.\n\n66\n00:03:36,579 --> 00:03:42,659\n Obedeçam a ordem da humanidade, disse ele, para os soldados americanos que estavam ali.\n\n67\n00:03:42,719 --> 00:03:46,459\n Ou seja, ele literalmente incitou soldados americanos.\n\n68\n00:03:46,500 --> 00:03:48,619\n Tudo bem que é falado da polícia de Nova York, não é?\n\n69\n00:03:48,839 --> 00:03:50,199\n Os caras ignoraram, né?\n\n70\n00:03:50,299 --> 00:03:55,459\n Porra, esse velho gaga, mais um esquerdista latino-americano achando que tá abafando lá, né?\n\n71\n00:03:55,899 --> 00:03:56,339\n Mas, enfim.\n\n72\n00:03:56,919 --> 00:04:03,259\n Ele literalmente incitou soldados americanos a se revoltarem contra Trump.\n\n73\n00:04:03,959 --> 00:04:07,679\n Eu não sei não, cara, mas isso é uma incitação à revolução, né?\n\n74\n00:04:07,799 --> 00:04:09,519\n E esse pessoal acha isso mesmo.\n\n75\n00:04:09,979 --> 00:04:13,439\n Eles realmente estão tão desesperados, eles estão percebendo que estão num fim de linha,\n\n76\n00:04:13,979 --> 00:04:15,699\n que eles acham que é agora ou nunca, né?\n\n77\n00:04:15,699 --> 00:04:16,899\n Só que vai ser nunca, né?\n\n78\n00:04:16,899 --> 00:04:17,539\n Eles não vão conseguir.\n\n79\n00:04:17,539 --> 00:04:22,199\n O Lula também aqui no Brasil, eu não acredito que ele consiga transformar o Brasil numa Venezuela, né?\n\n80\n00:04:22,519 --> 00:04:24,120\n Olha quem tava do lado dele aqui também.\n\n81\n00:04:24,279 --> 00:04:25,480\n O Roger Waters, né?\n\n82\n00:04:25,599 --> 00:04:26,539\n O Roger Waters do...\n\n83\n00:04:26,920 --> 00:04:29,699\n Pink Floyd, né?\n\n84\n00:04:30,080 --> 00:04:33,340\n Antigo cantor do Pink Floyd, antigo vocalista do Pink Floyd.\n\n85\n00:04:33,840 --> 00:04:39,400\n Que, lógico, cara, o Roger Waters é a pessoa mais consistente em termos de posicionamento político.\n\n86\n00:04:39,879 --> 00:04:44,660\n Se você quer saber se uma linha de posicionamento político tá errada, é só saber se o Roger Waters apoia ela.\n\n87\n00:04:44,879 --> 00:04:48,080\n Se o Roger Waters apoia aquela linha política, ela tá errada.\n\n88\n00:04:48,160 --> 00:04:49,460\n Você pode ter certeza disso, né?\n\n89\n00:04:49,900 --> 00:04:50,759\n É impressionante.\n\n90\n00:04:50,939 --> 00:04:55,520\n E tá aqui o Gustavo Petro, todo orgulhoso, falando pro pessoal se revoltar.\n\n91\n00:04:55,600 --> 00:04:56,800\n É lógico, ninguém se revoltou.\n\n92\n00:04:56,920 --> 00:04:57,640\n Ninguém fez nada.\n\n93\n00:04:58,040 --> 00:05:00,860\n Tá todo mundo sabendo que o cara tá desesperado ali, né?\n\n94\n00:05:01,980 --> 00:05:03,660\n Enfim, essa foi a história.\n\n95\n00:05:03,759 --> 00:05:07,860\n Tá aqui, tem visão dele no Instagram, pedindo pros soldados americanos.\n\n96\n00:05:07,860 --> 00:05:13,120\n Como se ele fosse conseguir convencer as pessoas a se revoltar nos Estados Unidos.\n\n97\n00:05:13,879 --> 00:05:17,960\n Gustavo Petro, a maior parte dos colombianos nos Estados Unidos detesta você.\n\n98\n00:05:18,280 --> 00:05:20,860\n E prefere muito mais o Trump, no final das contas, né?\n\n99\n00:05:21,300 --> 00:05:21,920\n Ele teve que...\n\n100\n00:05:21,920 --> 00:05:23,040\n Tem um tradutor ainda, né?\n\n101\n00:05:23,080 --> 00:05:25,100\n Ele gritava em espanhol.\n\n102\n00:05:25,520 --> 00:05:26,860\n E daí o tradutor traduzia.\n\n103\n00:05:26,920 --> 00:05:29,980\n E aí ele dizia pros americanos o que ele tava falando.\n\n104\n00:05:30,439 --> 00:05:31,520\n Que coisa patética.\n\n105\n00:05:31,680 --> 00:05:33,740\n Você repara que só tem jornalista aqui.\n\n106\n00:05:34,319 --> 00:05:36,240\n Muito pouca gente, de fato, ali, né?\n\n107\n00:05:36,280 --> 00:05:41,819\n Ou seja, ele falando para os soldados americanos desobedecerem Trump, brigarem com Trump.\n\n108\n00:05:42,340 --> 00:05:43,259\n Sabe por que eles tão falando isso?\n\n109\n00:05:43,400 --> 00:05:44,460\n É desespero, cara.\n\n110\n00:05:44,759 --> 00:05:47,580\n Porque esse pessoal tá vendo que eles não vão ter apoio, né?\n\n111\n00:05:47,920 --> 00:05:52,420\n A Europa, a esquerda europeia, a esquerda americana, vendeu pra esquerda latino-americana\n\n112\n00:05:52,420 --> 00:05:53,560\n que ela conseguiria.\n\n113\n00:05:53,680 --> 00:05:56,720\n Não porque a gente vai conseguir fazer um socialismo.\n\n114\n00:05:56,720 --> 00:05:58,140\n Não vamos conseguir, não sei o que lá.\n\n115\n00:05:58,220 --> 00:05:59,060\n Onda rosa.\n\n116\n00:05:59,480 --> 00:06:01,640\n Porque vai ter onda rosa aqui, não sei o que lá.\n\n117\n00:06:02,120 --> 00:06:04,020\n E eles tão percebendo que não vai ter jeito, né?\n\n118\n00:06:04,040 --> 00:06:05,080\n Não vai dar certo esse negócio.\n\n119\n00:06:05,180 --> 00:06:06,360\n Não vai chegar a lugar nenhum, né?\n\n120\n00:06:06,780 --> 00:06:11,120\n E daí estão nesse desespero de tentar derrubar o Trump na base da porrada, né?\n\n121\n00:06:11,780 --> 00:06:16,020\n O Barroso falou que espera que as coisas nos Estados Unidos vão mudar.\n\n122\n00:06:16,100 --> 00:06:20,900\n Porque agora que eles condenaram o Bolsonaro, os Estados Unidos vai voltar atrás das sanções contra o STF.\n\n123\n00:06:21,600 --> 00:06:22,360\n Não sei, cara.\n\n124\n00:06:22,360 --> 00:06:23,900\n Esse pessoal tem algum problema, cara.\n\n125\n00:06:23,960 --> 00:06:25,400\n Eles estão realmente com algum problema.\n\n126\n00:06:25,400 --> 00:06:25,600\n Problema.\n\n127\n00:06:25,600 --> 00:06:26,400\n Problema.\n\n128\n00:06:26,720 --> 00:06:27,160\n Ilusão.\n\n129\n00:06:27,240 --> 00:06:27,980\n Só pode ser, né?\n\n130\n00:06:28,360 --> 00:06:34,600\n Mas enfim, o Gustavo Petro fez esse bolo de barbaridade e agora o Departamento de Estado americano,\n\n131\n00:06:35,000 --> 00:06:40,720\n hoje mais cedo, o presidente colombiano, Gustavo Petro, se levantou numa rua em Nova York\n\n132\n00:06:40,720 --> 00:06:45,780\n e pediu que soldados americanos desobedecessem ordem e iniciassem violência.\n\n133\n00:06:46,140 --> 00:06:53,060\n Nós vamos revogar o visto do Petro devido a essa ação incendiária e sem sentido, né?\n\n134\n00:06:53,320 --> 00:06:56,640\n E aí é mais engraçado que o pessoal fica assim, não, alguém tem prova em vídeo disso?\n\n135\n00:06:56,720 --> 00:06:59,500\n Apenas um racismo do Trump, não sei o que lá?\n\n136\n00:06:59,540 --> 00:07:01,120\n Não, meu amigo, tem um monte de prova aqui, cara.\n\n137\n00:07:01,140 --> 00:07:02,060\n Tem um vídeo aqui, ó.\n\n138\n00:07:02,380 --> 00:07:06,200\n Tá aqui o vídeo passando aqui do cara falando lá com tradução em inglês e coisa e tal.\n\n139\n00:07:06,200 --> 00:07:07,660\n Tem um monte de vezes no vídeo aqui.\n\n140\n00:07:08,200 --> 00:07:10,120\n Sim, o cara falou essa merda mesmo.\n\n141\n00:07:10,200 --> 00:07:12,360\n É um absurdo completo o que o cara falou, né?\n\n142\n00:07:12,880 --> 00:07:15,740\n Enfim, isso aqui tem esse outro lado positivo, né?\n\n143\n00:07:15,780 --> 00:07:22,760\n Se pode revogar o visto do Petro, e de novo, visto de presidente de um país, é raro de ser revogado.\n\n144\n00:07:22,760 --> 00:07:26,560\n Porque mesmo quando o país é inimigo e coisa e tal, os países costumam...\n\n145\n00:07:26,560 --> 00:07:28,660\n costumam manter alguma dignidade, né?\n\n146\n00:07:28,699 --> 00:07:33,660\n Algum canal de comunicação pra poder permitir, sei lá, negociar alguma coisa, né?\n\n147\n00:07:33,980 --> 00:07:35,019\n Em caso de uma guerra.\n\n148\n00:07:35,959 --> 00:07:41,199\n Se pode revogar o visto do Petro, meu amigo, a situação pro Lula não fica muito distante, não, hein?\n\n149\n00:07:41,280 --> 00:07:42,639\n Ó, vou te falar uma coisa, hein?\n\n150\n00:07:42,939 --> 00:07:44,480\n Isso é um negócio positivo pra gente.\n\n151\n00:07:44,540 --> 00:07:46,379\n Já pensou revogarem o visto do Lula?\n\n152\n00:07:46,959 --> 00:07:47,300\n Lembra?\n\n153\n00:07:47,399 --> 00:07:52,340\n Os Estados Unidos são obrigados a fornecer vistos pro pessoal que vai para a ONU, né?\n\n154\n00:07:52,340 --> 00:07:53,660\n Pras Nações Unidas.\n\n155\n00:07:53,899 --> 00:07:56,160\n Por conta do acordo que os Estados Unidos tem com a ONU.\n\n156\n00:07:56,560 --> 00:08:00,100\n Mas tirando isso, os Estados Unidos não são obrigados a fornecer vistos pra ninguém.\n\n157\n00:08:00,300 --> 00:08:03,120\n Nem pra presidente da república, nem pra chefe de estado.\n\n158\n00:08:03,980 --> 00:08:07,920\n Como eu disse, geralmente eles oferecem, eles mantêm o visto do chefe de estado,\n\n159\n00:08:08,259 --> 00:08:10,639\n até pra uma situação de negociação e coisa e tal.\n\n160\n00:08:11,860 --> 00:08:12,300\n Mas...\n\n161\n00:08:12,300 --> 00:08:13,319\n ia ser lindo isso, hein?\n\n162\n00:08:13,759 --> 00:08:17,600\n Eu tô cada vez mais animado por esse papo entre o Lula e o Trump.\n\n163\n00:08:17,699 --> 00:08:19,560\n Acho que vai sair muita merda dessa história.\n\n164\n00:08:19,639 --> 00:08:20,519\n Vai ser lindo de ver.\n\n165\n00:08:23,560 --> 00:08:25,699\n Obrigado por assistir o vídeo até o final.\n\n166\n00:08:26,560 --> 00:08:28,959\n Se você gostou, curta, compartilha e se inscreva no canal.\n\n167\n00:08:28,959 --> 00:08:33,980\n E se você quiser se tornar patrocinador com valores a partir de R$1,99.\n\n168\n00:08:33,980 --> 00:08:40,240\n Clique no botão Seja Membro abaixo para saber as condições e vantagens de patrocinar o canal.\n\n169\n00:08:40,620 --> 00:08:45,259\n Mais informações sobre o nosso projeto, visite nossos sites indicados na tela.\n"
       }
     ]
   },
