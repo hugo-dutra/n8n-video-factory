@@ -1,5 +1,4 @@
 {
-  "name": "@VIDEO_SPLIT",
   "nodes": [
     {
       "parameters": {
@@ -134,7 +133,7 @@
     },
     {
       "parameters": {
-        "command": "=ffmpeg -y -i /home/node/download/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.mp4 -ss {{ $json.START_TIME }} -to {{ $json.END_TIME }} -c copy /home/node/processing/{{ $json.FILENAME }}\n"
+        "command": "=ffmpeg -y \\\n  -ss {{ $json.START_TIME }} -to {{ $json.END_TIME }} \\\n  -i \"/home/node/download/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.mp4\" \\\n  -c copy -avoid_negative_ts make_zero -movflags +faststart \\\n  \"/home/node/processing/{{ $json.FILENAME }}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -148,17 +147,6 @@
       "onError": "continueRegularOutput"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "VIDEO_ID": "_LMpN6o26E0",
-          "START_TIME": "00:00:00",
-          "END_TIME": "00:00:13"
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
@@ -212,14 +200,8 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
-  },
-  "versionId": "8cfcf0db-735d-46f0-aeed-7d490e8f49a0",
+  "pinData": {},
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "bPkDY1rLEosPYyck",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }

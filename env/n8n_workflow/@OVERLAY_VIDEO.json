@@ -3,7 +3,7 @@
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"VIDEO_FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.mp4\",\n  \"OVERLAY_FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.jpg\",\n  \"IMAGE_X_POS\":0,\n  \"IMAGE_Y_POS\":0,\n  \"START_TIME_OVERLAY\":5,\n  \"END_TIME_OVERLAY\":5,\n  \"FADE_TIME\":2\n}"
+        "jsonExample": "{\n  \"VIDEO_FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.mp4\",\n  \"OVERLAY_FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.jpg\",\n  \"IMAGE_X_POS\":0,\n  \"IMAGE_Y_POS\":0,\n  \"START_TIME_OVERLAY\":5\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
@@ -47,18 +47,6 @@
               "name": "START_OVERLAY",
               "value": "={{ $json.START_TIME_OVERLAY }}",
               "type": "number"
-            },
-            {
-              "id": "877d68b3-7b50-4416-a77c-14055b5756fa",
-              "name": "END_OVERLAY",
-              "value": "={{ $json.END_TIME_OVERLAY }}",
-              "type": "number"
-            },
-            {
-              "id": "5d1ea399-8699-4f80-a60c-6cd27c07cd4a",
-              "name": "FADE_TIME",
-              "value": "={{ $json.FADE_TIME }}",
-              "type": "number"
             }
           ]
         },
@@ -86,7 +74,7 @@
             {
               "id": "9f2ff60c-73ff-49b8-993b-437ec8110df2",
               "name": "FILENAME",
-              "value": "={{ $('VAR').item.json.FILENAME }}",
+              "value": "={{ $('VAR').item.json.VIDEO_FILENAME }}",
               "type": "string"
             }
           ]
