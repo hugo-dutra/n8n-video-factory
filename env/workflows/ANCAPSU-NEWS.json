@@ -913,6 +913,19 @@
       ],
       "id": "d8a1ae96-86c3-4b01-a438-dc1b1024ccd4",
       "name": "@JOIN_VIDEO"
+    },
+    {
+      "parameters": {
+        "command": "=/bin/bash -lc '\nset -euo pipefail\n\n# ====== ENTRADAS ======\nORIGINAL=\"/home/node/download/{{ $('Loop Over Items').item.json.videoId }}/{{ $('Loop Over Items').item.json.videoId }}.jpg\"\nOVERLAY=\"/home/node/assets/overlay_thumbs/thumb_template_0.png\"\nPCT=\"{{ $json.PERCENTUAL_DESLOCAMENTO_IMAGEM || 20 }}\"   # % a CORTAR do LADO DIREITO e deslocar a base pra DIREITA\nOUT=\"{{ $json.OUTPUT_FILE || (\"/home/node/processing/\" + $('Loop Over Items').item.json.videoId + \"_thumbnail.png\") }}\"\nFONT=\"{{ $json.FONT_PATH || \"/home/node/assets/fonts/impact.ttf\" }}\"\n\n# Overlay (mantém por cima; ajuste opcional)\nOVERLAY_X=\"{{ $json.OVERLAY_X || 0 }}\"\nOVERLAY_Y=\"{{ $json.OVERLAY_Y || 0 }}\"\n\n# Textos e posições (se passar só \"N\", tratamos como Y=N com X=10)\nT1=\"{{ $json.TEXTO1 || \"Teste Texto 1\" }}\"\nP1=\"{{ $json.POSICAO_TEXTO1 || \"60\" }}\"\nT2=\"{{ $json.TEXTO2 || \"Teste Texto 2\" }}\"\nP2=\"{{ $json.POSICAO_TEXTO2 || \"160\" }}\"\nT3=\"{{ $json.TEXTO3 || \"Teste Texto 3\" }}\"\nP3=\"{{ $json.POSICAO_TEXTO3 || \"260\" }}\"\nT4=\"{{ $json.TEXTO4 || \"Teste Texto 4\" }}\"\nP4=\"{{ $json.POSICAO_TEXTO4 || \"360\" }}\"\n\n# ====== VALIDAÇÕES ======\n[ -f \"$ORIGINAL\" ] || { echo \"ERRO: ORIGINAL nao encontrado: $ORIGINAL\" >&2; exit 1; }\n[ -f \"$OVERLAY\" ]  || { echo \"ERRO: OVERLAY nao encontrado: $OVERLAY\" >&2; exit 1; }\n[[ \"$PCT\" =~ ^[0-9]+$ ]] || { echo \"ERRO: PCT deve ser inteiro (1-90).\" >&2; exit 1; }\n(( PCT > 0 && PCT < 90 )) || { echo \"ERRO: PCT fora do intervalo (1-90).\" >&2; exit 1; }\n\nif [ ! -f \"$FONT\" ]; then\n  ALT=\"/home/node/assets/fonts/impact.ttf\"\n  [ -f \"$ALT\" ] && FONT=\"$ALT\" || { echo \"ERRO: fonte nao encontrada.\" >&2; exit 1; }\nfi\n\n# ====== MEDIDAS ======\nW=\"$(magick identify -format \"%w\" \"$ORIGINAL\")\"\nH=\"$(magick identify -format \"%h\" \"$ORIGINAL\")\"\nGUTTER=$(( W * PCT / 100 ))      # largura “pista” à esquerda\nKEEP_W=$(( W - GUTTER ))         # quanto da imagem fica após cortar à direita\n[ \"$KEEP_W\" -gt 0 ] || { echo \"ERRO: KEEP_W <= 0 (PCT alto demais?).\" >&2; exit 1; }\n\nBG=\"/tmp/bg-$$.png\"\n\n# ====== 1) CORTA À DIREITA e DESLOCA A BASE PARA A DIREITA ======\n# Mantém o bloco esquerdo (KEEP_W), remove a faixa direita (GUTTER),\n# e faz EXTENT para WxH com gravity=East -> conteúdo vai para a DIREITA,\n# abrindo uma pista TRANSPARENTE à ESQUERDA do tamanho GUTTER.\nmagick \"$ORIGINAL\" \\\n  -crop \"${KEEP_W}x${H}+0+0\" +repage \\\n  -background none -gravity East -extent \"${W}x${H}\" \\\n  \"$BG\"\n\n# ====== 2) TEXTOS (arquivos temporários) ======\n[ -n \"$T1\" ] && printf \"%s\" \"$T1\" > /tmp/t1-$$.txt || true\n[ -n \"$T2\" ] && printf \"%s\" \"$T2\" > /tmp/t2-$$.txt || true\n[ -n \"$T3\" ] && printf \"%s\" \"$T3\" > /tmp/t3-$$.txt || true\n[ -n \"$T4\" ] && printf \"%s\" \"$T4\" > /tmp/t4-$$.txt || true\n\n# parse_pos:\n#  - \"x,y,fontsize,color\" usa tudo.\n#  - \"N\" (apenas número) => Y=N, X=10, fontsize=36, color=white.\nparse_pos() {\n  local spec=\"$1\" X Y S C\n  if [[ \"$spec\" == *,* ]]; then\n    IFS=, read -r X Y S C <<<\"$spec\"\n    X=\"${X:-10}\"; Y=\"${Y:-0}\"; S=\"${S:-36}\"; C=\"${C:-white}\"\n  else\n    X=\"10\"; Y=\"${spec:-0}\"; S=\"36\"; C=\"white\"\n  fi\n  printf \"%s:%s:%s:%s\" \"$X\" \"$Y\" \"$S\" \"$C\"\n}\n\n# ====== 3) FILTRO: OVERLAY POR CIMA, depois TEXTOS por cima de tudo ======\nFILTER=\"[0:v][1:v]overlay=x=${OVERLAY_X}:y=${OVERLAY_Y}:format=auto,format=rgba\"\n\nif [ -n \"$T1\" ]; then IFS=: read X Y S C <<<\"$(parse_pos \"$P1\")\"; FILTER=\"$FILTER,drawtext=fontfile=$FONT:textfile=/tmp/t1-$$.txt:fontsize=$S:fontcolor=$C:x=$X:y=$Y:box=0\"; fi\nif [ -n \"$T2\" ]; then IFS=: read X Y S C <<<\"$(parse_pos \"$P2\")\"; FILTER=\"$FILTER,drawtext=fontfile=$FONT:textfile=/tmp/t2-$$.txt:fontsize=$S:fontcolor=$C:x=$X:y=$Y:box=0\"; fi\nif [ -n \"$T3\" ]; then IFS=: read X Y S C <<<\"$(parse_pos \"$P3\")\"; FILTER=\"$FILTER,drawtext=fontfile=$FONT:textfile=/tmp/t3-$$.txt:fontsize=$S:fontcolor=$C:x=$X:y=$Y:box=0\"; fi\nif [ -n \"$T4\" ]; then IFS=: read X Y S C <<<\"$(parse_pos \"$P4\")\"; FILTER=\"$FILTER,drawtext=fontfile=$FONT:textfile=/tmp/t4-$$.txt:fontsize=$S:fontcolor=$C:x=$X:y=$Y:box=0\"; fi\n\n# ====== 4) EXPORTA ======\n# 0 = base deslocada; 1 = overlay. Overlay fica por cima; textos por cima de tudo.\nffmpeg -loglevel error -y -i \"$BG\" -i \"$OVERLAY\" -filter_complex \"$FILTER\" -frames:v 1 \"$OUT\"\n\n# ====== LIMPEZA ======\nrm -f \"$BG\" /tmp/t{1..4}-$$.txt\n\necho \"OK: gerado $OUT (corte direita=${PCT}% e shift direita=${PCT}%)\"\n'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "100b6de2-8b8f-4826-b782-f0afdfed0618",
+      "name": "Execute Command"
     }
   ],
   "connections": {
@@ -938,11 +951,6 @@
         ],
         [
           {
-            "node": "Extract Audio",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Download Video",
             "type": "main",
             "index": 0
@@ -951,13 +959,24 @@
             "node": "Download Thumbnail",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Extract Audio",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
     },
     "Download Thumbnail": {
       "main": [
-        []
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Download Video": {
