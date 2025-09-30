@@ -2,6 +2,19 @@ FROM n8nio/n8n:latest
 
 USER root
 
+
+RUN apk add --no-cache \
+    ffmpeg \
+    imagemagick \
+    fontconfig \
+    font-dejavu \
+    font-liberation \
+    font-noto \
+    curl \
+    bash \
+    ca-certificates \
+    dos2unix
+
 # Pacotes essenciais
 RUN apk add --no-cache ffmpeg python3 curl bash ca-certificates dos2unix \
   && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
