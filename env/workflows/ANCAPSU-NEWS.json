@@ -380,8 +380,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        608,
-        160
+        672,
+        384
       ],
       "id": "d124763a-7fc4-4b9d-9e49-a85098928b44",
       "name": "Video Cut Agent Detector"
@@ -473,6 +473,16 @@
               "display": true,
               "canBeUsedToMatch": true,
               "type": "string"
+            },
+            {
+              "id": "PREFIX",
+              "displayName": "PREFIX",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -483,8 +493,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        800,
-        160
+        864,
+        384
       ],
       "id": "231b7372-afce-4c81-aafc-ae76b3867861",
       "name": "Video Splitter"
@@ -563,7 +573,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        416,
+        1808,
         384
       ],
       "id": "27ca8419-e979-4992-981b-087dc50af3b2",
@@ -606,7 +616,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        224,
+        1616,
         384
       ],
       "id": "20ebad80-6f06-49ae-b619-0fe33b2f09c3",
@@ -686,7 +696,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        32,
+        1424,
         384
       ],
       "id": "88014289-79dc-43b7-8739-d98e92a0345f",
@@ -700,8 +710,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        992,
-        160
+        1056,
+        384
       ],
       "id": "957a8d27-9029-4c98-8766-2e4e16ce3b36",
       "name": "List Overlays"
@@ -713,7 +723,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -160,
+        1232,
         384
       ],
       "id": "69681ba6-067d-4b3a-8aa4-386759efe445",
@@ -727,7 +737,7 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        608,
+        2000,
         384
       ],
       "id": "6003ad09-9de8-44fa-9582-fc82d1597663",
@@ -834,7 +844,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        816,
+        2208,
         384
       ],
       "id": "e30b9b1b-1336-4663-b47f-822dc3b72077",
@@ -908,7 +918,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1008,
+        2400,
         384
       ],
       "id": "d8a1ae96-86c3-4b01-a438-dc1b1024ccd4",
@@ -926,7 +936,27 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "videoId": "={{ $('Loop Over Items').item.json.videoId }}"
+            "videoId": "={{ $('Loop Over Items').item.json.videoId }}",
+            "fontSize4": 60,
+            "posYTexto4": 315,
+            "posXTexto4": 25,
+            "fontSize3": 60,
+            "posYTexto3": 250,
+            "posXTexto3": 25,
+            "fontSize2": 45,
+            "posYTexto2": 175,
+            "posXTexto2": 84,
+            "fontSize1": 40,
+            "posYTexto1": 47,
+            "posXTexto1": 50,
+            "colorTexto1": "#FFFFFF",
+            "colorTexto2": "#000000",
+            "colorTexto3": "#FFFFFF",
+            "colorTexto4": "#FFFFFF",
+            "texto1": "={{ $json.output[0].thumbTexts.split(',')[0] }}",
+            "texto2": "={{ $json.output[0].thumbTexts.split(',')[1] }}",
+            "texto3": "={{ $json.output[0].thumbTexts.split(',')[2] }}",
+            "texto4": "={{ $json.output[0].thumbTexts.split(',')[3] }}"
           },
           "matchingColumns": [
             "videoId"
@@ -943,13 +973,203 @@
               "removed": false
             },
             {
-              "id": "content",
-              "displayName": "content",
+              "id": "texto1",
+              "displayName": "texto1",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
-              "type": "array",
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "posXTexto1",
+              "displayName": "posXTexto1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "posYTexto1",
+              "displayName": "posYTexto1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "colorTexto1",
+              "displayName": "colorTexto1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fontSize1",
+              "displayName": "fontSize1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "texto2",
+              "displayName": "texto2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "posXTexto2",
+              "displayName": "posXTexto2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "posYTexto2",
+              "displayName": "posYTexto2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "colorTexto2",
+              "displayName": "colorTexto2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fontSize2",
+              "displayName": "fontSize2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "texto3",
+              "displayName": "texto3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "posXTexto3",
+              "displayName": "posXTexto3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "posYTexto3",
+              "displayName": "posYTexto3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "colorTexto3",
+              "displayName": "colorTexto3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fontSize3",
+              "displayName": "fontSize3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "texto4",
+              "displayName": "texto4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "posXTexto4",
+              "displayName": "posXTexto4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "posYTexto4",
+              "displayName": "posYTexto4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "colorTexto4",
+              "displayName": "colorTexto4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fontSize4",
+              "displayName": "fontSize4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
               "removed": false
             }
           ],
@@ -961,11 +1181,193 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        48,
-        -32
+        864,
+        224
       ],
       "name": "Process Thumbnail",
       "id": "6b161616-33ed-488b-aceb-b1225e8a409f"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ltwDPgUdmbzjybTH",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ltwDPgUdmbzjybTH",
+          "cachedResultName": "@VIDEO_CUT_SHORT_AGENT_DETECTOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videoId": "={{ $('Loop Over Items').item.json.videoId }}",
+            "videoTranscription": "={{ $json.RESPONSE }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "videoTranscription",
+              "displayName": "videoTranscription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        -80
+      ],
+      "id": "ab2ea848-b5e5-44c6-98b7-dbef1953664a",
+      "name": "@VIDEO_CUT_SHORT_AGENT_DETECTOR"
+    },
+    {
+      "parameters": {
+        "content": "## Long Vídeo Processing\n",
+        "height": 400,
+        "width": 1984
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        608,
+        176
+      ],
+      "id": "396f1ad7-b1fd-4d37-a564-92801ec431c5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        -80
+      ],
+      "id": "73e4caae-07f7-47d4-9c02-27856f815c7a",
+      "name": "Loop Over Items1",
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.first().json.output.map((item, index) => {\n  return {\n    json: {\n      ...item,\n      idx: index\n    }\n  }\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        -80
+      ],
+      "id": "b6e095cc-72c4-4698-9300-78e5a7a3d682",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bPkDY1rLEosPYyck",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/bPkDY1rLEosPYyck",
+          "cachedResultName": "@VIDEO_SPLIT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "START_TIME": "={{ $json.videoCutStartTime.toString() }}",
+            "END_TIME": "={{ $json.videoCutEndTime.toString() }}",
+            "VIDEO_ID": "={{ $('Loop Over Items').item.json.videoId }}",
+            "PREFIX": "={{\"short_\"}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "START_TIME",
+              "displayName": "START_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "END_TIME",
+              "displayName": "END_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "PREFIX",
+              "displayName": "PREFIX",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        -80
+      ],
+      "id": "c25f22f9-8b0b-4884-bb95-7b06987e170b",
+      "name": "Video Splitter1"
+    },
+    {
+      "parameters": {
+        "content": "## Short Video Processing\n",
+        "height": 304,
+        "width": 1040,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -144
+      ],
+      "id": "65ada152-acd7-4410-a781-2f3a4d28b43e",
+      "name": "Sticky Note1"
     }
   ],
   "connections": {
@@ -1010,13 +1412,7 @@
     },
     "Download Thumbnail": {
       "main": [
-        [
-          {
-            "node": "Process Thumbnail",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Download Video": {
@@ -1075,6 +1471,11 @@
             "node": "Video Splitter",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Process Thumbnail",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1082,6 +1483,11 @@
     "AUDIO_TO_WHISPER_LOCAL": {
       "main": [
         [
+          {
+            "node": "@VIDEO_CUT_SHORT_AGENT_DETECTOR",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Video Cut Agent Detector",
             "type": "main",
@@ -1180,9 +1586,53 @@
     },
     "@JOIN_VIDEO": {
       "main": [
+        []
+      ]
+    },
+    "Process Thumbnail": {
+      "main": [
+        []
+      ]
+    },
+    "@VIDEO_CUT_SHORT_AGENT_DETECTOR": {
+      "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Video Splitter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Splitter1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
@@ -1199,100 +1649,306 @@
     "Download Video": [
       {
         "RESULT": "SUCCESS",
-        "FILENAME": "UUwDwsZnGtY.mp4"
+        "FILENAME": "UZKSdzKW_JI.mp4"
+      }
+    ],
+    "Extract Audio": [
+      {
+        "RESULT": "SUCCESS"
+      }
+    ],
+    "Silence Detector": [
+      {
+        "periods": [
+          {
+            "startSilence": 252.243,
+            "endSilence": 254.617,
+            "duration": 2.37433
+          }
+        ]
+      }
+    ],
+    "Silence Remover": [
+      {
+        "RESULT": "SUCCESS",
+        "audio": "UZKSdzKW_JI.audio.mp3",
+        "video": "UZKSdzKW_JI.video.mp4"
       }
     ],
     "Find New Videos": [
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UUwDwsZnGtY",
-        "title": "CRISTINA GRAEML diz que \"NÃO é ANTI-SISTEMA\" e se filia ao UNIÃO BRASIL, para o SENADO em 2026",
-        "duration": "14:48",
-        "durationSeconds": 888,
-        "publishedAt": "2025-09-27 18:15:04",
-        "publishedAtISO": "2025-09-27T18:15:04Z",
-        "publishedAtEpoch": 1758996904,
-        "url": "https://www.youtube.com/watch?v=UUwDwsZnGtY",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UZKSdzKW_JI",
+        "title": "NOVELA do SITE tem MAIS UM CAPÍTULO: SITE voltou em INFRA 100% BRAZUCA, mas... SUSCETÍVEL a DDOS",
+        "duration": "8:12",
+        "durationSeconds": 492,
+        "publishedAt": "2025-09-30 16:43:38",
+        "publishedAtISO": "2025-09-30T16:43:38Z",
+        "publishedAtEpoch": 1759250618,
+        "url": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "UUwDwsZnGtY",
+        "videoId": "UZKSdzKW_JI",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_mmg6Rh4WLqU",
-        "title": "SITE do ESCRITÓRIO de ALEXANDRE de MORAES volta a FUNCIONAR, mas ONDE ESTARÁ HOSPEDADO AGORA?",
-        "duration": "11:58",
-        "durationSeconds": 718,
-        "publishedAt": "2025-09-27 16:15:04",
-        "publishedAtISO": "2025-09-27T16:15:04Z",
-        "publishedAtEpoch": 1758989704,
-        "url": "https://www.youtube.com/watch?v=mmg6Rh4WLqU",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_TBvmFpv8thI",
+        "title": "XI JINPING desafia TRUMP e anuncia o \"VISTO K\" para a CHINA COMPETIR com o \"VISTO H1B\" AMERICANO",
+        "duration": "15:06",
+        "durationSeconds": 906,
+        "publishedAt": "2025-09-30 13:15:04",
+        "publishedAtISO": "2025-09-30T13:15:04Z",
+        "publishedAtEpoch": 1759238104,
+        "url": "https://www.youtube.com/watch?v=TBvmFpv8thI",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "mmg6Rh4WLqU",
+        "videoId": "TBvmFpv8thI",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_6lvqGv2LDF0",
-        "title": "PETRO, amigo do LULA, pede que POLICIAIS de NY se REVOLTEM contra TRUMP: DESESPERO da ESQUERDA",
-        "duration": "8:50",
-        "durationSeconds": 530,
-        "publishedAt": "2025-09-27 13:15:00",
-        "publishedAtISO": "2025-09-27T13:15:00Z",
-        "publishedAtEpoch": 1758978900,
-        "url": "https://www.youtube.com/watch?v=6lvqGv2LDF0",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_46iHb_1kqzc",
+        "title": "INTOXICAÇÃO por METANOL MATA pessoas em SÃO PAULO: PCC pode ser o CULPADO pela TRAGÉDIA?",
+        "duration": "8:52",
+        "durationSeconds": 532,
+        "publishedAt": "2025-09-30 09:24:03",
+        "publishedAtISO": "2025-09-30T09:24:03Z",
+        "publishedAtEpoch": 1759224243,
+        "url": "https://www.youtube.com/watch?v=46iHb_1kqzc",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "6lvqGv2LDF0",
+        "videoId": "46iHb_1kqzc",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_meERpJobQIA",
-        "title": "PASTOR SUL-AFRICANO previu o ARREBATAMENTO no dia 23 de SETEMBRO e virou PIADA nas REDES SOCIAIS",
-        "duration": "10:41",
-        "durationSeconds": 641,
-        "publishedAt": "2025-09-27 09:15:04",
-        "publishedAtISO": "2025-09-27T09:15:04Z",
-        "publishedAtEpoch": 1758964504,
-        "url": "https://www.youtube.com/watch?v=meERpJobQIA",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_o7OAV4RmwDA",
+        "title": "BUROCRATA da ANATEL quer ir para a ONU para IMPEDIR BRASILEIROS de TEREM BONS serviços da STARLINK",
+        "duration": "15:43",
+        "durationSeconds": 943,
+        "publishedAt": "2025-09-30 02:09:59",
+        "publishedAtISO": "2025-09-30T02:09:59Z",
+        "publishedAtEpoch": 1759198199,
+        "url": "https://www.youtube.com/watch?v=o7OAV4RmwDA",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "meERpJobQIA",
+        "videoId": "o7OAV4RmwDA",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_uege52Z9wyU",
-        "title": "PRESIDENTE do PSOL PERDE VISTO para os ESTADOS UNIDOS e reclama que MOTIVAÇÃO é POLÍTICA, mas SERÁ?",
-        "duration": "13:22",
-        "durationSeconds": 802,
-        "publishedAt": "2025-09-27 00:06:36",
-        "publishedAtISO": "2025-09-27T00:06:36Z",
-        "publishedAtEpoch": 1758931596,
-        "url": "https://www.youtube.com/watch?v=uege52Z9wyU",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_zgziK2NDiFg",
+        "title": "TARCÍSIO se ENCONTRA com BOLSONARO e diz que TUDO DEPENDE do PROJETO da ANISTIA",
+        "duration": "8:34",
+        "durationSeconds": 514,
+        "publishedAt": "2025-09-29 23:31:21",
+        "publishedAtISO": "2025-09-29T23:31:21Z",
+        "publishedAtEpoch": 1759188681,
+        "url": "https://www.youtube.com/watch?v=zgziK2NDiFg",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "uege52Z9wyU",
+        "videoId": "zgziK2NDiFg",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_0A4hv9VaOdM",
-        "title": "TAGLIAFERRO apresenta MAIS EVIDÊNCIAS da PERSEGUIÇÃO a DIREITA e NOMES de PESSOAS IMPLICADAS",
-        "duration": "12:27",
-        "durationSeconds": 747,
-        "publishedAt": "2025-09-26 22:15:01",
-        "publishedAtISO": "2025-09-26T22:15:01Z",
-        "publishedAtEpoch": 1758924901,
-        "url": "https://www.youtube.com/watch?v=0A4hv9VaOdM",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_HxG8uMeeUTg",
+        "title": "LULA se ESCONDE ATRÁS de ALCKMIN com MEDO do TRUMP: \"NÃO sabemos QUANDO nem COMO SERÁ o ENCONTRO\"",
+        "duration": "7:20",
+        "durationSeconds": 440,
+        "publishedAt": "2025-09-29 22:15:01",
+        "publishedAtISO": "2025-09-29T22:15:01Z",
+        "publishedAtEpoch": 1759184101,
+        "url": "https://www.youtube.com/watch?v=HxG8uMeeUTg",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "0A4hv9VaOdM",
+        "videoId": "HxG8uMeeUTg",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_X-e1j2SbrXI",
-        "title": "CONSTITUINTES explicitamente AUTORIZARAM a ANISTIA em CASO de CRIMES de GOLPE de ESTADO",
-        "duration": "12:39",
-        "durationSeconds": 759,
-        "publishedAt": "2025-09-26 20:28:23",
-        "publishedAtISO": "2025-09-26T20:28:23Z",
-        "publishedAtEpoch": 1758918503,
-        "url": "https://www.youtube.com/watch?v=X-e1j2SbrXI",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_5nYqHLkfLpw",
+        "title": "ALEXANDRE de MORAES autoriza PROGRESSÃO para REGIME ABERTO para DANIEL SILVEIRA, mas VAI FICAR?",
+        "duration": "8:32",
+        "durationSeconds": 512,
+        "publishedAt": "2025-09-29 20:15:00",
+        "publishedAtISO": "2025-09-29T20:15:00Z",
+        "publishedAtEpoch": 1759176900,
+        "url": "https://www.youtube.com/watch?v=5nYqHLkfLpw",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "X-e1j2SbrXI",
+        "videoId": "5nYqHLkfLpw",
         "processed": false
+      },
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_01xEszS5dO4",
+        "title": "DE NOVO: CLOUDFLARE derruba SITE do ESCRITÓRIO do XANDÃO, MICROSOFT não é mais FORNECEDORA de EMAIL",
+        "duration": "12:08",
+        "durationSeconds": 728,
+        "publishedAt": "2025-09-29 19:15:00",
+        "publishedAtISO": "2025-09-29T19:15:00Z",
+        "publishedAtEpoch": 1759173300,
+        "url": "https://www.youtube.com/watch?v=01xEszS5dO4",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "01xEszS5dO4",
+        "processed": false
+      },
+      {
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_XfvKndOAciQ",
+        "title": "HADDAD faz PRIMEIRO ARGUMENTO RAZOÁVEL na VIDA DELE: QUER o FIM da ESTABILIDADE de SERVIDOR PÚBLICO",
+        "duration": "13:56",
+        "durationSeconds": 836,
+        "publishedAt": "2025-09-29 18:15:02",
+        "publishedAtISO": "2025-09-29T18:15:02Z",
+        "publishedAtEpoch": 1759169702,
+        "url": "https://www.youtube.com/watch?v=XfvKndOAciQ",
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "XfvKndOAciQ",
+        "processed": false
+      }
+    ],
+    "Video Cut Agent Detector": [
+      {
+        "output": [
+          {
+            "videoCutStartTime": 0,
+            "videoCutEndTime": 472,
+            "videoCutTitle": "LOCALWEB NO LIMITE: DNS, DDoS E POLÊMICA - CORTE!",
+            "videoCutDescription": "O vídeo analisa a remoção da Cloudflare e os riscos de DDoS, evidenciando como a LOCALWEB se coloca em perigo ao vender para o Xandão e ao enfrentar a Lei MAGNITSKY. A explicação detalha o DNS nacional e os problemas jurídicos, mostrando uma situação crítica para a empresa. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=UZKSdzKW_JI.",
+            "videoHardHook": "A LOCALWEB está brincando com fogo: sem proteção DDoS, o desastre é iminente!",
+            "videoTags": [
+              "LocalWeb",
+              "DNS",
+              "DDoS",
+              "Cloudflare",
+              "Tecnologia",
+              "Brasil",
+              "Alexandre de Moraes",
+              "Lei MAGNITSKY",
+              "Site",
+              "Hospedagem",
+              "WordPress",
+              "Registro BR",
+              "Segurança",
+              "Ataque DDoS",
+              "Problema",
+              "Internet",
+              "Xandão",
+              "Web",
+              "Servidor",
+              "Notícias"
+            ],
+            "videoUrl": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
+            "thumbTexts": "LOCALWEB ALERTA, DNS e DDoS, LOCALWEB EM RISCO, FOGO NA REDE",
+            "playlist": {
+              "nome": "playlist 1",
+              "id": "playlist 1"
+            }
+          }
+        ]
+      }
+    ],
+    "AUDIO_TO_WHISPER_LOCAL": [
+      {
+        "RESPONSE": "1\n00:00:00,000 --> 00:00:03,899\n Esse é o Ancapso e nós vamos falar agora sobre o escritório Barça e de Moraes.\n\n2\n00:00:03,980 --> 00:00:08,279\n O site voltou a funcionar, meu amigo. A corrida de gata e rata está ficando engraçada.\n\n3\n00:00:08,580 --> 00:00:13,439\n Mas calma, ainda tem mais problema vindo por aí. Fica tranquilo que as coisas vão se resolver, cara.\n\n4\n00:00:13,880 --> 00:00:17,620\n O que eles fizeram com o site para ele voltar a funcionar é aquilo que eu falei que eles fariam.\n\n5\n00:00:18,039 --> 00:00:24,460\n Eles tiraram a Cloudflare da parada, então a Cloudflare não está mais tendo contato com o escritório dele.\n\n6\n00:00:24,839 --> 00:00:28,620\n E fizeram o IP direto, né? Isso funciona? Funciona. E é tudo no Brasil.\n\n7\n00:00:28,620 --> 00:00:33,759\n Botaram até o DNS no registro BR. É tudo no Brasil. Não tem nada no exterior por enquanto.\n\n8\n00:00:34,299 --> 00:00:41,200\n Só tem dois problemas, né? A LocalWeb, embora ela seja uma empresa brasileira, ela tem contratos no exterior, tá?\n\n9\n00:00:41,660 --> 00:00:46,179\n Eu não sei não, hein? É capaz da LocalWeb ter problemas com esse negócio aqui. Não sei.\n\n10\n00:00:46,480 --> 00:00:48,060\n Vamos ver se vai acontecer alguma coisa.\n\n11\n00:00:48,520 --> 00:00:53,200\n E a outra coisa é que, lógico, o site deles agora fica suscetível a ataque de DDoS, né?\n\n12\n00:00:53,200 --> 00:00:58,380\n Se quiserem fazer um ataque de DDoS, não tem mais a Cloudflare para proteger eles desse tipo de ataque.\n\n13\n00:00:58,380 --> 00:00:59,679\n Vamos entender o que aconteceu aqui.\n\n14\n00:01:00,040 --> 00:01:06,920\n Essa notícia foi sugerida por Cocó, Cocó, Cocó, Sai do Meu Colo, Janja, Fanda Miku Lerdola e várias outras pessoas.\n\n15\n00:01:07,020 --> 00:01:11,400\n Obrigado aí ao pessoal que sugeriu notícias lá no nosso site, no visãolibertaria.com.\n\n16\n00:01:11,680 --> 00:01:13,420\n E obrigado a você que está assistindo o nosso vídeo.\n\n17\n00:01:13,520 --> 00:01:18,040\n Se você gosta do nosso conteúdo, por favor, deixe o seu like e se inscreva aqui no canal, né?\n\n18\n00:01:18,520 --> 00:01:25,000\n Pois é, mais um capítulo da excitante novela, o site da Sociedade de Advogados do Alexandre de Moraes.\n\n19\n00:01:25,000 --> 00:01:25,939\n Olha que coisa, né?\n\n20\n00:01:26,379 --> 00:01:28,359\n Caiu, depois voltou, depois caiu de novo.\n\n21\n00:01:28,359 --> 00:01:32,340\n E agora, daqui a pouco, voltou agora, daqui a pouco cai de novo.\n\n22\n00:01:32,500 --> 00:01:33,159\n Não tem jeito.\n\n23\n00:01:33,500 --> 00:01:36,340\n Na área de tecnologia, tudo leva aos Estados Unidos.\n\n24\n00:01:36,439 --> 00:01:39,159\n Eu não sei quanto tempo vai levar, porque agora você tem um problema.\n\n25\n00:01:39,760 --> 00:01:45,859\n Eu não sei se a LocalWeb estava ciente disso, mas no momento que ela decidiu vender o serviço para o Xandão,\n\n26\n00:01:45,920 --> 00:01:47,539\n ela se colocou num problema enorme.\n\n27\n00:01:48,019 --> 00:01:49,359\n Porque para para pensar, né?\n\n28\n00:01:49,359 --> 00:01:54,719\n Se ela agora nega a lei Magnitsky, ela se ferra lá nos Estados Unidos, porque ela usa coisas americanas.\n\n29\n00:01:54,719 --> 00:01:57,420\n Se ela não tira o site do Alexandre de Moraes...\n\n30\n00:01:57,420 --> 00:02:02,659\n Se ela tira o site do Alexandre de Moraes, ela se ferra no Brasil, porque o Alexandre de Moraes vai entrar com um processo contra ela, né?\n\n31\n00:02:02,840 --> 00:02:03,799\n E vai ganhar, né?\n\n32\n00:02:03,799 --> 00:02:04,780\n Porque é o Alexandre de Moraes, né?\n\n33\n00:02:04,780 --> 00:02:05,799\n Ele manda no Brasil, né?\n\n34\n00:02:06,200 --> 00:02:09,240\n Então, ou seja, a LocalWeb está ferrada nessa história.\n\n35\n00:02:09,719 --> 00:02:10,620\n Então, aqui, olha só.\n\n36\n00:02:10,740 --> 00:02:11,860\n O que aconteceu, né?\n\n37\n00:02:11,920 --> 00:02:12,280\n Aqui, ó.\n\n38\n00:02:12,360 --> 00:02:13,340\n Primeiro, o site está funcionando.\n\n39\n00:02:13,400 --> 00:02:15,159\n Você pode entrar agora e voltou a funcionar.\n\n40\n00:02:15,560 --> 00:02:18,199\n 100% no ar de novo, sem nenhum problema.\n\n41\n00:02:18,659 --> 00:02:19,920\n Agora, você olha aqui, ó.\n\n42\n00:02:20,599 --> 00:02:21,800\n O que teve de mudança?\n\n43\n00:02:21,920 --> 00:02:23,060\n A mudança foi hoje, aqui, ó.\n\n44\n00:02:23,319 --> 00:02:24,199\n Última alteração.\n\n45\n00:02:24,759 --> 00:02:26,400\n 2025, 09, 30.\n\n46\n00:02:26,400 --> 00:02:26,480\n Tá?\n\n47\n00:02:27,419 --> 00:02:30,819\n Ou seja, 30 de setembro de 2025, hoje foi alterado.\n\n48\n00:02:31,139 --> 00:02:32,079\n Foi alterado o quê?\n\n49\n00:02:32,699 --> 00:02:39,459\n Colocaram o nameserver, o DNS, para o nameserver do registro BR, né?\n\n50\n00:02:39,799 --> 00:02:43,539\n Para quem não sabe, quando você compra um site no Brasil, você vai no registro BR.\n\n51\n00:02:44,119 --> 00:02:49,079\n Então, se você quer comprar um site no Brasil, você pesquisa qualquer coisa aqui, né?\n\n52\n00:02:49,279 --> 00:02:51,179\n Peter de Sunguinha com BR, né?\n\n53\n00:02:52,839 --> 00:02:54,259\n Ah, já compraram, viu?\n\n54\n00:02:54,259 --> 00:02:54,899\n Alguém comprou.\n\n55\n00:02:54,979 --> 00:02:56,799\n Eu botei aqui o Peter de Sunguinha com BR.\n\n56\n00:02:56,919 --> 00:02:57,259\n Alguém comprou.\n\n57\n00:02:57,419 --> 00:02:58,799\n Eu não comprei, não.\n\n58\n00:02:58,879 --> 00:02:59,559\n Esse aqui não é meu, não.\n\n59\n00:02:59,979 --> 00:03:05,079\n Mas, quando você compra um site, você precisa ter um provedor para hospedar ele, né?\n\n60\n00:03:05,079 --> 00:03:06,859\n Então, geralmente, você aponta o site para lá.\n\n61\n00:03:07,339 --> 00:03:10,000\n Mas, às vezes, você compra o site só para manter ele registrado.\n\n62\n00:03:10,099 --> 00:03:14,819\n Então, por exemplo, é o caso desse meu site aqui, em que eu mantive o DNS aqui.\n\n63\n00:03:14,879 --> 00:03:17,739\n Eu estou usando os servidores de DNS do registro BR.\n\n64\n00:03:18,419 --> 00:03:23,839\n Então, aqui, se eu quiser, eu altero e coloco o servidor de DNS do meu site, onde eu vou armazenar mesmo.\n\n65\n00:03:23,839 --> 00:03:27,339\n Mas, o Alexandre de Moraes preferiu manter no próprio DNS.\n\n66\n00:03:27,419 --> 00:03:28,979\n Então, ele vai ter o DNS do registro BR.\n\n67\n00:03:29,519 --> 00:03:30,439\n E que não tem problema nenhum.\n\n68\n00:03:30,659 --> 00:03:31,699\n Assim, funciona direitinho.\n\n69\n00:03:31,780 --> 00:03:32,559\n Não tem problema nenhum, né?\n\n70\n00:03:32,939 --> 00:03:35,759\n E a vantagem do registro BR é que é uma empresa nacional.\n\n71\n00:03:35,859 --> 00:03:36,779\n É até do governo, né?\n\n72\n00:03:36,859 --> 00:03:38,560\n É o Comitê Gestor da Internet.\n\n73\n00:03:38,819 --> 00:03:39,599\n Ou é a FAPESP?\n\n74\n00:03:39,639 --> 00:03:40,500\n Agora eu não tenho certeza.\n\n75\n00:03:40,839 --> 00:03:41,979\n Eu acho que o Comitê Gestor da...\n\n76\n00:03:41,979 --> 00:03:45,939\n Eu acho que é a FAPESP que controla o registro BR, né?\n\n77\n00:03:46,379 --> 00:03:48,119\n De qualquer forma, é uma empresa nacional.\n\n78\n00:03:48,379 --> 00:03:50,599\n Não vai ter problema com a Lei Magnitsky aqui, né?\n\n79\n00:03:51,039 --> 00:03:56,519\n Só que aí, quando eles fazem isso, eles são obrigados a colocar o IP do lugar, né?\n\n80\n00:03:56,519 --> 00:03:57,259\n E aí, você vê aqui.\n\n81\n00:03:57,259 --> 00:03:57,379\n Isso.\n\n82\n00:03:57,379 --> 00:03:57,399\n Isso.\n\n83\n00:03:57,419 --> 00:04:00,399\n E aí, quando você olhar o DNS deles todos aqui, você vê que o IP é esse daqui, ó.\n\n84\n00:04:00,799 --> 00:04:04,579\n O IP é 191.252.83.198.\n\n85\n00:04:05,000 --> 00:04:07,259\n E é justamente cai na LocalWeb.\n\n86\n00:04:07,339 --> 00:04:08,899\n Então, é um IP da LocalWeb.\n\n87\n00:04:09,259 --> 00:04:12,179\n É onde está armazenado esse site deles aqui, né?\n\n88\n00:04:12,239 --> 00:04:14,759\n Então, assim, em princípio, eles estão safe.\n\n89\n00:04:14,959 --> 00:04:15,819\n Agora não cai mais.\n\n90\n00:04:15,899 --> 00:04:16,180\n Por quê?\n\n91\n00:04:16,500 --> 00:04:17,339\n Porque está tudo local.\n\n92\n00:04:17,539 --> 00:04:18,979\n Não tem como os Estados Unidos chegarem aqui.\n\n93\n00:04:19,439 --> 00:04:21,419\n Mas aí que entra o problema que eu falei para vocês.\n\n94\n00:04:21,519 --> 00:04:24,159\n Primeira coisa, eles não têm a proteção de DDoS.\n\n95\n00:04:24,159 --> 00:04:27,219\n Então, fica fácil dar ataque de DDoS aqui.\n\n96\n00:04:27,220 --> 00:04:30,980\n E no site deles, eles vão ter problemas com isso seguidamente, né?\n\n97\n00:04:31,380 --> 00:04:33,620\n Outra coisa que é um problema é que a LocalWeb...\n\n98\n00:04:33,620 --> 00:04:35,580\n Eu não sei se a LocalWeb tem alguma coisa lá fora.\n\n99\n00:04:35,640 --> 00:04:38,540\n Eu sei que é uma empresa nacional e um provedor muito bom.\n\n100\n00:04:38,680 --> 00:04:40,420\n Funciona muito bem aqui no Brasil e coisa e tal.\n\n101\n00:04:41,900 --> 00:04:44,960\n Mas eu não sei se eles não têm negócios lá no exterior, né?\n\n102\n00:04:44,980 --> 00:04:47,140\n Isso pode ser complicado para eles, tá?\n\n103\n00:04:47,300 --> 00:04:49,320\n Eu não sei como é que funciona isso.\n\n104\n00:04:49,700 --> 00:04:52,020\n Não sei se eles estão cientes até do risco que eles têm, né?\n\n105\n00:04:52,460 --> 00:04:54,560\n A LocalWeb está aqui, a página principal deles.\n\n106\n00:04:54,560 --> 00:04:57,060\n Se você quiser contratar um site aqui...\n\n107\n00:04:57,060 --> 00:04:58,160\n Tem planos e coisa e tal.\n\n108\n00:04:58,259 --> 00:05:00,939\n Tem vários planos de hospedagem que você pode fazer aqui.\n\n109\n00:05:01,800 --> 00:05:03,839\n Enfim, hospedagem para quem está começando.\n\n110\n00:05:03,939 --> 00:05:05,500\n Hospedagem para negócio em crescimento.\n\n111\n00:05:05,980 --> 00:05:09,199\n Pô, encher de morar, você pode pagar R$49,90 por mês, né?\n\n112\n00:05:09,680 --> 00:05:11,459\n Enfim, não sei como é que funciona isso daqui.\n\n113\n00:05:11,720 --> 00:05:13,199\n E a hospedagem direto em WordPress.\n\n114\n00:05:13,459 --> 00:05:14,500\n Talvez seja isso que ele esteja usando.\n\n115\n00:05:14,800 --> 00:05:16,120\n Porque ele usa o WordPress, tá?\n\n116\n00:05:17,699 --> 00:05:19,240\n Tem algum lugar aqui, WordPress.\n\n117\n00:05:19,899 --> 00:05:21,139\n Aqui, ó. Movida a WordPress.\n\n118\n00:05:21,399 --> 00:05:21,939\n Está aqui embaixo.\n\n119\n00:05:22,019 --> 00:05:23,519\n Eu acho que não dá para ver porque eu estou na frente.\n\n120\n00:05:23,519 --> 00:05:24,699\n Deixa eu tirar a minha cabeça daqui.\n\n121\n00:05:25,300 --> 00:05:25,720\n Aqui, está vendo?\n\n122\n00:05:26,019 --> 00:05:26,980\n Movida a WordPress.\n\n123\n00:05:27,060 --> 00:05:31,120\n WordPress é uma ferramenta, um framework para fazer site.\n\n124\n00:05:32,019 --> 00:05:33,339\n Que é...\n\n125\n00:05:33,339 --> 00:05:35,319\n Eu acho que é americano também, hein?\n\n126\n00:05:35,540 --> 00:05:36,240\n Eu não sei não.\n\n127\n00:05:36,280 --> 00:05:37,019\n Onde é que é o WordPress?\n\n128\n00:05:37,259 --> 00:05:38,240\n Onde é que fica o WordPress?\n\n129\n00:05:39,639 --> 00:05:41,160\n WordPress.com\n\n130\n00:05:41,160 --> 00:05:43,060\n É que eu acho que o WordPress é todo código aberto.\n\n131\n00:05:43,759 --> 00:05:45,620\n Então, não tem muita coisa, né?\n\n132\n00:05:46,860 --> 00:05:49,560\n Eu acho que aqui é para você hospedar com eles lá, né?\n\n133\n00:05:49,620 --> 00:05:51,759\n O framework em si é freeware.\n\n134\n00:05:52,240 --> 00:05:53,220\n Você não paga, né?\n\n135\n00:05:53,660 --> 00:05:57,040\n Apesar de que, será que as restrições do OFAC se aplicam?\n\n136\n00:05:57,060 --> 00:05:59,060\n Também em coisas que são gratuitas?\n\n137\n00:05:59,660 --> 00:06:00,740\n É uma boa questão isso.\n\n138\n00:06:00,819 --> 00:06:01,819\n Eu não sei dizer não, tá?\n\n139\n00:06:02,339 --> 00:06:04,540\n Não sei dizer se é uma coisa que se aplica ou não.\n\n140\n00:06:04,660 --> 00:06:06,819\n Aqui é os planos para hospedagem lá na WordPress.\n\n141\n00:06:07,000 --> 00:06:07,819\n Isso eles não vão conseguir.\n\n142\n00:06:08,280 --> 00:06:09,819\n Isso aqui certamente teria problema.\n\n143\n00:06:10,399 --> 00:06:14,840\n Outra coisa curiosa é que eles botaram aqui, de novo, o Outlook.\n\n144\n00:06:14,959 --> 00:06:18,079\n Então, a Microsoft, em princípio, o e-mail continua funcionando.\n\n145\n00:06:18,540 --> 00:06:21,620\n O Bars de Moraes com BR, Mail Protection e coisa e tal.\n\n146\n00:06:22,040 --> 00:06:26,540\n Mas está dando um erro aqui no registro do DNS reverso dele, tá?\n\n147\n00:06:26,540 --> 00:06:26,899\n Então, é uma coisa que eu não sei.\n\n148\n00:06:26,899 --> 00:06:26,920\n Então, eu não sei.\n\n149\n00:06:26,920 --> 00:06:26,939\n Então, eu não sei.\n\n150\n00:06:26,939 --> 00:06:26,959\n Então, eu não sei.\n\n151\n00:06:26,959 --> 00:06:27,040\n Então, eu não sei.\n\n152\n00:06:27,060 --> 00:06:30,300\n Ou seja, pode ser que seja alguma coisa que ele conseguiu consertar isso daqui.\n\n153\n00:06:30,920 --> 00:06:32,240\n Mas pode ser que seja mais complicado.\n\n154\n00:06:32,379 --> 00:06:34,879\n Eu não sei como é que está a questão aqui do Outlook.\n\n155\n00:06:35,259 --> 00:06:38,060\n Se o Outlook já sancionou eles ou não sancionou ainda.\n\n156\n00:06:38,199 --> 00:06:39,620\n O Outlook é a Microsoft, né?\n\n157\n00:06:40,060 --> 00:06:42,420\n Então, pode ser que eles tenham problemas com e-mails, né?\n\n158\n00:06:42,819 --> 00:06:45,939\n Então, assim, eles conseguiram uma saída, mas uma saída que é meio porca.\n\n159\n00:06:46,100 --> 00:06:48,480\n O site deles fica sem proteção de DDoS.\n\n160\n00:06:48,939 --> 00:06:50,819\n Fica hospedado diretamente aqui no Brasil.\n\n161\n00:06:51,340 --> 00:06:53,899\n E é um provedor que não é ruim.\n\n162\n00:06:54,040 --> 00:06:55,139\n O LocalWeb é um bom provedor.\n\n163\n00:06:55,139 --> 00:06:56,939\n Mas, de qualquer forma, isso...\n\n164\n00:06:56,939 --> 00:06:58,980\n Isso pode gerar problemas para a LocalWeb, né?\n\n165\n00:06:59,060 --> 00:07:03,959\n Eu não sei se já tem gente denunciando a LocalWeb para explicar isso.\n\n166\n00:07:04,040 --> 00:07:04,980\n Para fazer esse tipo de coisa.\n\n167\n00:07:05,079 --> 00:07:07,279\n Como é que faria para denunciar a LocalWeb.\n\n168\n00:07:07,339 --> 00:07:08,600\n Não sei como é que faria isso.\n\n169\n00:07:08,980 --> 00:07:12,680\n Mas o fato é que, por enquanto, o site está no ar mais uma vez.\n\n170\n00:07:13,120 --> 00:07:16,060\n Mas, repara, mesmo que você considere esse tipo de coisa...\n\n171\n00:07:16,060 --> 00:07:16,600\n Tipo assim, está vendo?\n\n172\n00:07:16,639 --> 00:07:17,199\n Eles ganharam.\n\n173\n00:07:17,279 --> 00:07:18,720\n Está funcionando e coisa.\n\n174\n00:07:19,019 --> 00:07:19,939\n Não, não está, cara.\n\n175\n00:07:19,980 --> 00:07:21,079\n Está uma dor de cabeça danada.\n\n176\n00:07:21,139 --> 00:07:23,180\n Os caras estão tendo que, todo dia, mudar o DNS deles.\n\n177\n00:07:23,279 --> 00:07:23,879\n Mudar o site.\n\n178\n00:07:24,019 --> 00:07:24,819\n Mudar a coisa toda.\n\n179\n00:07:24,980 --> 00:07:26,819\n Deve estar um pega para acabar.\n\n180\n00:07:26,939 --> 00:07:28,000\n É enorme ali, né?\n\n181\n00:07:28,339 --> 00:07:29,120\n E mais do que isso.\n\n182\n00:07:29,180 --> 00:07:31,319\n Eles sabem que, uma hora, eles vão ficar sem opção, né?\n\n183\n00:07:31,639 --> 00:07:33,500\n Não sei se a LocalWeb vai fazer alguma coisa.\n\n184\n00:07:33,620 --> 00:07:37,560\n Mas, mesmo que não faça, eles podem ter problema de DDoS no final das contas, né?\n\n185\n00:07:38,060 --> 00:07:38,899\n Enfim, é isso daí.\n\n186\n00:07:39,000 --> 00:07:40,199\n O site está no ar de novo.\n\n187\n00:07:40,319 --> 00:07:42,899\n E vamos ver qual vai ser o próximo problema desse pessoal aqui.\n\n188\n00:07:43,000 --> 00:07:43,899\n Vamos ficar atentos.\n\n189\n00:07:45,699 --> 00:07:47,740\n Obrigado por assistir o vídeo até o final.\n\n190\n00:07:48,240 --> 00:07:50,939\n Além de curtir, compartilhar e se inscrever no canal,\n\n191\n00:07:50,939 --> 00:07:55,500\n considere se tornar patrocinador com valores a partir de R$ 1,99.\n\n192\n00:07:56,939 --> 00:08:02,480\n Então, seja membro abaixo para saber as condições e vantagens de patrocinar o canal.\n\n193\n00:08:02,680 --> 00:08:07,540\n Mais informações sobre o nosso projeto, visite nossos sites indicados na tela.\n"
+      }
+    ],
+    "@VIDEO_CUT_SHORT_AGENT_DETECTOR": [
+      {
+        "output": [
+          {
+            "videoCutStartTime": 3.98,
+            "videoCutEndTime": 53.2,
+            "videoCutTitle": "CLOUDFLARE FORA: SITE VULNERÁVEL A DDOS - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador revela que retiraram a CLOUDFLARE do site, deixando-o vulnerável a ataques de DDOS. Ele menciona que \"se quiserem fazer um ataque de DDoS, não tem mais a Cloudflare para proteger\" e que o site voltou a funcionar, mas com riscos evidentes. Assista para entender essa mudança COMPLETA e os riscos envolvidos. Veja o vídeo completo: https://www.youtube.com/watch?v=UZKSdzKW_JI.",
+            "videoHardHook": "DESCUBRA A VULNERABILIDADE CRÍTICA AGORA!",
+            "videoTags": [
+              "Cloudflare",
+              "DDOS",
+              "segurança",
+              "site",
+              "vulnerabilidade",
+              "ataque",
+              "internet",
+              "servidor",
+              "tecnologia",
+              "Brasil",
+              "cibersegurança",
+              "problema",
+              "novela",
+              "polêmica",
+              "debate",
+              "hospedagem",
+              "DNS",
+              "controversa",
+              "suspense",
+              "Ancapso"
+            ],
+            "videoUrl": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
+            "thumbTexts": "CLOUDFLARE, DDOS, ALERTA",
+            "playlist": {
+              "nome": "playlist 1",
+              "id": "playlist1"
+            }
+          },
+          {
+            "videoCutStartTime": 99.76,
+            "videoCutEndTime": 144.76,
+            "videoCutTitle": "LOCALWEB EM RISCO: A POLÊMICA DO SITE DE MORAES - CORTE!",
+            "videoCutDescription": "Nesta parte, o apresentador alerta sobre a situação crítica da LOCALWEB ao hospedar o site do ALEXANDRE DE MORAES. Ele destaca que, se o site for removido, a empresa pode \"se ferra no Brasil\" e ainda enfrentar complicações nos EUA, enfatizando os riscos e as implicações jurídicas. Não perca essa análise COMPLETA dos problemas e riscos! Veja o vídeo completo: https://www.youtube.com/watch?v=UZKSdzKW_JI.",
+            "videoHardHook": "A LOCALWEB ESTÁ FERRADA! DESCUBRA POR QUÊ!",
+            "videoTags": [
+              "LocalWeb",
+              "Alexandre de Moraes",
+              "site",
+              "polêmica",
+              "riscos",
+              "judiciário",
+              "problema",
+              "Brasil",
+              "EUA",
+              "hospedagem",
+              "DNS",
+              "novela",
+              "política",
+              "controvérsia",
+              "debate",
+              "internet",
+              "segurança",
+              "hosting",
+              "advogado",
+              "exclusivo"
+            ],
+            "videoUrl": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
+            "thumbTexts": "LOCALWEB, MORAES, POLÊMICA",
+            "playlist": {
+              "nome": "playlist 1",
+              "id": "playlist1"
+            }
+          },
+          {
+            "videoCutStartTime": 416,
+            "videoCutEndTime": 461,
+            "videoCutTitle": "DNS CAÓTICO: A DOR DE CABEÇA DE MUDAR CONFIGURAÇÕES - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador faz uma crítica irônica à constante instabilidade do DNS, ressaltando que \"os caras estão tendo que mudar o DNS todo dia\". Ele comenta sobre a falta de proteção e o risco de DDOS que pesa sobre a gestão do site. Confira essa análise TÉCNICA e divertida sobre os problemas de configuração. Veja o vídeo completo: https://www.youtube.com/watch?v=UZKSdzKW_JI.",
+            "videoHardHook": "NÃO ACREDITE NO CAOS DO DNS!",
+            "videoTags": [
+              "DNS",
+              "configurações",
+              "instabilidade",
+              "ciberataque",
+              "DDOS",
+              "LocalWeb",
+              "tecnologia",
+              "internet",
+              "hospedagem",
+              "problemas",
+              "mudança",
+              "servidor",
+              "dor de cabeça",
+              "caos",
+              "controversa",
+              "polêmica",
+              "hosting",
+              "novela",
+              "crítica",
+              "técnico"
+            ],
+            "videoUrl": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
+            "thumbTexts": "DNS, INSTABILIDADE, ALERTA",
+            "playlist": {
+              "nome": "playlist 1",
+              "id": "playlist1"
+            }
+          }
+        ]
       }
     ]
   },
