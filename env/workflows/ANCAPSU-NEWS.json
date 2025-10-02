@@ -480,6 +480,30 @@
       ],
       "name": "@PROCESS_SHORTS_VIDEOS",
       "id": "0305fba0-7e00-4b8d-bb86-8ba3f514fcd6"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        176
+      ],
+      "id": "af707433-4825-4022-b9be-5f5f607b8b55",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "command": "/bin/bash -lc 'find /home/node/processing -maxdepth 1 -type f -name \"*.mp4\" ! -name \"READY_TO_UPLOAD*.mp4\" -delete'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        176
+      ],
+      "id": "6e630050-53f2-4522-a064-d12b9a56499c",
+      "name": "Remover Temporary Files"
     }
   ],
   "connections": {
@@ -594,12 +618,35 @@
     },
     "@PROCESS_LONG_VIDEOS": {
       "main": [
-        []
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
       ]
     },
     "@PROCESS_SHORTS_VIDEOS": {
       "main": [
-        []
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Remover Temporary Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
