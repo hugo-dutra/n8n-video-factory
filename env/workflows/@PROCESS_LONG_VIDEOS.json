@@ -52,7 +52,9 @@
         496
       ],
       "id": "d124763a-7fc4-4b9d-9e49-a85098928b44",
-      "name": "Video Cut Agent Detector"
+      "name": "Video Cut Agent Detector",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
     },
     {
       "parameters": {
