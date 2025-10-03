@@ -46,28 +46,13 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        672,
+        496,
         -32
       ],
       "id": "ab2ea848-b5e5-44c6-98b7-dbef1953664a",
       "name": "@VIDEO_CUT_SHORT_AGENT_DETECTOR",
       "retryOnFail": true,
       "waitBetweenTries": 3000
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1056,
-        -32
-      ],
-      "id": "73e4caae-07f7-47d4-9c02-27856f815c7a",
-      "name": "Loop Over Items1",
-      "executeOnce": false,
-      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -81,7 +66,7 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "FILENAME": "={{\"short_\"}}{{ $('Loop Over Items1').item.json.idx }}{{ \"_\" }}{{ $json.FILENAME }}"
+            "FILENAME": "={{\"short_\"}}{{ $('Loop Over Items').item.json.idx }}{{ \"_\" }}{{ $json.FILENAME }}"
           },
           "matchingColumns": [
             "VIDEO_ID"
@@ -106,7 +91,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1488,
+        1696,
         -32
       ],
       "id": "d23dfa79-f5b8-4560-aa65-329ba9baf061",
@@ -177,7 +162,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        1296,
+        1504,
         -32
       ],
       "id": "c25f22f9-8b0b-4884-bb95-7b06987e170b",
@@ -185,12 +170,12 @@
     },
     {
       "parameters": {
-        "jsCode": "return $input.first().json.output.map((item, index) => {\n  return {\n    json: {\n      ...item,\n      idx: index\n    }\n  }\n})"
+        "jsCode": "return {\n  output: $input.first().json.output.map((item, index) => ({\n    ...item,\n    idx: index,\n    timeStamp: Date.now() + index * 1000\n  })),\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        864,
+        672,
         -32
       ],
       "id": "b6e095cc-72c4-4698-9300-78e5a7a3d682",
@@ -204,7 +189,7 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1696,
+        1904,
         -32
       ],
       "id": "7c24f664-6b2c-4336-b3ac-580d5c33b032",
@@ -217,7 +202,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1872,
+        2080,
         -32
       ],
       "id": "02cffdde-d6af-40e4-b33b-ae1a7e9adb59",
@@ -324,7 +309,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2256,
+        2464,
         -32
       ],
       "id": "6a2206fc-ee8c-408f-8436-ffbda86031a7",
@@ -334,13 +319,13 @@
       "parameters": {
         "content": "## Short Video Processing\n",
         "height": 272,
-        "width": 2272,
+        "width": 2976,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        608,
+        288,
         -96
       ],
       "id": "65ada152-acd7-4410-a781-2f3a4d28b43e",
@@ -366,7 +351,7 @@
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        464,
+        320,
         -32
       ]
     },
@@ -407,7 +392,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        2064,
+        2272,
         -32
       ],
       "id": "ee701ecc-e14a-4a58-ad29-f9c5a122fac3",
@@ -492,7 +477,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2464,
+        2672,
         -32
       ],
       "id": "8e6fb2be-65d2-4cea-9ad6-4224ec5b0570",
@@ -514,7 +499,8 @@
             "FILE_1": "={{ 'FADE_IN_FADE_OUT_'+$json.FILENAME }}",
             "FILE_2": "/home/node/assets/final_videos/final-short.mp4",
             "EFFECT": "fadeblack",
-            "PREFIX": "SHORT"
+            "PREFIX": "={{'IDX_'+$('Loop Over Items').item.json.idx}}_SHORT",
+            "TIMESTAMP": "={{ $('Loop Over Items').item.json.timeStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -567,6 +553,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TIMESTAMP",
+              "displayName": "TIMESTAMP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -577,11 +573,86 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2672,
+        2880,
         -32
       ],
       "id": "4d4be8da-b2b6-4ec4-84f5-944dc0c9443c",
       "name": "@JOIN_VIDEO"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8db9d64f-f236-4aad-ac42-896b0b43a01d",
+              "name": "output",
+              "value": "={{ $('Loop Over Items').item.json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3072,
+        -32
+      ],
+      "id": "cc7f7549-4467-4de6-a325-2ead5673e70f",
+      "name": "return"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1056,
+        -32
+      ],
+      "id": "73e4caae-07f7-47d4-9c02-27856f815c7a",
+      "name": "Loop Over Items",
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        -256
+      ],
+      "id": "65e6d924-e550-49b6-b84f-b678709fea42",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.first().json.output.map((item, index) => ({\n  ...item,\n  idx: index,\n  timeStamp: Date.now() + index * 1000,\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        -32
+      ],
+      "id": "e9effa78-e427-49af-a400-6a17de48bc54",
+      "name": "Reducer"
+    },
+    {
+      "parameters": {
+        "jsCode": "function normalizeThumbTexts(t) {\n  if (Array.isArray(t)) return t;\n  if (typeof t === 'string' && t.trim()) return [t.trim()];\n  return [];\n}\n\nconst mapped = items.map((item) => {\n  const o = item?.json?.output ?? {};\n\n  return {\n    videoCutStartTime: Number(o.videoCutStartTime ?? 0),\n    videoCutEndTime:   Number(o.videoCutEndTime ?? 0),\n    videoCutTitle:     String(o.videoCutTitle ?? ''),\n    videoCutDescription: String(o.videoCutDescription ?? ''),\n    videoHardHook:     String(o.videoHardHook ?? ''),\n    videoTags:         Array.isArray(o.videoTags) ? o.videoTags : [],\n    videoUrl:          String(o.videoUrl ?? ''),\n    thumbTexts:        normalizeThumbTexts(o.thumbTexts),\n    playlist:          o.playlist ? { nome: o.playlist.nome, id: o.playlist.id } : undefined,    \n    idx:               o.idx ?? null,\n    timeStamp:         o.timeStamp ?? null,\n  };\n});\nreturn [\n  {\n    json: {\n      output: mapped\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        -256
+      ],
+      "id": "4378f3de-1775-436d-92cc-e4a59c07fd00",
+      "name": "Code in JavaScript"
     }
   ],
   "connections": {
@@ -590,18 +661,6 @@
         [
           {
             "node": "Indexator",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items1": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Video Short Splitter",
             "type": "main",
             "index": 0
           }
@@ -634,7 +693,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items1",
+            "node": "Reducer",
             "type": "main",
             "index": 0
           }
@@ -711,7 +770,58 @@
       "main": [
         [
           {
-            "node": "Loop Over Items1",
+            "node": "return",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "return": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Video Short Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reducer": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
             "type": "main",
             "index": 0
           }
@@ -724,94 +834,117 @@
       {
         "output": [
           {
-            "videoCutStartTime": 13.88,
-            "videoCutEndTime": 58.38,
-            "videoCutTitle": "SITE VULNERÁVEL SEM CLOUDFARE - CORTE!",
-            "videoCutDescription": "Nesta parte, o apresentador explica como removeram a CLOUDFARE, deixando o site com IP DIRETO e DNS configurado no REGISTRO BR. Ele alerta que o site agora está suscetível a ataques de DDoS, evidenciando a VULNERABILIDADE e a fragilidade na proteção. Assista e entenda como essas ALTERAÇÕES podem impactar a segurança online! Veja o vídeo completo: https://www.youtube.com/watch?v=UZKSdzKW_JI",
-            "videoHardHook": "Descubra como a ausência da CLOUDFARE expõe o site a DDoS!",
+            "videoCutStartTime": 10,
+            "videoCutEndTime": 55,
+            "videoCutTitle": "AMENAZAS NO NEPAL: O POVO BRASILEIRO É BANANA - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador critica a ordem do ministro Alexandre Moraes e discute a \"nepalização\" das ameaças, mencionando que o povo brasileiro é \"BANANA\". Ele lembra de vídeos anteriores sobre as manifestações no NEPAL e ironiza essa percepção, trazendo um debate polêmico e IMPACTANTE. Confira os argumentos e reflexões! Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "videoHardHook": "Confira agora!",
             "videoTags": [
-              "Cloudflare",
-              "DDoS",
-              "Site Vulnerável",
-              "DNS",
-              "Registro BR",
-              "Segurança",
-              "Ciberataque",
-              "IP Direto",
-              "Tecnologia",
-              "Internet",
-              "Hospedagem",
-              "Alteração de DNS",
-              "Ancapso",
-              "Ataque DDoS",
-              "Proteção Online",
-              "Vulnerabilidade",
-              "Servidores",
-              "Engajamento",
-              "Controvérsia",
-              "Problema Técnico"
+              "NEPAL",
+              "Banana",
+              "Alexandre Moraes",
+              "Big Tech",
+              "ameaças",
+              "nepalização",
+              "manifestação",
+              "controverso",
+              "debate",
+              "Brasil",
+              "política",
+              "análise",
+              "impacto",
+              "visãolibertaria",
+              "libertarianismo",
+              "crítica",
+              "argumento",
+              "política brasileira",
+              "mídia",
+              "ordem judicial"
             ],
-            "videoUrl": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
-            "thumbTexts": "SITE EXPOR, ATACOS DDoS, ALERTA!",
+            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "thumbTexts": "Destaque!",
             "playlist": {
               "nome": "playlist 1",
-              "id": "playlist_1"
+              "id": "playlist1"
             }
           },
           {
-            "videoCutStartTime": 78.52,
-            "videoCutEndTime": 123.8,
-            "videoCutTitle": "LOCALWEB EM CRISE: LEI MAGNITSKY E A POLÊMICA - CORTE!",
-            "videoCutDescription": "Neste segmento, o apresentador discute a situação CRÍTICA da LocalWeb ao vender serviço para o Xandão, evidenciando que, ao negar a LEI MAGNITSKY, a empresa se coloca numa posição de RISCO tanto nos EUA quanto no BRASIL. Ele destaca que se a LocalWeb remover o site do ALEXANDRE MORAES, o processo será IMINENTE. Não perca essa análise polêmica e reveladora! Veja o vídeo completo: https://www.youtube.com/watch?v=UZKSdzKW_JI",
-            "videoHardHook": "Entenda os riscos legais que podem destruir a LocalWeb!",
+            "videoCutStartTime": 450,
+            "videoCutEndTime": 495,
+            "videoCutTitle": "GOLPE NO PERU: PEDRO CASTILHO E A TENTATIVA - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador analisa a tentativa de golpe no PERU envolvendo Pedro Castilho, destacando declarações impactantes como 'Estou fechando o Congresso' e a ordem do Exército para assumir o poder. O debate evidencia a gravidade do episódio e a repercussão política, trazendo detalhes CHOCANTES sobre essa crise. Não perca! Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "videoHardHook": "Confira agora!",
             "videoTags": [
-              "LocalWeb",
-              "Lei Magnitsky",
-              "Alexandre Moraes",
-              "Processo Judicial",
-              "Crise Legal",
-              "Controvérsia",
-              "Xandão",
-              "Problema Legal",
-              "Advogados",
-              "Site Polêmico",
-              "Tecnologia",
-              "Brasil",
-              "EUA",
-              "Ciberataque",
-              "DNS",
-              "Hospedagem",
-              "Risco Jurídico",
-              "Polêmica",
-              "Novela Digital",
-              "Conflito"
+              "golpe",
+              "Pedro Castilho",
+              "Peru",
+              "tentativa de golpe",
+              "protesto",
+              "política",
+              "conspiração",
+              "conflito",
+              "exército",
+              "Congresso",
+              "crise",
+              "debate",
+              "impacto político",
+              "análise",
+              "controverso",
+              "revolução",
+              "manifestação",
+              "justiça",
+              "política latinoamericana",
+              "alerta"
             ],
-            "videoUrl": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
-            "thumbTexts": "LOCALWEB EM CRISE, RISCO LEGAL!",
+            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "thumbTexts": "Destaque!",
             "playlist": {
               "nome": "playlist 1",
-              "id": "playlist_1"
+              "id": "playlist1"
+            }
+          },
+          {
+            "videoCutStartTime": 701,
+            "videoCutEndTime": 750,
+            "videoCutTitle": "STF X BOLSONARO: A LUTA PELOS DIREITOS - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador critica a interferência do STF nas decisões governamentais, enfatizando o conflito entre o direito de possuir ARMAS e as restrições impostas a BOLSONARO. Ele ressalta que 'quem está contra é porque é bolsonarista' e questiona o funcionamento da DEMOCRACIA no Brasil. Um debate INTENSO que não pode ser perdido! Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "videoHardHook": "Confira agora!",
+            "videoTags": [
+              "STF",
+              "Bolsonaro",
+              "direitos",
+              "armas",
+              "democracia",
+              "política",
+              "controverso",
+              "conflito",
+              "Brasil",
+              "análise política",
+              "debate",
+              "repressão",
+              "liberdade",
+              "crítica",
+              "libertarianismo",
+              "justiça",
+              "autonomia",
+              "manifestação",
+              "poder",
+              "dissidência"
+            ],
+            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "thumbTexts": "Destaque!",
+            "playlist": {
+              "nome": "playlist 1",
+              "id": "playlist1"
             }
           }
         ]
       }
     ],
-    "@VIDEO_ORIENTATION_CHANGER": [
-      {
-        "RESULT": "SUCCESS",
-        "FILENAME": "short_1_UZKSdzKW_JI_78.52_123.8.mp4"
-      }
-    ],
-    "Video Short Splitter": [
-      {
-        "RESULT": "SUCCESS",
-        "FILENAME": "UZKSdzKW_JI_78.52_123.8.mp4"
-      }
-    ],
     "Start": [
       {
-        "videoId": "UZKSdzKW_JI",
-        "RESPONSE": "1\n00:00:00,000 --> 00:00:03,899\n Esse é o Ancapso e nós vamos falar agora sobre o escritório Barça e de Moraes.\n\n2\n00:00:03,980 --> 00:00:08,279\n O site voltou a funcionar, meu amigo. A corrida de gata e rata tá ficando engraçada.\n\n3\n00:00:08,580 --> 00:00:13,419\n Mas calma, ainda tem mais problema vindo por aí. Fica tranquilo que as coisas vão se resolver, cara.\n\n4\n00:00:13,880 --> 00:00:17,620\n O que eles fizeram com o site pra ele voltar a funcionar é aquilo que eu falei que eles fariam.\n\n5\n00:00:18,039 --> 00:00:24,460\n Eles tiraram a Cloudflare da parada, então a Cloudflare não tá mais tendo contato com o escritório dele.\n\n6\n00:00:24,839 --> 00:00:28,620\n E fizeram o IP direto, né? Isso funciona? Funciona. E é tudo no Brasil.\n\n7\n00:00:28,620 --> 00:00:33,759\n Botaram até o DNS no registro BR. É tudo no Brasil. Não tem nada no exterior por enquanto.\n\n8\n00:00:34,299 --> 00:00:41,200\n Só tem dois problemas, né? A LocalWeb, embora ela seja uma empresa brasileira, ela tem contratos no exterior, tá?\n\n9\n00:00:41,660 --> 00:00:46,179\n Eu não sei não, hein? É capaz da LocalWeb ter problemas com esse negócio aqui. Não sei.\n\n10\n00:00:46,480 --> 00:00:48,060\n Vamos ver se vai acontecer alguma coisa.\n\n11\n00:00:48,520 --> 00:00:53,200\n E a outra coisa é que, lógico, o site deles agora fica suscetível a ataque de DDoS, né?\n\n12\n00:00:53,200 --> 00:00:58,380\n Se quiserem fazer um ataque de DDoS, não tem mais a Cloudflare pra proteger eles desse tipo de ataque.\n\n13\n00:00:58,380 --> 00:00:59,700\n Vamos entender o que aconteceu aqui.\n\n14\n00:01:00,040 --> 00:01:06,920\n Essa notícia foi sugerida por Cocó, Cocó, Cocó, Sai do Meu Colo, Janja, Fanda Miku Lerdola e várias outras pessoas.\n\n15\n00:01:07,020 --> 00:01:11,400\n Obrigado aí ao pessoal que sugeriu notícias lá no nosso site, no visãolibertaria.com.\n\n16\n00:01:11,680 --> 00:01:18,040\n E obrigado a você que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like e se inscreva aqui no canal, né?\n\n17\n00:01:18,520 --> 00:01:25,000\n Pois é, mais um capítulo da excitante novela, o site da Sociedade de Advogados do Alexandre Moraes.\n\n18\n00:01:25,000 --> 00:01:25,939\n Olha que coisa, né?\n\n19\n00:01:26,379 --> 00:01:28,359\n Caiu, depois voltou, depois caiu de novo.\n\n20\n00:01:28,359 --> 00:01:32,340\n E agora, daqui a pouco, voltou agora, daqui a pouco cai de novo.\n\n21\n00:01:32,500 --> 00:01:33,159\n Não tem jeito.\n\n22\n00:01:33,500 --> 00:01:36,340\n Na área de tecnologia, tudo leva aos Estados Unidos.\n\n23\n00:01:36,439 --> 00:01:39,159\n Eu não sei quanto tempo vai levar, porque agora você tem um problema.\n\n24\n00:01:39,760 --> 00:01:47,539\n Eu não sei se a LocalWeb tava ciente disso, mas no momento que ela decidiu vender o serviço pro Xandão, ela se colocou num problema enorme.\n\n25\n00:01:48,019 --> 00:01:49,359\n Porque para pra pensar, né?\n\n26\n00:01:49,359 --> 00:01:54,719\n Se ela agora nega a lei Magnitsky, ela se ferra lá nos Estados Unidos, porque ela usa coisas americanas.\n\n27\n00:01:54,719 --> 00:01:57,420\n Se ela não tira o site do Alexandre Moraes...\n\n28\n00:01:57,420 --> 00:02:02,659\n Se ela tira o site do Alexandre Moraes, ela se ferra no Brasil, porque o Alexandre Moraes vai entrar com um processo contra ela, né?\n\n29\n00:02:02,840 --> 00:02:03,799\n E vai ganhar, né?\n\n30\n00:02:03,799 --> 00:02:04,799\n Porque é o Alexandre Moraes, né?\n\n31\n00:02:04,799 --> 00:02:05,799\n Ele manda no Brasil, né?\n\n32\n00:02:06,200 --> 00:02:09,240\n Então, ou seja, a LocalWeb tá ferrada nessa história.\n\n33\n00:02:09,719 --> 00:02:10,620\n Então, aqui, olha só.\n\n34\n00:02:10,740 --> 00:02:11,860\n O que aconteceu, né?\n\n35\n00:02:11,920 --> 00:02:12,280\n Aqui, ó.\n\n36\n00:02:12,360 --> 00:02:13,340\n Primeiro, o site tá funcionando.\n\n37\n00:02:13,400 --> 00:02:15,159\n Você pode entrar agora e voltou a funcionar.\n\n38\n00:02:15,479 --> 00:02:18,199\n 100% no ar de novo, sem nenhum problema.\n\n39\n00:02:18,659 --> 00:02:19,920\n Agora, você olha aqui, ó.\n\n40\n00:02:20,599 --> 00:02:21,800\n O que teve de mudança?\n\n41\n00:02:21,920 --> 00:02:23,060\n A mudança foi hoje, aqui, ó.\n\n42\n00:02:23,319 --> 00:02:24,199\n Última alteração.\n\n43\n00:02:24,759 --> 00:02:26,400\n 2025, 09, 30.\n\n44\n00:02:26,400 --> 00:02:26,480\n Tá?\n\n45\n00:02:27,419 --> 00:02:30,819\n Ou seja, 30 de setembro de 2025, hoje foi alterado.\n\n46\n00:02:31,139 --> 00:02:32,079\n Foi alterado o quê?\n\n47\n00:02:32,739 --> 00:02:39,459\n Colocaram o nameserver, o DNS, para o nameserver do registro BR, né?\n\n48\n00:02:39,799 --> 00:02:43,539\n Pra quem não sabe, quando você compra um site no Brasil, você vai no registro BR.\n\n49\n00:02:44,119 --> 00:02:49,060\n Então, se você quer comprar um site no Brasil, você pesquisa qualquer coisa aqui, né?\n\n50\n00:02:49,319 --> 00:02:51,179\n Peter de Sunguinha com BR, né?\n\n51\n00:02:52,839 --> 00:02:54,239\n Ah, já compraram, viu?\n\n52\n00:02:54,239 --> 00:02:54,879\n Alguém comprou.\n\n53\n00:02:54,979 --> 00:02:56,799\n Eu botei aqui o Peter de Sunguinha com BR.\n\n54\n00:02:56,919 --> 00:02:57,079\n Alguém comprou.\n\n55\n00:02:57,419 --> 00:02:58,799\n Eu não comprei, não.\n\n56\n00:02:58,879 --> 00:02:59,559\n Esse aqui não é meu, não.\n\n57\n00:02:59,979 --> 00:03:05,079\n Mas, quando você compra um site, você precisa ter um provedor para hospedar ele, né?\n\n58\n00:03:05,079 --> 00:03:06,859\n Então, geralmente, você aponta o site para lá.\n\n59\n00:03:07,339 --> 00:03:10,000\n Mas, às vezes, você compra o site só para manter ele registrado.\n\n60\n00:03:10,099 --> 00:03:14,819\n Então, por exemplo, é o caso desse meu site aqui, em que eu mantive o DNS aqui.\n\n61\n00:03:14,879 --> 00:03:17,739\n Eu estou usando o servidor de DNS do registro BR.\n\n62\n00:03:18,419 --> 00:03:23,839\n Então, aqui, se eu quiser, eu altero e coloco o servidor de DNS do meu site, onde eu vou armazenar mesmo.\n\n63\n00:03:23,839 --> 00:03:27,339\n Mas, o Alexandre de Moraes preferiu manter no próprio DNS.\n\n64\n00:03:27,419 --> 00:03:28,979\n Então, eu vou usar o DNS do registro BR.\n\n65\n00:03:29,500 --> 00:03:30,439\n E que não tem problema nenhum.\n\n66\n00:03:30,659 --> 00:03:31,699\n Assim, funciona direitinho.\n\n67\n00:03:31,780 --> 00:03:32,559\n Não tem problema nenhum, né?\n\n68\n00:03:32,939 --> 00:03:35,759\n E a vantagem do registro BR é que é uma empresa nacional.\n\n69\n00:03:35,859 --> 00:03:36,779\n É até do governo, né?\n\n70\n00:03:36,859 --> 00:03:38,560\n É o Comitê Gestor da Internet.\n\n71\n00:03:38,819 --> 00:03:39,599\n Ou é a FAPESP?\n\n72\n00:03:39,639 --> 00:03:40,500\n Agora eu não tenho certeza.\n\n73\n00:03:40,839 --> 00:03:41,979\n Eu acho que o Comitê Gestor da...\n\n74\n00:03:41,979 --> 00:03:45,939\n Eu acho que é a FAPESP que controla o registro BR, né?\n\n75\n00:03:46,379 --> 00:03:48,119\n De qualquer forma, é uma empresa nacional.\n\n76\n00:03:48,379 --> 00:03:50,599\n Não vai ter problema com a Lei Magnitsky aqui, né?\n\n77\n00:03:51,039 --> 00:03:56,519\n Só que aí, quando eles fazem isso, eles são obrigados a colocar o IP do lugar, né?\n\n78\n00:03:56,519 --> 00:03:57,259\n E aí, você vê aqui.\n\n79\n00:03:57,259 --> 00:03:57,379\n Isso.\n\n80\n00:03:57,419 --> 00:04:00,399\n Quando você olhar o DNS deles todos aqui, você vê que o IP é esse daqui, ó.\n\n81\n00:04:00,799 --> 00:04:04,579\n O IP é 191.252.83.198.\n\n82\n00:04:05,000 --> 00:04:07,259\n E é justamente cai na LocalWeb.\n\n83\n00:04:07,339 --> 00:04:08,899\n Então, é um IP da LocalWeb.\n\n84\n00:04:09,259 --> 00:04:12,179\n É onde está armazenado esse site deles aqui, né?\n\n85\n00:04:12,239 --> 00:04:14,759\n Então, assim, em princípio, eles estão safe.\n\n86\n00:04:14,959 --> 00:04:15,819\n Agora não cai mais.\n\n87\n00:04:15,899 --> 00:04:16,180\n Por quê?\n\n88\n00:04:16,500 --> 00:04:17,339\n Porque está tudo local.\n\n89\n00:04:17,539 --> 00:04:18,979\n Não tem como os Estados Unidos chegarem aqui.\n\n90\n00:04:19,479 --> 00:04:21,419\n Mas aí que entra o problema que eu falei para vocês.\n\n91\n00:04:21,519 --> 00:04:24,159\n Primeira coisa, eles não têm a proteção de DDoS.\n\n92\n00:04:24,159 --> 00:04:27,219\n Então, fica fácil dar ataque de DDoS aqui.\n\n93\n00:04:27,220 --> 00:04:30,980\n E no site deles, eles vão ter problemas com isso seguidamente, né?\n\n94\n00:04:31,400 --> 00:04:33,620\n Outra coisa que é um problema é que a LocalWeb...\n\n95\n00:04:33,620 --> 00:04:35,580\n Eu não sei se a LocalWeb tem alguma coisa lá fora.\n\n96\n00:04:35,640 --> 00:04:38,560\n Eu sei que é uma empresa nacional e um provedor muito bom.\n\n97\n00:04:38,700 --> 00:04:40,420\n Funciona muito bem aqui no Brasil e coisa e tal.\n\n98\n00:04:41,900 --> 00:04:44,960\n Mas eu não sei se eles não têm negócios lá no exterior, né?\n\n99\n00:04:44,980 --> 00:04:47,140\n Isso pode ser complicado para eles, tá?\n\n100\n00:04:47,300 --> 00:04:49,320\n Eu não sei como é que funciona isso.\n\n101\n00:04:49,700 --> 00:04:52,020\n Não sei se eles estão cientes até do risco que eles têm, né?\n\n102\n00:04:52,460 --> 00:04:54,560\n A LocalWeb está aqui, a página principal deles.\n\n103\n00:04:54,560 --> 00:04:57,060\n Se você quiser contratar um site aqui...\n\n104\n00:04:57,060 --> 00:04:58,160\n Tem planos e coisa e tal.\n\n105\n00:04:58,259 --> 00:05:00,939\n Tem vários planos de hospedagem que você pode fazer aqui.\n\n106\n00:05:01,800 --> 00:05:03,839\n Enfim, hospedagem para quem está começando.\n\n107\n00:05:03,939 --> 00:05:05,500\n Hospedagem para negócio em crescimento.\n\n108\n00:05:05,980 --> 00:05:09,199\n Pô, encher de morais pode pagar R$49,90 por mês, né?\n\n109\n00:05:09,680 --> 00:05:11,480\n Enfim, não sei como é que funciona isso daqui.\n\n110\n00:05:11,740 --> 00:05:13,199\n E a hospedagem direto em WordPress.\n\n111\n00:05:13,459 --> 00:05:14,500\n Talvez seja isso que ele esteja usando.\n\n112\n00:05:14,800 --> 00:05:16,120\n Porque ele usa WordPress, tá?\n\n113\n00:05:17,699 --> 00:05:19,259\n Tem algum lugar aqui, WordPress.\n\n114\n00:05:19,899 --> 00:05:21,120\n Aqui, ó. Movida WordPress.\n\n115\n00:05:21,399 --> 00:05:21,939\n Está aqui embaixo.\n\n116\n00:05:22,019 --> 00:05:23,519\n Eu acho que não dá para ver porque eu estou na frente.\n\n117\n00:05:23,519 --> 00:05:24,699\n Deixa eu tirar a minha cabeça daqui.\n\n118\n00:05:25,279 --> 00:05:25,720\n Aqui, está vendo?\n\n119\n00:05:26,040 --> 00:05:26,879\n Movida WordPress.\n\n120\n00:05:27,060 --> 00:05:31,120\n WordPress é uma ferramenta, um framework para fazer site.\n\n121\n00:05:32,019 --> 00:05:33,339\n Que é...\n\n122\n00:05:33,339 --> 00:05:35,319\n Eu acho que é americano também, hein?\n\n123\n00:05:35,540 --> 00:05:36,240\n Eu não sei não.\n\n124\n00:05:36,280 --> 00:05:37,000\n Onde é que é o WordPress?\n\n125\n00:05:37,259 --> 00:05:38,240\n Onde é que fica o WordPress?\n\n126\n00:05:39,639 --> 00:05:41,160\n WordPress.com\n\n127\n00:05:41,160 --> 00:05:43,060\n É que eu acho que o WordPress é todo código aberto.\n\n128\n00:05:43,759 --> 00:05:45,620\n Então, não tem muita coisa, né?\n\n129\n00:05:46,860 --> 00:05:49,560\n Eu acho que aqui é para você hospedar com eles lá, né?\n\n130\n00:05:49,620 --> 00:05:51,759\n O framework em si é freeware.\n\n131\n00:05:52,240 --> 00:05:53,220\n Você não paga, né?\n\n132\n00:05:53,660 --> 00:05:57,040\n Apesar de que, será que as restrições do OFAC se aplicam?\n\n133\n00:05:57,060 --> 00:05:59,720\n Também coisas que são gratuitas, né?\n\n134\n00:05:59,759 --> 00:06:00,740\n É uma boa questão isso.\n\n135\n00:06:00,819 --> 00:06:01,819\n Eu não sei dizer não, tá?\n\n136\n00:06:02,339 --> 00:06:04,540\n Não sei dizer se é uma coisa que se aplica ou não.\n\n137\n00:06:04,660 --> 00:06:06,819\n Aqui é os planos para hospedagem lá na WordPress.\n\n138\n00:06:07,000 --> 00:06:07,819\n Isso eles não vão conseguir.\n\n139\n00:06:08,280 --> 00:06:09,819\n Isso aqui certamente teria problema.\n\n140\n00:06:10,399 --> 00:06:14,840\n Outra coisa curiosa é que eles botaram aqui, de novo, o Outlook.\n\n141\n00:06:14,959 --> 00:06:18,079\n Então, a Microsoft, em princípio, o e-mail continua funcionando.\n\n142\n00:06:18,519 --> 00:06:21,620\n O Barsi de Moraes com BR Mail Protection e coisa e tal.\n\n143\n00:06:22,060 --> 00:06:26,540\n Mas está dando um erro aqui no registro do DNS reverso dele, tá?\n\n144\n00:06:26,540 --> 00:06:26,899\n Então, é uma coisa que eu não sei.\n\n145\n00:06:26,899 --> 00:06:26,920\n Então, eu não sei.\n\n146\n00:06:26,920 --> 00:06:30,300\n Ou seja, pode ser que seja alguma coisa que ele conseguiu consertar isso daqui.\n\n147\n00:06:30,860 --> 00:06:32,240\n Mas pode ser que seja mais complicado.\n\n148\n00:06:32,379 --> 00:06:34,879\n Eu não sei como é que está a questão aqui do Outlook.\n\n149\n00:06:35,259 --> 00:06:38,240\n Se o Outlook já sancionou eles ou não sancionou ainda, né?\n\n150\n00:06:38,240 --> 00:06:39,620\n O Outlook é a Microsoft, né?\n\n151\n00:06:40,060 --> 00:06:42,420\n Então, pode ser que eles tenham problemas com e-mails, né?\n\n152\n00:06:42,819 --> 00:06:45,939\n Então, assim, eles conseguiram uma saída, mas uma saída que é meio porca.\n\n153\n00:06:46,100 --> 00:06:48,480\n O site deles fica sem proteção de DDoS.\n\n154\n00:06:48,939 --> 00:06:50,819\n Fica hospedado diretamente aqui no Brasil.\n\n155\n00:06:51,340 --> 00:06:53,900\n E é um provedor que não é ruim.\n\n156\n00:06:53,900 --> 00:06:56,040\n O LocalWeb é um bom provedor, mas, de qualquer forma,\n\n157\n00:06:56,040 --> 00:06:59,000\n isso pode gerar problemas para a LocalWeb, né?\n\n158\n00:06:59,080 --> 00:07:03,960\n Eu não sei se já tem gente denunciando a LocalWeb para explicar isso,\n\n159\n00:07:04,040 --> 00:07:05,000\n para fazer esse tipo de coisa.\n\n160\n00:07:05,080 --> 00:07:07,280\n Como é que faria para denunciar a LocalWeb?\n\n161\n00:07:07,340 --> 00:07:08,600\n Não sei como é que faria isso.\n\n162\n00:07:09,020 --> 00:07:12,680\n Mas o fato é que, por enquanto, o site está no ar mais uma vez.\n\n163\n00:07:13,120 --> 00:07:16,060\n Mas repara, mesmo que você considere esse tipo de coisa...\n\n164\n00:07:16,060 --> 00:07:18,920\n Tipo assim, está vendo? Eles ganharam, está funcionando e coisa e tal.\n\n165\n00:07:19,259 --> 00:07:19,960\n Não, não está, cara.\n\n166\n00:07:19,980 --> 00:07:21,080\n Está uma dor de cabeça danada.\n\n167\n00:07:21,140 --> 00:07:24,820\n Os caras estão tendo que, todo dia, mudar o DNS deles, mudar o site, mudar a coisa toda.\n\n168\n00:07:24,920 --> 00:07:25,820\n Deve estar um...\n\n169\n00:07:26,040 --> 00:07:28,000\n Um pega para capar enorme ali, né?\n\n170\n00:07:28,340 --> 00:07:31,319\n E mais do que isso, eles sabem que uma hora eles vão ficar sem opção, né?\n\n171\n00:07:31,640 --> 00:07:33,500\n Não sei se a LocalWeb vai fazer alguma coisa,\n\n172\n00:07:33,600 --> 00:07:37,560\n mas, mesmo que não faça, eles podem ter problema de DDoS no final das contas, né?\n\n173\n00:07:38,060 --> 00:07:38,900\n Enfim, é isso daí.\n\n174\n00:07:39,000 --> 00:07:42,900\n O site está no ar de novo e vamos ver qual vai ser o próximo problema desse pessoal aqui.\n\n175\n00:07:43,000 --> 00:07:43,900\n Vamos ficar atentos.\n\n176\n00:07:45,700 --> 00:07:47,720\n Obrigado por assistir o vídeo até o final.\n\n177\n00:07:48,240 --> 00:07:50,939\n Além de curtir, compartilhar e se inscrever no canal,\n\n178\n00:07:50,939 --> 00:07:55,520\n considere se tornar patrocinador com valores a partir de R$ 1,99.\n\n179\n00:07:56,040 --> 00:08:02,280\n Clique no botão Seja Membro abaixo para saber as condições e vantagens de patrocinar o canal.\n\n180\n00:08:02,720 --> 00:08:07,319\n Mais informações sobre o nosso projeto, visite nossos sites indicados na tela.\n"
+        "videoId": "Y7SWKg3ExFM",
+        "RESPONSE": "1\n00:00:00,000 --> 00:00:09,500\n Seu Ancapso, e nós vamos falar agora sobre o Alexandre de Moraes, que deu 48 horas para as Big Techs fornecerem dados dos responsáveis por ameaças a Dino.\n\n2\n00:00:10,179 --> 00:00:13,740\n Sabe que ameaças que são essas? Aquela parada de nepalização.\n\n3\n00:00:14,120 --> 00:00:17,300\n É, meu amigo, e rapaz, não sei se meu nome não está nessa história aí não, tá?\n\n4\n00:00:17,740 --> 00:00:25,879\n Porque eu fiz um vídeo falando sobre as manifestações no Nepal, e falei que não, que eu acho que tá vindo como é que o povo brasileiro é banana, olha só.\n\n5\n00:00:25,879 --> 00:00:28,719\n O Nepal tá lá, o pessoal botou pra quebrar o troço todo.\n\n6\n00:00:28,719 --> 00:00:33,579\n Mas eu já falei também em outros vídeos que eu reconheço que tem diferenças enormes nessa história aí, né?\n\n7\n00:00:33,600 --> 00:00:35,640\n Não é exatamente a mesma coisa não, né?\n\n8\n00:00:35,640 --> 00:00:36,659\n Vamos entender esse caso aqui.\n\n9\n00:00:37,100 --> 00:00:38,640\n Essa notícia foi sugerida por...\n\n10\n00:00:38,640 --> 00:00:40,560\n Essa notícia foi sugerida por...\n\n11\n00:00:40,560 --> 00:00:43,820\n Pois bem, pois bem, é o funk do pois bem, e várias outras pessoas.\n\n12\n00:00:43,979 --> 00:00:48,359\n Obrigado aí ao pessoal que sugeriu notícias lá no nosso site, no visãolibertaria.com.\n\n13\n00:00:48,700 --> 00:00:50,460\n E obrigado a você que tá assistindo o nosso vídeo.\n\n14\n00:00:50,539 --> 00:00:55,060\n Se você gosta do nosso conteúdo, por favor, deixa o seu like e se inscreva aqui no canal, né?\n\n15\n00:00:55,679 --> 00:00:56,759\n Pois bem, olha só.\n\n16\n00:00:57,420 --> 00:00:58,480\n Pois bem, pois bem.\n\n17\n00:00:58,620 --> 00:00:58,700\n Pois bem.\n\n18\n00:00:58,700 --> 00:00:59,960\n É o funk dos pois bem, não é mesmo?\n\n19\n00:01:00,640 --> 00:01:05,460\n Moraes dá 48 horas pra Big Tech fornecerem dados de responsáveis por ameaças a Dino.\n\n20\n00:01:05,540 --> 00:01:06,140\n Então tá aqui, ó.\n\n21\n00:01:06,460 --> 00:01:08,560\n O ministro Alexandre Moraes, do Supremo Tribunal Federal,\n\n22\n00:01:08,799 --> 00:01:10,379\n determinou nessa quinta-feira, dia 2,\n\n23\n00:01:10,719 --> 00:01:14,640\n que as empresas Meta, YouTube, X e TikTok\n\n24\n00:01:14,640 --> 00:01:17,840\n forneçam em até 48 horas os dados cadastrais\n\n25\n00:01:17,840 --> 00:01:23,439\n de cerca de 50 perfis que foram acusados de terem ameaçado o ministro Flávio Dino\n\n26\n00:01:23,439 --> 00:01:25,820\n e o Fábio Schorr, delegado da Polícia Federal.\n\n27\n00:01:25,820 --> 00:01:28,600\n A medida visa identificar responsáveis pelas contas\n\n28\n00:01:28,599 --> 00:01:29,500\n das redes sociais.\n\n29\n00:01:29,699 --> 00:01:34,699\n Então você sabe, quando você abre uma conta na rede social,\n\n30\n00:01:34,819 --> 00:01:38,039\n você dá o seu nome e dá algumas informações, e-mail e coisa e tal.\n\n31\n00:01:38,579 --> 00:01:43,799\n E a rede social vai passar para a Polícia Federal todas essas informações que ela tem.\n\n32\n00:01:44,219 --> 00:01:46,379\n Ela pode ter, além do seu e-mail, né?\n\n33\n00:01:46,459 --> 00:01:48,519\n Ela pode ter o nome que você forneceu.\n\n34\n00:01:48,959 --> 00:01:50,579\n Muita gente usa pseudônimos.\n\n35\n00:01:50,719 --> 00:01:52,000\n Eu uso pseudônimo, né?\n\n36\n00:01:52,560 --> 00:01:57,780\n Mas uma coisa importante que eles têm é justamente o seu IP, o seu endereço IP.\n\n37\n00:01:57,780 --> 00:01:57,840\n O seu IP.\n\n38\n00:01:57,840 --> 00:01:57,899\n O seu IP.\n\n39\n00:01:57,899 --> 00:01:57,939\n O seu IP.\n\n40\n00:01:57,939 --> 00:01:57,959\n O seu IP.\n\n41\n00:01:57,959 --> 00:01:58,019\n O seu IP.\n\n42\n00:01:58,019 --> 00:01:58,060\n O seu IP.\n\n43\n00:01:58,060 --> 00:01:58,079\n O seu IP.\n\n44\n00:01:58,079 --> 00:01:58,139\n O seu IP.\n\n45\n00:01:58,139 --> 00:01:58,159\n O seu IP.\n\n46\n00:01:58,159 --> 00:01:58,179\n O seu IP.\n\n47\n00:01:58,179 --> 00:01:58,199\n O seu IP.\n\n48\n00:01:58,199 --> 00:01:58,219\n O seu IP.\n\n49\n00:01:58,219 --> 00:01:58,239\n O seu IP.\n\n50\n00:01:58,239 --> 00:01:58,259\n O seu IP.\n\n51\n00:01:58,260 --> 00:02:02,359\n Que é de onde veio aquela conexão da pessoa que mandou aquilo ali.\n\n52\n00:02:02,640 --> 00:02:10,200\n E com esse endereço IP é relativamente tranquilo as pessoas identificarem quem foi que fez\n\n53\n00:02:10,200 --> 00:02:12,040\n a postagem, que é a pessoa que está ali.\n\n54\n00:02:12,140 --> 00:02:12,379\n Por quê?\n\n55\n00:02:12,420 --> 00:02:19,500\n Porque ela entra em contato com o seu provedor de internet, seja a Oi, Vivo, Claro, ou sei\n\n56\n00:02:19,500 --> 00:02:24,200\n lá, qualquer provedor de internet, mesmo provedores pequenos, as provedoras têm essa\n\n57\n00:02:24,200 --> 00:02:28,159\n informação, elas são obrigadas a manter essa informação, então elas sabem que aquele\n\n58\n00:02:28,159 --> 00:02:28,219\n IP é o que ela está buscando.\n\n59\n00:02:28,219 --> 00:02:28,240\n Então, se você não tem essa informação, você pode usar o seu IP.\n\n60\n00:02:28,240 --> 00:02:34,240\n IP vem da sua casa especificamente então elas vão entregar isso para o para polícia federal\n\n61\n00:02:34,240 --> 00:02:39,340\n e você vai ser identificado a única maneira de você evitar isso é você usar um sistema de VPN\n\n62\n00:02:39,340 --> 00:02:47,200\n de boa qualidade de países que evitem a fornecer dados porque tem alguns países também que se a\n\n63\n00:02:47,200 --> 00:02:52,400\n polícia do Brasil pedir eles vão entregar os dados todos mas por exemplo o pessoal gosta muito de\n\n64\n00:02:52,400 --> 00:02:56,900\n ver os países na Suíça porque tipicamente na Suíça eles têm uma lei de privacidade muito\n\n65\n00:02:56,900 --> 00:03:01,879\n forte que não é que dependendo do crime eles vão entregar seus dados mesmo tá dependendo do que\n\n66\n00:03:01,879 --> 00:03:06,680\n eles vão entregar seus dados tudo mas dependendo também da situação eles não vão entregar os dados\n\n67\n00:03:06,680 --> 00:03:12,120\n não então se você usa um VPN é isso fica mais difícil a outra possibilidade você usar torce\n\n68\n00:03:12,120 --> 00:03:17,420\n você usar Thor acabou não tem como achar não tem como saber o que era você que tava fazendo ali\n\n69\n00:03:17,420 --> 00:03:22,280\n porque o Thor tem um nível de privacidade ainda maior já houve\n\n70\n00:03:22,400 --> 00:03:29,780\n casos da polícia americana consegui identificar pessoas não foram né da Deep Web coisa tal\n\n71\n00:03:29,780 --> 00:03:37,040\n através do Thor mas o que o pessoal comenta que esses casos todos foram por conta de de engenharia\n\n72\n00:03:37,040 --> 00:03:44,000\n social o agente da polícia federal faz amizade com cara bate-papo com cara o cara vai desarmando\n\n73\n00:03:44,000 --> 00:03:50,480\n né vai se não cara gente boa é um cap igual eu né super super libertário coisa tal vai falando\n\n74\n00:03:50,480 --> 00:03:52,379\n vai falar uma hora eu falo uma coisa que é polícia de fora e depois a gente vai falar uma coisa que a\n\n75\n00:03:52,379 --> 00:03:57,120\n polícia descobre ele e aí vai lá e prende o cara e aí não tem jeito você falou uma merda para o cara\n\n76\n00:03:57,120 --> 00:04:04,079\n o cara agente da polícia pronto né enfim aqui ó a pior a decisão foi incluída no chamado inquérito\n\n77\n00:04:04,079 --> 00:04:09,120\n das milícias digitais que foi aquele inquérito que o Alexandre de Moraes fez para suceder o inquérito\n\n78\n00:04:09,120 --> 00:04:14,340\n das fake News né o inquérito das fake News era totalmente absurdo não tinha nenhuma lógica é uma\n\n79\n00:04:14,340 --> 00:04:19,759\n coisa da feito de ofício e coisa tal mas aí depois eles criaram esse inquérito das fake News que pelo\n\n80\n00:04:19,759 --> 00:04:25,879\n outro lado foianne pedindo do PGR scomenar com pgr não pele um inquérito aí para não ficar muito feio\n\n81\n00:04:25,879 --> 00:04:31,480\n e coisa então de qualquer forma o inquérito das fake News foi distribuído por prevenção\n\n82\n00:04:31,480 --> 00:04:39,800\n erwyshandi Moraes e er Chillickel yesterday do inquérito das fake News né só preciso pode ser\n\n83\n00:04:39,800 --> 00:04:46,740\n morais e com isso é da mesma forma e legal que o inquérito das fake News vai um podemos dizer que\n\n84\n00:04:46,740 --> 00:04:48,839\n o inquérito da realista digitais é uma endocação da nova ditadura чувствável aí é talvez decidido\n\n85\n00:04:48,839 --> 00:04:49,599\n sacredas mais ou menos que o tesouro interrompe a conversa do assalto e Vernon no woofer tinnitus\n\n86\n00:04:49,599 --> 00:04:49,699\n que aliás é que ele pegou minhas fotos aquigem traz é barulho mais antes do relato eu vou mostrar\n\n87\n00:04:49,699 --> 00:04:55,939\n que investiga uma possível atuação de organizações criminosas nas redes sociais contra a democracia e instituições.\n\n88\n00:04:56,479 --> 00:04:58,199\n Olha só, eu acho uma besteira.\n\n89\n00:04:58,259 --> 00:05:01,659\n Esse pessoal continua insistindo nesse troço sem ter nenhuma evidência disso.\n\n90\n00:05:01,980 --> 00:05:06,219\n O que existe é um sentimento de várias pessoas, que é compartilhado por várias pessoas,\n\n91\n00:05:06,439 --> 00:05:09,459\n que realmente acham que o que o STF está fazendo no Brasil é um absurdo.\n\n92\n00:05:09,659 --> 00:05:11,259\n E eu concordo, é um absurdo mesmo.\n\n93\n00:05:11,539 --> 00:05:15,480\n Eu sou claro em dizer que eu não sou a favor de golpe, que eu não quero golpe, que eu não quero revolução,\n\n94\n00:05:15,480 --> 00:05:17,699\n isso é uma coisa ruim, isso piora a situação.\n\n95\n00:05:17,699 --> 00:05:22,439\n Mas que há uma sensação de, ah, porra, estamos no meio de uma merda.\n\n96\n00:05:22,959 --> 00:05:25,180\n E isso é uma sensação que um monte de gente tem.\n\n97\n00:05:25,459 --> 00:05:27,839\n E é natural que o pessoal vê o que acontece lá no Nepal,\n\n98\n00:05:27,979 --> 00:05:31,259\n que o pessoal saiu queimando casa de políticos, saiu destruindo a coisa toda.\n\n99\n00:05:31,740 --> 00:05:32,879\n E fica empolgado, né?\n\n100\n00:05:34,019 --> 00:05:38,399\n Até porque tem todo aquele negócio da geração Z e coisa e tal, né?\n\n101\n00:05:38,779 --> 00:05:39,120\n Aqui, ó.\n\n102\n00:05:39,879 --> 00:05:43,639\n Em seu pedido de enviar da Polícia Federal, o Dino afirmou que os ataques aconteceram\n\n103\n00:05:43,639 --> 00:05:46,980\n após o voto do julgamento que condenou o presidente Bolsonaro\n\n104\n00:05:46,980 --> 00:05:47,680\n a pena de violência contra a população.\n\n105\n00:05:47,680 --> 00:05:48,939\n A pena de 27 anos e 3 meses.\n\n106\n00:05:49,000 --> 00:05:49,379\n Eu não sei.\n\n107\n00:05:50,019 --> 00:05:55,340\n A minha visão, do que eu acompanho, já tinha muita gente criticando o Dino muito antes disso.\n\n108\n00:05:55,500 --> 00:05:59,960\n Mas, enfim, pode ter piorado por conta desse aspecto, né?\n\n109\n00:06:00,579 --> 00:06:03,360\n E aí, ele botou isso pra Polícia Federal.\n\n110\n00:06:03,460 --> 00:06:06,120\n A Polícia Federal questionou o Alexandre de Moraes se as ameaças a Dino\n\n111\n00:06:06,120 --> 00:06:09,060\n devem ser investigadas no inquérito das milícias digitais.\n\n112\n00:06:09,199 --> 00:06:10,800\n O Alexandre de Moraes, evidentemente, falou que sim.\n\n113\n00:06:11,460 --> 00:06:12,680\n Sim, é tudo comigo.\n\n114\n00:06:12,860 --> 00:06:13,680\n Tudo aqui no STF.\n\n115\n00:06:14,319 --> 00:06:15,740\n Sou eu que mando, sou eu que faço.\n\n116\n00:06:16,160 --> 00:06:17,100\n Então, sou eu mesmo.\n\n117\n00:06:17,100 --> 00:06:17,240\n Então, sou eu mesmo.\n\n118\n00:06:17,240 --> 00:06:22,560\n Então, são cerca de 50 publicações feitas em redes sociais com ameaças ao Flávio Dino, né?\n\n119\n00:06:22,980 --> 00:06:27,519\n Entre os conteúdos analisados, a Polícia Federal destacou as frequentes referências ao Nepal,\n\n120\n00:06:27,900 --> 00:06:32,019\n país que viveu uma onda de protesto que culminou na destruição dos prédios públicos\n\n121\n00:06:32,019 --> 00:06:33,920\n e na morte de mais de 50 pessoas.\n\n122\n00:06:34,579 --> 00:06:38,379\n Para Dino, essas menções sugerem incitação a atos semelhantes no Brasil.\n\n123\n00:06:38,480 --> 00:06:40,139\n Atos semelhantes no Brasil.\n\n124\n00:06:40,759 --> 00:06:42,980\n Eu não diria incitação, porque incitação é diferente.\n\n125\n00:06:43,100 --> 00:06:43,980\n Você tem que achar legal.\n\n126\n00:06:44,460 --> 00:06:45,879\n Gostei do que fizeram lá no Nepal.\n\n127\n00:06:45,879 --> 00:06:46,699\n É diferente.\n\n128\n00:06:46,699 --> 00:06:48,259\n É diferente de você incitar esse negócio, né?\n\n129\n00:06:48,620 --> 00:06:51,920\n Agora, é diferente também de você reconhecer que existe caminho pra isso.\n\n130\n00:06:52,199 --> 00:06:54,879\n Realmente, do jeito que esse pessoal tá ignorando a vontade popular,\n\n131\n00:06:55,420 --> 00:06:58,800\n querendo impor a vontade deles sobre a vontade popular, meu amigo,\n\n132\n00:06:58,839 --> 00:07:01,300\n a história é muito clara no que acontece nesses casos, né?\n\n133\n00:07:01,300 --> 00:07:02,279\n Não é só no Nepal, não.\n\n134\n00:07:02,620 --> 00:07:04,639\n Já aconteceu num monte de lugar, num monte de jeito.\n\n135\n00:07:04,740 --> 00:07:05,319\n Aliás, aqui, ó.\n\n136\n00:07:06,060 --> 00:07:06,379\n Aqui, ó.\n\n137\n00:07:06,879 --> 00:07:11,680\n Protestos da geração Z no Marrocos contra gastos para a Copa do Mundo deixam mortos e feridos.\n\n138\n00:07:12,219 --> 00:07:14,620\n O pessoal no Marrocos parece que vai ter que ser uma Copa do Mundo no Marrocos,\n\n139\n00:07:14,620 --> 00:07:16,399\n que é Marrocos, Espanha, Portugal.\n\n140\n00:07:16,699 --> 00:07:17,099\n Não sei mais o quê.\n\n141\n00:07:17,719 --> 00:07:19,399\n E o pessoal não tá gostando disso, não, pô.\n\n142\n00:07:19,459 --> 00:07:20,319\n Igual aqui no Brasil.\n\n143\n00:07:20,719 --> 00:07:21,319\n O pessoal...\n\n144\n00:07:21,319 --> 00:07:23,680\n Aqui no Brasil teve protesto contra a Copa do Mundo também, né?\n\n145\n00:07:24,159 --> 00:07:26,019\n E o pessoal saiu quebrando tudo lá.\n\n146\n00:07:26,159 --> 00:07:27,159\n E aí tem a bandeirinha.\n\n147\n00:07:27,219 --> 00:07:27,819\n Cadê a bandeirinha?\n\n148\n00:07:28,000 --> 00:07:29,180\n Aqui não tem a bandeirinha aqui.\n\n149\n00:07:29,579 --> 00:07:31,879\n A bandeirinha do One Piece, né?\n\n150\n00:07:32,219 --> 00:07:33,599\n Mas no Peru tem aqui, ó.\n\n151\n00:07:33,699 --> 00:07:37,560\n Protestos da geração Z no Peru contra a reforma da Previdência, anistia e coisa e tal.\n\n152\n00:07:38,120 --> 00:07:38,959\n E tá aqui...\n\n153\n00:07:38,959 --> 00:07:41,620\n Anistia ao candidato da esquerda lá, tá?\n\n154\n00:07:42,180 --> 00:07:44,740\n O cara lá fez realmente uma tentativa de golpe.\n\n155\n00:07:44,740 --> 00:07:46,639\n O Pedro Castilho no Peru.\n\n156\n00:07:46,759 --> 00:07:49,300\n Ele, de fato, foi na televisão e falou...\n\n157\n00:07:49,300 --> 00:07:51,159\n Olha só, eu estou dando um golpe...\n\n158\n00:07:51,159 --> 00:07:51,860\n Ele não falou com isso.\n\n159\n00:07:51,979 --> 00:07:52,479\n Ele falou...\n\n160\n00:07:52,479 --> 00:07:53,699\n Estou fechando o Congresso.\n\n161\n00:07:54,719 --> 00:07:56,719\n O Exército vai tomar conta de tudo.\n\n162\n00:07:56,839 --> 00:07:58,259\n Todo mundo responde a mim agora.\n\n163\n00:07:58,699 --> 00:07:59,199\n E é isso daí.\n\n164\n00:07:59,439 --> 00:08:00,699\n Isso é dar um golpe.\n\n165\n00:08:01,000 --> 00:08:02,139\n Ou melhor...\n\n166\n00:08:02,139 --> 00:08:03,659\n Isso é tentar um golpe.\n\n167\n00:08:04,000 --> 00:08:04,300\n Por quê?\n\n168\n00:08:04,360 --> 00:08:05,680\n Porque não deu certo o golpe dele.\n\n169\n00:08:05,740 --> 00:08:06,360\n Ele tentou.\n\n170\n00:08:06,459 --> 00:08:07,079\n E o que aconteceu?\n\n171\n00:08:08,039 --> 00:08:10,779\n Os militares não embarcaram na dele.\n\n172\n00:08:11,180 --> 00:08:14,120\n Ele foi tirado do poder e tá preso 40 anos de cadeia.\n\n173\n00:08:14,120 --> 00:08:14,759\n E é muito bem...\n\n174\n00:08:14,759 --> 00:08:16,539\n Eu também acho que no caso dele não tem que ter anistia.\n\n175\n00:08:16,699 --> 00:08:16,899\n Nenhuma.\n\n176\n00:08:17,180 --> 00:08:18,819\n O cara realmente tentou um golpe.\n\n177\n00:08:18,920 --> 00:08:20,959\n Aliás, eu já falei aqui mais de uma vez.\n\n178\n00:08:21,259 --> 00:08:25,219\n Se realmente Bolsonaro tivesse tentado golpe, eu estava do outro lado.\n\n179\n00:08:25,459 --> 00:08:26,719\n Eu estava realmente criticando.\n\n180\n00:08:26,779 --> 00:08:28,500\n Ele também achava que não tinha que ter anistia, não.\n\n181\n00:08:28,800 --> 00:08:29,159\n Golpe...\n\n182\n00:08:29,159 --> 00:08:29,920\n Ninguém quer golpe.\n\n183\n00:08:30,019 --> 00:08:30,599\n Golpe é ruim.\n\n184\n00:08:31,500 --> 00:08:33,679\n Mas o problema é que Bolsonaro não tentou.\n\n185\n00:08:33,840 --> 00:08:37,299\n Em momento algum tem uma nesga de evidência na coisa toda que eles levantaram lá\n\n186\n00:08:37,299 --> 00:08:40,240\n de que Bolsonaro tenha participado de qualquer coisa, tenha feito qualquer ato.\n\n187\n00:08:40,500 --> 00:08:42,679\n Ah, mas ele discutiu uma minuta.\n\n188\n00:08:43,220 --> 00:08:44,600\n Porra, meu amigo, discutir minuta, cara.\n\n189\n00:08:44,600 --> 00:08:46,600\n Minuta, por definição, é um raciocínio.\n\n190\n00:08:46,700 --> 00:08:48,060\n É um pensamento.\n\n191\n00:08:48,160 --> 00:08:48,700\n É um brainstorm.\n\n192\n00:08:49,000 --> 00:08:50,060\n É uma coisa que você está pensando ali.\n\n193\n00:08:50,400 --> 00:08:55,140\n Você pode falar coisas terríveis em uma minuta, desde que isso não se materialize.\n\n194\n00:08:55,220 --> 00:08:59,340\n Desde que você não faça atos para concretizar aquilo que está ali na minuta.\n\n195\n00:08:59,520 --> 00:09:00,200\n Agora, aqui tem.\n\n196\n00:09:00,460 --> 00:09:01,320\n O One Piece está aqui.\n\n197\n00:09:01,640 --> 00:09:04,000\n O One Piece está lá no Peru.\n\n198\n00:09:04,480 --> 00:09:08,780\n O pessoal está criticando muito o governo do Peru pela situação econômica.\n\n199\n00:09:09,140 --> 00:09:10,900\n Lembrando que lá é a esquerda no poder.\n\n200\n00:09:11,379 --> 00:09:14,040\n O Pedro Castilho saiu, assumiu a vice dele.\n\n201\n00:09:14,180 --> 00:09:15,560\n A vice dele também é de esquerda.\n\n202\n00:09:15,560 --> 00:09:16,560\n Era a vice dele.\n\n203\n00:09:16,700 --> 00:09:19,520\n E está uma lambança completa lá.\n\n204\n00:09:19,560 --> 00:09:21,580\n Na verdade, está tendo em vários lugares.\n\n205\n00:09:21,920 --> 00:09:22,940\n O pessoal fez aqui.\n\n206\n00:09:23,000 --> 00:09:26,759\n A geração Z da Ásia à África se alastram os protestos juvenis.\n\n207\n00:09:28,140 --> 00:09:32,320\n A gente já viu no Vietnã, na Tailândia, num monte de lugar lá na Ásia.\n\n208\n00:09:33,740 --> 00:09:34,259\n Marrocos.\n\n209\n00:09:34,820 --> 00:09:37,560\n Madagascar também parece que teve protesto da geração Z lá.\n\n210\n00:09:38,160 --> 00:09:39,020\n Timor-Leste.\n\n211\n00:09:39,720 --> 00:09:40,320\n Ih, caramba.\n\n212\n00:09:41,540 --> 00:09:43,759\n Enfim, um monte de protestos desse tipo.\n\n213\n00:09:43,759 --> 00:09:45,920\n E o símbolo dessa revolta da geração Z.\n\n214\n00:09:46,700 --> 00:09:49,600\n A banda desenhada é a banda de desenho da banda desenhada.\n\n215\n00:09:49,879 --> 00:09:52,740\n A banda desenhada é a banda de desenhar.\n\n216\n00:09:52,740 --> 00:09:53,220\n A banda desenhada.\n\n217\n00:09:53,220 --> 00:09:53,900\n O que é uma banda desenhada?\n\n218\n00:09:53,900 --> 00:09:57,020\n Um herói, um anpice, um anpice do livro japonês da banda de desenho, da banda desenhada, Maga.\n\n219\n00:09:57,020 --> 00:09:59,020\n Não sei se eu entendi essa frase aqui.\n\n220\n00:09:59,020 --> 00:10:00,600\n Acho que foi tradução automática que deu ruim.\n\n221\n00:10:00,600 --> 00:10:01,940\n Mas, basicamente, é um mangá.\n\n222\n00:10:01,940 --> 00:10:09,280\n Um mangá japonês que conta a história de um garoto que quer ser pirata, que o sonho dele é ser pirata e coisa e tal.\n\n223\n00:10:09,280 --> 00:10:11,200\n E é um desenho altamente libertário.\n\n224\n00:10:11,200 --> 00:10:13,220\n Eu fiz até um vídeo sobre isso.\n\n225\n00:10:13,220 --> 00:10:16,040\n Aliás, tem dois vídeos sobre isso lá no Visão Libertária.\n\n226\n00:10:16,040 --> 00:10:16,540\n .\n\n227\n00:10:16,539 --> 00:10:19,240\n Aqui, vídeos de quatro anos atrás, meu amigo.\n\n228\n00:10:19,339 --> 00:10:22,659\n O libertarianismo em One Piece e One Piece.\n\n229\n00:10:22,779 --> 00:10:24,399\n Nossos sonhos demandam liberdade.\n\n230\n00:10:24,879 --> 00:10:28,559\n Vídeos de quatro anos atrás contando a história do...\n\n231\n00:10:28,559 --> 00:10:31,799\n E conta as aventuras lá do Luffy que quer se tornar um pirata, né?\n\n232\n00:10:32,240 --> 00:10:33,699\n Ele quer combater, como é que é?\n\n233\n00:10:33,719 --> 00:10:37,079\n Ele quer se tornar o grande rei dos piratas e coisa e tal.\n\n234\n00:10:37,740 --> 00:10:38,059\n Pois é.\n\n235\n00:10:38,839 --> 00:10:40,860\n Uma historinha, tá? Uma brincadeira e coisa e tal.\n\n236\n00:10:40,879 --> 00:10:43,559\n Mas realmente tem uns princípios libertários muito bacanas lá.\n\n237\n00:10:44,000 --> 00:10:45,740\n Recomendo vocês verem esses vídeos aqui.\n\n238\n00:10:45,740 --> 00:10:47,159\n E olha que coisa.\n\n239\n00:10:47,560 --> 00:10:53,940\n Justamente esse desenho parece que inspirou muitos jovens nessa questão de contrapor governos, né?\n\n240\n00:10:54,000 --> 00:10:56,799\n E aí você tem um monte de gente aqui fazendo isso aqui.\n\n241\n00:10:57,180 --> 00:10:58,940\n E o Dino ficou chateado com esse negócio.\n\n242\n00:10:59,060 --> 00:11:00,500\n É, Dino. É uma coisa complicada mesmo.\n\n243\n00:11:00,600 --> 00:11:03,120\n O negócio de excesso de socialismo leva a isso, né?\n\n244\n00:11:03,799 --> 00:11:07,019\n Enfim, isso mostra também como é que esse pessoal não está tranquilo, né?\n\n245\n00:11:07,019 --> 00:11:09,840\n O Dino está sentindo na pele o ódio das pessoas.\n\n246\n00:11:10,299 --> 00:11:11,139\n O Gilmar Mendes...\n\n247\n00:11:11,139 --> 00:11:13,299\n Não foi o Barroso outro dia que estava reclamando que não,\n\n248\n00:11:13,299 --> 00:11:15,500\n que antigamente eu ia na rua, eu fazia as coisas.\n\n249\n00:11:15,500 --> 00:11:18,899\n Agora eu não posso mais sair na rua sem três ou quatro seguranças.\n\n250\n00:11:19,600 --> 00:11:20,220\n Pois é, Barroso.\n\n251\n00:11:20,299 --> 00:11:23,799\n É isso que dá você comprar briga com todo o povo brasileiro, né?\n\n252\n00:11:24,299 --> 00:11:26,960\n A elite aristocrática de Brasília está muito segura.\n\n253\n00:11:27,379 --> 00:11:29,259\n Que não, Bolsonaro é golpista.\n\n254\n00:11:29,360 --> 00:11:30,659\n Tem que prender ele mesmo.\n\n255\n00:11:30,799 --> 00:11:31,720\n Não sei, não importa.\n\n256\n00:11:32,080 --> 00:11:34,179\n Quem está contra é porque é bolsonarista.\n\n257\n00:11:34,279 --> 00:11:35,659\n Essa ralé é bolsonarista.\n\n258\n00:11:35,820 --> 00:11:37,340\n Que não tem que ser considerada, né?\n\n259\n00:11:37,779 --> 00:11:39,700\n Só que você está vendo na prática que não.\n\n260\n00:11:39,799 --> 00:11:41,080\n Que o pessoal está puto com isso.\n\n261\n00:11:41,080 --> 00:11:45,480\n E essa coisa toda começou exatamente com o STF contra a PON.\n\n262\n00:11:45,600 --> 00:11:47,299\n A questão do direito de ter armas.\n\n263\n00:11:47,740 --> 00:11:48,399\n Lembra disso.\n\n264\n00:11:48,620 --> 00:11:49,740\n É importante notar isso.\n\n265\n00:11:50,039 --> 00:11:52,259\n Quando o Bolsonaro ganhou a presidência, né?\n\n266\n00:11:52,659 --> 00:11:54,340\n A Carmen Lúcia levou pra ele uma...\n\n267\n00:11:54,340 --> 00:11:57,200\n A Carmen Lúcia foi aquela outra moça que eu não lembro mais o nome dela.\n\n268\n00:11:57,600 --> 00:11:58,179\n Não lembro, né?\n\n269\n00:11:58,240 --> 00:12:01,860\n Levou uma cópia da Constituição pro Bolsonaro, né?\n\n270\n00:12:02,480 --> 00:12:06,960\n Só que o Bolsonaro, a primeira coisa que ele fez foi justamente colocar decretos\n\n271\n00:12:06,960 --> 00:12:08,059\n que permitiam as pessoas ter...\n\n272\n00:12:08,059 --> 00:12:09,740\n Ou facilitavam as pessoas ter armas.\n\n273\n00:12:10,139 --> 00:12:11,759\n Era uma das promessas de campanha dele.\n\n274\n00:12:11,820 --> 00:12:13,200\n Era algo que ele queria fazer, né?\n\n275\n00:12:14,200 --> 00:12:15,360\n O pessoal do STF não queria fazer isso.\n\n276\n00:12:15,360 --> 00:12:16,899\n Não que não pode, que é proibido.\n\n277\n00:12:17,399 --> 00:12:19,240\n Aí começou a crítica.\n\n278\n00:12:19,340 --> 00:12:19,539\n Por quê?\n\n279\n00:12:19,580 --> 00:12:20,399\n Porque o pessoal viu.\n\n280\n00:12:20,860 --> 00:12:22,659\n Nós votamos no Bolsonaro pra isso.\n\n281\n00:12:22,800 --> 00:12:26,220\n O STF não deixa o Bolsonaro fazer as coisas que a gente votou ele pra fazer.\n\n282\n00:12:26,659 --> 00:12:27,180\n Tem um problema.\n\n283\n00:12:27,340 --> 00:12:28,620\n Essa democracia está quebrada.\n\n284\n00:12:29,019 --> 00:12:30,019\n Porra, como é que funciona isso?\n\n285\n00:12:30,100 --> 00:12:31,480\n A ideia da democracia não é essa?\n\n286\n00:12:31,539 --> 00:12:35,000\n Você eleger a pessoa pra ela impor as coisas que você quer, né?\n\n287\n00:12:35,320 --> 00:12:36,879\n Os seus pontos de texto.\n\n288\n00:12:36,879 --> 00:12:41,720\n Aí quando você elege alguém, depois de 200 anos de esquerda no poder aqui no Brasil,\n\n289\n00:12:42,159 --> 00:12:44,320\n elege alguém um pouco mais à direita e aí...\n\n290\n00:12:44,320 --> 00:12:45,300\n 200 anos mesmo, tá?\n\n291\n00:12:45,360 --> 00:12:47,840\n Porque os milicos aqui no Brasil estão de esquerda.\n\n292\n00:12:48,019 --> 00:12:50,740\n Eu conto o período militar como ditadura de esquerda aqui no Brasil.\n\n293\n00:12:51,460 --> 00:12:54,960\n O pessoal todo mundo de esquerda depois da ditadura militar também.\n\n294\n00:12:55,340 --> 00:12:57,200\n Aí entrou Lula, extrema esquerda.\n\n295\n00:12:57,659 --> 00:13:01,120\n Enfim, depois disso tudo, quando a gente pede alguma coisa e não pode, né?\n\n296\n00:13:01,159 --> 00:13:03,399\n Isso que começou a revolta do pessoal lá atrás.\n\n297\n00:13:03,960 --> 00:13:04,940\n E foi só aumentando.\n\n298\n00:13:05,039 --> 00:13:07,240\n Porque foi só aumentando o conflito nessa história.\n\n299\n00:13:07,620 --> 00:13:10,539\n E esse pessoal continua com a ideia de que eles sabem o que é melhor pro povo.\n\n300\n00:13:10,539 --> 00:13:12,279\n Não, porque temos que civilizar esse povo.\n\n301\n00:13:12,560 --> 00:13:14,860\n Esse povo não é civilizado, segundo o Barroso, né?\n\n302\n00:13:15,360 --> 00:13:16,659\n Pois é, vamos ver.\n\n303\n00:13:17,159 --> 00:13:18,240\n Eu sinceramente espero que não.\n\n304\n00:13:18,560 --> 00:13:19,340\n É o que eu falo sempre.\n\n305\n00:13:19,419 --> 00:13:21,919\n Esse negócio de revolução geralmente dá errado.\n\n306\n00:13:22,039 --> 00:13:25,300\n Tirando duas ou três revoluções aí no mundo, o resto tudo deu errado.\n\n307\n00:13:25,539 --> 00:13:27,120\n A Revolução Francesa foi uma tragédia.\n\n308\n00:13:27,639 --> 00:13:28,860\n A Revolução Americana foi boa.\n\n309\n00:13:29,019 --> 00:13:30,460\n A Revolução Americana foi positiva.\n\n310\n00:13:30,940 --> 00:13:34,700\n Você pode contar aí a revolução da Praça Maidã lá na Ucrânia foi positiva também.\n\n311\n00:13:35,039 --> 00:13:39,740\n Mas tirando uns poucos exemplos que você pinça assim, o resto tudo deu merda, meu amigo.\n\n312\n00:13:41,840 --> 00:13:43,960\n Obrigado por assistir o vídeo até o final.\n\n313\n00:13:43,960 --> 00:13:44,060\n Obrigado.\n\n314\n00:13:44,060 --> 00:13:44,120\n Obrigado.\n\n315\n00:13:44,120 --> 00:13:44,180\n Obrigado.\n\n316\n00:13:44,180 --> 00:13:44,200\n Obrigado.\n\n317\n00:13:44,200 --> 00:13:44,259\n Obrigado.\n\n318\n00:13:44,259 --> 00:13:44,279\n Obrigado.\n\n319\n00:13:44,279 --> 00:13:44,340\n Obrigado.\n\n320\n00:13:44,340 --> 00:13:44,379\n Obrigado.\n\n321\n00:13:44,379 --> 00:13:44,399\n Obrigado.\n\n322\n00:13:44,399 --> 00:13:44,460\n Obrigado.\n\n323\n00:13:44,460 --> 00:13:44,480\n Obrigado.\n\n324\n00:13:44,480 --> 00:13:44,539\n Obrigado.\n\n325\n00:13:44,539 --> 00:13:45,539\n Obrigado.\n\n326\n00:13:45,539 --> 00:13:46,539\n Obrigado.\n\n327\n00:13:46,539 --> 00:13:47,539\n Obrigado.\n\n328\n00:13:47,539 --> 00:13:48,579\n Obrigado.\n\n329\n00:13:48,579 --> 00:13:51,579\n Obrigado.\n"
       }
     ]
   },

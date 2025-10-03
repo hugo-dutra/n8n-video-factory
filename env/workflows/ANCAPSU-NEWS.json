@@ -5,7 +5,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -736,
+        -752,
         -48
       ],
       "id": "7d047811-9fd3-4901-a8f4-bce8f95f8200",
@@ -486,7 +486,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        880,
+        896,
         176
       ],
       "id": "af707433-4825-4022-b9be-5f5f607b8b55",
@@ -499,11 +499,85 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1056,
+        1072,
         176
       ],
       "id": "6e630050-53f2-4522-a064-d12b9a56499c",
       "name": "Remover Temporary Files"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "hRXzf6dN01dP2o29",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/hRXzf6dN01dP2o29",
+          "cachedResultName": "@UPLOAD_TO_YOUTUBE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+            "videoId": "={{ $('Loop Over Items').item.json.videoId }}",
+            "uploadShortVideoData": "={{ $('@PROCESS_SHORTS_VIDEOS').first().json.output }}",
+            "uploadLongVideoData": "={{ $('@PROCESS_LONG_VIDEOS').first().json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "channelId",
+              "displayName": "channelId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "uploadLongVideoData",
+              "displayName": "uploadLongVideoData",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "uploadShortVideoData",
+              "displayName": "uploadShortVideoData",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        176
+      ],
+      "id": "45127896-b90e-411f-afdf-20c14fb8988d",
+      "name": "@UPLOAD_TO_YOUTUBE"
     }
   ],
   "connections": {
@@ -648,126 +722,168 @@
           }
         ]
       ]
+    },
+    "Remover Temporary Files": {
+      "main": [
+        [
+          {
+            "node": "@UPLOAD_TO_YOUTUBE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {
+    "Download Thumbnail": [
+      {
+        "RESULT": "SUCCESS"
+      }
+    ],
+    "Download Video": [
+      {
+        "RESULT": "SUCCESS",
+        "FILENAME": "Y7SWKg3ExFM.mp4"
+      }
+    ],
+    "Extract Audio": [
+      {
+        "RESULT": "SUCCESS"
+      }
+    ],
+    "Silence Detector": [
+      {
+        "periods": [
+          {
+            "startSilence": 238.569,
+            "endSilence": 241.298,
+            "duration": 2.72902
+          },
+          {
+            "startSilence": 542.243,
+            "endSilence": 544.618,
+            "duration": 2.3749
+          }
+        ]
+      }
+    ],
+    "Silence Remover": [
+      {
+        "RESULT": "SUCCESS",
+        "audio": "Y7SWKg3ExFM.audio.mp3",
+        "video": "Y7SWKg3ExFM.video.mp4"
+      }
+    ],
     "Find New Videos": [
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UZKSdzKW_JI",
-        "title": "NOVELA do SITE tem MAIS UM CAPÍTULO: SITE voltou em INFRA 100% BRAZUCA, mas... SUSCETÍVEL a DDOS",
-        "duration": "8:12",
-        "durationSeconds": 492,
-        "publishedAt": "2025-09-30 16:43:38",
-        "publishedAtISO": "2025-09-30T16:43:38Z",
-        "publishedAtEpoch": 1759250618,
-        "url": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Y7SWKg3ExFM",
+        "title": "MORAES pede que REDES SOCIAIS IDENTIFIQUEM todos que AMEAÇARAM DINO com \"NEPALIZAÇÃO\"",
+        "duration": "14:11",
+        "durationSeconds": 851,
+        "publishedAt": "2025-10-02 22:15:03",
+        "publishedAtISO": "2025-10-02T22:15:03Z",
+        "publishedAtEpoch": 1759443303,
+        "url": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "UZKSdzKW_JI",
+        "videoId": "Y7SWKg3ExFM",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_TBvmFpv8thI",
-        "title": "XI JINPING desafia TRUMP e anuncia o \"VISTO K\" para a CHINA COMPETIR com o \"VISTO H1B\" AMERICANO",
-        "duration": "15:06",
-        "durationSeconds": 906,
-        "publishedAt": "2025-09-30 13:15:04",
-        "publishedAtISO": "2025-09-30T13:15:04Z",
-        "publishedAtEpoch": 1759238104,
-        "url": "https://www.youtube.com/watch?v=TBvmFpv8thI",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_bkmiOJe2ICI",
+        "title": "MORAES autoriza BOLSONARO a PARTICIPAR do PODCAST CAFÉ com FERRI: EXCELENTE OPORTUNIDADE",
+        "duration": "13:05",
+        "durationSeconds": 785,
+        "publishedAt": "2025-10-02 20:21:53",
+        "publishedAtISO": "2025-10-02T20:21:53Z",
+        "publishedAtEpoch": 1759436513,
+        "url": "https://www.youtube.com/watch?v=bkmiOJe2ICI",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "TBvmFpv8thI",
+        "videoId": "bkmiOJe2ICI",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_46iHb_1kqzc",
-        "title": "INTOXICAÇÃO por METANOL MATA pessoas em SÃO PAULO: PCC pode ser o CULPADO pela TRAGÉDIA?",
-        "duration": "8:52",
-        "durationSeconds": 532,
-        "publishedAt": "2025-09-30 09:24:03",
-        "publishedAtISO": "2025-09-30T09:24:03Z",
-        "publishedAtEpoch": 1759224243,
-        "url": "https://www.youtube.com/watch?v=46iHb_1kqzc",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_vO45gg4N0pw",
+        "title": "PROCURADOR indicado por TRUMP QUER REABRIR caso ODEBRECHT nos ESTADOS UNIDOS para REVER INDENIZAÇÃO",
+        "duration": "14:05",
+        "durationSeconds": 845,
+        "publishedAt": "2025-10-02 18:15:05",
+        "publishedAtISO": "2025-10-02T18:15:05Z",
+        "publishedAtEpoch": 1759428905,
+        "url": "https://www.youtube.com/watch?v=vO45gg4N0pw",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "46iHb_1kqzc",
+        "videoId": "vO45gg4N0pw",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_o7OAV4RmwDA",
-        "title": "BUROCRATA da ANATEL quer ir para a ONU para IMPEDIR BRASILEIROS de TEREM BONS serviços da STARLINK",
-        "duration": "15:43",
-        "durationSeconds": 943,
-        "publishedAt": "2025-09-30 02:09:59",
-        "publishedAtISO": "2025-09-30T02:09:59Z",
-        "publishedAtEpoch": 1759198199,
-        "url": "https://www.youtube.com/watch?v=o7OAV4RmwDA",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_KK2NFuc-GcU",
+        "title": "CONGRESSO aprova ISENÇÃO de IMPOSTO de RENDA para quem GANHA ATÉ R$ 5 MIL e IMPOSTO sobre RICOS",
+        "duration": "15:23",
+        "durationSeconds": 923,
+        "publishedAt": "2025-10-02 16:15:02",
+        "publishedAtISO": "2025-10-02T16:15:02Z",
+        "publishedAtEpoch": 1759421702,
+        "url": "https://www.youtube.com/watch?v=KK2NFuc-GcU",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "o7OAV4RmwDA",
+        "videoId": "KK2NFuc-GcU",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_zgziK2NDiFg",
-        "title": "TARCÍSIO se ENCONTRA com BOLSONARO e diz que TUDO DEPENDE do PROJETO da ANISTIA",
-        "duration": "8:34",
-        "durationSeconds": 514,
-        "publishedAt": "2025-09-29 23:31:21",
-        "publishedAtISO": "2025-09-29T23:31:21Z",
-        "publishedAtEpoch": 1759188681,
-        "url": "https://www.youtube.com/watch?v=zgziK2NDiFg",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q__6-rECTnUT8",
+        "title": "GOVERNO do AFEGANISTÃO corta INTERNET para seus CIDADÃOS por MOTIVOS MORAIS: CAOS TOTAL no PAÍS",
+        "duration": "8:53",
+        "durationSeconds": 533,
+        "publishedAt": "2025-10-02 13:15:08",
+        "publishedAtISO": "2025-10-02T13:15:08Z",
+        "publishedAtEpoch": 1759410908,
+        "url": "https://www.youtube.com/watch?v=_6-rECTnUT8",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "zgziK2NDiFg",
+        "videoId": "_6-rECTnUT8",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_HxG8uMeeUTg",
-        "title": "LULA se ESCONDE ATRÁS de ALCKMIN com MEDO do TRUMP: \"NÃO sabemos QUANDO nem COMO SERÁ o ENCONTRO\"",
-        "duration": "7:20",
-        "durationSeconds": 440,
-        "publishedAt": "2025-09-29 22:15:01",
-        "publishedAtISO": "2025-09-29T22:15:01Z",
-        "publishedAtEpoch": 1759184101,
-        "url": "https://www.youtube.com/watch?v=HxG8uMeeUTg",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_5nsyRUkDzS8",
+        "title": "EMMA WATSON pede DESCULPAS, mas J. K. ROWLING não tá NEM AÍ: \"ELA é IGNORANTE do quanto é IGNORANTE\"",
+        "duration": "21:11",
+        "durationSeconds": 1271,
+        "publishedAt": "2025-10-02 09:15:00",
+        "publishedAtISO": "2025-10-02T09:15:00Z",
+        "publishedAtEpoch": 1759396500,
+        "url": "https://www.youtube.com/watch?v=5nsyRUkDzS8",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "HxG8uMeeUTg",
+        "videoId": "5nsyRUkDzS8",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_5nYqHLkfLpw",
-        "title": "ALEXANDRE de MORAES autoriza PROGRESSÃO para REGIME ABERTO para DANIEL SILVEIRA, mas VAI FICAR?",
-        "duration": "8:32",
-        "durationSeconds": 512,
-        "publishedAt": "2025-09-29 20:15:00",
-        "publishedAtISO": "2025-09-29T20:15:00Z",
-        "publishedAtEpoch": 1759176900,
-        "url": "https://www.youtube.com/watch?v=5nYqHLkfLpw",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_xEI3p3bm6kM",
+        "title": "\"TRUMP está APAVORADO com o PODER do LULA\" - FANFIC da IMPRENSA ganha tons de DESESPERO PSICOPÁTICO",
+        "duration": "16:17",
+        "durationSeconds": 977,
+        "publishedAt": "2025-10-02 01:17:19",
+        "publishedAtISO": "2025-10-02T01:17:19Z",
+        "publishedAtEpoch": 1759367839,
+        "url": "https://www.youtube.com/watch?v=xEI3p3bm6kM",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "5nYqHLkfLpw",
+        "videoId": "xEI3p3bm6kM",
         "processed": false
       },
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_01xEszS5dO4",
-        "title": "DE NOVO: CLOUDFLARE derruba SITE do ESCRITÓRIO do XANDÃO, MICROSOFT não é mais FORNECEDORA de EMAIL",
-        "duration": "12:08",
-        "durationSeconds": 728,
-        "publishedAt": "2025-09-29 19:15:00",
-        "publishedAtISO": "2025-09-29T19:15:00Z",
-        "publishedAtEpoch": 1759173300,
-        "url": "https://www.youtube.com/watch?v=01xEszS5dO4",
+        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_55wzI1iv3Sg",
+        "title": "FUNCIONÁRIO da GLOBO tenta EXTORQUIR DEPUTADO e RECEBE VOZ de PRISÃO: IMAGINA como ERA no PASSADO",
+        "duration": "8:45",
+        "durationSeconds": 525,
+        "publishedAt": "2025-10-01 23:27:16",
+        "publishedAtISO": "2025-10-01T23:27:16Z",
+        "publishedAtEpoch": 1759361236,
+        "url": "https://www.youtube.com/watch?v=55wzI1iv3Sg",
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "01xEszS5dO4",
+        "videoId": "55wzI1iv3Sg",
         "processed": false
-      },
+      }
+    ],
+    "AUDIO_TO_WHISPER_LOCAL": [
       {
-        "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_XfvKndOAciQ",
-        "title": "HADDAD faz PRIMEIRO ARGUMENTO RAZOÁVEL na VIDA DELE: QUER o FIM da ESTABILIDADE de SERVIDOR PÚBLICO",
-        "duration": "13:56",
-        "durationSeconds": 836,
-        "publishedAt": "2025-09-29 18:15:02",
-        "publishedAtISO": "2025-09-29T18:15:02Z",
-        "publishedAtEpoch": 1759169702,
-        "url": "https://www.youtube.com/watch?v=XfvKndOAciQ",
-        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "XfvKndOAciQ",
-        "processed": false
+        "RESPONSE": "1\n00:00:00,000 --> 00:00:09,500\n Seu Ancapso, e nós vamos falar agora sobre o Alexandre de Moraes, que deu 48 horas para as Big Techs fornecerem dados dos responsáveis por ameaças a Dino.\n\n2\n00:00:10,179 --> 00:00:13,740\n Sabe que ameaças que são essas? Aquela parada de nepalização.\n\n3\n00:00:14,120 --> 00:00:17,300\n É, meu amigo, e rapaz, não sei se meu nome não está nessa história aí não, tá?\n\n4\n00:00:17,740 --> 00:00:25,879\n Porque eu fiz um vídeo falando sobre as manifestações no Nepal, e falei que não, que eu acho que tá vindo como é que o povo brasileiro é banana, olha só.\n\n5\n00:00:25,879 --> 00:00:28,719\n O Nepal tá lá, o pessoal botou pra quebrar o troço todo.\n\n6\n00:00:28,719 --> 00:00:33,579\n Mas eu já falei também em outros vídeos que eu reconheço que tem diferenças enormes nessa história aí, né?\n\n7\n00:00:33,600 --> 00:00:35,640\n Não é exatamente a mesma coisa não, né?\n\n8\n00:00:35,640 --> 00:00:36,659\n Vamos entender esse caso aqui.\n\n9\n00:00:37,100 --> 00:00:38,640\n Essa notícia foi sugerida por...\n\n10\n00:00:38,640 --> 00:00:40,560\n Essa notícia foi sugerida por...\n\n11\n00:00:40,560 --> 00:00:43,820\n Pois bem, pois bem, é o funk do pois bem, e várias outras pessoas.\n\n12\n00:00:43,979 --> 00:00:48,359\n Obrigado aí ao pessoal que sugeriu notícias lá no nosso site, no visãolibertaria.com.\n\n13\n00:00:48,700 --> 00:00:50,460\n E obrigado a você que tá assistindo o nosso vídeo.\n\n14\n00:00:50,539 --> 00:00:55,060\n Se você gosta do nosso conteúdo, por favor, deixa o seu like e se inscreva aqui no canal, né?\n\n15\n00:00:55,679 --> 00:00:56,759\n Pois bem, olha só.\n\n16\n00:00:57,420 --> 00:00:58,480\n Pois bem, pois bem.\n\n17\n00:00:58,620 --> 00:00:58,700\n Pois bem.\n\n18\n00:00:58,700 --> 00:00:59,960\n É o funk dos pois bem, não é mesmo?\n\n19\n00:01:00,640 --> 00:01:05,460\n Moraes dá 48 horas pra Big Tech fornecerem dados de responsáveis por ameaças a Dino.\n\n20\n00:01:05,540 --> 00:01:06,140\n Então tá aqui, ó.\n\n21\n00:01:06,460 --> 00:01:08,560\n O ministro Alexandre Moraes, do Supremo Tribunal Federal,\n\n22\n00:01:08,799 --> 00:01:10,379\n determinou nessa quinta-feira, dia 2,\n\n23\n00:01:10,719 --> 00:01:14,640\n que as empresas Meta, YouTube, X e TikTok\n\n24\n00:01:14,640 --> 00:01:17,840\n forneçam em até 48 horas os dados cadastrais\n\n25\n00:01:17,840 --> 00:01:23,439\n de cerca de 50 perfis que foram acusados de terem ameaçado o ministro Flávio Dino\n\n26\n00:01:23,439 --> 00:01:25,820\n e o Fábio Schorr, delegado da Polícia Federal.\n\n27\n00:01:25,820 --> 00:01:28,600\n A medida visa identificar responsáveis pelas contas\n\n28\n00:01:28,599 --> 00:01:29,500\n das redes sociais.\n\n29\n00:01:29,699 --> 00:01:34,699\n Então você sabe, quando você abre uma conta na rede social,\n\n30\n00:01:34,819 --> 00:01:38,039\n você dá o seu nome e dá algumas informações, e-mail e coisa e tal.\n\n31\n00:01:38,579 --> 00:01:43,799\n E a rede social vai passar para a Polícia Federal todas essas informações que ela tem.\n\n32\n00:01:44,219 --> 00:01:46,379\n Ela pode ter, além do seu e-mail, né?\n\n33\n00:01:46,459 --> 00:01:48,519\n Ela pode ter o nome que você forneceu.\n\n34\n00:01:48,959 --> 00:01:50,579\n Muita gente usa pseudônimos.\n\n35\n00:01:50,719 --> 00:01:52,000\n Eu uso pseudônimo, né?\n\n36\n00:01:52,560 --> 00:01:57,780\n Mas uma coisa importante que eles têm é justamente o seu IP, o seu endereço IP.\n\n37\n00:01:57,780 --> 00:01:57,840\n O seu IP.\n\n38\n00:01:57,840 --> 00:01:57,899\n O seu IP.\n\n39\n00:01:57,899 --> 00:01:57,939\n O seu IP.\n\n40\n00:01:57,939 --> 00:01:57,959\n O seu IP.\n\n41\n00:01:57,959 --> 00:01:58,019\n O seu IP.\n\n42\n00:01:58,019 --> 00:01:58,060\n O seu IP.\n\n43\n00:01:58,060 --> 00:01:58,079\n O seu IP.\n\n44\n00:01:58,079 --> 00:01:58,139\n O seu IP.\n\n45\n00:01:58,139 --> 00:01:58,159\n O seu IP.\n\n46\n00:01:58,159 --> 00:01:58,179\n O seu IP.\n\n47\n00:01:58,179 --> 00:01:58,199\n O seu IP.\n\n48\n00:01:58,199 --> 00:01:58,219\n O seu IP.\n\n49\n00:01:58,219 --> 00:01:58,239\n O seu IP.\n\n50\n00:01:58,239 --> 00:01:58,259\n O seu IP.\n\n51\n00:01:58,260 --> 00:02:02,359\n Que é de onde veio aquela conexão da pessoa que mandou aquilo ali.\n\n52\n00:02:02,640 --> 00:02:10,200\n E com esse endereço IP é relativamente tranquilo as pessoas identificarem quem foi que fez\n\n53\n00:02:10,200 --> 00:02:12,040\n a postagem, que é a pessoa que está ali.\n\n54\n00:02:12,140 --> 00:02:12,379\n Por quê?\n\n55\n00:02:12,420 --> 00:02:19,500\n Porque ela entra em contato com o seu provedor de internet, seja a Oi, Vivo, Claro, ou sei\n\n56\n00:02:19,500 --> 00:02:24,200\n lá, qualquer provedor de internet, mesmo provedores pequenos, as provedoras têm essa\n\n57\n00:02:24,200 --> 00:02:28,159\n informação, elas são obrigadas a manter essa informação, então elas sabem que aquele\n\n58\n00:02:28,159 --> 00:02:28,219\n IP é o que ela está buscando.\n\n59\n00:02:28,219 --> 00:02:28,240\n Então, se você não tem essa informação, você pode usar o seu IP.\n\n60\n00:02:28,240 --> 00:02:34,240\n IP vem da sua casa especificamente então elas vão entregar isso para o para polícia federal\n\n61\n00:02:34,240 --> 00:02:39,340\n e você vai ser identificado a única maneira de você evitar isso é você usar um sistema de VPN\n\n62\n00:02:39,340 --> 00:02:47,200\n de boa qualidade de países que evitem a fornecer dados porque tem alguns países também que se a\n\n63\n00:02:47,200 --> 00:02:52,400\n polícia do Brasil pedir eles vão entregar os dados todos mas por exemplo o pessoal gosta muito de\n\n64\n00:02:52,400 --> 00:02:56,900\n ver os países na Suíça porque tipicamente na Suíça eles têm uma lei de privacidade muito\n\n65\n00:02:56,900 --> 00:03:01,879\n forte que não é que dependendo do crime eles vão entregar seus dados mesmo tá dependendo do que\n\n66\n00:03:01,879 --> 00:03:06,680\n eles vão entregar seus dados tudo mas dependendo também da situação eles não vão entregar os dados\n\n67\n00:03:06,680 --> 00:03:12,120\n não então se você usa um VPN é isso fica mais difícil a outra possibilidade você usar torce\n\n68\n00:03:12,120 --> 00:03:17,420\n você usar Thor acabou não tem como achar não tem como saber o que era você que tava fazendo ali\n\n69\n00:03:17,420 --> 00:03:22,280\n porque o Thor tem um nível de privacidade ainda maior já houve\n\n70\n00:03:22,400 --> 00:03:29,780\n casos da polícia americana consegui identificar pessoas não foram né da Deep Web coisa tal\n\n71\n00:03:29,780 --> 00:03:37,040\n através do Thor mas o que o pessoal comenta que esses casos todos foram por conta de de engenharia\n\n72\n00:03:37,040 --> 00:03:44,000\n social o agente da polícia federal faz amizade com cara bate-papo com cara o cara vai desarmando\n\n73\n00:03:44,000 --> 00:03:50,480\n né vai se não cara gente boa é um cap igual eu né super super libertário coisa tal vai falando\n\n74\n00:03:50,480 --> 00:03:52,379\n vai falar uma hora eu falo uma coisa que é polícia de fora e depois a gente vai falar uma coisa que a\n\n75\n00:03:52,379 --> 00:03:57,120\n polícia descobre ele e aí vai lá e prende o cara e aí não tem jeito você falou uma merda para o cara\n\n76\n00:03:57,120 --> 00:04:04,079\n o cara agente da polícia pronto né enfim aqui ó a pior a decisão foi incluída no chamado inquérito\n\n77\n00:04:04,079 --> 00:04:09,120\n das milícias digitais que foi aquele inquérito que o Alexandre de Moraes fez para suceder o inquérito\n\n78\n00:04:09,120 --> 00:04:14,340\n das fake News né o inquérito das fake News era totalmente absurdo não tinha nenhuma lógica é uma\n\n79\n00:04:14,340 --> 00:04:19,759\n coisa da feito de ofício e coisa tal mas aí depois eles criaram esse inquérito das fake News que pelo\n\n80\n00:04:19,759 --> 00:04:25,879\n outro lado foianne pedindo do PGR scomenar com pgr não pele um inquérito aí para não ficar muito feio\n\n81\n00:04:25,879 --> 00:04:31,480\n e coisa então de qualquer forma o inquérito das fake News foi distribuído por prevenção\n\n82\n00:04:31,480 --> 00:04:39,800\n erwyshandi Moraes e er Chillickel yesterday do inquérito das fake News né só preciso pode ser\n\n83\n00:04:39,800 --> 00:04:46,740\n morais e com isso é da mesma forma e legal que o inquérito das fake News vai um podemos dizer que\n\n84\n00:04:46,740 --> 00:04:48,839\n o inquérito da realista digitais é uma endocação da nova ditadura чувствável aí é talvez decidido\n\n85\n00:04:48,839 --> 00:04:49,599\n sacredas mais ou menos que o tesouro interrompe a conversa do assalto e Vernon no woofer tinnitus\n\n86\n00:04:49,599 --> 00:04:49,699\n que aliás é que ele pegou minhas fotos aquigem traz é barulho mais antes do relato eu vou mostrar\n\n87\n00:04:49,699 --> 00:04:55,939\n que investiga uma possível atuação de organizações criminosas nas redes sociais contra a democracia e instituições.\n\n88\n00:04:56,479 --> 00:04:58,199\n Olha só, eu acho uma besteira.\n\n89\n00:04:58,259 --> 00:05:01,659\n Esse pessoal continua insistindo nesse troço sem ter nenhuma evidência disso.\n\n90\n00:05:01,980 --> 00:05:06,219\n O que existe é um sentimento de várias pessoas, que é compartilhado por várias pessoas,\n\n91\n00:05:06,439 --> 00:05:09,459\n que realmente acham que o que o STF está fazendo no Brasil é um absurdo.\n\n92\n00:05:09,659 --> 00:05:11,259\n E eu concordo, é um absurdo mesmo.\n\n93\n00:05:11,539 --> 00:05:15,480\n Eu sou claro em dizer que eu não sou a favor de golpe, que eu não quero golpe, que eu não quero revolução,\n\n94\n00:05:15,480 --> 00:05:17,699\n isso é uma coisa ruim, isso piora a situação.\n\n95\n00:05:17,699 --> 00:05:22,439\n Mas que há uma sensação de, ah, porra, estamos no meio de uma merda.\n\n96\n00:05:22,959 --> 00:05:25,180\n E isso é uma sensação que um monte de gente tem.\n\n97\n00:05:25,459 --> 00:05:27,839\n E é natural que o pessoal vê o que acontece lá no Nepal,\n\n98\n00:05:27,979 --> 00:05:31,259\n que o pessoal saiu queimando casa de políticos, saiu destruindo a coisa toda.\n\n99\n00:05:31,740 --> 00:05:32,879\n E fica empolgado, né?\n\n100\n00:05:34,019 --> 00:05:38,399\n Até porque tem todo aquele negócio da geração Z e coisa e tal, né?\n\n101\n00:05:38,779 --> 00:05:39,120\n Aqui, ó.\n\n102\n00:05:39,879 --> 00:05:43,639\n Em seu pedido de enviar da Polícia Federal, o Dino afirmou que os ataques aconteceram\n\n103\n00:05:43,639 --> 00:05:46,980\n após o voto do julgamento que condenou o presidente Bolsonaro\n\n104\n00:05:46,980 --> 00:05:47,680\n a pena de violência contra a população.\n\n105\n00:05:47,680 --> 00:05:48,939\n A pena de 27 anos e 3 meses.\n\n106\n00:05:49,000 --> 00:05:49,379\n Eu não sei.\n\n107\n00:05:50,019 --> 00:05:55,340\n A minha visão, do que eu acompanho, já tinha muita gente criticando o Dino muito antes disso.\n\n108\n00:05:55,500 --> 00:05:59,960\n Mas, enfim, pode ter piorado por conta desse aspecto, né?\n\n109\n00:06:00,579 --> 00:06:03,360\n E aí, ele botou isso pra Polícia Federal.\n\n110\n00:06:03,460 --> 00:06:06,120\n A Polícia Federal questionou o Alexandre de Moraes se as ameaças a Dino\n\n111\n00:06:06,120 --> 00:06:09,060\n devem ser investigadas no inquérito das milícias digitais.\n\n112\n00:06:09,199 --> 00:06:10,800\n O Alexandre de Moraes, evidentemente, falou que sim.\n\n113\n00:06:11,460 --> 00:06:12,680\n Sim, é tudo comigo.\n\n114\n00:06:12,860 --> 00:06:13,680\n Tudo aqui no STF.\n\n115\n00:06:14,319 --> 00:06:15,740\n Sou eu que mando, sou eu que faço.\n\n116\n00:06:16,160 --> 00:06:17,100\n Então, sou eu mesmo.\n\n117\n00:06:17,100 --> 00:06:17,240\n Então, sou eu mesmo.\n\n118\n00:06:17,240 --> 00:06:22,560\n Então, são cerca de 50 publicações feitas em redes sociais com ameaças ao Flávio Dino, né?\n\n119\n00:06:22,980 --> 00:06:27,519\n Entre os conteúdos analisados, a Polícia Federal destacou as frequentes referências ao Nepal,\n\n120\n00:06:27,900 --> 00:06:32,019\n país que viveu uma onda de protesto que culminou na destruição dos prédios públicos\n\n121\n00:06:32,019 --> 00:06:33,920\n e na morte de mais de 50 pessoas.\n\n122\n00:06:34,579 --> 00:06:38,379\n Para Dino, essas menções sugerem incitação a atos semelhantes no Brasil.\n\n123\n00:06:38,480 --> 00:06:40,139\n Atos semelhantes no Brasil.\n\n124\n00:06:40,759 --> 00:06:42,980\n Eu não diria incitação, porque incitação é diferente.\n\n125\n00:06:43,100 --> 00:06:43,980\n Você tem que achar legal.\n\n126\n00:06:44,460 --> 00:06:45,879\n Gostei do que fizeram lá no Nepal.\n\n127\n00:06:45,879 --> 00:06:46,699\n É diferente.\n\n128\n00:06:46,699 --> 00:06:48,259\n É diferente de você incitar esse negócio, né?\n\n129\n00:06:48,620 --> 00:06:51,920\n Agora, é diferente também de você reconhecer que existe caminho pra isso.\n\n130\n00:06:52,199 --> 00:06:54,879\n Realmente, do jeito que esse pessoal tá ignorando a vontade popular,\n\n131\n00:06:55,420 --> 00:06:58,800\n querendo impor a vontade deles sobre a vontade popular, meu amigo,\n\n132\n00:06:58,839 --> 00:07:01,300\n a história é muito clara no que acontece nesses casos, né?\n\n133\n00:07:01,300 --> 00:07:02,279\n Não é só no Nepal, não.\n\n134\n00:07:02,620 --> 00:07:04,639\n Já aconteceu num monte de lugar, num monte de jeito.\n\n135\n00:07:04,740 --> 00:07:05,319\n Aliás, aqui, ó.\n\n136\n00:07:06,060 --> 00:07:06,379\n Aqui, ó.\n\n137\n00:07:06,879 --> 00:07:11,680\n Protestos da geração Z no Marrocos contra gastos para a Copa do Mundo deixam mortos e feridos.\n\n138\n00:07:12,219 --> 00:07:14,620\n O pessoal no Marrocos parece que vai ter que ser uma Copa do Mundo no Marrocos,\n\n139\n00:07:14,620 --> 00:07:16,399\n que é Marrocos, Espanha, Portugal.\n\n140\n00:07:16,699 --> 00:07:17,099\n Não sei mais o quê.\n\n141\n00:07:17,719 --> 00:07:19,399\n E o pessoal não tá gostando disso, não, pô.\n\n142\n00:07:19,459 --> 00:07:20,319\n Igual aqui no Brasil.\n\n143\n00:07:20,719 --> 00:07:21,319\n O pessoal...\n\n144\n00:07:21,319 --> 00:07:23,680\n Aqui no Brasil teve protesto contra a Copa do Mundo também, né?\n\n145\n00:07:24,159 --> 00:07:26,019\n E o pessoal saiu quebrando tudo lá.\n\n146\n00:07:26,159 --> 00:07:27,159\n E aí tem a bandeirinha.\n\n147\n00:07:27,219 --> 00:07:27,819\n Cadê a bandeirinha?\n\n148\n00:07:28,000 --> 00:07:29,180\n Aqui não tem a bandeirinha aqui.\n\n149\n00:07:29,579 --> 00:07:31,879\n A bandeirinha do One Piece, né?\n\n150\n00:07:32,219 --> 00:07:33,599\n Mas no Peru tem aqui, ó.\n\n151\n00:07:33,699 --> 00:07:37,560\n Protestos da geração Z no Peru contra a reforma da Previdência, anistia e coisa e tal.\n\n152\n00:07:38,120 --> 00:07:38,959\n E tá aqui...\n\n153\n00:07:38,959 --> 00:07:41,620\n Anistia ao candidato da esquerda lá, tá?\n\n154\n00:07:42,180 --> 00:07:44,740\n O cara lá fez realmente uma tentativa de golpe.\n\n155\n00:07:44,740 --> 00:07:46,639\n O Pedro Castilho no Peru.\n\n156\n00:07:46,759 --> 00:07:49,300\n Ele, de fato, foi na televisão e falou...\n\n157\n00:07:49,300 --> 00:07:51,159\n Olha só, eu estou dando um golpe...\n\n158\n00:07:51,159 --> 00:07:51,860\n Ele não falou com isso.\n\n159\n00:07:51,979 --> 00:07:52,479\n Ele falou...\n\n160\n00:07:52,479 --> 00:07:53,699\n Estou fechando o Congresso.\n\n161\n00:07:54,719 --> 00:07:56,719\n O Exército vai tomar conta de tudo.\n\n162\n00:07:56,839 --> 00:07:58,259\n Todo mundo responde a mim agora.\n\n163\n00:07:58,699 --> 00:07:59,199\n E é isso daí.\n\n164\n00:07:59,439 --> 00:08:00,699\n Isso é dar um golpe.\n\n165\n00:08:01,000 --> 00:08:02,139\n Ou melhor...\n\n166\n00:08:02,139 --> 00:08:03,659\n Isso é tentar um golpe.\n\n167\n00:08:04,000 --> 00:08:04,300\n Por quê?\n\n168\n00:08:04,360 --> 00:08:05,680\n Porque não deu certo o golpe dele.\n\n169\n00:08:05,740 --> 00:08:06,360\n Ele tentou.\n\n170\n00:08:06,459 --> 00:08:07,079\n E o que aconteceu?\n\n171\n00:08:08,039 --> 00:08:10,779\n Os militares não embarcaram na dele.\n\n172\n00:08:11,180 --> 00:08:14,120\n Ele foi tirado do poder e tá preso 40 anos de cadeia.\n\n173\n00:08:14,120 --> 00:08:14,759\n E é muito bem...\n\n174\n00:08:14,759 --> 00:08:16,539\n Eu também acho que no caso dele não tem que ter anistia.\n\n175\n00:08:16,699 --> 00:08:16,899\n Nenhuma.\n\n176\n00:08:17,180 --> 00:08:18,819\n O cara realmente tentou um golpe.\n\n177\n00:08:18,920 --> 00:08:20,959\n Aliás, eu já falei aqui mais de uma vez.\n\n178\n00:08:21,259 --> 00:08:25,219\n Se realmente Bolsonaro tivesse tentado golpe, eu estava do outro lado.\n\n179\n00:08:25,459 --> 00:08:26,719\n Eu estava realmente criticando.\n\n180\n00:08:26,779 --> 00:08:28,500\n Ele também achava que não tinha que ter anistia, não.\n\n181\n00:08:28,800 --> 00:08:29,159\n Golpe...\n\n182\n00:08:29,159 --> 00:08:29,920\n Ninguém quer golpe.\n\n183\n00:08:30,019 --> 00:08:30,599\n Golpe é ruim.\n\n184\n00:08:31,500 --> 00:08:33,679\n Mas o problema é que Bolsonaro não tentou.\n\n185\n00:08:33,840 --> 00:08:37,299\n Em momento algum tem uma nesga de evidência na coisa toda que eles levantaram lá\n\n186\n00:08:37,299 --> 00:08:40,240\n de que Bolsonaro tenha participado de qualquer coisa, tenha feito qualquer ato.\n\n187\n00:08:40,500 --> 00:08:42,679\n Ah, mas ele discutiu uma minuta.\n\n188\n00:08:43,220 --> 00:08:44,600\n Porra, meu amigo, discutir minuta, cara.\n\n189\n00:08:44,600 --> 00:08:46,600\n Minuta, por definição, é um raciocínio.\n\n190\n00:08:46,700 --> 00:08:48,060\n É um pensamento.\n\n191\n00:08:48,160 --> 00:08:48,700\n É um brainstorm.\n\n192\n00:08:49,000 --> 00:08:50,060\n É uma coisa que você está pensando ali.\n\n193\n00:08:50,400 --> 00:08:55,140\n Você pode falar coisas terríveis em uma minuta, desde que isso não se materialize.\n\n194\n00:08:55,220 --> 00:08:59,340\n Desde que você não faça atos para concretizar aquilo que está ali na minuta.\n\n195\n00:08:59,520 --> 00:09:00,200\n Agora, aqui tem.\n\n196\n00:09:00,460 --> 00:09:01,320\n O One Piece está aqui.\n\n197\n00:09:01,640 --> 00:09:04,000\n O One Piece está lá no Peru.\n\n198\n00:09:04,480 --> 00:09:08,780\n O pessoal está criticando muito o governo do Peru pela situação econômica.\n\n199\n00:09:09,140 --> 00:09:10,900\n Lembrando que lá é a esquerda no poder.\n\n200\n00:09:11,379 --> 00:09:14,040\n O Pedro Castilho saiu, assumiu a vice dele.\n\n201\n00:09:14,180 --> 00:09:15,560\n A vice dele também é de esquerda.\n\n202\n00:09:15,560 --> 00:09:16,560\n Era a vice dele.\n\n203\n00:09:16,700 --> 00:09:19,520\n E está uma lambança completa lá.\n\n204\n00:09:19,560 --> 00:09:21,580\n Na verdade, está tendo em vários lugares.\n\n205\n00:09:21,920 --> 00:09:22,940\n O pessoal fez aqui.\n\n206\n00:09:23,000 --> 00:09:26,759\n A geração Z da Ásia à África se alastram os protestos juvenis.\n\n207\n00:09:28,140 --> 00:09:32,320\n A gente já viu no Vietnã, na Tailândia, num monte de lugar lá na Ásia.\n\n208\n00:09:33,740 --> 00:09:34,259\n Marrocos.\n\n209\n00:09:34,820 --> 00:09:37,560\n Madagascar também parece que teve protesto da geração Z lá.\n\n210\n00:09:38,160 --> 00:09:39,020\n Timor-Leste.\n\n211\n00:09:39,720 --> 00:09:40,320\n Ih, caramba.\n\n212\n00:09:41,540 --> 00:09:43,759\n Enfim, um monte de protestos desse tipo.\n\n213\n00:09:43,759 --> 00:09:45,920\n E o símbolo dessa revolta da geração Z.\n\n214\n00:09:46,700 --> 00:09:49,600\n A banda desenhada é a banda de desenho da banda desenhada.\n\n215\n00:09:49,879 --> 00:09:52,740\n A banda desenhada é a banda de desenhar.\n\n216\n00:09:52,740 --> 00:09:53,220\n A banda desenhada.\n\n217\n00:09:53,220 --> 00:09:53,900\n O que é uma banda desenhada?\n\n218\n00:09:53,900 --> 00:09:57,020\n Um herói, um anpice, um anpice do livro japonês da banda de desenho, da banda desenhada, Maga.\n\n219\n00:09:57,020 --> 00:09:59,020\n Não sei se eu entendi essa frase aqui.\n\n220\n00:09:59,020 --> 00:10:00,600\n Acho que foi tradução automática que deu ruim.\n\n221\n00:10:00,600 --> 00:10:01,940\n Mas, basicamente, é um mangá.\n\n222\n00:10:01,940 --> 00:10:09,280\n Um mangá japonês que conta a história de um garoto que quer ser pirata, que o sonho dele é ser pirata e coisa e tal.\n\n223\n00:10:09,280 --> 00:10:11,200\n E é um desenho altamente libertário.\n\n224\n00:10:11,200 --> 00:10:13,220\n Eu fiz até um vídeo sobre isso.\n\n225\n00:10:13,220 --> 00:10:16,040\n Aliás, tem dois vídeos sobre isso lá no Visão Libertária.\n\n226\n00:10:16,040 --> 00:10:16,540\n .\n\n227\n00:10:16,539 --> 00:10:19,240\n Aqui, vídeos de quatro anos atrás, meu amigo.\n\n228\n00:10:19,339 --> 00:10:22,659\n O libertarianismo em One Piece e One Piece.\n\n229\n00:10:22,779 --> 00:10:24,399\n Nossos sonhos demandam liberdade.\n\n230\n00:10:24,879 --> 00:10:28,559\n Vídeos de quatro anos atrás contando a história do...\n\n231\n00:10:28,559 --> 00:10:31,799\n E conta as aventuras lá do Luffy que quer se tornar um pirata, né?\n\n232\n00:10:32,240 --> 00:10:33,699\n Ele quer combater, como é que é?\n\n233\n00:10:33,719 --> 00:10:37,079\n Ele quer se tornar o grande rei dos piratas e coisa e tal.\n\n234\n00:10:37,740 --> 00:10:38,059\n Pois é.\n\n235\n00:10:38,839 --> 00:10:40,860\n Uma historinha, tá? Uma brincadeira e coisa e tal.\n\n236\n00:10:40,879 --> 00:10:43,559\n Mas realmente tem uns princípios libertários muito bacanas lá.\n\n237\n00:10:44,000 --> 00:10:45,740\n Recomendo vocês verem esses vídeos aqui.\n\n238\n00:10:45,740 --> 00:10:47,159\n E olha que coisa.\n\n239\n00:10:47,560 --> 00:10:53,940\n Justamente esse desenho parece que inspirou muitos jovens nessa questão de contrapor governos, né?\n\n240\n00:10:54,000 --> 00:10:56,799\n E aí você tem um monte de gente aqui fazendo isso aqui.\n\n241\n00:10:57,180 --> 00:10:58,940\n E o Dino ficou chateado com esse negócio.\n\n242\n00:10:59,060 --> 00:11:00,500\n É, Dino. É uma coisa complicada mesmo.\n\n243\n00:11:00,600 --> 00:11:03,120\n O negócio de excesso de socialismo leva a isso, né?\n\n244\n00:11:03,799 --> 00:11:07,019\n Enfim, isso mostra também como é que esse pessoal não está tranquilo, né?\n\n245\n00:11:07,019 --> 00:11:09,840\n O Dino está sentindo na pele o ódio das pessoas.\n\n246\n00:11:10,299 --> 00:11:11,139\n O Gilmar Mendes...\n\n247\n00:11:11,139 --> 00:11:13,299\n Não foi o Barroso outro dia que estava reclamando que não,\n\n248\n00:11:13,299 --> 00:11:15,500\n que antigamente eu ia na rua, eu fazia as coisas.\n\n249\n00:11:15,500 --> 00:11:18,899\n Agora eu não posso mais sair na rua sem três ou quatro seguranças.\n\n250\n00:11:19,600 --> 00:11:20,220\n Pois é, Barroso.\n\n251\n00:11:20,299 --> 00:11:23,799\n É isso que dá você comprar briga com todo o povo brasileiro, né?\n\n252\n00:11:24,299 --> 00:11:26,960\n A elite aristocrática de Brasília está muito segura.\n\n253\n00:11:27,379 --> 00:11:29,259\n Que não, Bolsonaro é golpista.\n\n254\n00:11:29,360 --> 00:11:30,659\n Tem que prender ele mesmo.\n\n255\n00:11:30,799 --> 00:11:31,720\n Não sei, não importa.\n\n256\n00:11:32,080 --> 00:11:34,179\n Quem está contra é porque é bolsonarista.\n\n257\n00:11:34,279 --> 00:11:35,659\n Essa ralé é bolsonarista.\n\n258\n00:11:35,820 --> 00:11:37,340\n Que não tem que ser considerada, né?\n\n259\n00:11:37,779 --> 00:11:39,700\n Só que você está vendo na prática que não.\n\n260\n00:11:39,799 --> 00:11:41,080\n Que o pessoal está puto com isso.\n\n261\n00:11:41,080 --> 00:11:45,480\n E essa coisa toda começou exatamente com o STF contra a PON.\n\n262\n00:11:45,600 --> 00:11:47,299\n A questão do direito de ter armas.\n\n263\n00:11:47,740 --> 00:11:48,399\n Lembra disso.\n\n264\n00:11:48,620 --> 00:11:49,740\n É importante notar isso.\n\n265\n00:11:50,039 --> 00:11:52,259\n Quando o Bolsonaro ganhou a presidência, né?\n\n266\n00:11:52,659 --> 00:11:54,340\n A Carmen Lúcia levou pra ele uma...\n\n267\n00:11:54,340 --> 00:11:57,200\n A Carmen Lúcia foi aquela outra moça que eu não lembro mais o nome dela.\n\n268\n00:11:57,600 --> 00:11:58,179\n Não lembro, né?\n\n269\n00:11:58,240 --> 00:12:01,860\n Levou uma cópia da Constituição pro Bolsonaro, né?\n\n270\n00:12:02,480 --> 00:12:06,960\n Só que o Bolsonaro, a primeira coisa que ele fez foi justamente colocar decretos\n\n271\n00:12:06,960 --> 00:12:08,059\n que permitiam as pessoas ter...\n\n272\n00:12:08,059 --> 00:12:09,740\n Ou facilitavam as pessoas ter armas.\n\n273\n00:12:10,139 --> 00:12:11,759\n Era uma das promessas de campanha dele.\n\n274\n00:12:11,820 --> 00:12:13,200\n Era algo que ele queria fazer, né?\n\n275\n00:12:14,200 --> 00:12:15,360\n O pessoal do STF não queria fazer isso.\n\n276\n00:12:15,360 --> 00:12:16,899\n Não que não pode, que é proibido.\n\n277\n00:12:17,399 --> 00:12:19,240\n Aí começou a crítica.\n\n278\n00:12:19,340 --> 00:12:19,539\n Por quê?\n\n279\n00:12:19,580 --> 00:12:20,399\n Porque o pessoal viu.\n\n280\n00:12:20,860 --> 00:12:22,659\n Nós votamos no Bolsonaro pra isso.\n\n281\n00:12:22,800 --> 00:12:26,220\n O STF não deixa o Bolsonaro fazer as coisas que a gente votou ele pra fazer.\n\n282\n00:12:26,659 --> 00:12:27,180\n Tem um problema.\n\n283\n00:12:27,340 --> 00:12:28,620\n Essa democracia está quebrada.\n\n284\n00:12:29,019 --> 00:12:30,019\n Porra, como é que funciona isso?\n\n285\n00:12:30,100 --> 00:12:31,480\n A ideia da democracia não é essa?\n\n286\n00:12:31,539 --> 00:12:35,000\n Você eleger a pessoa pra ela impor as coisas que você quer, né?\n\n287\n00:12:35,320 --> 00:12:36,879\n Os seus pontos de texto.\n\n288\n00:12:36,879 --> 00:12:41,720\n Aí quando você elege alguém, depois de 200 anos de esquerda no poder aqui no Brasil,\n\n289\n00:12:42,159 --> 00:12:44,320\n elege alguém um pouco mais à direita e aí...\n\n290\n00:12:44,320 --> 00:12:45,300\n 200 anos mesmo, tá?\n\n291\n00:12:45,360 --> 00:12:47,840\n Porque os milicos aqui no Brasil estão de esquerda.\n\n292\n00:12:48,019 --> 00:12:50,740\n Eu conto o período militar como ditadura de esquerda aqui no Brasil.\n\n293\n00:12:51,460 --> 00:12:54,960\n O pessoal todo mundo de esquerda depois da ditadura militar também.\n\n294\n00:12:55,340 --> 00:12:57,200\n Aí entrou Lula, extrema esquerda.\n\n295\n00:12:57,659 --> 00:13:01,120\n Enfim, depois disso tudo, quando a gente pede alguma coisa e não pode, né?\n\n296\n00:13:01,159 --> 00:13:03,399\n Isso que começou a revolta do pessoal lá atrás.\n\n297\n00:13:03,960 --> 00:13:04,940\n E foi só aumentando.\n\n298\n00:13:05,039 --> 00:13:07,240\n Porque foi só aumentando o conflito nessa história.\n\n299\n00:13:07,620 --> 00:13:10,539\n E esse pessoal continua com a ideia de que eles sabem o que é melhor pro povo.\n\n300\n00:13:10,539 --> 00:13:12,279\n Não, porque temos que civilizar esse povo.\n\n301\n00:13:12,560 --> 00:13:14,860\n Esse povo não é civilizado, segundo o Barroso, né?\n\n302\n00:13:15,360 --> 00:13:16,659\n Pois é, vamos ver.\n\n303\n00:13:17,159 --> 00:13:18,240\n Eu sinceramente espero que não.\n\n304\n00:13:18,560 --> 00:13:19,340\n É o que eu falo sempre.\n\n305\n00:13:19,419 --> 00:13:21,919\n Esse negócio de revolução geralmente dá errado.\n\n306\n00:13:22,039 --> 00:13:25,300\n Tirando duas ou três revoluções aí no mundo, o resto tudo deu errado.\n\n307\n00:13:25,539 --> 00:13:27,120\n A Revolução Francesa foi uma tragédia.\n\n308\n00:13:27,639 --> 00:13:28,860\n A Revolução Americana foi boa.\n\n309\n00:13:29,019 --> 00:13:30,460\n A Revolução Americana foi positiva.\n\n310\n00:13:30,940 --> 00:13:34,700\n Você pode contar aí a revolução da Praça Maidã lá na Ucrânia foi positiva também.\n\n311\n00:13:35,039 --> 00:13:39,740\n Mas tirando uns poucos exemplos que você pinça assim, o resto tudo deu merda, meu amigo.\n\n312\n00:13:41,840 --> 00:13:43,960\n Obrigado por assistir o vídeo até o final.\n\n313\n00:13:43,960 --> 00:13:44,060\n Obrigado.\n\n314\n00:13:44,060 --> 00:13:44,120\n Obrigado.\n\n315\n00:13:44,120 --> 00:13:44,180\n Obrigado.\n\n316\n00:13:44,180 --> 00:13:44,200\n Obrigado.\n\n317\n00:13:44,200 --> 00:13:44,259\n Obrigado.\n\n318\n00:13:44,259 --> 00:13:44,279\n Obrigado.\n\n319\n00:13:44,279 --> 00:13:44,340\n Obrigado.\n\n320\n00:13:44,340 --> 00:13:44,379\n Obrigado.\n\n321\n00:13:44,379 --> 00:13:44,399\n Obrigado.\n\n322\n00:13:44,399 --> 00:13:44,460\n Obrigado.\n\n323\n00:13:44,460 --> 00:13:44,480\n Obrigado.\n\n324\n00:13:44,480 --> 00:13:44,539\n Obrigado.\n\n325\n00:13:44,539 --> 00:13:45,539\n Obrigado.\n\n326\n00:13:45,539 --> 00:13:46,539\n Obrigado.\n\n327\n00:13:46,539 --> 00:13:47,539\n Obrigado.\n\n328\n00:13:47,539 --> 00:13:48,579\n Obrigado.\n\n329\n00:13:48,579 --> 00:13:51,579\n Obrigado.\n"
       }
     ]
   },
