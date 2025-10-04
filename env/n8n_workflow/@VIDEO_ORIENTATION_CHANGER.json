@@ -3,15 +3,15 @@
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"VIDEO_ID\": \"_LMpN6o26E0\",\n  \"START_TIME\": \"00:00:00\",\n  \"END_TIME\": \"00:00:13\",\n  \"PREFIX\": \"a string\"\n}"
+        "jsonExample": "{\n  \"FILENAME\": \"_LMpN6o26E0\"\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -304,
+        -288,
         -112
       ],
-      "id": "bfe03852-475f-45a9-803d-27f66d322928",
+      "id": "2339601f-6fb2-41ef-ac54-b2b411d590b7",
       "name": "START"
     },
     {
@@ -20,26 +20,8 @@
           "assignments": [
             {
               "id": "dff10386-aac1-4bf2-a53e-24e2e7441381",
-              "name": "VIDEO_ID",
-              "value": "={{ $('START').item.json.VIDEO_ID }}",
-              "type": "string"
-            },
-            {
-              "id": "33aa6889-88db-458a-884c-f4d2c8fba03d",
-              "name": "START_TIME",
-              "value": "={{ $('START').item.json.START_TIME }}",
-              "type": "string"
-            },
-            {
-              "id": "2d342576-6c10-423c-86ce-f5f8cdcc8cef",
-              "name": "END_TIME",
-              "value": "={{ $('START').item.json.END_TIME }}",
-              "type": "string"
-            },
-            {
-              "id": "ab7f91b9-a7d9-4a5a-b5a6-189685e0bf2d",
               "name": "FILENAME",
-              "value": "={{ $('START').item.json.VIDEO_ID }}_{{ $('START').item.json.START_TIME.replaceAll(\":\", \"_\") }}_{{ $('START').item.json.END_TIME.replaceAll(\":\", \"_\") }}.mp4",
+              "value": "={{ $('START').item.json.FILENAME }}",
               "type": "string"
             }
           ]
@@ -52,7 +34,7 @@
         64,
         -112
       ],
-      "id": "7902aef1-9770-47bd-b237-132e22ec63c5",
+      "id": "4f8d8fe3-374a-4971-925d-2cf56086cbc0",
       "name": "VAR"
     },
     {
@@ -81,7 +63,7 @@
         640,
         -176
       ],
-      "id": "e44da930-7925-4dd3-9694-6aa3a484339b",
+      "id": "38a71970-7dcb-4927-97d2-2bbd3d5fe24b",
       "name": "RESULT"
     },
     {
@@ -94,7 +76,7 @@
         464,
         -16
       ],
-      "id": "c99123d1-05fb-4b33-a2f4-328ab8221397",
+      "id": "6ba0ed60-8c14-438c-92e6-fe7b85e08a13",
       "name": "ERROR"
     },
     {
@@ -109,7 +91,7 @@
           "conditions": [
             {
               "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
-              "leftValue": "={{ $json.VIDEO_ID }}",
+              "leftValue": "={{ $json.FILENAME }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -128,12 +110,12 @@
         224,
         -112
       ],
-      "id": "7a92881b-91af-4b50-8592-e483ee55e19f",
+      "id": "b3515e91-d648-4fd3-814d-1cb72ed76231",
       "name": "HAS_CHANNEL_ID"
     },
     {
       "parameters": {
-        "command": "=ffmpeg -y \\\n  -ss {{ $json.START_TIME }} -to {{ $json.END_TIME }} \\\n  -i \"/home/node/download/{{$('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME}}/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.mp4\" \\\n  -c copy -avoid_negative_ts make_zero -movflags +faststart \\\n  \"/home/node/processing/{{$('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME}}/{{ $('START').item.json.PREFIX }}{{ $json.FILENAME }}\"\n"
+        "command": "=ffmpeg -y \\\n  -i \"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/{{ $json.FILENAME }}\" \\\n  -filter:v \"crop=iw/3:ih:0:0,scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920:0:(ih-1920)/2\" \\\n  -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p \\\n  -c:a aac -b:a 160k \\\n  -movflags +faststart \\\n  \"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/orientated_{{ $json.FILENAME }}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -141,7 +123,7 @@
         464,
         -176
       ],
-      "id": "189611d2-d798-4dc2-8278-817724aa8356",
+      "id": "fb1e3add-1905-404b-b26d-cfea1184108c",
       "name": "SPLIT",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput"
@@ -167,7 +149,7 @@
         -112,
         -112
       ],
-      "id": "9ea1f07f-3eac-4c69-8c97-7ed627079196",
+      "id": "0512972a-3a51-473f-826e-c97a88a0a797",
       "name": "@GLOBAL_ANCAPSU"
     }
   ],
@@ -238,10 +220,7 @@
   "pinData": {
     "START": [
       {
-        "VIDEO_ID": "UZKSdzKW_JI",
-        "START_TIME": "3.98",
-        "END_TIME": "53.2",
-        "PREFIX": "short_"
+        "FILENAME": "UZKSdzKW_JI_8.58_58.38.mp4"
       }
     ]
   },

@@ -1,18 +1,17 @@
 {
-  "name": "@JOIN_VIDEO",
   "nodes": [
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"FILE_1\": \"FILENAME_1\",\n  \"FILE_2\": \"FILENAME_2\",\n  \"EFFECT\": \"fade\"\n}"
+        "jsonExample": "{\n  \"FILE_1\": \"FILENAME_1\",\n  \"FILE_2\": \"FILENAME_2\",\n  \"EFFECT\": \"fade\",\n  \"MAIN_VIDEO_DURATION\": 100,\n  \"PREFIX\": \"PREFIXO IDENTIFICADOR\",\n  \"TIMESTAMP\": 0\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -544,
-        -80
+        0,
+        -96
       ],
-      "id": "ac9b3b67-b70e-46e1-a8c3-af1da29e734f",
+      "id": "9bb30f0d-b063-47ec-8052-10db8c99d87b",
       "name": "START"
     },
     {
@@ -24,24 +23,24 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -416,
-        -96
+        320,
+        -112
       ],
       "typeVersion": 1,
-      "id": "197b6d65-d230-4948-8720-2d953eaabe6d",
+      "id": "4dbd99a2-23e1-4c87-b692-b2a563304926",
       "name": "Sticky Note"
     },
     {
       "parameters": {
-        "jsCode": "// Entradas vindas do JSON/nodes do n8n\nconst file1  = $('START').first().json.FILE_1;     // ex: \"video1.mp4\"\nconst file2  = $('START').first().json.FILE_2;      // ex: \"video2.mp4\"\nconst effect = ($('START').first().json.EFFECT || 'fade').toString(); // ex: \"fade\", \"fadeblack\", \"wipeleft\"...\nconst fadeDur =2;        // opcional (padrão 2s)\nconst offset  = 5;      // opcional (padrão 5s)\n\n// Funções auxiliares p/ nome do arquivo de saída\nconst baseName = f => f.replace(/\\.mp4$/i, '');\nconst safe = s => baseName(s).replace(/[^A-Za-z0-9_\\-]/g, '_');\n\n// Nome de saída\nconst outFile = `CROSSFADE_${effect}_${safe(file1)}_${safe(file2)}.mp4`;\n\n// Comando FFmpeg (crossfade de vídeo + áudio)\nconst cmd =\n  `ffmpeg -y ` +\n  `-i \"/home/node/processing/${file1}\" -i \"/home/node/processing/${file2}\" ` +\n  `-filter_complex \"` +\n    `[0:v]format=yuv420p,setsar=1[v0]; ` +\n    `[1:v]format=yuv420p,setsar=1[v1]; ` +\n    `[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a0]; ` +\n    `[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a1]; ` +\n    `[v0][v1]xfade=transition=${effect}:duration=${fadeDur}:offset=${offset}[v]; ` +\n    `[a0][a1]acrossfade=d=${fadeDur}[a]\" ` +\n  `-map \"[v]\" -map \"[a]\" ` +\n  `-c:v libx264 -pix_fmt yuv420p -profile:v high -level:v 4.1 -movflags +faststart ` +\n  `-c:a aac -b:a 192k ` +\n  `\"/home/node/processing/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+        "jsCode": "\n// ====== CONFIG INICIAL ======\nconst prefix = ($('START').first().json.TIMESTAMP +'_'+ $('START').first().json.PREFIX|| 'OUT').toString();  \n// se não vier nada, usa \"OUT\"\n\n// Função auxiliar: gera timestamp (em segundos inteiros)\nfunction getTimestamp() {\n  return Math.floor(Date.now() / 1000); \n}\n\n// Entradas vindas do JSON/nodes do n8n\nconst file1  = $('START').first().json.FILE_1;     // ex: \"video1.mp4\"\nconst file2  = $('START').first().json.FILE_2;     // ex: \"video2.mp4\"\nconst effect = ($('START').first().json.EFFECT || 'fade').toString();\nconst channelName = $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME;\n\n\n\nconst fadeDur = 2; // padrão 2s\n\n// Duração total do 1º vídeo (em segundos)\nconst mainDur = Number($('START').first().json.MAIN_VIDEO_DURATION);\n\n// offset = fim do vídeo1 - duração do fade; fallback = 5s\nconst offset  = Number.isFinite(mainDur) ? Math.max(0, mainDur - fadeDur) : 5;\n\n// Helpers para nome\nconst baseName = f => f.replace(/\\.mp4$/i, '');\nconst safe = s => baseName(s).replace(/[^A-Za-z0-9_\\-]/g, '_');\n\n// Nome de saída de referência (sem timestamp)\nconst outFile = `CROSSFADE_${effect}_${safe(file1)}_${safe(file2)}.mp4`;\n\n// Nome final para upload → agora com prefix + timestamp\nconst ts = getTimestamp();\nconst finalOut = `/home/node/processing/${channelName}/READY_TO_UPLOAD_${prefix}_${ts}.mp4`;\n\n// Comando FFmpeg\nconst cmd =\n  `ffmpeg -y ` +\n  `-i \"/home/node/processing/${channelName}/${file1}\" -i \"${file2}\" ` +\n  `-filter_complex \"` +\n    `[0:v]fps=30,settb=AVTB,setpts=PTS-STARTPTS,format=yuv420p,setsar=1[v0]; ` +\n    `[1:v]fps=30,settb=AVTB,setpts=PTS-STARTPTS,format=yuv420p,setsar=1[v1]; ` +\n    `[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a0]; ` +\n    `[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a1]; ` +\n    `[v0][v1]xfade=transition=${effect}:duration=${fadeDur}:offset=${offset}[v]; ` +\n    `[a0][a1]acrossfade=d=${fadeDur}[a]\" ` +\n  `-map \"[v]\" -map \"[a]\" ` +\n  `-c:v libx264 -pix_fmt yuv420p -profile:v high -level:v 4.1 -movflags +faststart ` +\n  `-c:a aac -b:a 192k ` +\n  `\"${finalOut}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile,  \n  finalOutput: finalOut,\n  debug: { MAIN_VIDEO_DURATION: mainDur, fadeDur, offset, prefix, timestamp: ts }\n};\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        160,
-        -80
+        880,
+        -96
       ],
-      "id": "cbaebc04-d4ec-4ad6-a083-19735e8d3d7e",
+      "id": "5fa7e7fc-2809-420e-b8b4-cf3c0ea979b1",
       "name": "C0DE"
     },
     {
@@ -51,10 +50,10 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        464,
-        -80
+        1184,
+        -96
       ],
-      "id": "28881484-e96a-414b-853a-1564cb944894",
+      "id": "3179452f-af18-49a6-8ada-328b05e7c909",
       "name": "COMMAND"
     },
     {
@@ -64,31 +63,89 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        320,
-        -80
+        1040,
+        -96
       ],
-      "id": "d2e5ef82-de3a-4614-ad6f-0f267dddad31",
+      "id": "535e795b-ce26-41fb-a8b8-ffd21e52f9fd",
       "name": "Wait",
       "webhookId": "1982499d-410a-4032-826b-5924d19e4b4a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "156aa925-b11e-4b2f-b75a-1f5b43edccb5",
+              "name": "finalOutput",
+              "value": "={{ $('C0DE').item.json.finalOutput.split('/')[$('C0DE').item.json.finalOutput.split('/').length-1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        -96
+      ],
+      "id": "b60840ce-35af-4d96-9b39-6f51e3272a94",
+      "name": "return"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        -96
+      ],
+      "id": "cc44b4c9-e22e-44c0-9007-a732c29871cf",
+      "name": "@GLOBAL_ANCAPSU"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "FILE_1": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
-          "FILE_2": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
-          "EFFECT": "fade"
-        }
-      }
-    ]
-  },
   "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "C0DE": {
       "main": [
         [
           {
             "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "COMMAND": {
+      "main": [
+        [
+          {
+            "node": "return",
             "type": "main",
             "index": 0
           }
@@ -106,7 +163,7 @@
         ]
       ]
     },
-    "START": {
+    "@GLOBAL_ANCAPSU": {
       "main": [
         [
           {
@@ -118,14 +175,19 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "FILE_1": "FADE_IN_FADE_OUT_OVERLAY_orientated_short_0_EG7qAwnz394_10_55.mp4",
+        "FILE_2": "/home/node/assets/CANAL_ANCAPSU/final_videos/final-short.mp4",
+        "EFFECT": "fadeblack",
+        "MAIN_VIDEO_DURATION": 46.824349,
+        "PREFIX": "IDX_0_SHORT",
+        "TIMESTAMP": 1759606338194
+      }
+    ]
   },
-  "versionId": "048fed01-bee8-475c-bebe-4aadef3b141f",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "9gtSZfrTHOD0gYJb",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }

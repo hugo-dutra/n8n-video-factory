@@ -1,0 +1,165 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $('Edit Fields').item.json.id }}",
+        "value": "={{\n(() => {\n  const raw = String($json.video || '');\n  const obj = JSON.parse(raw);     // levanta erro se não for JSON válido\n  obj.processed = true;            // força true\n  return JSON.stringify(obj);\n})()\n}}\n",
+        "keyType": "string"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -128
+      ],
+      "id": "cd52e17b-eacc-4290-b066-b8c40848be52",
+      "name": "Set Processed",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"channelId\": \"a string\",\n  \"videoId\": \"a string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -576,
+        -128
+      ],
+      "id": "5a5de88a-dc49-4403-8d91-8600a4ac9ce4",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "280fd4ba-2379-457a-889c-93f0d843217a",
+              "name": "id",
+              "value": "=video:{{ $json.channelId }}_{{ $json.videoId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -128
+      ],
+      "id": "4ed91467-c57b-4ef3-be55-46bab0ef88d4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "1118e950-8511-4665-91ff-26e80d943c88",
+      "name": "Get to Process",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ $('Edit Fields').item.json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -128
+      ],
+      "id": "195ba0ac-c711-4883-847a-d01b10da2d2a",
+      "name": "Get after process",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Set Processed": {
+      "main": [
+        [
+          {
+            "node": "Get after process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get to Process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get to Process": {
+      "main": [
+        [
+          {
+            "node": "Set Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Start": [
+      {
+        "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+        "videoId": "TBvmFpv8thI"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}

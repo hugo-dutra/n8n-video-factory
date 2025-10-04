@@ -1,90 +1,28 @@
 {
-  "name": "@CHROMAKEY",
   "nodes": [
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"MAIN_VIDEO\": \"FILENAME_1\",\n  \"CHROMA_VIDEO\": \"FILENAME_2\",\n  \"START\":1,\n  \"END\" : 20,\n  \"KEY_COLOR\": \"0x00FF00\",\n  \"TOL\" :0.3,\n  \"SOFT\" : 0.2,\n  \"X\" :100,\n  \"Y\" :0\n}"
+        "jsonExample": "{  \"FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.mp4\"\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -896,
-        -80
+        -272,
+        -112
       ],
-      "id": "cd654e16-a580-4000-814f-94ae564d3d39",
+      "id": "ccb33857-600d-4eac-8739-05acaded743d",
       "name": "START"
-    },
-    {
-      "parameters": {
-        "command": "={{ $json.command }}"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        96,
-        -80
-      ],
-      "id": "e8eb29f1-8251-4f2b-9f8b-9dca2e3a98f4",
-      "name": "COMMAND"
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "d29754d0-e6ad-43cc-80d5-80a90a726a16",
-              "name": "MAIN_VIDEO",
-              "value": "={{ $json.MAIN_VIDEO }}",
+              "id": "ab7f91b9-a7d9-4a5a-b5a6-189685e0bf2d",
+              "name": "FILENAME",
+              "value": "={{ $json.FILE_NAME}}",
               "type": "string"
-            },
-            {
-              "id": "b74ac4bc-c067-4069-8d28-53097a71c8a2",
-              "name": "CHROMA_VIDEO",
-              "value": "={{ $json.CHROMA_VIDEO }}",
-              "type": "string"
-            },
-            {
-              "id": "fd76496b-a714-44cb-b8dd-faf525a9ad32",
-              "name": "START",
-              "value": "={{ $json.START }}",
-              "type": "number"
-            },
-            {
-              "id": "bb9db54e-7eb5-42a1-ba22-53ca3bd7e813",
-              "name": "END",
-              "value": "={{ $json.END }}",
-              "type": "number"
-            },
-            {
-              "id": "40752876-bd74-434f-bdb2-cfc6bbd89ac2",
-              "name": "KEY_COLOR",
-              "value": "={{ $json.KEY_COLOR }}",
-              "type": "string"
-            },
-            {
-              "id": "6ec48bb9-846a-4f00-8a6c-a55bfd99c7ae",
-              "name": "TOL",
-              "value": "={{ $json.TOL }}",
-              "type": "number"
-            },
-            {
-              "id": "a03bad01-2c67-4648-9d77-cfb9303f094f",
-              "name": "SOFT",
-              "value": "={{ $json.SOFT }}",
-              "type": "number"
-            },
-            {
-              "id": "11436d5d-b212-423d-9d5e-42223f979170",
-              "name": "X",
-              "value": "={{ $json.X }}",
-              "type": "number"
-            },
-            {
-              "id": "3f397228-7464-4dcb-aa2d-716578bc3418",
-              "name": "Y",
-              "value": "={{ $json.Y }}",
-              "type": "number"
             }
           ]
         },
@@ -93,59 +31,104 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -160,
-        -80
+        -128,
+        -112
       ],
-      "id": "4a74e055-cec1-44d1-a8d4-a1bfcfcbb380",
+      "id": "d6830131-e495-48d5-baf1-a34d280df220",
       "name": "VAR"
     },
     {
       "parameters": {
-        "jsCode": "const principal = $input.first().json.MAIN_VIDEO;   // ex: \"video.mp4\"\nconst animacao  = $input.first().json.CHROMA_VIDEO; // ex: \"inscreva.mp4\"\n\nconst START = Number($input.first().json.START ?? 0);\nconst END   = $input.first().json.END;\n\nconst KEY_COLOR = ($input.first().json.KEY_COLOR ?? '0x00FF00').toString();\nconst TOL       = Number($input.first().json.TOL ?? 0.3);\nconst SOFT      = Number($input.first().json.SOFT ?? 0.2);\n\n// Posição opcional\nlet posX = $input.first().json.X;\nlet posY = $input.first().json.Y;\n\n// Se não informar X/Y → canto inferior direito com margem\nif (!posX) posX = 'W-w-20';\nif (!posY) posY = 'H-h-20';\n\n// Nome seguro p/ saída\nconst safe = f => f.replace(/\\.mp4$/i, '').replace(/[^A-Za-z0-9_\\-]/g, '_');\nconst stamp = END != null ? `${START}_${END}` : `${START}`;\nconst outFile = `MERGED_${safe(principal)}_${safe(animacao)}_${stamp}.mp4`;\n\n// enable entre start/end\nconst enableExpr = (END != null)\n  ? `between(t\\\\,${START}\\\\,${END})`\n  : `gte(t\\\\,${START})`;\n\nconst cmd =\n  `ffmpeg -y ` +\n  `-i \"/home/node/processing/${principal}\" -i \"/home/node/assets/${animacao}\" ` +\n  `-filter_complex \"` +\n    `[1:v]colorkey=${KEY_COLOR}:${TOL}:${SOFT}[ck];` +\n    `[0:v][ck]overlay=${posX}:${posY}:enable='${enableExpr}'[vout]\" ` +\n  `-map \"[vout]\" -map 0:a ` +\n  `-c:v libx264 -pix_fmt yuv420p -profile:v high -level:v 4.1 -movflags +faststart ` +\n  `-c:a copy ` +\n  `\"/home/node/processing/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4aa43995-1d25-4eac-949f-6ed21d4ab940",
+              "name": "=RESULT",
+              "value": "={{ $json.exitCode === 0? \"SUCCESS\":\"ERROR\"}}",
+              "type": "string"
+            },
+            {
+              "id": "9f2ff60c-73ff-49b8-993b-437ec8110df2",
+              "name": "FILENAME",
+              "value": "={{ $('VAR').item.json.FILENAME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        -32,
-        -80
+        432,
+        -176
       ],
-      "id": "81ca2fd0-c643-4155-af8a-3b71fdafa965",
-      "name": "C0DE"
+      "id": "c8cd484b-bc7a-47c5-9bee-98c02274d89c",
+      "name": "RESULT"
     },
     {
       "parameters": {
-        "content": "## 📌 Parâmetros para sobreposição com FFmpeg\n\n- **MAIN_VIDEO** → vídeo principal (ex.: `video.mp4`)  \n- **CHROMA_VIDEO** → vídeo com fundo verde/animado (ex.: `inscreva.mp4`)  \n- **START** → tempo em segundos para iniciar o overlay (ex.: `5`)  \n- **END** → tempo em segundos para encerrar o overlay (ex.: `12`)  \n   - se não for informado, o overlay vai do `START` até o fim do vídeo  \n- **X** → posição horizontal do overlay  \n   - valores possíveis: número fixo (`50`) ou fórmula (`W-w-20`)  \n   - se não informado → `W-w-20` (canto inferior direito)  \n- **Y** → posição vertical do overlay  \n   - valores possíveis: número fixo (`100`) ou fórmula (`H-h-20`)  \n   - se não informado → `H-h-20` (canto inferior direito)  \n- **KEY_COLOR** → cor do chroma key (padrão: `0x00FF00` = verde)  \n- **TOL** → tolerância da remoção da cor (padrão: `0.3`)  \n- **SOFT** → suavização das bordas do recorte (padrão: `0.2`)  \n\n### 🖼️ Exemplos de posições (X,Y)\n- **Canto inferior direito** → `X=W-w-20`, `Y=H-h-20`  \n- **Centro** → `X=(W-w)/2`, `Y=(H-h)/2`  \n- **Canto superior esquerdo** → `X=20`, `Y=20`  \n",
-        "height": 528,
-        "width": 592,
-        "color": 5
+        "errorMessage": "CHANNEL ID NOT FOUND"
       },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -784,
-        -96
-      ],
+      "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
-      "id": "60ed30b8-fb4c-44b9-8a83-299693ac0991",
-      "name": "Sticky Note"
+      "position": [
+        256,
+        -16
+      ],
+      "id": "4663af68-b585-4712-affe-2403f7297bde",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -y \\\n  -i \"/home/node/assets/{{ $('HAS_FILENAME_ID').item.json.FILENAME }}\" \\\n  -vf \"format=rgba,boxblur=2:1,chromakey=0x00FF00:0.30:0.08,format=rgba,fade=t=in:st=0:d=0.5:alpha=1\" \\\n  -c:v libvpx-vp9 -pix_fmt yuva420p -crf 28 -b:v 0 \\\n  -an -shortest \\\n  \"/home/node/processing/NO_BG_{{ $('HAS_FILENAME_ID').item.json.FILENAME.replace(/\\.[^.]+$/, '') }}.webm\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -176
+      ],
+      "id": "60fbf97a-3ac7-4a21-9ec1-63b5d39d300a",
+      "name": "SPLIT",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "= {{ $('START').item.json.FILE_NAME }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -112
+      ],
+      "id": "3b9d41da-91f3-430f-8de7-5a1064ad3b7d",
+      "name": "HAS_FILENAME_ID"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "MAIN_VIDEO": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
-          "CHROMA_VIDEO": "overlay_02.mp4",
-          "START": 0,
-          "END": 200,
-          "KEY_COLOR": "0x00FF00",
-          "TOL": 0.3,
-          "SOFT": 0.2,
-          "X": 100,
-          "Y": 0
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
@@ -162,18 +145,36 @@
       "main": [
         [
           {
-            "node": "C0DE",
+            "node": "HAS_FILENAME_ID",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "C0DE": {
+    "SPLIT": {
       "main": [
         [
           {
-            "node": "COMMAND",
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_FILENAME_ID": {
+      "main": [
+        [
+          {
+            "node": "SPLIT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
             "type": "main",
             "index": 0
           }
@@ -181,14 +182,14 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "FILE_NAME": "overlay_01.mp4"
+      }
+    ]
   },
-  "versionId": "16929ecd-54df-4f91-82f3-4d78a0d88383",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "6nUIHD7vPkpzpiWg",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }

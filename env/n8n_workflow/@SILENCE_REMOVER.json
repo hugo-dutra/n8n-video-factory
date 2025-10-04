@@ -109,13 +109,13 @@
             {
               "id": "0c8190ba-3620-4752-b675-0b4a495b81b9",
               "name": "audioPath",
-              "value": "=/home/node/download/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}.mp4",
+              "value": "=/home/node/download/CANAL_ANCAPSU/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}.mp4",
               "type": "string"
             },
             {
               "id": "a02d189b-d4a3-47f2-82c7-f02a663b6076",
               "name": "videoPath",
-              "value": "=/home/node/download/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}.mp4",
+              "value": "=/home/node/download/CANAL_ANCAPSU/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}.mp4",
               "type": "string"
             }
           ]
