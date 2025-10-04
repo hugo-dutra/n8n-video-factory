@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "f0da06f1-dbb7-4b79-8114-8c18c8e083f8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e437a1bd-4a0b-42be-846d-caff4c5e5e74",
+              "name": "CHANNEL_NAME",
+              "value": "CANAL_ANCAPSU",
+              "type": "string"
+            },
+            {
+              "id": "5bec419c-553f-4463-a6c2-26a7b2684eb2",
+              "name": "CHANNEL_ID",
+              "value": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+              "type": "string"
+            },
+            {
+              "id": "7335c9ca-4ed6-4fd5-bb77-f694a202e523",
+              "name": "LAST_N_HOURS",
+              "value": 24,
+              "type": "string"
+            },
+            {
+              "id": "dcbf1dee-e038-4f05-a50d-f9b0f4980282",
+              "name": "MIN_DURATION",
+              "value": "182",
+              "type": "string"
+            },
+            {
+              "id": "1f6ea11f-e6a3-421f-a25b-00f915e7381b",
+              "name": "MAX_DURATION",
+              "value": "1800",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        16
+      ],
+      "id": "57a60776-aeed-4086-bf2e-801dfa6885fe",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}
