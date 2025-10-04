@@ -21,25 +21,25 @@
             {
               "id": "b676ba59-4a9e-4c1b-9348-ae5174152a33",
               "name": "CHANNEL_ID",
-              "value": "={{ $json['CHANNEL_ID'] }}",
+              "value": "={{ $('START').item.json.CHANNEL_ID }}",
               "type": "string"
             },
             {
               "id": "773580a0-eb6b-4fd6-8e1e-a74eefd32d9f",
               "name": "LAST_N_HOURS",
-              "value": "={{ $json.LAST_N_HOURS }}",
+              "value": "={{ $('START').item.json.LAST_N_HOURS }}",
               "type": "string"
             },
             {
               "id": "b00d291c-689a-4d03-beda-2e9780788c2b",
               "name": "MIN_DURATION",
-              "value": "={{ $json.MIN_DURATION }}",
+              "value": "={{ $('START').item.json.MIN_DURATION }}",
               "type": "string"
             },
             {
               "id": "4b63f9ca-d9bc-4db2-9bd1-1ea1bbad1bc0",
               "name": "MAX_DURATION",
-              "value": "={{ $json.MAX_DURATION }}",
+              "value": "={{ $('START').item.json.MAX_DURATION }}",
               "type": "string"
             }
           ]
@@ -67,7 +67,7 @@
           "conditions": [
             {
               "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
-              "leftValue": "={{ $json['CHANNEL_ID'] }}",
+              "leftValue": "={{ $('START').item.json.CHANNEL_ID }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
