@@ -1,10 +1,9 @@
 {
-  "name": "@AUDIO_EXTRACTOR",
   "nodes": [
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"PATH_SOURCE\": \"a string\",\n   \"PATH_DESTINATION\": \"a string\"\n}"
+        "jsonExample": "{\n  \"VIDEO_ID\": \"a string\"\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
@@ -20,15 +19,9 @@
         "assignments": {
           "assignments": [
             {
-              "id": "16e5b92f-08a9-48a6-a986-c39126c77064",
-              "name": "PATH_SOURCE",
-              "value": "={{ $json.PATH_SOURCE }}",
-              "type": "string"
-            },
-            {
-              "id": "9ee4b510-8740-46d7-ad19-b6f49e1565d3",
-              "name": "PATH_DESTINATION",
-              "value": "={{ $json.PATH_DESTINATION }}",
+              "id": "dff10386-aac1-4bf2-a53e-24e2e7441381",
+              "name": "VIDEO_ID",
+              "value": "={{ $json.VIDEO_ID }}",
               "type": "string"
             }
           ]
@@ -56,17 +49,7 @@
           "conditions": [
             {
               "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
-              "leftValue": "={{ $json.PATH_SOURCE }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "9b457fb5-5d00-4b9c-97cc-43f797390700",
-              "leftValue": "={{ $json.PATH_DESTINATION }}",
+              "leftValue": "={{ $json.VIDEO_ID }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -110,12 +93,6 @@
               "name": "=RESULT",
               "value": "={{ $json.exitCode === 0? \"SUCCESS\":\"ERROR\"}}",
               "type": "string"
-            },
-            {
-              "id": "b0776936-91fa-4afd-aca4-57408a6a4761",
-              "name": "PATH_DESTINATION",
-              "value": "={{ $('START').item.json.PATH_DESTINATION }}",
-              "type": "string"
             }
           ]
         },
@@ -124,38 +101,85 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        496,
-        -192
+        848,
+        -208
       ],
       "id": "525dc60b-0f7f-4be9-90f6-0c0d45cd1623",
       "name": "RESULT"
     },
     {
       "parameters": {
-        "command": "=ffmpeg -y -i \"{{ $json.PATH_SOURCE }}\" -vn -c:a libmp3lame -q:a 2 \"{{ $json.PATH_DESTINATION }}\"\n"
+        "command": "=IN=\"/home/node/download/CANAL_ANCAPSU/{{ $('START').first().json.VIDEO_ID }}/{{ $('START').first().json.VIDEO_ID }}.mp4\"; EXT=\"${EXT:-mp3}\"; \\\nDIR=\"$(dirname \"$IN\")\"; BASE=\"$(basename \"$IN\")\"; NAME=\"${BASE%.*}\"; \\\nffmpeg -y -i \"$IN\" -vn -c:a libmp3lame -q:a 2 \"$DIR/$NAME.$EXT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        336,
-        -192
+        688,
+        -208
       ],
       "id": "ca219805-248e-4a2d-9ea8-c983dab5af66",
       "name": "EXTRACT",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DOfnd0M834V8kbv2",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/DOfnd0M834V8kbv2",
+          "cachedResultName": "@CREATE_FOLDER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "path": "=/home/node/download/CANAL_ANCAPSU/{{ $('START').first().json.VIDEO_ID }}"
+          },
+          "matchingColumns": [
+            "path"
+          ],
+          "schema": [
+            {
+              "id": "path",
+              "displayName": "path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        -208
+      ],
+      "id": "f83cf0ca-34b7-4b64-a11a-7ebe5966c5e9",
+      "name": "CREATE_FOLDER"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        -208
+      ],
+      "id": "31a96440-0ad2-4430-831c-fb1fad3927b4",
+      "name": "Wait",
+      "webhookId": "547564a2-960d-47a6-98d0-0f45f7c59244"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "PATH_SOURCE": "/home/node/processing/_LMpN6o26E0_0_5.mp4",
-          "PATH_DESTINATION": "/home/node/processing/_LMpN6o26E0_0_5.mp3"
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
@@ -183,7 +207,7 @@
       "main": [
         [
           {
-            "node": "EXTRACT",
+            "node": "CREATE_FOLDER",
             "type": "main",
             "index": 0
           }
@@ -207,16 +231,38 @@
           }
         ]
       ]
+    },
+    "CREATE_FOLDER": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "EXTRACT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "1_N7Iri0xhs"
+      }
+    ]
   },
-  "versionId": "e1470ddd-dba7-4a68-b988-297bd712b411",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "sk6qHDqmsTEMLNsp",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }

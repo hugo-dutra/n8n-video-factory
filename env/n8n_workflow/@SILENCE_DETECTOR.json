@@ -124,7 +124,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Entrada esperada (de um Execute Command, por exemplo):\n// items[0].json.stdout = \"silence_start: 257.047\\nsilence_end: 259.402 | silence_duration: 2.35465\\n...\"\n//\n// Saída deste Code:\n// [{ json: { periods: [ { startSilence, endeSilence, duration }, ... ] } }]\n\nfunction parseSilences(stdout) {\n  const lines = String(stdout || \"\").split(/\\r?\\n/).filter(Boolean);\n  const periods = [];\n  let start = null;\n\n  for (const line of lines) {\n    // silence_start: <num>\n    let m = line.match(/silence_start:\\s*([0-9.]+)/);\n    if (m) {\n      start = parseFloat(m[1]);\n      continue;\n    }\n\n    // silence_end: <num> | silence_duration: <num>\n    m = line.match(/silence_end:\\s*([0-9.]+)\\s*(?:\\|\\s*silence_duration:\\s*([0-9.]+))?/);\n    if (m) {\n      const end = parseFloat(m[1]);\n      const duration = m[2] != null ? parseFloat(m[2]) : (start != null ? (end - start) : undefined);\n\n      if (start != null) {\n        periods.push({\n          startSilence: start,\n          endeSilence: end,\n          ...(duration != null ? { duration } : {}),\n        });\n      } else {\n        // Caso raro: end sem start anterior — ainda assim registramos\n        periods.push({\n          startSilence: null,\n          endeSilence: end,\n          ...(duration != null ? { duration } : {}),\n        });\n      }\n      start = null;\n    }\n  }\n  return periods;\n}\n\nreturn items.map(item => {\n  const stdout = item?.json?.stdout ?? item?.stdout ?? \"\";\n  const periods = parseSilences(stdout);\n  return { json: { periods } };\n});\n"
+        "jsCode": "// Entrada esperada (de um Execute Command, por exemplo):\n// items[0].json.stdout = \"silence_start: 257.047\\nsilence_end: 259.402 | silence_duration: 2.35465\\n...\"\n//\n// Saída deste Code:\n// [{ json: { periods: [ { startSilence, endeSilence, duration }, ... ] } }]\n\nfunction parseSilences(stdout) {\n  const lines = String(stdout || \"\").split(/\\r?\\n/).filter(Boolean);\n  const periods = [];\n  let start = null;\n\n  for (const line of lines) {\n    // silence_start: <num>\n    let m = line.match(/silence_start:\\s*([0-9.]+)/);\n    if (m) {\n      start = parseFloat(m[1]);\n      continue;\n    }\n\n    // silence_end: <num> | silence_duration: <num>\n    m = line.match(/silence_end:\\s*([0-9.]+)\\s*(?:\\|\\s*silence_duration:\\s*([0-9.]+))?/);\n    if (m) {\n      const end = parseFloat(m[1]);\n      const duration = m[2] != null ? parseFloat(m[2]) : (start != null ? (end - start) : undefined);\n\n      if (start != null) {\n        periods.push({\n          startSilence: start,\n          endSilence: end,\n          ...(duration != null ? { duration } : {}),\n        });\n      } else {\n        // Caso raro: end sem start anterior — ainda assim registramos\n        periods.push({\n          startSilence: null,\n          endSilence: end,\n          ...(duration != null ? { duration } : {}),\n        });\n      }\n      start = null;\n    }\n  }\n  return periods;\n}\n\nreturn items.map(item => {\n  const stdout = item?.json?.stdout ?? item?.stdout ?? \"\";\n  const periods = parseSilences(stdout);\n  return { json: { periods } };\n});\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -203,7 +203,7 @@
   "pinData": {
     "START": [
       {
-        "FILE_PATH": "/home/node/download/1_N7Iri0xhs/1_N7Iri0xhs.mp4"
+        "FILE_PATH": "/home/node/download/CANAL_ANCAPSU/1_N7Iri0xhs/1_N7Iri0xhs.mp4"
       }
     ]
   },

@@ -1,5 +1,4 @@
 {
-  "name": "@DOWNLOAD_THUMBNAIL",
   "nodes": [
     {
       "parameters": {
@@ -40,7 +39,7 @@
     },
     {
       "parameters": {
-        "command": "=yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg \\\n  -o \"/home/node/download/{{$('START').item.json.VIDEO_ID}}/{{$('START').item.json.VIDEO_ID}}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{$('START').item.json.VIDEO_ID}}\"\n"
+        "command": "=yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg \\\n  -o \"/home/node/download/CANAL_ANCAPSU/{{$('START').item.json.VIDEO_ID}}/{{$('START').item.json.VIDEO_ID}}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{$('START').item.json.VIDEO_ID}}\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -129,12 +128,13 @@
           "__rl": true,
           "value": "DOfnd0M834V8kbv2",
           "mode": "list",
+          "cachedResultUrl": "/workflow/DOfnd0M834V8kbv2",
           "cachedResultName": "@CREATE_FOLDER"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "path": "=/home/node/download/{{ $('START').item.json.VIDEO_ID}}"
+            "path": "=/home/node/download/CANAL_ANCAPSU/{{ $('START').item.json.VIDEO_ID}}"
           },
           "matchingColumns": [
             "path"
@@ -163,18 +163,9 @@
         -208
       ],
       "id": "35469c71-f6d4-4ac3-a907-5ece472c0b32",
-      "name": "Execute Workflow"
+      "name": "Create Folder"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "VIDEO_ID": "1tNpw8a_kRw"
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
@@ -198,11 +189,22 @@
         ]
       ]
     },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "HAS_CHANNEL_ID": {
       "main": [
         [
           {
-            "node": "Execute Workflow",
+            "node": "Create Folder",
             "type": "main",
             "index": 0
           }
@@ -216,18 +218,7 @@
         ]
       ]
     },
-    "DOWNLOAD": {
-      "main": [
-        [
-          {
-            "node": "RESULT",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Workflow": {
+    "Create Folder": {
       "main": [
         [
           {
@@ -239,14 +230,14 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "1tNpw8a_kRw"
+      }
+    ]
   },
-  "versionId": "b973bdbb-0b4e-4a08-bdcf-6d3a41a11dab",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
-  },
-  "id": "BQu7fXvxcZR1av6F",
-  "tags": []
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }
