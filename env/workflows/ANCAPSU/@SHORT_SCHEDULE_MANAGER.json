@@ -1,0 +1,272 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "37ceebde-5b84-4ecc-843f-30fc8ecbbc5e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "LM60YIwjz0cDTu3u",
+          "mode": "list",
+          "cachedResultName": "SHORT_SCHEDULE",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/LM60YIwjz0cDTu3u"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "LAST_APPOINTMENT",
+              "condition": "isTrue"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        176,
+        0
+      ],
+      "id": "00290cc4-3f26-449b-b8f5-bef6549f4d8e",
+      "name": "Last Appointment"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "LM60YIwjz0cDTu3u",
+          "mode": "list",
+          "cachedResultName": "SHORT_SCHEDULE",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/LM60YIwjz0cDTu3u"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $json.id == 34 ? 1 : $json.id + 1 }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "e6688a34-1dce-4f86-9347-46c27013b9b0",
+      "name": "Current Appointment"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "LM60YIwjz0cDTu3u",
+          "mode": "list",
+          "cachedResultName": "SHORT_SCHEDULE",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/LM60YIwjz0cDTu3u"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Last Appointment').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LAST_APPOINTMENT": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "APPOINTMENT",
+              "displayName": "APPOINTMENT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "LAST_APPOINTMENT",
+              "displayName": "LAST_APPOINTMENT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        544,
+        0
+      ],
+      "id": "5b58be39-bc88-4029-a070-07620af8213b",
+      "name": "Update Last Appointment"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "LM60YIwjz0cDTu3u",
+          "mode": "list",
+          "cachedResultName": "SHORT_SCHEDULE",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/LM60YIwjz0cDTu3u"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Current Appointment').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LAST_APPOINTMENT": true
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "APPOINTMENT",
+              "displayName": "APPOINTMENT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "LAST_APPOINTMENT",
+              "displayName": "LAST_APPOINTMENT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        736,
+        0
+      ],
+      "id": "ec0d6ce1-f43f-420a-b7b3-418296fd9d21",
+      "name": "Update Current Appointment"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "275ce5e5-c53e-45a2-abbf-5622963611f8",
+              "name": "APPOINTMENT",
+              "value": "={{ $('Last Appointment').item.json.APPOINTMENT }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        0
+      ],
+      "id": "9786ae5f-320d-45ab-8f66-a3bb39079b80",
+      "name": "Return Appointment"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Last Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last Appointment": {
+      "main": [
+        [
+          {
+            "node": "Current Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Current Appointment": {
+      "main": [
+        [
+          {
+            "node": "Update Last Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Last Appointment": {
+      "main": [
+        [
+          {
+            "node": "Update Current Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Current Appointment": {
+      "main": [
+        [
+          {
+            "node": "Return Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}
