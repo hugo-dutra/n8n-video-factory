@@ -5,7 +5,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -704,
+        -688,
         -48
       ],
       "id": "7d047811-9fd3-4901-a8f4-bce8f95f8200",
@@ -61,7 +61,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        48,
+        224,
         -32
       ],
       "id": "7b13fc1d-7610-4844-9aff-2e6a7a11eca6",
@@ -104,8 +104,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        48,
-        -208
+        224,
+        -224
       ],
       "id": "82e27bc0-7bf4-4069-aaa0-5adfe4333a35",
       "name": "Download Video"
@@ -147,11 +147,13 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        48,
-        160
+        32,
+        544
       ],
       "id": "66162901-955f-4d49-8d88-bb4bd3c15371",
-      "name": "Extract Audio"
+      "name": "Extract Audio",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -165,7 +167,7 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "FILE_PATH": "=/home/node/download/{{ $('Loop Over Items').item.json.json.videoId}}/{{ $('Loop Over Items').item.json.json.videoId}}.mp4"
+            "FILE_PATH": "=/home/node/download/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/{{ $('Loop Over Items').item.json.json.videoId}}/{{ $('Loop Over Items').item.json.json.videoId}}.mp4"
           },
           "matchingColumns": [
             "FILE_PATH"
@@ -190,8 +192,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        240,
-        160
+        224,
+        544
       ],
       "id": "96ffe14f-94ae-4438-89e3-bc164abb68c0",
       "name": "Silence Detector"
@@ -245,8 +247,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        432,
-        160
+        400,
+        544
       ],
       "name": "Silence Remover",
       "id": "5ff848e2-410b-452c-a14c-122a70b37cba"
@@ -326,8 +328,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1040,
-        160
+        1024,
+        544
       ],
       "id": "af707433-4825-4022-b9be-5f5f607b8b55",
       "name": "Merge"
@@ -339,8 +341,8 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1216,
-        160
+        1200,
+        544
       ],
       "id": "6e630050-53f2-4522-a064-d12b9a56499c",
       "name": "Remover Temporary Files"
@@ -352,8 +354,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1584,
-        160
+        1568,
+        544
       ],
       "id": "6585562f-acf5-46d9-84ca-00e45ea02560",
       "name": "Wait",
@@ -406,8 +408,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        832,
-        48
+        816,
+        432
       ],
       "name": "@PROCESS_SHORTS",
       "id": "0305fba0-7e00-4b8d-bb86-8ba3f514fcd6"
@@ -459,8 +461,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        832,
-        272
+        816,
+        656
       ],
       "name": "@PROCESS_LONG",
       "id": "11bbc88c-0d53-4d17-a772-69a594f6f088"
@@ -502,8 +504,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        624,
-        160
+        608,
+        544
       ],
       "id": "0a378c61-29eb-4069-9d71-90080e6aee45",
       "name": "WHISPER_LOCAL"
@@ -576,11 +578,12 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1392,
-        160
+        1376,
+        544
       ],
       "id": "45127896-b90e-411f-afdf-20c14fb8988d",
-      "name": "@UPLOAD"
+      "name": "@UPLOAD",
+      "disabled": true
     },
     {
       "parameters": {
@@ -628,8 +631,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1776,
-        160
+        1744,
+        544
       ],
       "id": "de0b126f-7b1b-43fa-a7bd-5d8d2b782398",
       "name": "@SET_VIDEO_AS_PROCESSED"
@@ -652,7 +655,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -528,
+        -512,
         -48
       ],
       "id": "27cdd236-ef0d-4cdd-b338-58748a16a827",
@@ -669,11 +672,221 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        48,
-        -368
+        224,
+        -560
       ],
       "id": "50339a31-f366-4f17-a9f4-572f101f51db",
-      "name": "Shorts Enviados",
+      "name": "PROCESSO CONCLUÍDO",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "=/bin/bash -lc 'dir=\"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}\"; [ -n \"$dir\" ] && [ -d \"$dir\" ] && find \"$dir\" -maxdepth 1 -type f -delete'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        656
+      ],
+      "id": "b751cc2a-473b-41d5-b202-1024e95e1a34",
+      "name": "Limpar Pasta de Trabalho"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=INICIANDO PROCESSAMENTO DO VIDEO: {{ $('Loop Over Items').first().json.json.url }}\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -400
+      ],
+      "id": "e64e7449-806a-4d29-be9f-6258cebfdffa",
+      "name": "NOTIFICAR INICIO",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Notificações\n",
+        "height": 208,
+        "width": 2144,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        192
+      ],
+      "id": "0cb66ce2-5b06-45d2-a1f9-5ed02bc418a9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Processo princial",
+        "height": 432,
+        "width": 2320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        416
+      ],
+      "id": "bf17bd03-8ada-4f15-9a93-739440e28310",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Detectando Silêncios...\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        224,
+        256
+      ],
+      "id": "680f051a-83cf-456a-a9a6-a0f365022786",
+      "name": "Notify Silence Detector",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Extraindo audio...\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        32,
+        256
+      ],
+      "id": "8aa227ef-9e44-4c75-9b1b-0bbd5511bfea",
+      "name": "Notify extract Audio",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Removendo silêncios...\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        416,
+        256
+      ],
+      "id": "d407af3b-3311-4fee-a262-3808bacc0733",
+      "name": "Notify Remove Silences",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Iniciando transcrição...\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        608,
+        256
+      ],
+      "id": "68782f0f-e46a-4297-b2f6-7843562aba07",
+      "name": "Notify Whinsper",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Iniciando processamento do vídeo...\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        816,
+        256
+      ],
+      "id": "87bc003b-17fe-4912-914f-df2eb178fc48",
+      "name": "Notify Vídeo Process",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Iniciando Upload...\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        256
+      ],
+      "id": "023c69b6-4d5c-4292-a87f-9e6e121b37a9",
+      "name": "Notify Upload",
       "credentials": {
         "evolutionApi": {
           "id": "FEzvaAKjYtvZZ6HQ",
@@ -698,14 +911,19 @@
       "main": [
         [
           {
-            "node": "Shorts Enviados",
+            "node": "PROCESSO CONCLUÍDO",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Extract Audio",
+            "node": "NOTIFICAR INICIO",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Video",
             "type": "main",
             "index": 0
           },
@@ -715,7 +933,12 @@
             "index": 0
           },
           {
-            "node": "Download Video",
+            "node": "Extract Audio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify extract Audio",
             "type": "main",
             "index": 0
           }
@@ -739,6 +962,11 @@
             "node": "Silence Detector",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Notify Silence Detector",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -750,6 +978,11 @@
             "node": "Silence Remover",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Notify Remove Silences",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -757,6 +990,11 @@
     "Silence Remover": {
       "main": [
         [
+          {
+            "node": "Notify Whinsper",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "WHISPER_LOCAL",
             "type": "main",
@@ -792,6 +1030,11 @@
         [
           {
             "node": "@UPLOAD",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Upload",
             "type": "main",
             "index": 0
           }
@@ -843,6 +1086,11 @@
             "node": "@PROCESS_SHORTS",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Notify Vídeo Process",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -860,7 +1108,13 @@
     },
     "@SET_VIDEO_AS_PROCESSED": {
       "main": [
-        []
+        [
+          {
+            "node": "Limpar Pasta de Trabalho",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "@GLOBAL_ANCAPSU": {
@@ -873,1437 +1127,20 @@
           }
         ]
       ]
+    },
+    "Limpar Pasta de Trabalho": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "pinData": {
-    "START": [
-      {}
-    ],
-    "Download Thumbnail": [
-      {
-        "RESULT": "SUCCESS"
-      }
-    ],
-    "Download Video": [
-      {
-        "RESULT": "SUCCESS",
-        "FILENAME": "EG7qAwnz394.mp4"
-      }
-    ],
-    "Extract Audio": [
-      {
-        "RESULT": "SUCCESS"
-      }
-    ],
-    "Silence Detector": [
-      {
-        "periods": []
-      }
-    ],
-    "Silence Remover": [
-      {
-        "RESULT": "SUCCESS",
-        "audio": "EG7qAwnz394.audio.mp3",
-        "video": "EG7qAwnz394.video.mp4"
-      }
-    ],
-    "Find New Videos": [
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_EG7qAwnz394",
-          "title": "TRUMP pode VIR ao BRASIL para SE ENCONTRAR com BOLSONARO... EU ACHO extremamente IMPROVÁVEL",
-          "duration": "13:41",
-          "durationSeconds": 821,
-          "publishedAt": "2025-09-26 18:25:52",
-          "publishedAtISO": "2025-09-26T18:25:52Z",
-          "publishedAtEpoch": 1758911152,
-          "url": "https://www.youtube.com/watch?v=EG7qAwnz394",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "EG7qAwnz394",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Cm3wGX8s9dw",
-          "title": "TRUMP quer SUBSTITUIR o PETRODÓLAR pelo CRYPTODÓLAR: O DOLÁR THETER como 2a CAMADA do BITCOIN",
-          "duration": "23:31",
-          "durationSeconds": 1411,
-          "publishedAt": "2025-10-03 23:15:00",
-          "publishedAtISO": "2025-10-03T23:15:00Z",
-          "publishedAtEpoch": 1759533300,
-          "url": "https://www.youtube.com/watch?v=Cm3wGX8s9dw",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Cm3wGX8s9dw",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_reFY1ub8wgk",
-          "title": "LULA chora com AMIGOS ESQUERDISTAS sem VOTOS: ONDE foi que ERRAMOS? POR QUE a ESQUERDA está na M...?",
-          "duration": "14:43",
-          "durationSeconds": 883,
-          "publishedAt": "2025-09-24 23:21:36",
-          "publishedAtISO": "2025-09-24T23:21:36Z",
-          "publishedAtEpoch": 1758756096,
-          "url": "https://www.youtube.com/watch?v=reFY1ub8wgk",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "reFY1ub8wgk",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_IiW_SIpytFs",
-          "title": "POSTAGEM com ORDEM de \"APAGAMENTO MUNDIAL\" são CRITICAS TRIVIAIS de DISCUSSÃO na INTERNET",
-          "duration": "11:38",
-          "durationSeconds": 698,
-          "publishedAt": "2025-09-06 16:15:01",
-          "publishedAtISO": "2025-09-06T16:15:01Z",
-          "publishedAtEpoch": 1757175301,
-          "url": "https://www.youtube.com/watch?v=IiW_SIpytFs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "IiW_SIpytFs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_I7pBY4fEH2Y",
-          "title": "ANISTIA a BOLSONARO GANHA FORÇA em BRASÍLIA: OPOSIÇÃO espera VOTAÇÃO essa SEMANA",
-          "duration": "14:29",
-          "durationSeconds": 869,
-          "publishedAt": "2025-09-15 20:15:01",
-          "publishedAtISO": "2025-09-15T20:15:01Z",
-          "publishedAtEpoch": 1757967301,
-          "url": "https://www.youtube.com/watch?v=I7pBY4fEH2Y",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "I7pBY4fEH2Y",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_7yWM-wf6H58",
-          "title": "FILHA de FACHIN é AGREDIDA na UFPR em situação SIMILAR a JEFREY CHIQUINI e GUILHERME KILTER",
-          "duration": "10:56",
-          "durationSeconds": 656,
-          "publishedAt": "2025-09-16 09:15:01",
-          "publishedAtISO": "2025-09-16T09:15:01Z",
-          "publishedAtEpoch": 1758014101,
-          "url": "https://www.youtube.com/watch?v=7yWM-wf6H58",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "7yWM-wf6H58",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_F4nBHarrivE",
-          "title": "GLOBO na mira do GOVERNO AMERICANO por chamar CHARLIE KIRK de \"EXTREMISTA\": SEM COPA ano que VEM?",
-          "duration": "9:14",
-          "durationSeconds": 554,
-          "publishedAt": "2025-09-14 09:15:01",
-          "publishedAtISO": "2025-09-14T09:15:01Z",
-          "publishedAtEpoch": 1757841301,
-          "url": "https://www.youtube.com/watch?v=F4nBHarrivE",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "F4nBHarrivE",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_bkmiOJe2ICI",
-          "title": "MORAES autoriza BOLSONARO a PARTICIPAR do PODCAST CAFÉ com FERRI: EXCELENTE OPORTUNIDADE",
-          "duration": "13:05",
-          "durationSeconds": 785,
-          "publishedAt": "2025-10-02 20:21:53",
-          "publishedAtISO": "2025-10-02T20:21:53Z",
-          "publishedAtEpoch": 1759436513,
-          "url": "https://www.youtube.com/watch?v=bkmiOJe2ICI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "bkmiOJe2ICI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q__9-g_gzdNjI",
-          "title": "CASO BOLSONARO repete CASO DREYFUS: ACUSAÇÕES sem PROVAS, PROCESSO ACELERADO, PERSEGUIÇÃO POLÍTICA",
-          "duration": "13:04",
-          "durationSeconds": 784,
-          "publishedAt": "2025-09-15 18:15:04",
-          "publishedAtISO": "2025-09-15T18:15:04Z",
-          "publishedAtEpoch": 1757960104,
-          "url": "https://www.youtube.com/watch?v=_9-g_gzdNjI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "_9-g_gzdNjI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_RL2es3mX3GY",
-          "title": "PL da DOSIMETRIA soltaria TODO MUNDO e pena de BOLSONARO seria de 1 ANO e 7 MESES, mas tem um PORÉM",
-          "duration": "14:23",
-          "durationSeconds": 863,
-          "publishedAt": "2025-09-24 16:15:03",
-          "publishedAtISO": "2025-09-24T16:15:03Z",
-          "publishedAtEpoch": 1758730503,
-          "url": "https://www.youtube.com/watch?v=RL2es3mX3GY",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "RL2es3mX3GY",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_hP6M4oIdnGU",
-          "title": "BRASIL pode ser CLASSIFICADO como \"PATROCINADOR de PRISÕES ARBITRÁRIAS\" e receber MAIS SANÇÕES",
-          "duration": "12:24",
-          "durationSeconds": 744,
-          "publishedAt": "2025-09-06 23:15:02",
-          "publishedAtISO": "2025-09-06T23:15:02Z",
-          "publishedAtEpoch": 1757200502,
-          "url": "https://www.youtube.com/watch?v=hP6M4oIdnGU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "hP6M4oIdnGU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_DccU_aBJ9ic",
-          "title": "EMPRESÁRIOS BRASILEIROS estão TRIANGULANDO com ARGENTINA para CONTORNAR TARIFAÇO do TRUMP",
-          "duration": "12:19",
-          "durationSeconds": 739,
-          "publishedAt": "2025-09-06 18:15:00",
-          "publishedAtISO": "2025-09-06T18:15:00Z",
-          "publishedAtEpoch": 1757182500,
-          "url": "https://www.youtube.com/watch?v=DccU_aBJ9ic",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "DccU_aBJ9ic",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UdGMP-huxpo",
-          "title": "GABINETE do XANDÃO perde MAIS UM JUIZ-AUXILIAR: CADA vez mais DIFÍCIL o XANDÃO conseguir APOIO",
-          "duration": "9:07",
-          "durationSeconds": 547,
-          "publishedAt": "2025-09-26 16:23:39",
-          "publishedAtISO": "2025-09-26T16:23:39Z",
-          "publishedAtEpoch": 1758903819,
-          "url": "https://www.youtube.com/watch?v=UdGMP-huxpo",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "UdGMP-huxpo",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_01xEszS5dO4",
-          "title": "DE NOVO: CLOUDFLARE derruba SITE do ESCRITÓRIO do XANDÃO, MICROSOFT não é mais FORNECEDORA de EMAIL",
-          "duration": "12:08",
-          "durationSeconds": 728,
-          "publishedAt": "2025-09-29 19:15:00",
-          "publishedAtISO": "2025-09-29T19:15:00Z",
-          "publishedAtEpoch": 1759173300,
-          "url": "https://www.youtube.com/watch?v=01xEszS5dO4",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "01xEszS5dO4",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_46iHb_1kqzc",
-          "title": "INTOXICAÇÃO por METANOL MATA pessoas em SÃO PAULO: PCC pode ser o CULPADO pela TRAGÉDIA?",
-          "duration": "8:52",
-          "durationSeconds": 532,
-          "publishedAt": "2025-09-30 09:24:03",
-          "publishedAtISO": "2025-09-30T09:24:03Z",
-          "publishedAtEpoch": 1759224243,
-          "url": "https://www.youtube.com/watch?v=46iHb_1kqzc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "46iHb_1kqzc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_C5Ot_ugj9bc",
-          "title": "\"THE ECOMUNIST\" mostra que ÚNICA OPOSIÇÃO a TRUMP é... LULA! DEMOCRATAS SUMIRAM, esquerda MORREU",
-          "duration": "16:04",
-          "durationSeconds": 964,
-          "publishedAt": "2025-09-06 01:12:08",
-          "publishedAtISO": "2025-09-06T01:12:08Z",
-          "publishedAtEpoch": 1757121128,
-          "url": "https://www.youtube.com/watch?v=C5Ot_ugj9bc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "C5Ot_ugj9bc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_m693e3Ki4aA",
-          "title": "IMPOSTO sobre ALUGUEL vai AUMENTAR MUITO com REFORMA TRIBUTÁRIA: O LEVIATÃ tem FOME",
-          "duration": "11:19",
-          "durationSeconds": 679,
-          "publishedAt": "2025-09-13 18:15:05",
-          "publishedAtISO": "2025-09-13T18:15:05Z",
-          "publishedAtEpoch": 1757787305,
-          "url": "https://www.youtube.com/watch?v=m693e3Ki4aA",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "m693e3Ki4aA",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_L1nymMP0P9U",
-          "title": "VAMOS DEMITIR os POLÍTICOS e DECIDIR o PAÍS em um GRUPÃO de DISCORD? NO NEPAL funcionou ISSO...",
-          "duration": "19:14",
-          "durationSeconds": 1154,
-          "publishedAt": "2025-09-14 18:15:01",
-          "publishedAtISO": "2025-09-14T18:15:01Z",
-          "publishedAtEpoch": 1757873701,
-          "url": "https://www.youtube.com/watch?v=L1nymMP0P9U",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "L1nymMP0P9U",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_X-e1j2SbrXI",
-          "title": "CONSTITUINTES explicitamente AUTORIZARAM a ANISTIA em CASO de CRIMES de GOLPE de ESTADO",
-          "duration": "12:39",
-          "durationSeconds": 759,
-          "publishedAt": "2025-09-26 20:28:23",
-          "publishedAtISO": "2025-09-26T20:28:23Z",
-          "publishedAtEpoch": 1758918503,
-          "url": "https://www.youtube.com/watch?v=X-e1j2SbrXI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "X-e1j2SbrXI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_diDPi1B1uw4",
-          "title": "GEORGE SOROS resolveu o PROBLEMA: A LEI da UNIÃO EUROPÉIA contra MAGNITSKY... só tem um PROBLEMA",
-          "duration": "14:42",
-          "durationSeconds": 882,
-          "publishedAt": "2025-09-14 16:15:03",
-          "publishedAtISO": "2025-09-14T16:15:03Z",
-          "publishedAtEpoch": 1757866503,
-          "url": "https://www.youtube.com/watch?v=diDPi1B1uw4",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "diDPi1B1uw4",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_9QKRSIuI0KM",
-          "title": "DIREITA AMERICANA faz CAMPANHA de DEMISSÃO de ESQUERDISTAS que COMEMORARAM ATENTADO de CHARLIE KIRK",
-          "duration": "10:50",
-          "durationSeconds": 650,
-          "publishedAt": "2025-09-12 13:15:00",
-          "publishedAtISO": "2025-09-12T13:15:00Z",
-          "publishedAtEpoch": 1757682900,
-          "url": "https://www.youtube.com/watch?v=9QKRSIuI0KM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "9QKRSIuI0KM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_8u2tQ7FN89k",
-          "title": "GLOBO corre para TERMINAR \"VALE TUDO\": REMAKE da LACRAÇÃO se tornou FRACASSO CONSTRANGEDOR",
-          "duration": "8:47",
-          "durationSeconds": 527,
-          "publishedAt": "2025-09-25 09:15:01",
-          "publishedAtISO": "2025-09-25T09:15:01Z",
-          "publishedAtEpoch": 1758791701,
-          "url": "https://www.youtube.com/watch?v=8u2tQ7FN89k",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "8u2tQ7FN89k",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_GtvV1alzCjs",
-          "title": "GOVERNO e STF APAVORADOS com MANIFESTAÇÕES AMANHÃ, dia 7 de SETEMBRO, que PROMETEM ser ENORMES",
-          "duration": "9:50",
-          "durationSeconds": 590,
-          "publishedAt": "2025-09-06 22:15:00",
-          "publishedAtISO": "2025-09-06T22:15:00Z",
-          "publishedAtEpoch": 1757196900,
-          "url": "https://www.youtube.com/watch?v=GtvV1alzCjs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "GtvV1alzCjs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_ZhiymNZ-zJs",
-          "title": "DUDU LEITE esnoba ANISTIA e é VAIADO em EVENTO da EXPOINTER, junto com MINISTROS do CORRUPTO",
-          "duration": "10:43",
-          "durationSeconds": 643,
-          "publishedAt": "2025-09-05 22:21:58",
-          "publishedAtISO": "2025-09-05T22:21:58Z",
-          "publishedAtEpoch": 1757110918,
-          "url": "https://www.youtube.com/watch?v=ZhiymNZ-zJs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "ZhiymNZ-zJs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_tncxjnnSJWs",
-          "title": "EMPRESÁRIOS PERSEGUIDOS por MORAES, com base em FRAUDE, podem EXIGIR INDENIZAÇÃO por DANOS MORAIS?",
-          "duration": "12:25",
-          "durationSeconds": 745,
-          "publishedAt": "2025-09-07 18:15:07",
-          "publishedAtISO": "2025-09-07T18:15:07Z",
-          "publishedAtEpoch": 1757268907,
-          "url": "https://www.youtube.com/watch?v=tncxjnnSJWs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "tncxjnnSJWs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_FXBvHwARzKE",
-          "title": "SENADO enterra a PEC das PRERROGATIVAS por UNANIMIDADE: SERÁ que isso foi a \"PEC BOI de PIRANHA\"",
-          "duration": "11:07",
-          "durationSeconds": 667,
-          "publishedAt": "2025-09-24 20:15:01",
-          "publishedAtISO": "2025-09-24T20:15:01Z",
-          "publishedAtEpoch": 1758744901,
-          "url": "https://www.youtube.com/watch?v=FXBvHwARzKE",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "FXBvHwARzKE",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_bH35hvaYjQM",
-          "title": "PL da ANISTIA MORREU: EMBORA tenha APOIO no POVO e no CONGRESSO, LIDERANÇA quer 3 ANOS de CADEIA",
-          "duration": "11:59",
-          "durationSeconds": 719,
-          "publishedAt": "2025-10-03 16:15:05",
-          "publishedAtISO": "2025-10-03T16:15:05Z",
-          "publishedAtEpoch": 1759508105,
-          "url": "https://www.youtube.com/watch?v=bH35hvaYjQM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "bH35hvaYjQM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Y7SWKg3ExFM",
-          "title": "MORAES pede que REDES SOCIAIS IDENTIFIQUEM todos que AMEAÇARAM DINO com \"NEPALIZAÇÃO\"",
-          "duration": "14:11",
-          "durationSeconds": 851,
-          "publishedAt": "2025-10-02 22:15:03",
-          "publishedAtISO": "2025-10-02T22:15:03Z",
-          "publishedAtEpoch": 1759443303,
-          "url": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Y7SWKg3ExFM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Q4SyPZhLXFM",
-          "title": "REPERCUSSÃO da CONDENAÇÃO de BOLSONARO no BRASIL: O QUE fazer AGORA para SALVAR BOLSONARO?",
-          "duration": "9:43",
-          "durationSeconds": 583,
-          "publishedAt": "2025-09-12 16:15:03",
-          "publishedAtISO": "2025-09-12T16:15:03Z",
-          "publishedAtEpoch": 1757693703,
-          "url": "https://www.youtube.com/watch?v=Q4SyPZhLXFM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Q4SyPZhLXFM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_55wzI1iv3Sg",
-          "title": "FUNCIONÁRIO da GLOBO tenta EXTORQUIR DEPUTADO e RECEBE VOZ de PRISÃO: IMAGINA como ERA no PASSADO",
-          "duration": "8:45",
-          "durationSeconds": 525,
-          "publishedAt": "2025-10-01 23:27:16",
-          "publishedAtISO": "2025-10-01T23:27:16Z",
-          "publishedAtEpoch": 1759361236,
-          "url": "https://www.youtube.com/watch?v=55wzI1iv3Sg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "55wzI1iv3Sg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_qbhs6NqP9fo",
-          "title": "COPACABANA e várias outras CIDADES LOTADAS pela ANISTIA: DESFILE \"OFICIAL\" não tinha NINGUÉM",
-          "duration": "12:38",
-          "durationSeconds": 758,
-          "publishedAt": "2025-09-07 16:24:08",
-          "publishedAtISO": "2025-09-07T16:24:08Z",
-          "publishedAtEpoch": 1757262248,
-          "url": "https://www.youtube.com/watch?v=qbhs6NqP9fo",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "qbhs6NqP9fo",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Xhm2J8rjQfI",
-          "title": "REFERENCIAS ao NEPAL estão IRRITANDO o ROCAMBOLE do INFERNO: CUIDADO com REVOLUÇÕES, não AJUDA NADA",
-          "duration": "10:40",
-          "durationSeconds": 640,
-          "publishedAt": "2025-09-13 13:15:04",
-          "publishedAtISO": "2025-09-13T13:15:04Z",
-          "publishedAtEpoch": 1757769304,
-          "url": "https://www.youtube.com/watch?v=Xhm2J8rjQfI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Xhm2J8rjQfI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_-6VfXyFNIP8",
-          "title": "TRUMP mira GEORGE SOROS com LEI RICO para CHEGAR ATÉ ALEXANDRE de MORAES e seus COMPARSAS",
-          "duration": "10:35",
-          "durationSeconds": 635,
-          "publishedAt": "2025-09-12 22:15:00",
-          "publishedAtISO": "2025-09-12T22:15:00Z",
-          "publishedAtEpoch": 1757715300,
-          "url": "https://www.youtube.com/watch?v=-6VfXyFNIP8",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "-6VfXyFNIP8",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_mmg6Rh4WLqU",
-          "title": "SITE do ESCRITÓRIO de ALEXANDRE de MORAES volta a FUNCIONAR, mas ONDE ESTARÁ HOSPEDADO AGORA?",
-          "duration": "11:58",
-          "durationSeconds": 718,
-          "publishedAt": "2025-09-27 16:15:04",
-          "publishedAtISO": "2025-09-27T16:15:04Z",
-          "publishedAtEpoch": 1758989704,
-          "url": "https://www.youtube.com/watch?v=mmg6Rh4WLqU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "mmg6Rh4WLqU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_RwRDHaMw96E",
-          "title": "LULA ANCAP CONFIRMADO: SINAL VERDE para CNH sem AUTOESCOLA vai SIMPLIFICAR e BARATEAR CNH no BRASIL",
-          "duration": "14:16",
-          "durationSeconds": 856,
-          "publishedAt": "2025-10-03 20:15:01",
-          "publishedAtISO": "2025-10-03T20:15:01Z",
-          "publishedAtEpoch": 1759522501,
-          "url": "https://www.youtube.com/watch?v=RwRDHaMw96E",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "RwRDHaMw96E",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_1UyNc4aSG9o",
-          "title": "ELON MUSK vai CRIAR ALTERNATIVA a WIKIPEDIA chamada GROKIPEDIA: MAS como isso VAI FUNCIONAR?",
-          "duration": "11:52",
-          "durationSeconds": 712,
-          "publishedAt": "2025-10-01 22:15:01",
-          "publishedAtISO": "2025-10-01T22:15:01Z",
-          "publishedAtEpoch": 1759356901,
-          "url": "https://www.youtube.com/watch?v=1UyNc4aSG9o",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "1UyNc4aSG9o",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_i73KHUGSDZU",
-          "title": "TRUMP oficializa o \"MUNDO MULTIPOLAR\" do PUTIN e isso É UMA BOA NOTÍCIA para o BRASIL",
-          "duration": "12:29",
-          "durationSeconds": 749,
-          "publishedAt": "2025-09-05 14:23:59",
-          "publishedAtISO": "2025-09-05T14:23:59Z",
-          "publishedAtEpoch": 1757082239,
-          "url": "https://www.youtube.com/watch?v=i73KHUGSDZU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "i73KHUGSDZU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_XfvKndOAciQ",
-          "title": "HADDAD faz PRIMEIRO ARGUMENTO RAZOÁVEL na VIDA DELE: QUER o FIM da ESTABILIDADE de SERVIDOR PÚBLICO",
-          "duration": "13:56",
-          "durationSeconds": 836,
-          "publishedAt": "2025-09-29 18:15:02",
-          "publishedAtISO": "2025-09-29T18:15:02Z",
-          "publishedAtEpoch": 1759169702,
-          "url": "https://www.youtube.com/watch?v=XfvKndOAciQ",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "XfvKndOAciQ",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_8UO2MpH4AIg",
-          "title": "AÇÕES de EMPRESAS BÉLICAS CHINESAS DESABARAM após o DESFILE: O QUE HOUVE com a ECONOMIA CHINESA?",
-          "duration": "16:36",
-          "durationSeconds": 996,
-          "publishedAt": "2025-09-06 20:15:02",
-          "publishedAtISO": "2025-09-06T20:15:02Z",
-          "publishedAtEpoch": 1757189702,
-          "url": "https://www.youtube.com/watch?v=8UO2MpH4AIg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "8UO2MpH4AIg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_5nYqHLkfLpw",
-          "title": "ALEXANDRE de MORAES autoriza PROGRESSÃO para REGIME ABERTO para DANIEL SILVEIRA, mas VAI FICAR?",
-          "duration": "8:32",
-          "durationSeconds": 512,
-          "publishedAt": "2025-09-29 20:15:00",
-          "publishedAtISO": "2025-09-29T20:15:00Z",
-          "publishedAtEpoch": 1759176900,
-          "url": "https://www.youtube.com/watch?v=5nYqHLkfLpw",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "5nYqHLkfLpw",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_yQlXbska8NU",
-          "title": "JUSTIÇA BRASILEIRA segue PRECENDENTE de XANDÃO e QUER TER JURISDIÇÃO no MUNDO TODO",
-          "duration": "10:33",
-          "durationSeconds": 633,
-          "publishedAt": "2025-09-05 20:34:17",
-          "publishedAtISO": "2025-09-05T20:34:17Z",
-          "publishedAtEpoch": 1757104457,
-          "url": "https://www.youtube.com/watch?v=yQlXbska8NU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "yQlXbska8NU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_-rYRbnm7rxo",
-          "title": "INFELIZMENTE AVIÃO do LULA tem PANE QUANDO AINDA ESTAVA em SOLO: VIAGEM INÚTIL de LULA a COP30",
-          "duration": "10:36",
-          "durationSeconds": 636,
-          "publishedAt": "2025-10-03 22:15:00",
-          "publishedAtISO": "2025-10-03T22:15:00Z",
-          "publishedAtEpoch": 1759529700,
-          "url": "https://www.youtube.com/watch?v=-rYRbnm7rxo",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "-rYRbnm7rxo",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_dhfS87HOD6A",
-          "title": "MULHERES GRÁVIDAS americanas TOMAM TYLENOL só para DESOBEDECER RECOMENDAÇÃO de TRUMP",
-          "duration": "13:38",
-          "durationSeconds": 818,
-          "publishedAt": "2025-09-24 18:15:03",
-          "publishedAtISO": "2025-09-24T18:15:03Z",
-          "publishedAtEpoch": 1758737703,
-          "url": "https://www.youtube.com/watch?v=dhfS87HOD6A",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "dhfS87HOD6A",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_9SZ-EBLivAE",
-          "title": "TRUMP se encontra com ZELENSKY e REAFIRMA que UCRÂNIA VAI RETOMAR todo seu TERRITÓRIO",
-          "duration": "16:00",
-          "durationSeconds": 960,
-          "publishedAt": "2025-09-24 13:15:03",
-          "publishedAtISO": "2025-09-24T13:15:03Z",
-          "publishedAtEpoch": 1758719703,
-          "url": "https://www.youtube.com/watch?v=9SZ-EBLivAE",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "9SZ-EBLivAE",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_aki33W2xkiU",
-          "title": "JUSTIÇA ITALIANA NEGA prisão de TAGLIAFERRO e ele JÁ ESTÁ em CASA: XANDÃO pediu PRISÃO e EXTRADIÇÃO",
-          "duration": "13:40",
-          "durationSeconds": 820,
-          "publishedAt": "2025-10-01 19:38:40",
-          "publishedAtISO": "2025-10-01T19:38:40Z",
-          "publishedAtEpoch": 1759347520,
-          "url": "https://www.youtube.com/watch?v=aki33W2xkiU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "aki33W2xkiU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_85qanCU0PAs",
-          "title": "\"BRICS\" já é PASSADO, a SIGLA da VEZ AGORA é o \"CRINK\" e, FELIZMENTE, NÃO estamos nessa PILHA de M",
-          "duration": "12:34",
-          "durationSeconds": 754,
-          "publishedAt": "2025-09-06 13:15:01",
-          "publishedAtISO": "2025-09-06T13:15:01Z",
-          "publishedAtEpoch": 1757164501,
-          "url": "https://www.youtube.com/watch?v=85qanCU0PAs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "85qanCU0PAs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_6lvqGv2LDF0",
-          "title": "PETRO, amigo do LULA, pede que POLICIAIS de NY se REVOLTEM contra TRUMP: DESESPERO da ESQUERDA",
-          "duration": "8:50",
-          "durationSeconds": 530,
-          "publishedAt": "2025-09-27 13:15:00",
-          "publishedAtISO": "2025-09-27T13:15:00Z",
-          "publishedAtEpoch": 1758978900,
-          "url": "https://www.youtube.com/watch?v=6lvqGv2LDF0",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "6lvqGv2LDF0",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_uege52Z9wyU",
-          "title": "PRESIDENTE do PSOL PERDE VISTO para os ESTADOS UNIDOS e reclama que MOTIVAÇÃO é POLÍTICA, mas SERÁ?",
-          "duration": "13:22",
-          "durationSeconds": 802,
-          "publishedAt": "2025-09-27 00:06:36",
-          "publishedAtISO": "2025-09-27T00:06:36Z",
-          "publishedAtEpoch": 1758931596,
-          "url": "https://www.youtube.com/watch?v=uege52Z9wyU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "uege52Z9wyU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_8Lig4TS4gMs",
-          "title": "FALA de DINO sobre CHARLIE KIRK no JULGAMENTO de BOLSONARO irrita TRUMP PESSOALMENTE",
-          "duration": "13:29",
-          "durationSeconds": 809,
-          "publishedAt": "2025-09-13 16:15:04",
-          "publishedAtISO": "2025-09-13T16:15:04Z",
-          "publishedAtEpoch": 1757780104,
-          "url": "https://www.youtube.com/watch?v=8Lig4TS4gMs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "8Lig4TS4gMs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_HxG8uMeeUTg",
-          "title": "LULA se ESCONDE ATRÁS de ALCKMIN com MEDO do TRUMP: \"NÃO sabemos QUANDO nem COMO SERÁ o ENCONTRO\"",
-          "duration": "7:20",
-          "durationSeconds": 440,
-          "publishedAt": "2025-09-29 22:15:01",
-          "publishedAtISO": "2025-09-29T22:15:01Z",
-          "publishedAtEpoch": 1759184101,
-          "url": "https://www.youtube.com/watch?v=HxG8uMeeUTg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "HxG8uMeeUTg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_p7GuiJaBEps",
-          "title": "LULA e MORAES LATEM paraTRUMP ameaçando PRENDER BOLSONARO na PAPUDA contra MAGNITSKY em MINISTROS",
-          "duration": "15:46",
-          "durationSeconds": 946,
-          "publishedAt": "2025-09-15 16:16:52",
-          "publishedAtISO": "2025-09-15T16:16:52Z",
-          "publishedAtEpoch": 1757953012,
-          "url": "https://www.youtube.com/watch?v=p7GuiJaBEps",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "p7GuiJaBEps",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_wsSCzDjMi7M",
-          "title": "URGENTE: EDUARDO TAGLIAFERRO é PRESO na ITÁLIA após MAIS UMA ENTREVISTA EXPLOSIVA sobre ELEIÇÃO 2026",
-          "duration": "12:47",
-          "durationSeconds": 767,
-          "publishedAt": "2025-10-01 15:38:27",
-          "publishedAtISO": "2025-10-01T15:38:27Z",
-          "publishedAtEpoch": 1759333107,
-          "url": "https://www.youtube.com/watch?v=wsSCzDjMi7M",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "wsSCzDjMi7M",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_9I2SCXWjlMc",
-          "title": "NO MÍNIMO PADILHA e LEWANDOWSKY sem VISTO nem PARA IR na ONU na ASSEMBLEIA GERAL, SEMANA que VEM",
-          "duration": "9:00",
-          "durationSeconds": 540,
-          "publishedAt": "2025-09-15 22:15:01",
-          "publishedAtISO": "2025-09-15T22:15:01Z",
-          "publishedAtEpoch": 1757974501,
-          "url": "https://www.youtube.com/watch?v=9I2SCXWjlMc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "9I2SCXWjlMc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_meERpJobQIA",
-          "title": "PASTOR SUL-AFRICANO previu o ARREBATAMENTO no dia 23 de SETEMBRO e virou PIADA nas REDES SOCIAIS",
-          "duration": "10:41",
-          "durationSeconds": 641,
-          "publishedAt": "2025-09-27 09:15:04",
-          "publishedAtISO": "2025-09-27T09:15:04Z",
-          "publishedAtEpoch": 1758964504,
-          "url": "https://www.youtube.com/watch?v=meERpJobQIA",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "meERpJobQIA",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_G5O242k3L78",
-          "title": "EDUARDO BUENO reclama de CENSURA por perder CONTRATOS por FALAR BESTEIRA: É CENSURA nesse CASO?",
-          "duration": "18:15",
-          "durationSeconds": 1095,
-          "publishedAt": "2025-09-14 00:15:01",
-          "publishedAtISO": "2025-09-14T00:15:01Z",
-          "publishedAtEpoch": 1757808901,
-          "url": "https://www.youtube.com/watch?v=G5O242k3L78",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "G5O242k3L78",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_BJZc7wjDXgg",
-          "title": "ESTADOS do OESTE do CANADÁ PLANEJAM fazer o WEXIT para se UNIR aos ESTADOS UNIDOS: TRUMP vai GANHAR?",
-          "duration": "11:21",
-          "durationSeconds": 681,
-          "publishedAt": "2025-09-15 13:15:02",
-          "publishedAtISO": "2025-09-15T13:15:02Z",
-          "publishedAtEpoch": 1757942102,
-          "url": "https://www.youtube.com/watch?v=BJZc7wjDXgg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "BJZc7wjDXgg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_1Tq4NCSQNSs",
-          "title": "TWITTER FILES FRANÇA mostra que o SISTEMA REAGE do MESMO JEITO na EUROPA: DESESPERO da ESQUERDA",
-          "duration": "16:11",
-          "durationSeconds": 971,
-          "publishedAt": "2025-09-05 23:15:00",
-          "publishedAtISO": "2025-09-05T23:15:00Z",
-          "publishedAtEpoch": 1757114100,
-          "url": "https://www.youtube.com/watch?v=1Tq4NCSQNSs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "1Tq4NCSQNSs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_1_N7Iri0xhs",
-          "title": "GERAÇÃO Z é só \"FICANTE\" com o EMPREGO, NÃO QUER se COMPROMETER com a EMPRESA: ESTÃO CERTOS!",
-          "duration": "12:43",
-          "durationSeconds": 763,
-          "publishedAt": "2025-09-07 09:15:01",
-          "publishedAtISO": "2025-09-07T09:15:01Z",
-          "publishedAtEpoch": 1757236501,
-          "url": "https://www.youtube.com/watch?v=1_N7Iri0xhs",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "1_N7Iri0xhs",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_nJQMYuF3YkE",
-          "title": "PF faz OPERAÇÃO contra \"CARECA do INSS\" e encontra FORTUNA em CARROS e OBJETOS de ARTE",
-          "duration": "8:47",
-          "durationSeconds": 527,
-          "publishedAt": "2025-09-12 18:15:10",
-          "publishedAtISO": "2025-09-12T18:15:10Z",
-          "publishedAtEpoch": 1757700910,
-          "url": "https://www.youtube.com/watch?v=nJQMYuF3YkE",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "nJQMYuF3YkE",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_-UkoOWeI0O0",
-          "title": "BOMBA: LULA pode ser PROIBIDO de DISCURSAR na ONU, com VISTO NEGADO por TRUMP",
-          "duration": "14:02",
-          "durationSeconds": 842,
-          "publishedAt": "2025-09-05 15:21:47",
-          "publishedAtISO": "2025-09-05T15:21:47Z",
-          "publishedAtEpoch": 1757085707,
-          "url": "https://www.youtube.com/watch?v=-UkoOWeI0O0",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "-UkoOWeI0O0",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_e9dGsZ96Lg8",
-          "title": "PESQUISA MOSTRA que LULA TEM USADO ROBÔS a EXAUSTÃO para TENTAR APARECER na INTERNET",
-          "duration": "11:59",
-          "durationSeconds": 719,
-          "publishedAt": "2025-09-13 20:15:01",
-          "publishedAtISO": "2025-09-13T20:15:01Z",
-          "publishedAtEpoch": 1757794501,
-          "url": "https://www.youtube.com/watch?v=e9dGsZ96Lg8",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "e9dGsZ96Lg8",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_M5br-pr2A2Y",
-          "title": "INFLUENCER \"JUJU dos TECLADOS\" sugere MORTE de NIKOLAS mas fica TODA ASSUSTADA quando POLÍCIA CHEGA",
-          "duration": "12:47",
-          "durationSeconds": 767,
-          "publishedAt": "2025-10-03 09:15:03",
-          "publishedAtISO": "2025-10-03T09:15:03Z",
-          "publishedAtEpoch": 1759482903,
-          "url": "https://www.youtube.com/watch?v=M5br-pr2A2Y",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "M5br-pr2A2Y",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_gg2CFrPmohI",
-          "title": "DANIELA LIMA mendiga EMPREGO CLT no INSTITUTO CHUPA LULA: DECADÊNCIA AGUARDA TODOS da ESQUERDA",
-          "duration": "12:29",
-          "durationSeconds": 749,
-          "publishedAt": "2025-09-06 09:15:04",
-          "publishedAtISO": "2025-09-06T09:15:04Z",
-          "publishedAtEpoch": 1757150104,
-          "url": "https://www.youtube.com/watch?v=gg2CFrPmohI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "gg2CFrPmohI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_0A4hv9VaOdM",
-          "title": "TAGLIAFERRO apresenta MAIS EVIDÊNCIAS da PERSEGUIÇÃO a DIREITA e NOMES de PESSOAS IMPLICADAS",
-          "duration": "12:27",
-          "durationSeconds": 747,
-          "publishedAt": "2025-09-26 22:15:01",
-          "publishedAtISO": "2025-09-26T22:15:01Z",
-          "publishedAtEpoch": 1758924901,
-          "url": "https://www.youtube.com/watch?v=0A4hv9VaOdM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "0A4hv9VaOdM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UZKSdzKW_JI",
-          "title": "NOVELA do SITE tem MAIS UM CAPÍTULO: SITE voltou em INFRA 100% BRAZUCA, mas... SUSCETÍVEL a DDOS",
-          "duration": "8:12",
-          "durationSeconds": 492,
-          "publishedAt": "2025-09-30 16:43:38",
-          "publishedAtISO": "2025-09-30T16:43:38Z",
-          "publishedAtEpoch": 1759250618,
-          "url": "https://www.youtube.com/watch?v=UZKSdzKW_JI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "UZKSdzKW_JI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_r9Fx6g087rE",
-          "title": "GILMAR MENDES manda AVISO para SCOTT BESSENT que os BANCOS BRASILEIROS estão CAGANDO pra MAGNITSKY",
-          "duration": "12:47",
-          "durationSeconds": 767,
-          "publishedAt": "2025-10-02 23:30:31",
-          "publishedAtISO": "2025-10-02T23:30:31Z",
-          "publishedAtEpoch": 1759447831,
-          "url": "https://www.youtube.com/watch?v=r9Fx6g087rE",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "r9Fx6g087rE",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_48Ekr0MCyjI",
-          "title": "LULA faz PRONUNCIAMENTO na TELEVISÃO com PANELAÇO que BASICAMENTE REPETE \"SOBERANÍIIA, SOBERANÍIIA\"",
-          "duration": "9:02",
-          "durationSeconds": 542,
-          "publishedAt": "2025-09-07 00:24:44",
-          "publishedAtISO": "2025-09-07T00:24:44Z",
-          "publishedAtEpoch": 1757204684,
-          "url": "https://www.youtube.com/watch?v=48Ekr0MCyjI",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "48Ekr0MCyjI",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_TrQual1d5dU",
-          "title": "CREDITO SOCIAL CHINÊS não é ALGO TÃO NOVO ASSIM, você JÁ TEM SUA NOTA, mas HÁ UMA DIFERENÇA",
-          "duration": "12:48",
-          "durationSeconds": 768,
-          "publishedAt": "2025-09-16 13:15:09",
-          "publishedAtISO": "2025-09-16T13:15:09Z",
-          "publishedAtEpoch": 1758028509,
-          "url": "https://www.youtube.com/watch?v=TrQual1d5dU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "TrQual1d5dU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_QY1FFvow2FU",
-          "title": "GOLPE do XANDÃO foi CONSUMADO, agora ESPERAM o \"CONSENSO SOCIAL\" e o \"FIM do BOLSONARISMO\": SERÁ?",
-          "duration": "14:26",
-          "durationSeconds": 866,
-          "publishedAt": "2025-09-13 23:15:00",
-          "publishedAtISO": "2025-09-13T23:15:00Z",
-          "publishedAtEpoch": 1757805300,
-          "url": "https://www.youtube.com/watch?v=QY1FFvow2FU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "QY1FFvow2FU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_0cXp2JT7Yuc",
-          "title": "BOLSONARO teria ESCOLHIDO TARCÍSIO como CANDIDATO em 2026... mas SERÁ MESMO?",
-          "duration": "15:15",
-          "durationSeconds": 915,
-          "publishedAt": "2025-09-25 00:52:48",
-          "publishedAtISO": "2025-09-25T00:52:48Z",
-          "publishedAtEpoch": 1758761568,
-          "url": "https://www.youtube.com/watch?v=0cXp2JT7Yuc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "0cXp2JT7Yuc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_voN4cvtBSRQ",
-          "title": "CASAL BULGARO passa a SER INVESTIGADO por AGRESSÃO a MENINAS ESCOCESAS em caso EXPLOSIVO",
-          "duration": "10:19",
-          "durationSeconds": 619,
-          "publishedAt": "2025-09-05 13:15:10",
-          "publishedAtISO": "2025-09-05T13:15:10Z",
-          "publishedAtEpoch": 1757078110,
-          "url": "https://www.youtube.com/watch?v=voN4cvtBSRQ",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "voN4cvtBSRQ",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Ln8ymvS0fE0",
-          "title": "PETER NAVARRO, CZAR das TARIFAS do TRUMP, acha GRAÇA na CONSULTORIA do BRASIL que tentou FAZER LOBBY",
-          "duration": "9:31",
-          "durationSeconds": 571,
-          "publishedAt": "2025-09-13 22:15:01",
-          "publishedAtISO": "2025-09-13T22:15:01Z",
-          "publishedAtEpoch": 1757801701,
-          "url": "https://www.youtube.com/watch?v=Ln8ymvS0fE0",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Ln8ymvS0fE0",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_HDW0Lf09UGc",
-          "title": "PAULO BILYNSKYJ propõe DIVIDIR PAIS em BRASIL do NORTE e BRASIL do SUL: ISSO resolveria o PROBLEMA?",
-          "duration": "8:48",
-          "durationSeconds": 528,
-          "publishedAt": "2025-09-24 22:15:01",
-          "publishedAtISO": "2025-09-24T22:15:01Z",
-          "publishedAtEpoch": 1758752101,
-          "url": "https://www.youtube.com/watch?v=HDW0Lf09UGc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "HDW0Lf09UGc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_UUwDwsZnGtY",
-          "title": "CRISTINA GRAEML diz que \"NÃO é ANTI-SISTEMA\" e se filia ao UNIÃO BRASIL, para o SENADO em 2026",
-          "duration": "14:48",
-          "durationSeconds": 888,
-          "publishedAt": "2025-09-27 18:15:04",
-          "publishedAtISO": "2025-09-27T18:15:04Z",
-          "publishedAtEpoch": 1758996904,
-          "url": "https://www.youtube.com/watch?v=UUwDwsZnGtY",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "UUwDwsZnGtY",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_8Qc97LXXzIc",
-          "title": "TRUMP chama 800 GENERAIS pra DIZER que ELES ESTÃO GORDOS, mas, no FINAL, eles GOSTARAM da CONVERSA",
-          "duration": "16:32",
-          "durationSeconds": 992,
-          "publishedAt": "2025-10-03 13:15:03",
-          "publishedAtISO": "2025-10-03T13:15:03Z",
-          "publishedAtEpoch": 1759497303,
-          "url": "https://www.youtube.com/watch?v=8Qc97LXXzIc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "8Qc97LXXzIc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_rIUcz1YNxlY",
-          "title": "KASSAB empurra RATINHO JR na IMPRENSA, para PRESSIONAR BOLSONARO a APOIAR TARCÍSIO em 2026",
-          "duration": "13:51",
-          "durationSeconds": 831,
-          "publishedAt": "2025-10-03 18:15:05",
-          "publishedAtISO": "2025-10-03T18:15:05Z",
-          "publishedAtEpoch": 1759515305,
-          "url": "https://www.youtube.com/watch?v=rIUcz1YNxlY",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "rIUcz1YNxlY",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_EX06nK3F48U",
-          "title": "PROTESTO \"UNITE the KINGDOM\" leva MILHARES as RUAS de LONDRES contra a ESQUERDA e com UMA NOVIDADE",
-          "duration": "11:41",
-          "durationSeconds": 701,
-          "publishedAt": "2025-09-14 13:15:01",
-          "publishedAtISO": "2025-09-14T13:15:01Z",
-          "publishedAtEpoch": 1757855701,
-          "url": "https://www.youtube.com/watch?v=EX06nK3F48U",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "EX06nK3F48U",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Rz0IoT5dFOc",
-          "title": "NOVELA do SITE CONTINUA: APÓS ser DERRUBADO por ATAQUES de DDOS site do XANDÃO SAI da LOCAWEB",
-          "duration": "9:53",
-          "durationSeconds": 593,
-          "publishedAt": "2025-10-01 18:15:03",
-          "publishedAtISO": "2025-10-01T18:15:03Z",
-          "publishedAtEpoch": 1759342503,
-          "url": "https://www.youtube.com/watch?v=Rz0IoT5dFOc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Rz0IoT5dFOc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_o7OAV4RmwDA",
-          "title": "BUROCRATA da ANATEL quer ir para a ONU para IMPEDIR BRASILEIROS de TEREM BONS serviços da STARLINK",
-          "duration": "15:43",
-          "durationSeconds": 943,
-          "publishedAt": "2025-09-30 02:09:59",
-          "publishedAtISO": "2025-09-30T02:09:59Z",
-          "publishedAtEpoch": 1759198199,
-          "url": "https://www.youtube.com/watch?v=o7OAV4RmwDA",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "o7OAV4RmwDA",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_oNHtHzNU0qg",
-          "title": "\"GERAÇÃO Z\" está ADOTANDO o \"REVERSE CATFISH\": usar fotos RUINS em APLICATIVOS de ENCONTRO, POR QUE?",
-          "duration": "10:28",
-          "durationSeconds": 628,
-          "publishedAt": "2025-09-13 09:15:04",
-          "publishedAtISO": "2025-09-13T09:15:04Z",
-          "publishedAtEpoch": 1757754904,
-          "url": "https://www.youtube.com/watch?v=oNHtHzNU0qg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "oNHtHzNU0qg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_zgziK2NDiFg",
-          "title": "TARCÍSIO se ENCONTRA com BOLSONARO e diz que TUDO DEPENDE do PROJETO da ANISTIA",
-          "duration": "8:34",
-          "durationSeconds": 514,
-          "publishedAt": "2025-09-29 23:31:21",
-          "publishedAtISO": "2025-09-29T23:31:21Z",
-          "publishedAtEpoch": 1759188681,
-          "url": "https://www.youtube.com/watch?v=zgziK2NDiFg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "zgziK2NDiFg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_hqCoRB1wORU",
-          "title": "HOUTHIS do YEMEN rompem CABOS SUBMARINOS prejudicando a INTERNET em NOVO TIPO de GUERRA",
-          "duration": "8:55",
-          "durationSeconds": 535,
-          "publishedAt": "2025-09-07 13:15:04",
-          "publishedAtISO": "2025-09-07T13:15:04Z",
-          "publishedAtEpoch": 1757250904,
-          "url": "https://www.youtube.com/watch?v=hqCoRB1wORU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "hqCoRB1wORU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_a69v6IRscjQ",
-          "title": "TAGLIAFERRO divulga AUDIO BOMBÁSTICO em que JUIZ AUXILIAR de MORAES CONFESSA ILEGALIDADES",
-          "duration": "8:04",
-          "durationSeconds": 484,
-          "publishedAt": "2025-09-05 16:17:10",
-          "publishedAtISO": "2025-09-05T16:17:10Z",
-          "publishedAtEpoch": 1757089030,
-          "url": "https://www.youtube.com/watch?v=a69v6IRscjQ",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "a69v6IRscjQ",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_jP4SoYvMFwc",
-          "title": "\"BRASIL ACERTOU onde ESTADOS UNIDOS ERROU\": IMPRENSA INTERNACIONAL SOCIALISTA comemora CONDENAÇÃO",
-          "duration": "13:40",
-          "durationSeconds": 820,
-          "publishedAt": "2025-09-12 20:15:03",
-          "publishedAtISO": "2025-09-12T20:15:03Z",
-          "publishedAtEpoch": 1757708103,
-          "url": "https://www.youtube.com/watch?v=jP4SoYvMFwc",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "jP4SoYvMFwc",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_8VEETfGtqEE",
-          "title": "PROJETO da ANISTIA AMPLA, GERAL e IRRESTRITA como SOLUÇÃO tem APOIO de TRUMP, EDUARDO e PAULO",
-          "duration": "10:28",
-          "durationSeconds": 628,
-          "publishedAt": "2025-09-05 18:15:01",
-          "publishedAtISO": "2025-09-05T18:15:01Z",
-          "publishedAtEpoch": 1757096101,
-          "url": "https://www.youtube.com/watch?v=8VEETfGtqEE",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "8VEETfGtqEE",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_Ns2RjkA0p0s",
-          "title": "XANDÃO quer EXPLICAÇÃO da POLÍCIA de POR QUE ATRASOU CINCO MINUTOS na SAÍDA da CIRURGIA",
-          "duration": "13:59",
-          "durationSeconds": 839,
-          "publishedAt": "2025-09-15 23:36:31",
-          "publishedAtISO": "2025-09-15T23:36:31Z",
-          "publishedAtEpoch": 1757979391,
-          "url": "https://www.youtube.com/watch?v=Ns2RjkA0p0s",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "Ns2RjkA0p0s",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_KK2NFuc-GcU",
-          "title": "CONGRESSO aprova ISENÇÃO de IMPOSTO de RENDA para quem GANHA ATÉ R$ 5 MIL e IMPOSTO sobre RICOS",
-          "duration": "15:23",
-          "durationSeconds": 923,
-          "publishedAt": "2025-10-02 16:15:02",
-          "publishedAtISO": "2025-10-02T16:15:02Z",
-          "publishedAtEpoch": 1759421702,
-          "url": "https://www.youtube.com/watch?v=KK2NFuc-GcU",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "KK2NFuc-GcU",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_xEI3p3bm6kM",
-          "title": "\"TRUMP está APAVORADO com o PODER do LULA\" - FANFIC da IMPRENSA ganha tons de DESESPERO PSICOPÁTICO",
-          "duration": "16:17",
-          "durationSeconds": 977,
-          "publishedAt": "2025-10-02 01:17:19",
-          "publishedAtISO": "2025-10-02T01:17:19Z",
-          "publishedAtEpoch": 1759367839,
-          "url": "https://www.youtube.com/watch?v=xEI3p3bm6kM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "xEI3p3bm6kM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q__6-rECTnUT8",
-          "title": "GOVERNO do AFEGANISTÃO corta INTERNET para seus CIDADÃOS por MOTIVOS MORAIS: CAOS TOTAL no PAÍS",
-          "duration": "8:53",
-          "durationSeconds": 533,
-          "publishedAt": "2025-10-02 13:15:08",
-          "publishedAtISO": "2025-10-02T13:15:08Z",
-          "publishedAtEpoch": 1759410908,
-          "url": "https://www.youtube.com/watch?v=_6-rECTnUT8",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "_6-rECTnUT8",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_kNUKJ2bpgrg",
-          "title": "MPF de SÃO PAULO pede CANCELAMENTO da CONCESSÃO da RADIO JOVEM PAN por \"GOLPISMO\"",
-          "duration": "11:30",
-          "durationSeconds": 690,
-          "publishedAt": "2025-09-16 00:41:54",
-          "publishedAtISO": "2025-09-16T00:41:54Z",
-          "publishedAtEpoch": 1757983314,
-          "url": "https://www.youtube.com/watch?v=kNUKJ2bpgrg",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "kNUKJ2bpgrg",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_M_5mie_Z57g",
-          "title": "ESTADOS UNIDOS ZERA TARIFAS para CAFÉ... de PAISES ALINHADOS, ou seja, NÃO do BRASIL",
-          "duration": "10:28",
-          "durationSeconds": 628,
-          "publishedAt": "2025-09-12 23:15:00",
-          "publishedAtISO": "2025-09-12T23:15:00Z",
-          "publishedAtEpoch": 1757718900,
-          "url": "https://www.youtube.com/watch?v=M_5mie_Z57g",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "M_5mie_Z57g",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_5nsyRUkDzS8",
-          "title": "EMMA WATSON pede DESCULPAS, mas J. K. ROWLING não tá NEM AÍ: \"ELA é IGNORANTE do quanto é IGNORANTE\"",
-          "duration": "21:11",
-          "durationSeconds": 1271,
-          "publishedAt": "2025-10-02 09:15:00",
-          "publishedAtISO": "2025-10-02T09:15:00Z",
-          "publishedAtEpoch": 1759396500,
-          "url": "https://www.youtube.com/watch?v=5nsyRUkDzS8",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "5nsyRUkDzS8",
-          "processed": false
-        }
-      }
-    ],
-    "WHISPER_LOCAL": [
-      {
-        "RESPONSE": "1\n00:00:00,000 --> 00:00:04,900\n Esse é o Acapso e nós vamos falar agora da possível vinda do Trump ao Brasil para visitar o Bolsonaro.\n\n2\n00:00:05,240 --> 00:00:07,219\n Eu não acredito que isso aconteça não, tá gente?\n\n3\n00:00:07,320 --> 00:00:10,179\n Pra mim, isso daqui é um exagero da Folha de São Paulo,\n\n4\n00:00:10,240 --> 00:00:15,720\n que tá exagerando nesse ponto exatamente para dar a impressão que depois deu errado, tá?\n\n5\n00:00:15,759 --> 00:00:19,559\n Eu acho muito pouco provável que o Trump venha ao Brasil visitar o Bolsonaro,\n\n6\n00:00:20,199 --> 00:00:26,000\n embora, de fato, o Van Garten tenha cogitado essa hipótese, né?\n\n7\n00:00:26,000 --> 00:00:29,980\n Mas, de novo, é uma cogitação bastante ampla que ele fez.\n\n8\n00:00:30,079 --> 00:00:33,280\n A Folha de São Paulo tá usando isso daqui porque quer desacreditar o Van Garten.\n\n9\n00:00:33,700 --> 00:00:36,439\n O mais engraçado é que a imprensa tem feito isso, tá?\n\n10\n00:00:36,500 --> 00:00:43,560\n Tem usado essas declarações como tom de certeza pra tentar justamente desacreditar a direita, né?\n\n11\n00:00:43,620 --> 00:00:49,400\n O objetivo deles é semear discórdia, é causar briga entre o Tarcísio e o Eduardo Bolsonaro,\n\n12\n00:00:49,500 --> 00:00:53,379\n a gente já percebeu isso, causar problemas na direita. Por quê?\n\n13\n00:00:53,620 --> 00:00:55,100\n Porque o Lula tá muito mal.\n\n14\n00:00:55,179 --> 00:00:55,980\n Eu já expliquei pra vocês.\n\n15\n00:00:56,000 --> 00:00:58,020\n Eu já expliquei pra vocês no vídeo de ontem também, que eu falei sobre as pesquisas.\n\n16\n00:00:58,100 --> 00:01:00,799\n O Lula tá muito mal, ele tá perdendo apoio, ele tá virando pato manco.\n\n17\n00:01:01,140 --> 00:01:03,859\n Com a saída do União Brasil e do PP do governo agora,\n\n18\n00:01:03,960 --> 00:01:06,840\n ele vai ficar o resto do governo dele sem conseguir aprovar nada.\n\n19\n00:01:07,420 --> 00:01:12,240\n Então, ele precisa desacreditar a direita, precisa convencer os deputados\n\n20\n00:01:12,240 --> 00:01:14,840\n de que ele ainda tem chance de ganhar a eleição no que vem\n\n21\n00:01:14,840 --> 00:01:16,780\n e que a direita não tem chance nenhuma.\n\n22\n00:01:16,920 --> 00:01:18,900\n Isso daqui é parte desse esforço.\n\n23\n00:01:19,700 --> 00:01:22,460\n Desacreditar a direita, semear confusão na direita\n\n24\n00:01:22,460 --> 00:01:25,500\n pra gerar confusão, pra gerar desunião.\n\n25\n00:01:25,500 --> 00:01:28,680\n E aí, convencer os deputados que é melhor ficar com o Lula mesmo.\n\n26\n00:01:29,540 --> 00:01:31,500\n Então, não levem isso a sério.\n\n27\n00:01:31,560 --> 00:01:35,079\n Eu vou falar um monte de manchetes aqui que tem de briga de Bolsonaro,\n\n28\n00:01:35,460 --> 00:01:37,980\n que o Bolsonaro tá insatisfeito com o Eduardo Bolsonaro,\n\n29\n00:01:38,400 --> 00:01:40,000\n que a direita tá em crise,\n\n30\n00:01:40,500 --> 00:01:44,019\n tem impacto da possível candidatura do Tarcísio e não sei o que lá.\n\n31\n00:01:44,340 --> 00:01:47,039\n Eduardo Bolsonaro não tem mais o ponto de retorno.\n\n32\n00:01:47,579 --> 00:01:49,519\n Um monte de crítica que eles estão fazendo.\n\n33\n00:01:50,099 --> 00:01:52,219\n Lembra, a direita está unida sim.\n\n34\n00:01:52,319 --> 00:01:53,620\n A direita está com o Bolsonaro.\n\n35\n00:01:53,620 --> 00:01:55,939\n Se vai ser o Bolsonaro o candidato,\n\n36\n00:01:56,000 --> 00:01:59,040\n ou se ele vai estar impedido e ele vai indicar alguém pra ser o candidato dele,\n\n37\n00:01:59,359 --> 00:02:00,980\n isso a gente vai ver mais adiante, né?\n\n38\n00:02:01,300 --> 00:02:02,939\n Mas a direita está unida sim,\n\n39\n00:02:03,040 --> 00:02:05,880\n então ignorem esse tipo de briga que tá acontecendo aqui.\n\n40\n00:02:06,219 --> 00:02:09,140\n Isso é a imprensa tentando separar a direita.\n\n41\n00:02:09,319 --> 00:02:10,400\n Prestem atenção nisso.\n\n42\n00:02:10,780 --> 00:02:13,460\n Essa notícia foi sugerida por Peter, fã número um da Light,\n\n43\n00:02:13,580 --> 00:02:14,900\n Supremo é o meu cacete,\n\n44\n00:02:14,980 --> 00:02:15,920\n e várias outras pessoas.\n\n45\n00:02:16,080 --> 00:02:18,780\n Obrigado aí a todo mundo que sugeriu notícias lá no nosso site,\n\n46\n00:02:18,860 --> 00:02:20,180\n no visãolibertaria.com.\n\n47\n00:02:20,460 --> 00:02:22,240\n E obrigado a você que tá assistindo o nosso vídeo.\n\n48\n00:02:22,240 --> 00:02:23,580\n Se você gosta do nosso conteúdo,\n\n49\n00:02:23,580 --> 00:02:26,740\n por favor, deixa o seu like e se inscreva aqui no canal, né?\n\n50\n00:02:27,280 --> 00:02:29,580\n Pois bem, a notícia que saiu da Folha de São Paulo,\n\n51\n00:02:29,660 --> 00:02:31,600\n aqui com a coluna da Mônica Bergamo, é essa.\n\n52\n00:02:31,720 --> 00:02:33,660\n Trump pode visitar Bolsonaro no Brasil,\n\n53\n00:02:33,860 --> 00:02:35,580\n dizem apoiadores do ex-presidente.\n\n54\n00:02:36,080 --> 00:02:37,580\n Aí diz que a visita estaria sendo articulada\n\n55\n00:02:38,140 --> 00:02:39,840\n pelo apresentador Paulo Figueiredo,\n\n56\n00:02:39,860 --> 00:02:40,560\n e não sei o que lá,\n\n57\n00:02:40,680 --> 00:02:42,860\n e o ex-assessor, o Fábio Van Garten,\n\n58\n00:02:42,900 --> 00:02:44,200\n fez uma postagem no X.\n\n59\n00:02:45,320 --> 00:02:46,820\n Enfim, o que eles estão fazendo com isso daqui?\n\n60\n00:02:46,900 --> 00:02:47,480\n Isso aqui é nada.\n\n61\n00:02:47,620 --> 00:02:48,939\n Olha só o que o Van Garten falou aqui.\n\n62\n00:02:49,520 --> 00:02:51,740\n Nada vence o próprio testemunho.\n\n63\n00:02:51,740 --> 00:02:53,560\n Que tal uma visita do presidente,\n\n64\n00:02:53,580 --> 00:02:55,280\n Trump, ao presidente Bolsonaro,\n\n65\n00:02:55,360 --> 00:02:57,280\n na sua casa, para que ambos evidenciem\n\n66\n00:02:57,280 --> 00:03:00,380\n uma química perfeita, atualizando a prosa?\n\n67\n00:03:00,760 --> 00:03:02,920\n Obviamente, a corte e os advogados do presidente\n\n68\n00:03:02,920 --> 00:03:04,840\n seriam consultados com antecedência,\n\n69\n00:03:05,000 --> 00:03:05,900\n fica a dica, né?\n\n70\n00:03:06,400 --> 00:03:08,800\n Ou seja, ele falou isso aqui no seguinte contexto,\n\n71\n00:03:08,880 --> 00:03:10,939\n no contexto justamente dos outros,\n\n72\n00:03:11,300 --> 00:03:13,040\n das outras manchetes que a gente vai ver aqui,\n\n73\n00:03:13,100 --> 00:03:15,160\n que tem um monte de manchete falando de desunião,\n\n74\n00:03:15,320 --> 00:03:17,740\n crise na direita, que a direita tá em crise,\n\n75\n00:03:18,120 --> 00:03:19,960\n porque a ação do Eduardo Bolsonaro\n\n76\n00:03:19,960 --> 00:03:23,240\n deu ruim, aumentou a popularidade do Lula,\n\n77\n00:03:23,240 --> 00:03:23,280\n aumentou a popularidade do Lula,\n\n78\n00:03:23,280 --> 00:03:23,320\n aumentou a popularidade do Lula,\n\n79\n00:03:23,320 --> 00:03:23,360\n aumentou a popularidade do Lula,\n\n80\n00:03:23,360 --> 00:03:23,400\n aumentou a popularidade do Lula,\n\n81\n00:03:23,400 --> 00:03:23,560\n aumentou a popularidade do Lula,\n\n82\n00:03:23,580 --> 00:03:34,800\n não tem sentido nenhum.\n\n83\n00:03:35,100 --> 00:03:36,980\n Eles tentam, na verdade, jogar o Tarcísio\n\n84\n00:03:36,980 --> 00:03:38,939\n contra o Eduardo e o Eduardo contra o Tarcísio,\n\n85\n00:03:39,060 --> 00:03:41,280\n criar essa briga, porque eles sabem\n\n86\n00:03:41,280 --> 00:03:43,180\n que o Tarcísio é muito forte\n\n87\n00:03:43,180 --> 00:03:44,520\n se tiver o apoio do Bolsonaro,\n\n88\n00:03:44,880 --> 00:03:46,740\n mas o Tarcísio não consegue se ele não tiver\n\n89\n00:03:46,740 --> 00:03:47,600\n o apoio do Bolsonaro.\n\n90\n00:03:48,080 --> 00:03:49,900\n Então, se tiver a briga, ou seja,\n\n91\n00:03:49,900 --> 00:03:53,560\n se não tiver o apoio do Bolsonaro para o Tarcísio,\n\n92\n00:03:53,560 --> 00:03:54,920\n o Tarcísio não ganha.\n\n93\n00:03:55,259 --> 00:03:57,400\n E eles esperam que o do lado do Bolsonaro,\n\n94\n00:03:57,479 --> 00:03:59,120\n o Bolsonaro e qualquer outra pessoa que tem,\n\n95\n00:03:59,219 --> 00:04:00,819\n eles vão dar um jeito de proibir de concorrer.\n\n96\n00:04:01,280 --> 00:04:03,580\n Então esse é o caminho que eles querem fazer\n\n97\n00:04:03,580 --> 00:04:05,960\n para melar 2026.\n\n98\n00:04:06,180 --> 00:04:10,240\n Eu ainda acredito que Bolsonaro pode ser o candidato sim ano que vem.\n\n99\n00:04:10,620 --> 00:04:13,400\n Como eu falei para vocês, até aqui eu achava pouco provável,\n\n100\n00:04:13,400 --> 00:04:18,579\n porque com a vontade que estava o STF de condenar Bolsonaro\n\n101\n00:04:18,579 --> 00:04:19,779\n não teria outra alternativa.\n\n102\n00:04:20,180 --> 00:04:21,680\n Mas agora com essas ações do Trump,\n\n103\n00:04:21,680 --> 00:04:25,819\n por mais que já tenha havido a condenação no STF,\n\n104\n00:04:25,900 --> 00:04:27,579\n ainda dá tempo de anular a coisa toda.\n\n105\n00:04:27,680 --> 00:04:29,240\n Isso não é tão difícil de acontecer.\n\n106\n00:04:29,639 --> 00:04:32,240\n Anularam do Lula, por que não anulariam do Bolsonaro também?\n\n107\n00:04:32,620 --> 00:04:34,780\n Então dependendo da pressão lá de fora,\n\n108\n00:04:34,939 --> 00:04:37,000\n pode ser que venha alguma coisa nesse sentido sim.\n\n109\n00:04:39,319 --> 00:04:41,340\n Bom, então repara, essa coisa aqui,\n\n110\n00:04:41,340 --> 00:04:46,399\n o pessoal da Mônica Bergamo pegou essa história aqui do Trump vir ao Brasil.\n\n111\n00:04:46,800 --> 00:04:49,120\n A minha visão é justamente para criar um espantalho\n\n112\n00:04:49,120 --> 00:04:50,620\n e quando o Trump não vier no Brasil,\n\n113\n00:04:50,980 --> 00:04:51,660\n poder dizer, tá vendo?\n\n114\n00:04:51,680 --> 00:04:54,680\n O pessoal do bolsonarismo queria que o Trump viesse e coisa e tal.\n\n115\n00:04:54,680 --> 00:04:55,680\n O Trump não vai vir.\n\n116\n00:04:55,680 --> 00:04:57,680\n Gente, o Trump é um cara muito ocupado, bicho.\n\n117\n00:04:57,680 --> 00:04:59,680\n As preocupações dele...\n\n118\n00:04:59,680 --> 00:05:02,680\n A gente falou um vídeo mais cedo sobre a possibilidade de uma terceira guerra mundial,\n\n119\n00:05:02,680 --> 00:05:04,680\n de entrar em guerra com a Rússia, de invadir a Venezuela.\n\n120\n00:05:04,680 --> 00:05:07,680\n O cara vai vir aqui no Brasil, para ir lá em Brasília,\n\n121\n00:05:07,680 --> 00:05:08,680\n para conversar com o Bolsonaro.\n\n122\n00:05:08,680 --> 00:05:09,680\n Eles são amigos, sim.\n\n123\n00:05:09,680 --> 00:05:14,680\n E poucos amigos estão fazendo tanto por Bolsonaro quanto o Trump está fazendo.\n\n124\n00:05:14,680 --> 00:05:17,680\n Mas daí, ele pegar uma hora para vir aqui no Brasil,\n\n125\n00:05:17,680 --> 00:05:20,680\n eu acho muito pouco provável isso, assim, extremamente improvável.\n\n126\n00:05:20,680 --> 00:05:21,680\n Não acredito que aconteça.\n\n127\n00:05:21,680 --> 00:05:23,680\n Então, não levem isso daqui em consideração.\n\n128\n00:05:23,680 --> 00:05:24,680\n Não vai haver...\n\n129\n00:05:24,680 --> 00:05:27,680\n Isso aqui está saindo nos jornais exatamente porque a imprensa\n\n130\n00:05:27,680 --> 00:05:30,680\n quer semear essa falsa esperança para criar dor de cabeça.\n\n131\n00:05:30,680 --> 00:05:34,680\n Quanto mais intriga eles criarem na direita, melhor para eles.\n\n132\n00:05:34,680 --> 00:05:35,680\n Quer ver um outro caso aqui?\n\n133\n00:05:35,680 --> 00:05:39,680\n Bolsonaro perde que Eduardo Bolsonaro feche a boca para não prejudicá-lo,\n\n134\n00:05:39,680 --> 00:05:42,680\n mas filho intensifica o ataque.\n\n135\n00:05:43,680 --> 00:05:46,680\n O ex-deputado federal e seu aliado, Paulo Figueiredo,\n\n136\n00:05:46,680 --> 00:05:49,680\n acreditam que o ex-presidente é refém sem condições de negociar a própria soltura.\n\n137\n00:05:49,680 --> 00:05:51,680\n Os dois não podem se falar de nada.\n\n138\n00:05:51,680 --> 00:05:54,680\n O ex-presidente é reclamado por determinação do ministro de morais.\n\n139\n00:05:54,680 --> 00:05:59,680\n É lógico que essa prisão do Bolsonaro e a determinação de que ele não fale na internet\n\n140\n00:05:59,680 --> 00:06:01,680\n tinha por objetivo exatamente isso.\n\n141\n00:06:01,680 --> 00:06:05,680\n Uma vez que a gente não tem a voz do Bolsonaro propriamente dita,\n\n142\n00:06:05,680 --> 00:06:09,680\n fica fácil para a imprensa ficar colocando palavras na boca do Bolsonaro.\n\n143\n00:06:09,680 --> 00:06:11,680\n Não porque o Bolsonaro já escolheu Tarcísio,\n\n144\n00:06:11,680 --> 00:06:14,680\n não porque o Bolsonaro não gosta do Eduardo Bolsonaro mais,\n\n145\n00:06:14,680 --> 00:06:17,680\n não porque o Bolsonaro vai deserdar o Bolsonaro,\n\n146\n00:06:17,680 --> 00:06:18,680\n e não sei o que lá,\n\n147\n00:06:18,680 --> 00:06:19,680\n e agora...\n\n148\n00:06:19,680 --> 00:06:20,680\n Enfim,\n\n149\n00:06:20,680 --> 00:06:22,680\n não podemos colocar qualquer palavra na boca do Bolsonaro\n\n150\n00:06:22,680 --> 00:06:26,680\n porque a gente não tem, de fato, acesso direto ao Bolsonaro.\n\n151\n00:06:26,680 --> 00:06:31,680\n Então, o Fabio Van Garten falou muitas matérias nesse mesmo sentido,\n\n152\n00:06:31,680 --> 00:06:33,680\n que evidencia que a gente tem pautado a imprensa.\n\n153\n00:06:33,680 --> 00:06:34,680\n E a verdade é essa.\n\n154\n00:06:34,680 --> 00:06:36,680\n Eles ficaram muito chateados, por quê?\n\n155\n00:06:36,680 --> 00:06:40,680\n Porque quando saiu a manchete dele dizendo que o Bolsonaro tinha apoiado o Tarcísio,\n\n156\n00:06:40,680 --> 00:06:43,680\n logo o Flávio Bolsonaro desmentiu.\n\n157\n00:06:43,680 --> 00:06:46,680\n Falou que ele teve com o pai e não tem apoio nenhum determinado.\n\n158\n00:06:46,680 --> 00:06:50,680\n O Flávio Bolsonaro foi bem claro em dizer que gostava,\n\n159\n00:06:50,680 --> 00:06:51,680\n que gosta do Tarcísio,\n\n160\n00:06:51,680 --> 00:06:53,680\n que o Tarcísio é uma possibilidade sim,\n\n161\n00:06:53,680 --> 00:06:54,680\n que não está descartado,\n\n162\n00:06:54,680 --> 00:06:57,680\n que não precisa ficar provando que é a favor ou contra Bolsonaro,\n\n163\n00:06:57,680 --> 00:07:00,680\n e que na verdade aquilo ali era só uma maneira,\n\n164\n00:07:00,680 --> 00:07:01,680\n mais uma vez,\n\n165\n00:07:01,680 --> 00:07:05,680\n uma maneira da imprensa brasileira tentar semear discórdia na direita.\n\n166\n00:07:05,680 --> 00:07:07,680\n Então tomem cuidado com essas manchetes,\n\n167\n00:07:07,680 --> 00:07:10,680\n porque aí a pessoa tende a ficar chateada,\n\n168\n00:07:10,680 --> 00:07:13,680\n porque estão calando o Eduardo Bolsonaro,\n\n169\n00:07:13,680 --> 00:07:14,680\n então a culpa é do Tarcísio,\n\n170\n00:07:14,680 --> 00:07:16,680\n vou brigar com o Tarcísio porque...\n\n171\n00:07:16,680 --> 00:07:17,680\n Não, não tem nada a ver,\n\n172\n00:07:17,680 --> 00:07:18,680\n não tem briga nenhuma nisso daí.\n\n173\n00:07:18,680 --> 00:07:21,680\n É a imprensa que está semeando discórdia.\n\n174\n00:07:21,680 --> 00:07:23,680\n A imprensa sabe fazer isso muito bem, né?\n\n175\n00:07:23,680 --> 00:07:24,680\n Muitas matérias nesse mesmo sentido,\n\n176\n00:07:24,680 --> 00:07:27,680\n evidencia que tem gente pautando a imprensa.\n\n177\n00:07:27,680 --> 00:07:29,680\n Quem é que está por trás dessa coisa toda pautando a imprensa?\n\n178\n00:07:29,680 --> 00:07:32,680\n Tem alguém muito esperto que quer semear discórdia.\n\n179\n00:07:32,680 --> 00:07:33,680\n Eu não sei quem é,\n\n180\n00:07:33,680 --> 00:07:35,680\n mas é um suspeito do Zé Dirceu.\n\n181\n00:07:35,680 --> 00:07:37,680\n O Zé Dirceu é o cara que faria esse tipo de coisa,\n\n182\n00:07:37,680 --> 00:07:39,680\n que tem o conhecimento para fazer esse tipo de coisa,\n\n183\n00:07:39,680 --> 00:07:41,680\n e é ele que está agora...\n\n184\n00:07:41,680 --> 00:07:42,680\n Voltou ao governo Lula,\n\n185\n00:07:42,680 --> 00:07:43,680\n já está com o governo Lula,\n\n186\n00:07:43,680 --> 00:07:44,680\n já está do lado do Lula,\n\n187\n00:07:44,680 --> 00:07:46,680\n e está manipulando esse tipo de coisa.\n\n188\n00:07:46,680 --> 00:07:47,680\n Por que eles estão fazendo isso?\n\n189\n00:07:47,680 --> 00:07:48,680\n De novo, já expliquei,\n\n190\n00:07:48,680 --> 00:07:49,680\n mas vou falar de novo.\n\n191\n00:07:49,680 --> 00:07:51,680\n Porque o PT está perdendo apoio,\n\n192\n00:07:51,680 --> 00:07:53,680\n o PP está saindo da base do governo,\n\n193\n00:07:53,680 --> 00:07:55,680\n a União Brasil está saindo da base do governo,\n\n194\n00:07:55,680 --> 00:07:57,680\n o Lula está caminhando em direção à esquerda,\n\n195\n00:07:57,680 --> 00:07:59,680\n está cada vez se refugiando mais na esquerda,\n\n196\n00:07:59,680 --> 00:08:02,680\n o que é um problema para ganhar a eleição de 2026.\n\n197\n00:08:02,680 --> 00:08:03,680\n Ele precisa da direita,\n\n198\n00:08:03,680 --> 00:08:06,680\n ele precisa preservar o centrão dentro do governo.\n\n199\n00:08:06,680 --> 00:08:08,680\n Então qual que é a ideia do pessoal?\n\n200\n00:08:08,680 --> 00:08:11,680\n Ameaçar o centrão, como começaram a fazer,\n\n201\n00:08:11,680 --> 00:08:14,680\n disseram que o Expo, o Ciro Nogueira,\n\n202\n00:08:14,680 --> 00:08:16,680\n o cara, o Rueda e coisa e tal,\n\n203\n00:08:16,680 --> 00:08:17,680\n isso não funciona.\n\n204\n00:08:17,680 --> 00:08:18,680\n Deu errado.\n\n205\n00:08:18,680 --> 00:08:19,680\n Então o que eles estão tentando agora?\n\n206\n00:08:19,680 --> 00:08:21,680\n Estão tentando agora fazer com que a direita\n\n207\n00:08:21,680 --> 00:08:22,680\n pareça toda despedaçada.\n\n208\n00:08:22,680 --> 00:08:23,680\n Mas a direita não tem chance,\n\n209\n00:08:23,680 --> 00:08:24,680\n vai ser quem?\n\n210\n00:08:24,680 --> 00:08:26,680\n Está brigando com o Eduardo Bolsonaro,\n\n211\n00:08:26,680 --> 00:08:27,680\n com o Tarcísio, com não sei quem lá,\n\n212\n00:08:27,680 --> 00:08:29,680\n com o Zema, com o Ratinho,\n\n213\n00:08:29,680 --> 00:08:30,680\n está todo mundo brigando,\n\n214\n00:08:30,680 --> 00:08:31,680\n não tem a direita,\n\n215\n00:08:31,680 --> 00:08:33,680\n vai ser o Lula mesmo, não sei o que lá.\n\n216\n00:08:33,680 --> 00:08:35,680\n Essa é a estratégia deles.\n\n217\n00:08:37,680 --> 00:08:39,680\n Então você vai ver um monte de manchetes desse tipo aqui.\n\n218\n00:08:39,680 --> 00:08:42,680\n Bolsonaro mostra insatisfação com ações de Eduardo\n\n219\n00:08:42,680 --> 00:08:44,680\n e manda recado ao filho.\n\n220\n00:08:44,680 --> 00:08:45,680\n Como?\n\n221\n00:08:45,680 --> 00:08:46,680\n Não, não tem isso.\n\n222\n00:08:46,680 --> 00:08:47,680\n Não teve isso.\n\n223\n00:08:47,679 --> 00:08:48,679\n Não teve isso em momento algum.\n\n224\n00:08:48,679 --> 00:08:50,679\n Crise na direita, aliados,\n\n225\n00:08:50,679 --> 00:08:53,679\n vem impacto, impossível a candidatura de Tarcísio contra Lula.\n\n226\n00:08:53,679 --> 00:08:58,679\n Não porque isso vai deixar o lado do Bolsonaro da direita insatisfeito\n\n227\n00:08:58,679 --> 00:08:59,679\n e, portanto, tem briga.\n\n228\n00:08:59,679 --> 00:09:02,679\n O Tarcísio está brigando com o Eduardo Bolsonaro.\n\n229\n00:09:02,679 --> 00:09:03,679\n Daniela Lima,\n\n230\n00:09:03,679 --> 00:09:06,679\n Eduardo Bolsonaro não tem mais ponto de retorno.\n\n231\n00:09:06,679 --> 00:09:07,679\n Não porque ele já queimou tudo,\n\n232\n00:09:07,679 --> 00:09:09,679\n que ele já está totalmente radical.\n\n233\n00:09:09,679 --> 00:09:11,679\n Quem não tem ponto de retorno, meu amigo,\n\n234\n00:09:11,679 --> 00:09:13,679\n é o Alexandre de Moraes e o governo Lula.\n\n235\n00:09:13,679 --> 00:09:15,679\n Eles que já estão para lá do ponto de retorno.\n\n236\n00:09:15,679 --> 00:09:17,679\n O Eduardo Bolsonaro está do lado do Trump, meu amigo.\n\n237\n00:09:17,679 --> 00:09:19,679\n A pessoa mais poderosa do mundo.\n\n238\n00:09:19,679 --> 00:09:24,679\n Então, é ele que determina o retorno das outras pessoas para junto dele.\n\n239\n00:09:24,679 --> 00:09:26,679\n Não é o contrário que funciona.\n\n240\n00:09:26,679 --> 00:09:28,679\n Mas, de novo, mais uma vez,\n\n241\n00:09:28,679 --> 00:09:30,679\n a ideia aqui é isolar o Eduardo Bolsonaro,\n\n242\n00:09:30,679 --> 00:09:32,679\n dizer que ele não tem mais importância.\n\n243\n00:09:32,679 --> 00:09:34,679\n Você vai ver também um monte de manchetes falando que\n\n244\n00:09:34,679 --> 00:09:39,679\n não porque o Lula conseguiu contornar o Eduardo Bolsonaro para chegar no Trump.\n\n245\n00:09:39,679 --> 00:09:40,679\n O que é uma besteira.\n\n246\n00:09:40,679 --> 00:09:42,679\n Bastava o Lula ligar para o Trump para falar com ele em qualquer momento.\n\n247\n00:09:42,679 --> 00:09:45,679\n O Eduardo Bolsonaro nunca proibiu ele de falar com o Trump.\n\n248\n00:09:45,679 --> 00:09:46,679\n Mas estão vendendo essa ideia.\n\n249\n00:09:46,679 --> 00:09:47,679\n Por quê?\n\n250\n00:09:47,679 --> 00:09:49,679\n Porque querem desacreditar o Eduardo Bolsonaro.\n\n251\n00:09:49,679 --> 00:09:51,679\n Querem criticar o Eduardo Bolsonaro.\n\n252\n00:09:51,679 --> 00:09:55,679\n Querem quebrar o apoio entre os deputados\n\n253\n00:09:55,679 --> 00:09:58,679\n justamente para tentar favorecer a esquerda.\n\n254\n00:09:58,679 --> 00:09:59,679\n Aqui, olha.\n\n255\n00:09:59,679 --> 00:10:02,679\n Eduardo Bolsonaro deveria recuar, mas não pode mais.\n\n256\n00:10:02,679 --> 00:10:03,679\n Gazeta do Povo, tá?\n\n257\n00:10:03,679 --> 00:10:06,679\n Gazeta do Povo tem andado com o pessoal esquerdista aqui pra caramba também.\n\n258\n00:10:06,679 --> 00:10:10,679\n A cena de Trump e a Lula acendeu alerta em Bolsonaro.\n\n259\n00:10:10,679 --> 00:10:13,679\n Não porque o Lula agora vai se aproximar do Trump\n\n260\n00:10:13,679 --> 00:10:15,679\n e Bolsonaro vai perder o apoio do Trump\n\n261\n00:10:15,679 --> 00:10:18,679\n e isso vai acabar com a estratégia do Bolsonaro e não sei o que lá.\n\n262\n00:10:18,679 --> 00:10:19,679\n E por que eles estão falando?\n\n263\n00:10:19,679 --> 00:10:20,679\n Eles sabem que é mentira isso.\n\n264\n00:10:20,679 --> 00:10:22,679\n Eles sabem que não tem lógica nenhuma nisso daqui.\n\n265\n00:10:22,679 --> 00:10:27,679\n No entanto, eles querem, de novo, querem causar problemas da direita.\n\n266\n00:10:27,679 --> 00:10:30,679\n Querem convencer a esquerda que agora vai resolver tudo, né?\n\n267\n00:10:30,679 --> 00:10:31,679\n Aqui, olha.\n\n268\n00:10:31,679 --> 00:10:36,679\n Sem respaldo de Trump, Bolsonaro entra em desespero e culpa Eduardo.\n\n269\n00:10:36,679 --> 00:10:39,679\n Caramba, o Bolsonaro está totalmente incomunicável.\n\n270\n00:10:39,679 --> 00:10:41,679\n Ninguém consegue falar com o Bolsonaro.\n\n271\n00:10:41,679 --> 00:10:43,679\n Esse pessoal fica inventando esse tipo de coisa mais uma vez.\n\n272\n00:10:43,679 --> 00:10:44,679\n Tomem cuidado.\n\n273\n00:10:44,679 --> 00:10:46,679\n Estão querendo semear discórdia, né?\n\n274\n00:10:46,679 --> 00:10:48,679\n Não tem nada disso daí.\n\n275\n00:10:48,679 --> 00:10:49,679\n E aqui, olha.\n\n276\n00:10:49,679 --> 00:10:52,679\n Eduardo Bolsonaro fica mais próximo da cassação após a ofensiva da Câmara\n\n277\n00:10:52,679 --> 00:10:54,679\n e sofre revés com o Trump\n\n278\n00:10:54,679 --> 00:10:56,679\n porque o fato do Trump ter falado com Lula\n\n279\n00:10:56,679 --> 00:10:59,679\n invalidou a coisa do Eduardo Bolsonaro.\n\n280\n00:10:59,679 --> 00:11:01,679\n O que é uma besteira, cara.\n\n281\n00:11:01,679 --> 00:11:03,679\n Não tem lógica nenhuma isso daí, né?\n\n282\n00:11:03,679 --> 00:11:05,679\n Não tem nenhuma razão pra isso daqui.\n\n283\n00:11:05,679 --> 00:11:08,679\n Até porque a cassação do Eduardo Bolsonaro\n\n284\n00:11:08,679 --> 00:11:10,679\n também caiu na mão de um aliado do Bolsonaro.\n\n285\n00:11:10,679 --> 00:11:12,679\n O relator é um aliado do Bolsonaro.\n\n286\n00:11:12,679 --> 00:11:13,679\n Então, eu não sei não, tá?\n\n287\n00:11:13,679 --> 00:11:17,679\n Eu tô achando que não vai sair a cassação do Eduardo Bolsonaro, não.\n\n288\n00:11:17,679 --> 00:11:18,679\n Mas a esquerda quer muito.\n\n289\n00:11:18,679 --> 00:11:21,679\n Uma das coisas que eles querem é enfraquecer o Eduardo Bolsonaro\n\n290\n00:11:21,679 --> 00:11:25,679\n pra conseguir passar essa cassação dele lá na Câmara, né?\n\n291\n00:11:25,679 --> 00:11:27,679\n É muito curioso a imprensa tentando fazer isso\n\n292\n00:11:27,679 --> 00:11:29,679\n porque, de novo, eles fazem esse tipo de coisa\n\n293\n00:11:29,679 --> 00:11:32,679\n porque no passado eles faziam isso e funcionava, cara.\n\n294\n00:11:32,679 --> 00:11:34,679\n Porque no passado eles faziam essas coisas\n\n295\n00:11:34,679 --> 00:11:35,679\n e não tinha ninguém pra questionar\n\n296\n00:11:35,679 --> 00:11:37,679\n porque esse pessoal tá falando essas besteiras aqui.\n\n297\n00:11:37,679 --> 00:11:39,679\n Então, eles faziam isso, né?\n\n298\n00:11:39,679 --> 00:11:41,679\n E esse tipo de coisa passava.\n\n299\n00:11:41,679 --> 00:11:43,679\n Mas, hoje em dia, fica só uma coisa.\n\n300\n00:11:43,679 --> 00:11:44,679\n Uma coisa ridícula.\n\n301\n00:11:44,679 --> 00:11:46,679\n Eles ficam botando um monte de manchete, um monte de fofoca.\n\n302\n00:11:46,679 --> 00:11:48,679\n Eles querem convencer de que realmente\n\n303\n00:11:48,679 --> 00:11:50,679\n Eduardo Bolsonaro é um caso perdido.\n\n304\n00:11:50,679 --> 00:11:51,679\n Já era.\n\n305\n00:11:51,679 --> 00:11:53,679\n Querem que abandonem o Eduardo Bolsonaro\n\n306\n00:11:53,679 --> 00:11:56,679\n porque eles sabem que isso vai enfraquecer o próprio Bolsonaro.\n\n307\n00:11:56,679 --> 00:11:58,679\n Vai enfraquecer a própria direita, né?\n\n308\n00:11:58,679 --> 00:12:01,679\n E vai semear mais discórdia entre os bolsonaristas\n\n309\n00:12:01,679 --> 00:12:04,679\n e o Tarcísio, eventualmente, em 2026.\n\n310\n00:12:04,679 --> 00:12:05,679\n Então, não caiam nessa lorota.\n\n311\n00:12:05,679 --> 00:12:07,679\n Não tem nenhuma separação.\n\n312\n00:12:07,679 --> 00:12:09,679\n O fato do Lula conversar com o Trump...\n\n313\n00:12:09,679 --> 00:12:11,679\n O Lula vai perceber daqui a pouquinho\n\n314\n00:12:11,679 --> 00:12:14,679\n vai sair o resultado dessa conversa do Lula com o Trump.\n\n315\n00:12:14,679 --> 00:12:15,679\n A gente vai ver isso aí.\n\n316\n00:12:15,679 --> 00:12:17,679\n Se for uma conversa presencial,\n\n317\n00:12:17,679 --> 00:12:19,679\n eu vou abrir live aqui pra acompanhar isso.\n\n318\n00:12:19,679 --> 00:12:20,679\n Porque eu acho que vai ser muito divertido.\n\n319\n00:12:20,679 --> 00:12:21,679\n Pra esse pessoal, inclusive.\n\n320\n00:12:21,679 --> 00:12:23,679\n Mas eles estão todos empolgados.\n\n321\n00:12:23,679 --> 00:12:25,679\n Estão usando essa aproximação do Trump com o Lula\n\n322\n00:12:25,679 --> 00:12:29,679\n pra tentar atingir Bolsonaro e Eduardo Bolsonaro\n\n323\n00:12:29,679 --> 00:12:31,679\n e o Tarcísio e a direita de forma geral.\n\n324\n00:12:31,679 --> 00:12:32,679\n Não caiam nessa.\n\n325\n00:12:32,679 --> 00:12:34,679\n Agora, tem uma outra notícia que saiu por aí\n\n326\n00:12:34,679 --> 00:12:35,679\n que é essa daqui, ó.\n\n327\n00:12:35,679 --> 00:12:37,679\n Trump convoca Bolsonaro pra reunião na Casa Branca.\n\n328\n00:12:37,679 --> 00:12:39,679\n Gente, isso daqui é antigo, tá?\n\n329\n00:12:39,679 --> 00:12:40,679\n Aqui, ó.\n\n330\n00:12:40,679 --> 00:12:42,679\n Governo Trump chama Eduardo Bolsonaro pra reunião em Washington.\n\n331\n00:12:42,679 --> 00:12:45,679\n Isso aconteceu de fato lá no início de agosto.\n\n332\n00:12:45,679 --> 00:12:46,679\n Não é agora, não.\n\n333\n00:12:46,679 --> 00:12:47,679\n Aconteceu no início de agosto.\n\n334\n00:12:47,679 --> 00:12:50,679\n O Eduardo Bolsonaro foi lá com o Paulo Figueiredo.\n\n335\n00:12:50,679 --> 00:12:54,679\n Conversaram com o pessoal lá, com o Trump, com o Besant, com todo mundo.\n\n336\n00:12:54,679 --> 00:12:56,679\n Então, essa conversa aqui já aconteceu.\n\n337\n00:12:56,679 --> 00:12:57,679\n Eu não duvido.\n\n338\n00:12:57,679 --> 00:12:58,679\n Eu não duvido, não.\n\n339\n00:12:58,679 --> 00:13:00,679\n Que o Trump chame o Eduardo Bolsonaro também\n\n340\n00:13:00,679 --> 00:13:05,679\n no dia que for chamar o Lula pra conversar lá na Casa Branca.\n\n341\n00:13:05,679 --> 00:13:06,679\n Pode ser que aconteça isso.\n\n342\n00:13:06,679 --> 00:13:09,679\n Mas, por enquanto, a gente não tem essa informação, não.\n\n343\n00:13:09,679 --> 00:13:10,679\n Tá?\n\n344\n00:13:10,679 --> 00:13:12,679\n Eu tentei achar alguma fonte pra isso.\n\n345\n00:13:12,679 --> 00:13:13,679\n Não achei em lugar nenhum.\n\n346\n00:13:13,679 --> 00:13:18,679\n Obrigado por assistir o vídeo até o final.\n\n347\n00:13:18,679 --> 00:13:21,679\n Além de curtir, compartilhar e se inscrever no canal,\n\n348\n00:13:21,679 --> 00:13:26,679\n considere se tornar patrocinador com valores a partir de R$ 1,99.\n\n349\n00:13:26,679 --> 00:13:32,679\n Clique no botão Seja Membro abaixo para saber as condições e vantagens de patrocinar o canal.\n\n350\n00:13:32,679 --> 00:13:37,679\n Mais informações sobre o nosso projeto, visite nossos sites indicados na tela.\n\n351\n00:13:40,679 --> 00:13:51,679\n locatedatarias.blogspot.com\n"
-      }
-    ],
-    "@GLOBAL_ANCAPSU": [
-      {
-        "CHANNEL_NAME": "CANAL_ANCAPSU",
-        "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "LAST_N_HOURS": "24",
-        "MIN_DURATION": "182",
-        "MAX_DURATION": "1800"
-      }
-    ]
-  },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"

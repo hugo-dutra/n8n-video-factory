@@ -21,7 +21,7 @@
             {
               "id": "2d3afe09-9721-421b-9beb-a4a910b000e1",
               "name": "FILE_PATH",
-              "value": "={{ $json.FILE_PATH }}",
+              "value": "={{ $('START').item.json.FILE_PATH }}",
               "type": "string"
             }
           ]
@@ -31,7 +31,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -128,
+        80,
         -112
       ],
       "id": "48826e16-6b65-40d7-bb1d-f9667e1a0bfb",
@@ -54,7 +54,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        656,
+        864,
         -176
       ],
       "id": "904609fa-20ab-4da4-bf5a-9367998e9296",
@@ -67,7 +67,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        256,
+        464,
         -16
       ],
       "id": "9f7f9b12-d3dc-4bc7-9b46-9e6750d2aacc",
@@ -80,7 +80,7 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        256,
+        464,
         -176
       ],
       "id": "1793f2f0-f884-4517-9298-dcb627df1575",
@@ -116,7 +116,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        16,
+        224,
         -112
       ],
       "id": "9d398dff-5f1d-45dd-be9b-5b4382cb35d0",
@@ -129,11 +129,35 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
+        672,
         -176
       ],
       "id": "6d3b0c69-f6e8-4562-810c-0c49c5a82d15",
       "name": "Code"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        -112
+      ],
+      "id": "b6f2c612-2655-4d58-8806-22d6eb2395cb",
+      "name": "@GLOBAL_ANCAPSU"
     }
   ],
   "connections": {
@@ -141,7 +165,7 @@
       "main": [
         [
           {
-            "node": "VAR",
+            "node": "@GLOBAL_ANCAPSU",
             "type": "main",
             "index": 0
           }
@@ -198,12 +222,23 @@
           }
         ]
       ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {
     "START": [
       {
-        "FILE_PATH": "/home/node/download/CANAL_ANCAPSU/1_N7Iri0xhs/1_N7Iri0xhs.mp4"
+        "FILE_PATH": "/home/node/download/POsbqYT-EuI/POsbqYT-EuI.mp4"
       }
     ]
   },
