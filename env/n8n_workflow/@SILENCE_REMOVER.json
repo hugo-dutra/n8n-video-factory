@@ -23,8 +23,8 @@
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        608,
-        0
+        688,
+        48
       ]
     },
     {
@@ -62,7 +62,7 @@
       "typeVersion": 2,
       "position": [
         1664,
-        -16
+        32
       ],
       "id": "cfc7f1d8-9fb1-4d2d-8e45-7e3a24984cdb",
       "name": "Format Result"
@@ -85,7 +85,7 @@
       "typeVersion": 3.4,
       "position": [
         1504,
-        -16
+        32
       ],
       "id": "986f8ba6-0d51-4d52-9757-a15534710f8d",
       "name": "Get Result"
@@ -159,8 +159,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        816,
-        0
+        880,
+        48
       ],
       "id": "9d6ba318-03f4-4bd8-8895-de2be42987d7",
       "name": "If"
