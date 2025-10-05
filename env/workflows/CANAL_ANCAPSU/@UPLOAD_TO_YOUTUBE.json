@@ -2,13 +2,13 @@
   "nodes": [
     {
       "parameters": {
-        "fileSelector": "=/home/node/processing/{{ $('Loop Over Items1').item.json.fileName}}",
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Loop Over Items1').item.json.fileName}}",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1568,
+        1776,
         448
       ],
       "id": "1f83a8f8-6d5a-4f84-9ccd-a3df5cc45efa",
@@ -25,8 +25,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        1952,
-        512
+        2416,
+        480
       ],
       "id": "96bea9b7-5512-4134-a96b-562acb2b870f",
       "name": "Notificar FALHA",
@@ -48,7 +48,7 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        1568,
+        1776,
         304
       ],
       "id": "bfbae2d3-4436-46a2-961f-69bbb119eb09",
@@ -67,7 +67,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1376,
+        1584,
         304
       ],
       "id": "37820d6b-e27f-41da-a69e-48b968a5c68c",
@@ -75,14 +75,14 @@
     },
     {
       "parameters": {
-        "fileSelector": "/home/node/processing/*.mp4",
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/*.mp4",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        576,
-        624
+        784,
+        704
       ],
       "id": "1bf93058-4d0f-4b94-bd95-9522c39abf2f",
       "name": "List Videos to Upload1"
@@ -94,7 +94,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1184,
+        1392,
         448
       ],
       "id": "f8bd5f12-4bb3-4e1d-b8b6-ea6b7d6e2346",
@@ -120,7 +120,7 @@
       "type": "n8n-nodes-base.youTube",
       "typeVersion": 1,
       "position": [
-        1760,
+        1968,
         448
       ],
       "id": "e8864b1a-cc8e-4a36-a4dc-5faf7adf8e84",
@@ -138,14 +138,14 @@
       "parameters": {
         "content": "## Upload shorts",
         "height": 416,
-        "width": 1536,
+        "width": 1648,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        752,
-        288
+        960,
+        272
       ],
       "id": "76097924-a762-4927-8dce-8a3583c0f152",
       "name": "Sticky Note1"
@@ -168,7 +168,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1376,
+        1584,
         448
       ],
       "id": "bdf6ff81-eed6-4c67-80e9-45fa0c83d93b",
@@ -183,7 +183,7 @@
       "typeVersion": 1.1,
       "position": [
         208,
-        624
+        704
       ],
       "id": "da70e806-c692-4962-a0fc-25f09b1eab95",
       "name": "START"
@@ -195,7 +195,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
+        1008,
         448
       ],
       "id": "9d0cd348-533b-4637-86b2-f0ae4190cf08",
@@ -208,8 +208,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
-        816
+        1008,
+        912
       ],
       "id": "b4b4b5b9-939c-409c-a1f3-8bdbefb7247f",
       "name": "Get Long Video Info"
@@ -221,7 +221,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        992,
+        1200,
         448
       ],
       "id": "63b3491a-f2c9-40be-a755-d8406764296c",
@@ -229,14 +229,14 @@
     },
     {
       "parameters": {
-        "fileSelector": "/home/node/processing/*.png",
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/*.png",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        384,
-        624
+        592,
+        704
       ],
       "id": "67779c1d-10a1-4e80-b95b-29a67245dce1",
       "name": "List Thumbnail Upload"
@@ -259,8 +259,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        976,
-        816
+        1184,
+        912
       ],
       "id": "1f95ab48-de31-4d4a-ac00-1dd18003c9bd",
       "name": "@LONG_SCHEDULE_MANAGER"
@@ -285,8 +285,8 @@
       "type": "n8n-nodes-base.youTube",
       "typeVersion": 1,
       "position": [
-        1328,
-        816
+        1536,
+        912
       ],
       "id": "6830a84e-5933-429c-9b7c-67d637ea63bc",
       "name": "Upload a video",
@@ -301,28 +301,28 @@
     },
     {
       "parameters": {
-        "fileSelector": "=/home/node/processing/{{ $('Get Long Video Info').item.json.fileName }}",
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Get Long Video Info').item.json.fileName }}",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1152,
-        816
+        1360,
+        912
       ],
       "id": "1688da31-29fa-4d56-a52d-64a3fd35fd08",
       "name": "Read File Video"
     },
     {
       "parameters": {
-        "fileSelector": "=/home/node/processing/{{ $('Get Long Video Info').item.json.thumbnail }}",
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Get Long Video Info').item.json.thumbnail }}",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1520,
-        816
+        1728,
+        912
       ],
       "id": "fc27c7df-3eec-45b0-a11f-34539d433de3",
       "name": "Read File Thumb"
@@ -356,8 +356,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1696,
-        816
+        1904,
+        912
       ],
       "credentials": {
         "youTubeOAuth2Api": {
@@ -377,7 +377,7 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        2096,
+        2224,
         432
       ],
       "id": "2e18fae3-9605-4396-8c1c-e00e1c1c69d4",
@@ -400,8 +400,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        1520,
-        976
+        1728,
+        1072
       ],
       "id": "6b1dfb81-a07e-47bf-bf5b-ae1fb10dc812",
       "name": "Notificar FALHA LONGO",
@@ -417,14 +417,14 @@
         "resource": "messages-api",
         "instanceName": "n8n",
         "remoteJid": "5561982086449",
-        "messageText": "=Vídeo LONGO de ID:{{ $('Loop Over Items1').item.json.idx }} e título {{ $('Loop Over Items1').item.json.videoCutTitle }} de uploadId: {{ $json.uploadId }} enviado com SUCESSO",
+        "messageText": "=Vídeo LONGO de ID:{{ $('Loop Over Items1').first().json.idx }} e título {{ $('Loop Over Items1').first().json.videoCutTitle }} de uploadId: {{ $('Upload a video').item.json.uploadId }}enviado com SUCESSO",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        1872,
-        816
+        2256,
+        912
       ],
       "id": "025b341b-f62f-4b3b-948c-4e55b0daf0fb",
       "name": "Notificar SUCESSO LONGO",
@@ -439,22 +439,87 @@
       "parameters": {
         "content": "## Upload longs",
         "height": 400,
-        "width": 1360
+        "width": 1536
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        752,
-        736
+        960,
+        832
       ],
       "id": "9418625a-fa0a-4de7-befe-c1782c701efa",
       "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        704
+      ],
+      "id": "9ab7e090-578a-4336-a4af-0041927233c7",
+      "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/youtube/v3/playlistItems",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const info = $('Get Long Video Info')?.item?.json || {};\n  const upload = $('Upload a video')?.item?.json || {};\n\n  // playlistId pode vir como info.playlist.id, ou (fallback) info.playlistId / $json.playlistId\n  const playlistId = (info.playlist && info.playlist.id) || info.playlistId || $json.playlistId;\n  const videoId = upload.uploadId || $json.videoId;\n\n  if (!playlistId) throw new Error('playlistId ausente (esperado em Get Long Video Info.playlist.id).');\n  if (!videoId)   throw new Error('videoId ausente (use Upload a video.uploadId ou $json.videoId).');\n\n  return JSON.stringify({\n    snippet: {\n      playlistId,\n      resourceId: { kind: 'youtube#video', videoId },\n      position: 0\n    }\n  });\n})()\n}}",
+        "options": {}
+      },
+      "id": "3aafbafa-8ecb-4436-bf7f-0c7c91ea8b79",
+      "name": "Set Video To Playlist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        912
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account"
+        }
+      }
     }
   ],
   "connections": {
     "Read File": {
       "main": [
-        []
+        [
+          {
+            "node": "Upload a video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Notificar FALHA": {
@@ -546,7 +611,7 @@
       "main": [
         [
           {
-            "node": "List Thumbnail Upload",
+            "node": "@GLOBAL_ANCAPSU",
             "type": "main",
             "index": 0
           }
@@ -652,7 +717,7 @@
       "main": [
         [
           {
-            "node": "Notificar SUCESSO LONGO",
+            "node": "Set Video To Playlist",
             "type": "main",
             "index": 0
           }
@@ -669,168 +734,194 @@
           }
         ]
       ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "List Thumbnail Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Video To Playlist": {
+      "main": [
+        [
+          {
+            "node": "Notificar SUCESSO LONGO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {
     "START": [
       {
         "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "videoId": "Y7SWKg3ExFM",
+        "videoId": "j8CP1M13O0E",
         "uploadLongVideoData": [
           {
-            "videoCutStartTime": 60,
-            "videoCutEndTime": 360,
-            "videoCutTitle": "MORAES DÁ 48H: BIG TECHS SOB INVESTIGAÇÃO - CORTE!",
-            "videoCutDescription": "No clipe, o orador expõe como Alexandre de Moraes determinou em 48 horas que Meta, YouTube, X e TikTok forneçam os dados dos responsáveis por ameaças a Dino, evidenciando o uso do ENDEREÇO IP e de sistemas de VPN para identificar os culpados. Descubra detalhes intensos e POLÊMICOS sobre essa estratégia. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM.",
-            "videoHardHook": "Big Techs na mira de Moraes: dados, IP e VPN expostos – é polêmico!",
+            "videoCutStartTime": 0,
+            "videoCutEndTime": 302,
+            "videoCutTitle": "METANOL E CORTINA: ADVOGADO PACHECO EXPÕE VERDADE - CORTE!",
+            "videoCutDescription": "Neste corte, o orador analisa a CRISE DO METANOL, apontando uma CORTINA DE FUMAÇA usada para desviar a atenção de temas políticos e para explicar o polêmico caso do advogado Luiz Fernando Pacheco, que ilustra o nexo causal entre violência e consumo de metanol. Descubra os elementos que revelam a REALIDADE por trás das manchetes. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=j8CP1M13O0E.",
+            "videoHardHook": "Você vai se surpreender com como o metanol mascara verdades políticas e causa mortes!",
             "videoTags": [
-              "Moraes",
-              "Big Tech",
-              "Big Techs",
-              "Estado",
-              "IP",
-              "VPN",
-              "segurança digital",
-              "ameaças",
-              "Dino",
-              "Polêmica",
-              "STF",
-              "Ancap",
-              "notícias",
-              "tecnologia",
-              "privacidade",
-              "dados cadastrais",
-              "redes sociais",
-              "Supremo Tribunal",
-              "investigação",
-              "política",
-              "fake news",
-              "milícias digitais"
+              "metanol",
+              "crise do metanol",
+              "cortina de fumaça",
+              "advogado",
+              "Luiz Fernando Pacheco",
+              "latrocínio",
+              "direito penal",
+              "nexo causal",
+              "política brasileira",
+              "corrupção",
+              "desvio de atenção",
+              "análise crítica",
+              "falsificação",
+              "violência",
+              "justiça",
+              "debate político",
+              "caso Pacheco",
+              "segurança pública",
+              "impunidade",
+              "realidade brasileira"
             ],
-            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
+            "videoUrl": "https://www.youtube.com/watch?v=j8CP1M13O0E",
             "thumbTexts": [
-              "MORAES FIRME",
-              "BIG TECHS EM ALERTA",
-              "DADOS REVELADOS AGORA",
-              "IP DÁ PLAY"
+              "METANOL CRISE",
+              "CORTINA DE FUMAÇA",
+              "CASO PACHECO CHOCANTE",
+              "VERDADE REVELA PODER"
             ],
             "playlist": {
-              "nome": "playlist 1",
-              "id": "playlist 1"
+              "nome": "politica",
+              "id": "PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2"
             }
           }
         ],
         "uploadShortVideoData": [
           {
-            "videoCutStartTime": 50,
-            "videoCutEndTime": 95,
-            "videoCutTitle": "MORAES e as BIG TECHS: DADOS EM 48 HORAS - CORTE!",
-            "videoCutDescription": "Neste segmento, o apresentador destaca a ordem polêmica de ALEXANDRE MORAES, que determinou que as BIG TECHS forneçam dados dos responsáveis por ameaças a Dino em apenas 48 HORAS. São discutidos detalhes sobre o rastreamento via IP e a importância das informações cadastrais, evidenciando a CONTROVÉRSIA e os riscos para a PRIVACIDADE. Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-            "videoHardHook": "",
+            "videoCutStartTime": 0,
+            "videoCutEndTime": 49,
+            "videoCutTitle": "CRISE DO METANOL: CORTINA DE FUMAÇA POLÍTICA - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador expõe a POLÊMICA em torno da crise do METANOL e como ela pode ser uma CORTINA DE FUMAÇA para desviar a atenção de assuntos políticos, como a prisão do BOLSONARO e eventos envolvendo Magnitsky. São destacados pontos como as mortes por metanol e a longa história de contaminação, provocando debates sobre verdade e manipulação. Veja o vídeo completo: https://www.youtube.com/watch?v=j8CP1M13O0E",
+            "videoHardHook": "Descubra a verdade por trás da cortina de fumaça!",
             "videoTags": [
-              "Moraes",
-              "Big Tech",
-              "dados",
-              "IP",
-              "48 HORAS",
-              "STF",
-              "Ameaças",
-              "Dino",
-              "Flávio Dino",
-              "Segurança",
-              "Rede Social",
-              "Polícia Federal",
-              "Alexandre Moraes",
-              "Tecnologia",
-              "Investigação",
-              "Conta Online",
-              "Liberdade",
-              "Controvérsia",
-              "Política",
-              "Brasil"
+              "metanol",
+              "crise",
+              "política",
+              "cortina de fumaça",
+              "Bolsonaro",
+              "Magnitsky",
+              "controvérsia",
+              "mortes",
+              "desvio",
+              "opinião pública",
+              "debate",
+              "análise",
+              "fatos",
+              "manipulação",
+              "estranheza",
+              "exclusivo",
+              "impacto",
+              "imponderável",
+              "escândalo",
+              "notícias"
             ],
-            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-            "thumbTexts": [],
+            "videoUrl": "https://www.youtube.com/watch?v=j8CP1M13O0E",
+            "thumbTexts": [
+              "CRISE DO METANOL!"
+            ],
             "playlist": {
               "nome": "playlist 1",
               "id": "playlist1"
             },
             "idx": 0,
-            "timeStamp": 1759491805311
+            "timeStamp": 1759625415328
           },
           {
-            "videoCutStartTime": 244,
-            "videoCutEndTime": 289,
-            "videoCutTitle": "INQUÉRITO DAS FAKE NEWS: A NOVA DITADURA? - CORTE!",
-            "videoCutDescription": "Este corte aborda a CHOCANTE continuidade dos inquéritos, onde o inquérito das FAKE NEWS e o das MILÍCIAS DIGITAIS são colocados lado a lado, sugerindo uma nova forma de DITADURA. O apresentador menciona que a medida foi 'uma besteira' e critica a intervenção do STF, provocando debates sobre a REALIDADE política atual. Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-            "videoHardHook": "",
+            "videoCutStartTime": 847,
+            "videoCutEndTime": 896,
+            "videoCutTitle": "TECNOLOGIA CONTRA O METANOL: SOLUÇÃO RÁPIDA E INOVADORA - CORTE!",
+            "videoCutDescription": "Neste segmento, o apresentador revela uma solução INOVADORA para o problema do metanol em bebidas. Ele destaca que o incentivo econômico e a tecnologia, como o teste de 10 REAIS da UNESP que detecta metanol em APENAS 15 MINUTOS, podem revolucionar a segurança do consumo. A tecnologia é apresentada como alternativa aos altos riscos de CONTAMINAÇÃO, mostrando benefícios e provocando curiosidade. Veja o vídeo completo: https://www.youtube.com/watch?v=j8CP1M13O0E",
+            "videoHardHook": "Inovação que pode salvar sua saúde!",
             "videoTags": [
-              "Fake News",
-              "Inquérito",
-              "Milícias Digitais",
-              "Ditadura",
-              "Moraes",
-              "STF",
-              "Controvérsia",
-              "Política",
-              "Brasil",
-              "Liberdade",
-              "Censura",
-              "Ameaças",
-              "Justiça",
-              "Alexandre Moraes",
-              "Críticas",
-              "Impunidade",
-              "Ordem",
-              "Governos",
-              "Manifestação",
-              "Conflito"
+              "metanol",
+              "tecnologia",
+              "inovação",
+              "Unesp",
+              "incentivo",
+              "teste rápido",
+              "bebidas alcoólicas",
+              "segurança",
+              "detecção",
+              "15 MINUTOS",
+              "economia",
+              "solução",
+              "ciência",
+              "qualidade",
+              "problema",
+              "bem-estar",
+              "tecnológico",
+              "descoberta",
+              "análise",
+              "revolução"
             ],
-            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-            "thumbTexts": [],
+            "videoUrl": "https://www.youtube.com/watch?v=j8CP1M13O0E",
+            "thumbTexts": [
+              "SOLUÇÃO INOVADORA!"
+            ],
             "playlist": {
               "nome": "playlist 1",
               "id": "playlist1"
             },
             "idx": 1,
-            "timeStamp": 1759491806311
+            "timeStamp": 1759625416328
           },
           {
-            "videoCutStartTime": 705,
-            "videoCutEndTime": 750,
-            "videoCutTitle": "DIREITO ÀS ARMAS E A DEMOCRACIA QUEBRADA - CORTE!",
-            "videoCutDescription": "Neste segmento, o apresentador discute de forma contundente temas polêmicos, como o DIREITO ÀS ARMAS e a crise da DEMOCRACIA, relembrando o momento em que o Bolsonaro assumiu a presidência e a intervenção de Carmen LÚCIA. A crítica vai fundo, questionando se a democracia realmente funciona quando o STF impede decisões votadas popularmente. Veja o vídeo completo: https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-            "videoHardHook": "",
+            "videoCutStartTime": 790,
+            "videoCutEndTime": 838,
+            "videoCutTitle": "IMPOSTOS ALTOS: A CRISE DA BEBIDA FALSIFICADA - CORTE!",
+            "videoCutDescription": "Neste recorte, o apresentador explora como os ALTOS IMPOSTOS sobre bebidas alcoólicas no Brasil incentivam a FALSIFICAÇÃO e a CONTAMINAÇÃO por metanol. Ele menciona a existência do artigo 272 do Código Penal e a proposta de lei para combater esse crime, ressaltando que a elevação dos preços abre espaço para fraudes. Uma análise crítica que provoca debates sobre economia, direito penal e a realidade do mercado. Veja o vídeo completo: https://www.youtube.com/watch?v=j8CP1M13O0E",
+            "videoHardHook": "Entenda como os impostos podem estar colocando sua saúde em risco!",
             "videoTags": [
-              "Direito às Armas",
-              "STF",
-              "Bolsonaro",
-              "Carmen Lúcia",
-              "Democracia",
-              "Quebra da Democracia",
-              "Controvérsia",
-              "Política",
-              "Brasil",
-              "Liberdade",
-              "Constituição",
-              "Protesto",
-              "Governo",
-              "Debate",
-              "Eleições",
-              "Crítica",
-              "Revolução",
-              "Segurança",
-              "Discurso",
-              "Político"
+              "impostos",
+              "bebidas",
+              "falsificação",
+              "contaminação",
+              "metanol",
+              "artigo 272",
+              "direito penal",
+              "crise",
+              "economia",
+              "lei",
+              "cadeia",
+              "impostos altos",
+              "política",
+              "debate",
+              "análise",
+              "fraude",
+              "segurança",
+              "mercado",
+              "incentivo econômico",
+              "controverso"
             ],
-            "videoUrl": "https://www.youtube.com/watch?v=Y7SWKg3ExFM",
-            "thumbTexts": [],
+            "videoUrl": "https://www.youtube.com/watch?v=j8CP1M13O0E",
+            "thumbTexts": [
+              "CRISE DAS BEBIDAS!"
+            ],
             "playlist": {
               "nome": "playlist 1",
               "id": "playlist1"
             },
             "idx": 2,
-            "timeStamp": 1759491807311
+            "timeStamp": 1759625417328
           }
         ]
       }
