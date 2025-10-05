@@ -893,6 +893,29 @@
           "name": "Evolution account"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "5561982086449",
+        "messageText": "=Processamento do vídeo atual FINALIZADO.\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        256
+      ],
+      "id": "f68d27fc-1201-46a7-bc51-0dc840348667",
+      "name": "Notify Finish Video",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1111,6 +1134,11 @@
         [
           {
             "node": "Limpar Pasta de Trabalho",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Finish Video",
             "type": "main",
             "index": 0
           }
