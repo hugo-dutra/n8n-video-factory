@@ -1,5 +1,4 @@
 {
-  "name": "@AUDIO_TO_WHISPER_OPEN_AI",
   "nodes": [
     {
       "parameters": {
@@ -9,156 +8,11 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -208,
-        -112
+        384,
+        144
       ],
-      "id": "d0974a94-b6d9-4374-9feb-fe48dd94ef9d",
+      "id": "c9dd57db-0727-430e-9211-4af87e4febee",
       "name": "START"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "sk6qHDqmsTEMLNsp"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "PATH_SOURCE": "=/home/node/processing/{{ $json.FILENAME }}",
-            "PATH_DESTINATION": "=/home/node/processing/{{ $('START').item.json.VIDEO_ID }}.mp3"
-          },
-          "matchingColumns": [
-            "VIDEO_ID"
-          ],
-          "schema": [
-            {
-              "id": "PATH_SOURCE",
-              "displayName": "PATH_SOURCE",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "PATH_DESTINATION",
-              "displayName": "PATH_DESTINATION",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.2,
-      "position": [
-        128,
-        -112
-      ],
-      "id": "e76b7c83-76d7-4e93-8cb8-0758416372e4",
-      "name": "@AUDIO_EXTRACTOR"
-    },
-    {
-      "parameters": {
-        "fileSelector": "={{ $json.PATH_DESTINATION }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        320,
-        -112
-      ],
-      "id": "004c506d-eca5-40a8-977a-16dcf890cbcc",
-      "name": "READ"
-    },
-    {
-      "parameters": {
-        "resource": "audio",
-        "operation": "transcribe",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 1.8,
-      "position": [
-        496,
-        -112
-      ],
-      "id": "b52bb361-c638-48f4-a5de-0daa7bcf9650",
-      "name": "TRANSCRIBE",
-      "credentials": {
-        "openAiApi": {
-          "id": "ofmB5FK5dcRY2I4p",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "bPkDY1rLEosPYyck"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "VIDEO_ID": "={{ $json.VIDEO_ID }}",
-            "START_TIME": "0",
-            "END_TIME": "5"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "VIDEO_ID",
-              "displayName": "VIDEO_ID",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "START_TIME",
-              "displayName": "START_TIME",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "END_TIME",
-              "displayName": "END_TIME",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.2,
-      "position": [
-        -48,
-        -112
-      ],
-      "id": "163dba26-46fb-4117-b5cc-7f9a15c69043",
-      "name": "@VIDEO_SPLIT"
     },
     {
       "parameters": {
@@ -167,14 +21,8 @@
             {
               "id": "b08217d3-fe5e-4286-a655-3e9caa5eb0d4",
               "name": "RESPONSE",
-              "value": "={{ $json.text }}",
+              "value": "={{ $json.data }}",
               "type": "string"
-            },
-            {
-              "id": "323fa35f-104d-4591-a2c3-ff72c13ab8a7",
-              "name": "usage",
-              "value": "={{ $json.usage }}",
-              "type": "object"
             }
           ]
         },
@@ -183,35 +31,111 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        704,
-        -112
+        1184,
+        144
       ],
-      "id": "84463750-dbe5-4cc1-a686-d0ec47c35546",
-      "name": "Edit Fields"
+      "id": "9617c7cf-8aa4-4f02-b1a7-c17c33b7f048",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        144
+      ],
+      "id": "969e23d9-ce01-4780-b754-3a4ed6a8fbf2",
+      "name": "Call '@GLOBAL_ANCAPSU'"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "...",
+              "value": "..."
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "name": "response_format",
+              "value": "srt"
+            },
+            {
+              "name": "language",
+              "value": "pt"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        144
+      ],
+      "id": "1c9c6c2e-9f6b-4a09-bcbb-0155df1fd997",
+      "name": "Call Open AI"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/download/{{ $json.CHANNEL_NAME }}/{{ $('START').item.json.VIDEO_ID }}/{{ $('START').item.json.VIDEO_ID }}.mp3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        768,
+        144
+      ],
+      "id": "816683e9-2f49-4603-b78f-4c440cfe289b",
+      "name": "READ"
     }
   ],
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "VIDEO_ID": "_LMpN6o26E0"
-        }
-      }
-    ]
-  },
   "connections": {
     "START": {
       "main": [
         [
           {
-            "node": "@VIDEO_SPLIT",
+            "node": "Call '@GLOBAL_ANCAPSU'",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "@AUDIO_EXTRACTOR": {
+    "Call '@GLOBAL_ANCAPSU'": {
       "main": [
         [
           {
@@ -222,33 +146,22 @@
         ]
       ]
     },
+    "Call Open AI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "READ": {
       "main": [
         [
           {
-            "node": "TRANSCRIBE",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "@VIDEO_SPLIT": {
-      "main": [
-        [
-          {
-            "node": "@AUDIO_EXTRACTOR",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "TRANSCRIBE": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
+            "node": "Call Open AI",
             "type": "main",
             "index": 0
           }
@@ -256,15 +169,15 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "POsbqYT-EuI"
+      }
+    ]
   },
-  "versionId": "4b05f25d-a3c5-4c30-b44e-1391a5b573c0",
   "meta": {
-    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692",
-    "templateCredsSetupCompleted": true
-  },
-  "id": "NkF6UEWXKe3O5uOR",
-  "tags": []
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
 }
