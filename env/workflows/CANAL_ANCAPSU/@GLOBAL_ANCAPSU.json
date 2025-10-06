@@ -32,7 +32,7 @@
             {
               "id": "7335c9ca-4ed6-4fd5-bb77-f694a202e523",
               "name": "LAST_N_HOURS",
-              "value": 24,
+              "value": "={{\n(() => {\n  const now = new Date();\n  const midnight = new Date(now);\n  midnight.setHours(0,0,0,0);\n  return Math.floor((now - midnight) / 3_600_000);\n})()\n}}",
               "type": "string"
             },
             {
@@ -46,6 +46,18 @@
               "name": "MAX_DURATION",
               "value": "1800",
               "type": "string"
+            },
+            {
+              "id": "ce77e3fe-b0d5-4766-a3df-5ac2dda4f853",
+              "name": "PLAYLISTS",
+              "value": "={{\nJSON.stringify(\n  [\n    { nome: \"justiça\", id: \"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\" },\n    { nome: \"Geopolítica\", id: \"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\" },\n    { nome: \"politica\", id: \"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\" },\n    { nome: \"cultura e sociedade\", id: \"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\" },\n    { nome: \"Liberdade e mercado\", id: \"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\" },\n    { nome: \"Economia\", id: \"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\" },\n    { nome: \"Corrupção\", id: \"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\" },\n    { nome: \"Tecnologia\", id: \"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\" }\n  ]\n)\n}}\n",
+              "type": "string"
+            },
+            {
+              "id": "e7c92207-4d3a-441b-b65a-8c4437a365e5",
+              "name": "NOTIFY_NUMBERS",
+              "value": "[\"5561982086449\",\"5561986357902\"]",
+              "type": "array"
             }
           ]
         },
