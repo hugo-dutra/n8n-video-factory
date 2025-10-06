@@ -665,6 +665,47 @@
       ],
       "id": "93ac6895-57e6-4f91-8321-341cface3366",
       "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Iniciando processamento dos vídeos SHORTS..."
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        -240
+      ],
+      "id": "4b9cc3c7-843e-43ce-bbb6-5ae7b99a85e9",
+      "name": "@NOTIFIER"
     }
   ],
   "connections": {
@@ -750,6 +791,11 @@
         [
           {
             "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@NOTIFIER",
             "type": "main",
             "index": 0
           }
@@ -853,117 +899,6 @@
     }
   },
   "pinData": {
-    "@VIDEO_CUT_SHORT_AGENT_DETECTOR": [
-      {
-        "output": [
-          {
-            "videoCutStartTime": 10,
-            "videoCutEndTime": 55,
-            "videoCutTitle": "MÍDIAS MANIPULANDO A DIREITA - CORTE!",
-            "videoCutDescription": "Neste segmento polêmico, o apresentador analisa a possível visita do TRUMP ao Brasil e critica a estratégia da Folha de São Paulo e de outros veículos, que usam essa hipótese para DESACREDITAR a direita e semear discórdia entre TARCÍSIO e Eduardo Bolsonaro. Ele destaca a manipulação das MANCHETES e o exagero midiático. Veja o vídeo completo: https://www.youtube.com/watch?v=EG7qAwnz394",
-            "videoHardHook": "DESCUBRA A VERDADE SOBRE A MANIPULAÇÃO!",
-            "videoTags": [
-              "Trump",
-              "Direita",
-              "Manipulação",
-              "Folha de São Paulo",
-              "Van Garten",
-              "Bolsonaro",
-              "Tarcísio",
-              "EduardoBolsonaro",
-              "Polêmica",
-              "Notícias",
-              "Mídia",
-              "Desacreditar",
-              "Discórdia",
-              "Acapso",
-              "Brasil",
-              "Hipótese",
-              "Ideologia",
-              "Debate",
-              "Estratégia",
-              "Manchetes"
-            ],
-            "videoUrl": "https://www.youtube.com/watch?v=EG7qAwnz394",
-            "thumbTexts": "TRUMP vs. DIREITA",
-            "playlist": {
-              "nome": "playlist 1",
-              "id": "playlist 1"
-            }
-          },
-          {
-            "videoCutStartTime": 652,
-            "videoCutEndTime": 702,
-            "videoCutTitle": "EDUARDO BOLSONARO E A CAUSA DA CASSAÇÃO - CORTE!",
-            "videoCutDescription": "Neste trecho controverso, o apresentador expõe como a ligação entre TRUMP e LULA estaria invalidando as críticas contra EDUARDO BOLSONARO, apontando para uma estratégia midiática de isolar a direita. As manchetes e a suposta 'cassação' são analisadas de forma IMPACTANTE, revelando a tentativa de manipulação para favorecer a ESQUERDA. Veja o vídeo completo: https://www.youtube.com/watch?v=EG7qAwnz394",
-            "videoHardHook": "ENTENDA A POLÊMICA POR TRÁS DA CASSAÇÃO!",
-            "videoTags": [
-              "EduardoBolsonaro",
-              "Cassação",
-              "Trump",
-              "Lula",
-              "Direita",
-              "Esquerda",
-              "Manchetes",
-              "Polêmica",
-              "Manipulação",
-              "Imprensa",
-              "Critica",
-              "Debate",
-              "Ex-presidente",
-              "Brasil",
-              "Acusação",
-              "Impacto",
-              "Estratégia",
-              "Isolamento",
-              "Notícias",
-              "Conspiração"
-            ],
-            "videoUrl": "https://www.youtube.com/watch?v=EG7qAwnz394",
-            "thumbTexts": "BOLSONARO NA MIRA",
-            "playlist": {
-              "nome": "playlist 1",
-              "id": "playlist 1"
-            }
-          },
-          {
-            "videoCutStartTime": 420,
-            "videoCutEndTime": 470,
-            "videoCutTitle": "ZÉ DIRCEU NA MIRA: A MANIPULAÇÃO DA IMPRENSA - CORTE!",
-            "videoCutDescription": "Neste segmento IMPACTANTE, o apresentador critica a imprensa por semear discórdia e aponta suspeitas envolvendo o papel de ZÉ DIRCEU na manipulação das notícias. São destacadas referências sobre como as palavras são distorcidas para enfraquecer líderes, tornando o debate político ainda mais ACALORADO. Veja o vídeo completo: https://www.youtube.com/watch?v=EG7qAwnz394",
-            "videoHardHook": "REVELE OS SEGREDOS DA MANIPULAÇÃO!",
-            "videoTags": [
-              "ZéDirceu",
-              "Imprensa",
-              "Manipulação",
-              "Discórdia",
-              "Política",
-              "Bolsonaro",
-              "Lula",
-              "Manchetes",
-              "Critica",
-              "Polêmica",
-              "Estratégia",
-              "Debate",
-              "Suspeito",
-              "Notícias",
-              "ManipulaçãoMidiática",
-              "Acusação",
-              "Poder",
-              "Mídia",
-              "Conspiração",
-              "Influência"
-            ],
-            "videoUrl": "https://www.youtube.com/watch?v=EG7qAwnz394",
-            "thumbTexts": "ZÉ DIRCEU EXPOSITO",
-            "playlist": {
-              "nome": "playlist 1",
-              "id": "playlist 1"
-            }
-          }
-        ]
-      }
-    ],
     "Start": [
       {
         "videoId": "EG7qAwnz394",

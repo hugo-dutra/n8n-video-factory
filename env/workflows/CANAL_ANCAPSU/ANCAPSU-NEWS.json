@@ -148,7 +148,7 @@
       "typeVersion": 1.2,
       "position": [
         32,
-        544
+        608
       ],
       "id": "66162901-955f-4d49-8d88-bb4bd3c15371",
       "name": "Extract Audio",
@@ -193,7 +193,7 @@
       "typeVersion": 1.2,
       "position": [
         224,
-        544
+        608
       ],
       "id": "96ffe14f-94ae-4438-89e3-bc164abb68c0",
       "name": "Silence Detector"
@@ -248,7 +248,7 @@
       "typeVersion": 1.2,
       "position": [
         400,
-        544
+        608
       ],
       "name": "Silence Remover",
       "id": "5ff848e2-410b-452c-a14c-122a70b37cba"
@@ -329,7 +329,7 @@
       "typeVersion": 3.2,
       "position": [
         1024,
-        544
+        608
       ],
       "id": "af707433-4825-4022-b9be-5f5f607b8b55",
       "name": "Merge"
@@ -342,7 +342,7 @@
       "typeVersion": 1,
       "position": [
         1200,
-        544
+        608
       ],
       "id": "6e630050-53f2-4522-a064-d12b9a56499c",
       "name": "Remover Temporary Files"
@@ -354,8 +354,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1568,
-        544
+        1552,
+        608
       ],
       "id": "6585562f-acf5-46d9-84ca-00e45ea02560",
       "name": "Wait",
@@ -409,7 +409,7 @@
       "typeVersion": 1.2,
       "position": [
         816,
-        432
+        496
       ],
       "name": "@PROCESS_SHORTS",
       "id": "0305fba0-7e00-4b8d-bb86-8ba3f514fcd6"
@@ -462,7 +462,7 @@
       "typeVersion": 1.2,
       "position": [
         816,
-        656
+        720
       ],
       "name": "@PROCESS_LONG",
       "id": "11bbc88c-0d53-4d17-a772-69a594f6f088"
@@ -505,7 +505,7 @@
       "typeVersion": 1.2,
       "position": [
         608,
-        544
+        608
       ],
       "id": "0a378c61-29eb-4069-9d71-90080e6aee45",
       "name": "WHISPER_LOCAL"
@@ -579,11 +579,10 @@
       "typeVersion": 1.3,
       "position": [
         1376,
-        544
+        608
       ],
       "id": "45127896-b90e-411f-afdf-20c14fb8988d",
-      "name": "@UPLOAD",
-      "disabled": true
+      "name": "@UPLOAD"
     },
     {
       "parameters": {
@@ -631,8 +630,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1744,
-        544
+        1728,
+        608
       ],
       "id": "de0b126f-7b1b-43fa-a7bd-5d8d2b782398",
       "name": "@SET_VIDEO_AS_PROCESSED"
@@ -663,62 +662,16 @@
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Processo de upload do dia [{{ new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }).replace(/\\//g, '-') }}] FINALIZADO.\n",
-        "options_message": {}
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        224,
-        -560
-      ],
-      "id": "50339a31-f366-4f17-a9f4-572f101f51db",
-      "name": "PROCESSO CONCLUÍDO",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "command": "=/bin/bash -lc 'dir=\"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}\"; [ -n \"$dir\" ] && [ -d \"$dir\" ] && find \"$dir\" -maxdepth 1 -type f -delete'"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1920,
-        656
+        1904,
+        720
       ],
       "id": "b751cc2a-473b-41d5-b202-1024e95e1a34",
       "name": "Limpar Pasta de Trabalho"
-    },
-    {
-      "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=INICIANDO PROCESSAMENTO DO VIDEO: {{ $('Loop Over Items').first().json.json.url }}\n",
-        "options_message": {}
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        224,
-        -400
-      ],
-      "id": "e64e7449-806a-4d29-be9f-6258cebfdffa",
-      "name": "NOTIFICAR INICIO",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      }
     },
     {
       "parameters": {
@@ -740,182 +693,328 @@
       "parameters": {
         "content": "## Processo princial",
         "height": 432,
-        "width": 2320,
-        "color": 5
+        "width": 2352,
+        "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -240,
-        416
+        -256,
+        480
       ],
       "id": "bf17bd03-8ada-4f15-9a93-739440e28310",
       "name": "Sticky Note1"
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Detectando Silêncios...\n",
-        "options_message": {}
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "=Processo de upload do dia [{{ new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }).replace(/\\//g, '-') }}] FINALIZADO."
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
       "position": [
         224,
-        256
+        -576
       ],
-      "id": "680f051a-83cf-456a-a9a6-a0f365022786",
-      "name": "Notify Silence Detector",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      },
-      "onError": "continueRegularOutput"
+      "id": "f735abfb-bf8c-424d-98aa-8d4c1efee5d3",
+      "name": "@NOTIFIER 1"
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Extraindo audio...\n",
-        "options_message": {}
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "=INICIANDO PROCESSAMENTO DO VIDEO: {{ $('Loop Over Items').first().json.json.url }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        -400
+      ],
+      "id": "bdbbc49e-d1f9-4026-9dff-0be8ef981670",
+      "name": "@NOTIFIER 2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Extraindo audio..."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
       "position": [
         32,
         256
       ],
-      "id": "8aa227ef-9e44-4c75-9b1b-0bbd5511bfea",
-      "name": "Notify extract Audio",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      },
-      "onError": "continueRegularOutput"
+      "id": "22a07d2b-87d7-4069-83a9-c7462b1b824d",
+      "name": "@NOTIFIER 3"
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Removendo silêncios...\n",
-        "options_message": {}
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Detectando Silêncios..."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
       "position": [
-        416,
+        224,
         256
       ],
-      "id": "d407af3b-3311-4fee-a262-3808bacc0733",
-      "name": "Notify Remove Silences",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      },
-      "onError": "continueRegularOutput"
+      "id": "bf567a4a-11ef-4406-b667-a2be0d79dab6",
+      "name": "@NOTIFIER 4"
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Iniciando transcrição...\n",
-        "options_message": {}
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Removendo silêncios..."
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        256
+      ],
+      "id": "6d39a2bd-caa2-4685-832d-91cc2d10322f",
+      "name": "@NOTIFIER 5"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Iniciando transcrição..."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
       "position": [
         608,
         256
       ],
-      "id": "68782f0f-e46a-4297-b2f6-7843562aba07",
-      "name": "Notify Whinsper",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      },
-      "onError": "continueRegularOutput"
+      "id": "9dc69645-9daf-4bc7-9490-03f3ba3d9b80",
+      "name": "@NOTIFIER 6"
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Iniciando processamento do vídeo...\n",
-        "options_message": {}
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Iniciando Upload..."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        816,
-        256
-      ],
-      "id": "87bc003b-17fe-4912-914f-df2eb178fc48",
-      "name": "Notify Vídeo Process",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Iniciando Upload...\n",
-        "options_message": {}
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
       "position": [
         1376,
         256
       ],
-      "id": "023c69b6-4d5c-4292-a87f-9e6e121b37a9",
-      "name": "Notify Upload",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      }
+      "id": "37ded1eb-947c-42a0-98e9-33179c066465",
+      "name": "@NOTIFIER 8"
     },
     {
       "parameters": {
-        "resource": "messages-api",
-        "instanceName": "n8n",
-        "remoteJid": "5561982086449",
-        "messageText": "=Processamento do vídeo atual FINALIZADO.\n",
-        "options_message": {}
+        "content": "## Notificações\n",
+        "height": 400,
+        "width": 256,
+        "color": 4
       },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1920,
-        256
+        160,
+        -640
       ],
-      "id": "f68d27fc-1201-46a7-bc51-0dc840348667",
-      "name": "Notify Finish Video",
-      "credentials": {
-        "evolutionApi": {
-          "id": "FEzvaAKjYtvZZ6HQ",
-          "name": "Evolution account"
-        }
-      }
+      "id": "1bf36a2c-9961-4659-a52d-04ffc258e37e",
+      "name": "Sticky Note2"
     }
   ],
   "connections": {
@@ -934,17 +1033,12 @@
       "main": [
         [
           {
-            "node": "PROCESSO CONCLUÍDO",
+            "node": "@NOTIFIER 1",
             "type": "main",
             "index": 0
           }
         ],
         [
-          {
-            "node": "NOTIFICAR INICIO",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Download Video",
             "type": "main",
@@ -961,7 +1055,12 @@
             "index": 0
           },
           {
-            "node": "Notify extract Audio",
+            "node": "@NOTIFIER 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@NOTIFIER 3",
             "type": "main",
             "index": 0
           }
@@ -987,7 +1086,7 @@
             "index": 0
           },
           {
-            "node": "Notify Silence Detector",
+            "node": "@NOTIFIER 4",
             "type": "main",
             "index": 0
           }
@@ -1003,7 +1102,7 @@
             "index": 0
           },
           {
-            "node": "Notify Remove Silences",
+            "node": "@NOTIFIER 5",
             "type": "main",
             "index": 0
           }
@@ -1014,12 +1113,12 @@
       "main": [
         [
           {
-            "node": "Notify Whinsper",
+            "node": "WHISPER_LOCAL",
             "type": "main",
             "index": 0
           },
           {
-            "node": "WHISPER_LOCAL",
+            "node": "@NOTIFIER 6",
             "type": "main",
             "index": 0
           }
@@ -1057,7 +1156,7 @@
             "index": 0
           },
           {
-            "node": "Notify Upload",
+            "node": "@NOTIFIER 8",
             "type": "main",
             "index": 0
           }
@@ -1109,11 +1208,6 @@
             "node": "@PROCESS_SHORTS",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Notify Vídeo Process",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -1134,11 +1228,6 @@
         [
           {
             "node": "Limpar Pasta de Trabalho",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Notify Finish Video",
             "type": "main",
             "index": 0
           }
