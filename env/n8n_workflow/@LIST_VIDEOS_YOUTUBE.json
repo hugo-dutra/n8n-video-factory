@@ -166,7 +166,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1024,
+        1056,
         -160
       ],
       "id": "a4ff7309-65e7-45d7-8294-a2def1544b17",
@@ -181,7 +181,7 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        1184,
+        1216,
         -176
       ],
       "id": "f5c0252e-149d-4fd3-b852-10e4bb8c8096",
@@ -206,7 +206,7 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        864,
+        896,
         -160
       ],
       "id": "a3915f0c-a4fd-49db-9f3d-a9ee0de0e42d",
@@ -230,10 +230,12 @@
         -176
       ],
       "id": "42a76de9-7328-4946-b79c-e3eaa8dbf566",
-      "name": "Loop Over Items"
+      "name": "Loop Over Items",
+      "alwaysOutputData": false
     },
     {
       "parameters": {
+        "executeOnce": false,
         "command": "=# -------- Parâmetros (n8n) --------\nCHANNEL_ID=\"{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_ID }}\"\nLAST_N_HOURS={{ $('@GLOBAL_ANCAPSU').item.json.LAST_N_HOURS || 24 }}\nMIN_DURATION={{ $('@GLOBAL_ANCAPSU').item.json.MIN_DURATION || 182 }}\nMAX_DURATION={{ $('@GLOBAL_ANCAPSU').item.json.MAX_DURATION || 1800 }}\nN={{ $json.LIMIT || 50 }}\n\n# -------- Cálculo do corte por epoch --------\nNOW_EPOCH=$(date -u +%s)\nCUTOFF_EPOCH=$(( NOW_EPOCH - LAST_N_HOURS*3600 ))\n\n# -------- Lista filtrando por epoch, duração e disponibilidade pública --------\nyt-dlp \"https://www.youtube.com/channel/${CHANNEL_ID}/videos\" \\\n  --skip-download \\\n  --ignore-errors \\\n  --no-abort-on-error \\\n  --no-warnings \\\n  --match-filter \"availability = public & timestamp != None & duration != None & timestamp >= ${CUTOFF_EPOCH} & duration >= ${MIN_DURATION} & duration <= ${MAX_DURATION}\" \\\n  --playlist-end \"$N\" \\\n  --print \"%(id)s | %(title)s | %(duration_string)s | %(timestamp>%Y-%m-%d %H:%M:%S)s | %(webpage_url)s\" \\\n  || true\n"
       },
       "type": "n8n-nodes-base.executeCommand",
@@ -244,7 +246,7 @@
       ],
       "id": "41d75754-e046-4275-bfa8-dcf238b5c2df",
       "name": "LISTA DO YOUTUBE",
-      "alwaysOutputData": true,
+      "alwaysOutputData": false,
       "onError": "continueRegularOutput"
     },
     {
@@ -260,7 +262,7 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        1328,
+        1360,
         -176
       ],
       "id": "22208150-d8db-4b42-8384-9b4019e8587c",
@@ -294,39 +296,6 @@
     },
     {
       "parameters": {
-        "operation": "keys",
-        "keyPattern": "video:*"
-      },
-      "type": "n8n-nodes-base.redis",
-      "typeVersion": 1,
-      "position": [
-        832,
-        -336
-      ],
-      "id": "bf1d9b48-72d5-4f68-bfe9-52139e8bfde1",
-      "name": "Get All1",
-      "credentials": {
-        "redis": {
-          "id": "H9ySyNyj1MBc1lrU",
-          "name": "Redis account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// n8n Code node (JavaScript)\n// Entrada: items = [{ json: { video: \"<string JSON>\" } }, ...]\n// Saída:   [{ json: { id, title, ... } }, ... ]\n\nfunction safeParse(s) {\n  try { return JSON.parse(s); } catch { return null; }\n}\n\nconst out = [];\n\nfor (const item of items) {\n  // aceita tanto item.json.video quanto item.video (defensivo)\n  let payload = item?.json?.video ?? item?.video ?? null;\n  let obj = null;\n\n  if (typeof payload === 'string') {\n    const s = payload.trim();\n\n    // 1) tenta parse direto (é o seu caso)\n    obj = safeParse(s);\n\n    // 2) fallback para JSON duplamente encodado: \"\\\"{...}\\\"\"\n    if (!obj && s.startsWith('\"') && s.endsWith('\"')) {\n      const unwrapped = safeParse(s);      // tira a casca externa\n      if (typeof unwrapped === 'string') {\n        obj = safeParse(unwrapped);        // parse do JSON interno\n      }\n    }\n  } else if (payload && typeof payload === 'object') {\n    // caso já venha como objeto (raro)\n    obj = payload;\n  }\n\n  if (!obj) {\n    out.push({ json: { _error: 'parse_failed', _raw: payload } });\n    continue;\n  }\n\n  // Garante ID no padrão video:<channelId>_<videoId>\n  if ((!obj.id || !/^video:/.test(obj.id)) && obj.channelId && obj.videoId) {\n    obj.id = `video:${obj.channelId}_${obj.videoId}`;\n  }\n\n  // Coerções de tipo (defensivas)\n  if (typeof obj.durationSeconds === 'string' && /^-?\\d+$/.test(obj.durationSeconds)) {\n    obj.durationSeconds = parseInt(obj.durationSeconds, 10);\n  }\n  if (typeof obj.publishedAtEpoch === 'string' && /^-?\\d+$/.test(obj.publishedAtEpoch)) {\n    obj.publishedAtEpoch = parseInt(obj.publishedAtEpoch, 10);\n  }\n  if (typeof obj.processed === 'string') {\n    obj.processed = obj.processed.toLowerCase() === 'true';\n  }\n\n  out.push({ json: obj });\n}\n\nreturn out.filter(value => value.json.processed==false);\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        992,
-        -336
-      ],
-      "id": "4b28b399-bb71-4cce-9c08-227dcd8623b7",
-      "name": "filter unprocesseds"
-    },
-    {
-      "parameters": {
         "assignments": {
           "assignments": [
             {
@@ -356,7 +325,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        16,
+        64,
         -288
       ],
       "id": "ac7d9206-bd0d-4ee0-b8b0-464d3f502101",
@@ -432,6 +401,96 @@
       ],
       "id": "59a0fe28-335e-4a63-8d89-b50568aaf091",
       "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "video:*"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -336
+      ],
+      "id": "12802cd5-c793-40be-9ed1-401fda4f75b8",
+      "name": "Get All2",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entrada: 1 item com várias props { \"video:...\": \"{...json...}\", ... }\n// Saída: N itens -> { key, id, title, duration, durationSeconds, publishedAt, publishedAtISO, publishedAtEpoch, url, channelId, videoId, processed:false }\n\nconst out = [];\n\nfor (const item of items) {\n  const obj = item.json || {};\n\n  for (const [key, raw] of Object.entries(obj)) {\n    if (!key.startsWith(\"video:\")) continue;\n\n    // Parse seguro\n    let parsed = raw;\n    if (typeof raw === \"string\") {\n      try {\n        parsed = JSON.parse(raw);\n      } catch {\n        continue;\n      }\n    }\n    if (!parsed || typeof parsed !== \"object\") continue;\n\n    // Normaliza processed (aceita \"true\"/\"false\" string)\n    let processed = parsed.processed;\n    if (typeof processed === \"string\") {\n      const s = processed.trim().toLowerCase();\n      processed = s === \"true\" ? true : s === \"false\" ? false : undefined;\n    } else {\n      processed =\n        processed === true ? true : processed === false ? false : undefined;\n    }\n    if (processed !== false) continue; // apenas não processados\n\n    // Normaliza datas/campos\n    const id = parsed.id ?? key;\n\n    const publishedAtISO =\n      parsed.publishedAtISO ??\n      (parsed.publishedAt\n        ? new Date(parsed.publishedAt.replace(\" \", \"T\") + \"Z\").toISOString()\n        : null);\n\n    const publishedAtEpoch =\n      typeof parsed.publishedAtEpoch === \"number\" &&\n      !Number.isNaN(parsed.publishedAtEpoch)\n        ? parsed.publishedAtEpoch\n        : publishedAtISO\n          ? Math.floor(Date.parse(publishedAtISO) / 1000)\n          : null;\n\n    let durationSeconds = null;\n    if (typeof parsed.durationSeconds === \"number\") {\n      durationSeconds = parsed.durationSeconds;\n    } else if (\n      typeof parsed.durationSeconds === \"string\" &&\n      parsed.durationSeconds.trim() !== \"\"\n    ) {\n      const n = Number(parsed.durationSeconds);\n      durationSeconds = Number.isFinite(n) ? n : null;\n    }\n\n    out.push({\n      json: {\n        id,\n        title: parsed.title ?? null,\n        duration: parsed.duration ?? null,\n        durationSeconds,\n        publishedAt: parsed.publishedAt ?? null,\n        publishedAtISO,\n        publishedAtEpoch,\n        url: parsed.url ?? null,\n        channelId: parsed.channelId ?? null,\n        videoId: parsed.videoId ?? null,\n        processed: false,\n      },\n    });\n  }\n}\n\n// Se quiser FIFO: descomente a ordenação abaixo.\n// out.sort((a, b) => (a.json.publishedAtEpoch ?? 0) - (b.json.publishedAtEpoch ?? 0));\n\nreturn { out };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        -336
+      ],
+      "id": "6e9c8d01-1757-495a-aacc-fcb58220c62f",
+      "name": "filter unprocesseds1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "76116d08-daa9-470e-81ab-f0a7117453cc",
+              "name": "out",
+              "value": "={{ $json.out}}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        -336
+      ],
+      "id": "07aebac1-5553-489e-af67-73e852fe61f5",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "out",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        -336
+      ],
+      "id": "8c284916-da0c-40cc-8865-89c4b89ac1e9",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "video"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -336
+      ],
+      "id": "0cb15aaa-56ff-427f-a131-cec5a0a85406",
+      "name": "Aggregate"
     }
   ],
   "connections": {
@@ -541,7 +600,7 @@
       "main": [
         [
           {
-            "node": "Get All1",
+            "node": "Aggregate",
             "type": "main",
             "index": 0
           }
@@ -582,17 +641,6 @@
         [
           {
             "node": "Get Umprocesseds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get All1": {
-      "main": [
-        [
-          {
-            "node": "filter unprocesseds",
             "type": "main",
             "index": 0
           }
@@ -649,22 +697,59 @@
           }
         ]
       ]
+    },
+    "Get All2": {
+      "main": [
+        [
+          {
+            "node": "filter unprocesseds1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter unprocesseds1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get All2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {
     "START": [
       {
         "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-        "LAST_N_HOURS": "24",
+        "LAST_N_HOURS": "8",
         "MIN_DURATION": "182",
         "MAX_DURATION": "1800"
-      }
-    ],
-    "LISTA DO YOUTUBE": [
-      {
-        "exitCode": 0,
-        "stderr": "",
-        "stdout": "nRW81L2-dAQ | ANATEL sugere \"CARTEIRA de HABILITAÇÃO\" para USAR a INTERNET, primeiro PASSO para PONTUAÇÃO e MULTAS | 13:59 | 2025-10-04 09:15:07 | https://www.youtube.com/watch?v=nRW81L2-dAQ\ntGpdD4XYLO8 | FILHOS de BOLSONARO dizem que PAI não vai FALAR: FIQUEI PREOCUPADO, não sei MAIS em QUEM CONFIAR | 13:36 | 2025-10-04 00:59:52 | https://www.youtube.com/watch?v=tGpdD4XYLO8\nCm3wGX8s9dw | TRUMP quer SUBSTITUIR o PETRODÓLAR pelo CRYPTODÓLAR: O DOLÁR THETER como 2a CAMADA do BITCOIN | 23:31 | 2025-10-03 23:15:00 | https://www.youtube.com/watch?v=Cm3wGX8s9dw\n-rYRbnm7rxo | INFELIZMENTE AVIÃO do LULA tem PANE QUANDO AINDA ESTAVA em SOLO: VIAGEM INÚTIL de LULA a COP30 | 10:36 | 2025-10-03 22:15:00 | https://www.youtube.com/watch?v=-rYRbnm7rxo\nRwRDHaMw96E | LULA ANCAP CONFIRMADO: SINAL VERDE para CNH sem AUTOESCOLA vai SIMPLIFICAR e BARATEAR CNH no BRASIL | 14:16 | 2025-10-03 20:15:01 | https://www.youtube.com/watch?v=RwRDHaMw96E\nrIUcz1YNxlY | KASSAB empurra RATINHO JR na IMPRENSA, para PRESSIONAR BOLSONARO a APOIAR TARCÍSIO em 2026 | 13:51 | 2025-10-03 18:15:05 | https://www.youtube.com/watch?v=rIUcz1YNxlY\nbH35hvaYjQM | PL da ANISTIA MORREU: EMBORA tenha APOIO no POVO e no CONGRESSO, LIDERANÇA quer 3 ANOS de CADEIA | 11:59 | 2025-10-03 16:15:05 | https://www.youtube.com/watch?v=bH35hvaYjQM\n8Qc97LXXzIc | TRUMP chama 800 GENERAIS pra DIZER que ELES ESTÃO GORDOS, mas, no FINAL, eles GOSTARAM da CONVERSA | 16:32 | 2025-10-03 13:15:03 | https://www.youtube.com/watch?v=8Qc97LXXzIc\nM5br-pr2A2Y | INFLUENCER \"JUJU dos TECLADOS\" sugere MORTE de NIKOLAS mas fica TODA ASSUSTADA quando POLÍCIA CHEGA | 12:47 | 2025-10-03 09:15:03 | https://www.youtube.com/watch?v=M5br-pr2A2Y\nPGwrBuf4kpE | CPMI do INSS descobre LIGAÇÃO entre CARECA do INSS e PUBLICITÁRIA LIGADA ao PT que FEZ DELAÇÃO | 16:29 | 2025-10-03 02:07:56 | https://www.youtube.com/watch?v=PGwrBuf4kpE\nr9Fx6g087rE | GILMAR MENDES manda AVISO para SCOTT BESSENT que os BANCOS BRASILEIROS estão CAGANDO pra MAGNITSKY | 12:47 | 2025-10-02 23:30:31 | https://www.youtube.com/watch?v=r9Fx6g087rE\nY7SWKg3ExFM | MORAES pede que REDES SOCIAIS IDENTIFIQUEM todos que AMEAÇARAM DINO com \"NEPALIZAÇÃO\" | 14:11 | 2025-10-02 22:15:03 | https://www.youtube.com/watch?v=Y7SWKg3ExFM\nbkmiOJe2ICI | MORAES autoriza BOLSONARO a PARTICIPAR do PODCAST CAFÉ com FERRI: EXCELENTE OPORTUNIDADE | 13:05 | 2025-10-02 20:21:53 | https://www.youtube.com/watch?v=bkmiOJe2ICI\nvO45gg4N0pw | PROCURADOR indicado por TRUMP QUER REABRIR caso ODEBRECHT nos ESTADOS UNIDOS para REVER INDENIZAÇÃO | 14:05 | 2025-10-02 18:15:05 | https://www.youtube.com/watch?v=vO45gg4N0pw\nKK2NFuc-GcU | CONGRESSO aprova ISENÇÃO de IMPOSTO de RENDA para quem GANHA ATÉ R$ 5 MIL e IMPOSTO sobre RICOS | 15:23 | 2025-10-02 16:15:02 | https://www.youtube.com/watch?v=KK2NFuc-GcU\n_6-rECTnUT8 | GOVERNO do AFEGANISTÃO corta INTERNET para seus CIDADÃOS por MOTIVOS MORAIS: CAOS TOTAL no PAÍS | 8:53 | 2025-10-02 13:15:08 | https://www.youtube.com/watch?v=_6-rECTnUT8"
       }
     ]
   },
