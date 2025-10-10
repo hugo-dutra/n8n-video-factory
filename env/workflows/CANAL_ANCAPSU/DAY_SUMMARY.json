@@ -1,0 +1,161 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        304,
+        0
+      ],
+      "id": "1130bfb7-aef0-4970-a92e-016f3308f4b2",
+      "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "command": "=bash -lc '\ndir=\"/home/node/processing/{{ $json.CHANNEL_NAME }}/DAY_SUMMARY\"\nshopt -s nullglob\nprintf \"[\"\nfirst=1\nfor f in \"$dir\"/*.mp4; do\n  bn=\"$(basename -- \"$f\")\"\n  ext=\"${bn##*.}\"\n  mime=\"$(file --mime-type -b \"$f\" 2>/dev/null || echo application/octet-stream)\"\n  size=\"$(stat -c%s \"$f\")\"\n  size_h=\"$(numfmt --to=iec --suffix=B \"$size\" 2>/dev/null || echo \"$size\")\"\n  mtime=\"$(stat -c%y \"$f\" 2>/dev/null || echo \"-\")\"\n  btime=\"$(stat -c%w \"$f\" 2>/dev/null || echo \"-\")\"  # pode ser \"-\" em alguns FS\n  kind=\"$(stat -c%F \"$f\" 2>/dev/null || echo \"file\")\"\n\n  if [ $first -eq 0 ]; then printf \",\"; fi\n  first=0\n\n  printf \"{\"\n  printf \"\\\"fileName\\\":%q,\"   \"$bn\"\n  printf \"\\\"directory\\\":%q,\"  \"$(dirname -- \"$f\")\"\n  printf \"\\\"fileExtension\\\":%q,\" \"$ext\"\n  printf \"\\\"mimeType\\\":%q,\"   \"$mime\"\n  printf \"\\\"fileSize\\\":%s,\"   \"$size\"\n  printf \"\\\"fileSizeHuman\\\":%q,\" \"$size_h\"\n  printf \"\\\"modified\\\":%q,\"   \"$mtime\"\n  printf \"\\\"created\\\":%q,\"    \"$btime\"\n  printf \"\\\"kind\\\":%q\"        \"$kind\"\n  printf \"}\"\ndone\nprintf \"]\"\n'\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "id": "792571a4-63e1-4242-ae2e-31e1bb754fcd",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lê o retorno cru (ajuste a origem se for outro campo)\nlet raw = $json.stdout ?? $json.data ?? $json.raw ?? '';\n\nif (typeof raw !== 'string') {\n  raw = String(raw);\n}\n\n// Se vier como string JSON (começa com aspas), tenta desserializar uma vez\nif (raw.startsWith('\"') && raw.endsWith('\"')) {\n  try { raw = JSON.parse(raw); } catch (e) { /* ok, segue em frente */ }\n}\n\n// Normaliza: espaços escapados e barras\nlet s = raw.replace(/\\\\ /g, ' ');\n\n// Extrai cada objeto {...} do array\nconst objMatches = s.match(/\\{[^}]*\\}/g) || [];\nconst numberKeys = new Set(['fileSize', 'fileSizeHuman']);\n\nconst out = [];\n\nfor (const chunk of objMatches) {\n  const rec = {};\n  const pairRe = /\"([^\"]+)\":([^,}]+)/g;\n  let m;\n\n  while ((m = pairRe.exec(chunk)) !== null) {\n    const key = m[1];\n    let val = m[2].trim();\n\n    // Remove aspas se existirem\n    if (val.startsWith('\"') && val.endsWith('\"')) {\n      val = val.slice(1, -1);\n    }\n\n    // Desescapa restos comuns\n    val = val.replace(/\\\\\\\\/g, '\\\\')\n             .replace(/\\\\n/g, '\\n')\n             .replace(/\\\\t/g, '\\t');\n\n    if (numberKeys.has(key)) {\n      // Garante número (remove qualquer sufixo estranho)\n      const num = Number(val.replace(/[^\\d.-]/g, ''));\n      rec[key] = Number.isFinite(num) ? num : null;\n    } else {\n      // Arruma valores \"especiais\"\n      if (key === 'created' && (val === '-' || val === 'w' || val === '')) {\n        rec[key] = null;\n      } else {\n        rec[key] = val;\n      }\n    }\n  }\n\n  // Campo auxiliar: caminho completo\n  if (rec.directory && rec.fileName) {\n    rec.file = `${rec.fileName}`;\n  }\n\n  out.push({ json: rec });\n}\n\n// Retorna um item por arquivo\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        0
+      ],
+      "id": "68f371e3-6b6f-4d37-92e2-ca243569aa7e",
+      "name": "Parse List of Files"
+    },
+    {
+      "parameters": {
+        "command": "={{ $('Create Script Proccess').item.json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        0
+      ],
+      "id": "6f82d616-f546-402a-bbc4-7c7488c7fcfb",
+      "name": "Execute Command1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code (Node.js)\n// Lê via $input; opcional em qualquer item: DEST_DIR, OUTPUT_FILE_NAME, FADE_SEC (default 2s)\n\nconst all = $input.all().map(i => i.json);\nif (!all.length) throw new Error('Nenhum item de entrada foi recebido.');\n\nlet filesList = [];\nif (all.length > 1 || (all[0] && all[0].file && all[0].directory)) filesList = all;\nelse if (Array.isArray(all[0]?.FILES)) filesList = all[0].FILES;\nelse throw new Error('Esperava itens com {directory, file} ou um objeto com FILES[].');\n\nconst firstWithDest = all.find(o => o.DEST_DIR) || {};\nconst firstWithName = all.find(o => o.OUTPUT_FILE_NAME) || {};\nconst firstWithFade = all.find(o => o.FADE_SEC !== undefined) || {};\n\nfunction normDir(d){ return String(d || '').replace(/\\/+$/,''); }\nfunction quote(s){ return `\"${String(s).replace(/\"/g,'\\\\\"')}\"`; }\n\nlet DEST_DIR = normDir(firstWithDest.DEST_DIR);\nif (!DEST_DIR) DEST_DIR = normDir(filesList[0]?.directory);\nif (!DEST_DIR) throw new Error('DEST_DIR não informado e não foi possível inferir do primeiro arquivo.');\n\nfunction tailIndex(name){ const m = String(name).match(/_(\\d+)\\.mp4$/i); return m ? parseInt(m[1],10) : null; }\nconst ordered = [...filesList].sort((a,b)=>{\n  const fa = a.file || a.fileName || '';\n  const fb = b.file || b.fileName || '';\n  const ia = tailIndex(fa), ib = tailIndex(fb);\n  if (ia != null && ib != null && ia !== ib) return ia - ib;\n  if (ia != null && ib == null) return -1;\n  if (ia == null && ib != null) return 1;\n  return fa.localeCompare(fb);\n});\n\nconst inputs = ordered.map(o => {\n  const dir = normDir(o.directory);\n  const name = o.file || o.fileName;\n  if (!dir || !name) throw new Error('Cada item precisa de \"directory\" e \"file\".');\n  return `${dir}/${name}`;\n});\n\n// Nome de saída com prefixo DAY_SUMMARY_\nconst PREFIX = 'DAY_SUMMARY_';\nconst rawOutName = (firstWithName.OUTPUT_FILE_NAME || ordered[0]?.file || `MERGED_${Date.now()}.mp4`);\nconst cleanedOutName = String(rawOutName).replace(/[\\\\\\/:*?\"<>|]/g,'_');\nconst outputFile = cleanedOutName.startsWith(PREFIX) ? cleanedOutName : `${PREFIX}${cleanedOutName}`;\nconst finalOut = `${DEST_DIR}/${outputFile}`;\n\n// Fade\nconst fadeSec = Number(firstWithFade.FADE_SEC);\nconst FADE_SEC = Number.isFinite(fadeSec) && fadeSec > 0 ? fadeSec : 2;\n\n// Inputs quotados pro shell\nconst inputsQuoted = inputs.map(p => `\"${p.replace(/\"/g,'\\\\\"')}\"`).join(' ');\n\n// Script POSIX (sem wrapper). ATENÇÃO: ${OUT_FADE} precisa ser literal → ${'${OUT_FADE}'}\nconst script = `\nset -e\nFADE_SEC=${FADE_SEC}\nDEST_DIR=${quote(DEST_DIR)}\nFINAL_OUT=${quote(finalOut)}\n\nmkdir -p \"$DEST_DIR\"\n\nTMPDIR=\"$DEST_DIR/.mergefade_$(date +%s)_$$\"\nmkdir -p \"$TMPDIR\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"\n: > \"$LIST\"\n\nidx=0\nfor SRC in ${inputsQuoted}; do\n  DUR=$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 \"$SRC\" | tr -d '\\\\r')\n  [ -z \"$DUR\" ] && DUR=0\n  OUT_FADE=$(awk -v d=\"$DUR\" -v f=\"$FADE_SEC\" 'BEGIN{ s=d-f; if(s<0) s=0; printf \"%.6f\", s }')\n\n  HAS_AUDIO=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 \"$SRC\" | head -n1 || true)\n  PART=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\").mp4\"\n\n  if [ -n \"$HAS_AUDIO\" ]; then\n    ffmpeg -y -i \"$SRC\" \\\n      -vf \"fps=30,format=yuv420p,setsar=1,fade=t=in:st=0:d=${FADE_SEC},fade=t=out:st=${'${OUT_FADE}'}:d=${FADE_SEC}\" \\\n      -af \"aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${FADE_SEC},afade=t=out:st=${'${OUT_FADE}'}:d=${FADE_SEC}\" \\\n      -c:v libx264 -profile:v high -level:v 4.1 -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a 192k \\\n      \"$PART\"\n  else\n    SIL=\"$TMPDIR/sil_$(printf \"%03d\" \"$idx\").wav\"\n    SR=44100\n    ffmpeg -y -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=$SR -t \"$DUR\" \"$SIL\"\n\n    ffmpeg -y -i \"$SRC\" -i \"$SIL\" \\\n      -map 0:v:0 -map 1:a:0 \\\n      -vf \"fps=30,format=yuv420p,setsar=1,fade=t=in:st=0:d=${FADE_SEC},fade=t=out:st=${'${OUT_FADE}'}:d=${FADE_SEC}\" \\\n      -af \"aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${FADE_SEC},afade=t=out:st=${'${OUT_FADE}'}:d=${FADE_SEC}\" \\\n      -c:v libx264 -profile:v high -level:v 4.1 -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a 192k \\\n      \"$PART\"\n  fi\n\n  printf \"file '%s'\\\\n\" \"$PART\" >> \"$LIST\"\n  idx=$((idx+1))\ndone\n\nffmpeg -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK: $FINAL_OUT\"\n`.trim() + '\\n';\n\nreturn {\n  command: script,              // <— sem \"sh -c\"\n  inputs,\n  outputFile,\n  finalOutput: finalOut,\n  debug: {\n    fadeSec: FADE_SEC,\n    count: inputs.length,\n    order: ordered.map(o=>o.file || o.fileName),\n    dest: DEST_DIR,\n    note: 'Escapado ${OUT_FADE} dentro do template JS; script cru no Execute Command'\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "2786834a-fcab-4794-b7cb-1817d75bf7e4",
+      "name": "Create Script Proccess"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23,
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        0
+      ],
+      "id": "22bb321b-a154-4e9f-bfe0-0b538576350f",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Parse List of Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse List of Files": {
+      "main": [
+        [
+          {
+            "node": "Create Script Proccess",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Script Proccess": {
+      "main": [
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}
