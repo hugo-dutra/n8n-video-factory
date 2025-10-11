@@ -1,0 +1,344 @@
+{
+  "createdAt": "2025-08-21T11:01:01.521Z",
+  "updatedAt": "2025-10-04T18:14:34.000Z",
+  "id": "3d92D6TV6oLVwDrh",
+  "name": "@VIDEO_FADEIN_FADEOUT",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.mp4\",\n  \"IN_SECOND\": 0,\n  \"IN_DURATION\": 2,\n  \"OUT_SECOND\": 11,\n  \"OUT_DURATION\": 2\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        -112
+      ],
+      "id": "2d3c9bb9-f413-4b20-92dc-734de8ff8d66",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dff10386-aac1-4bf2-a53e-24e2e7441381",
+              "name": "VIDEO_ID",
+              "value": "={{ $('START').item.json.FILE_NAME }}",
+              "type": "string"
+            },
+            {
+              "id": "ab7f91b9-a7d9-4a5a-b5a6-189685e0bf2d",
+              "name": "FILENAME",
+              "value": "={{ $('START').item.json.FILE_NAME }}",
+              "type": "string"
+            },
+            {
+              "id": "b6c8e742-9c4e-4302-9a4b-a7c26a66e7c4",
+              "name": "IN_SECOND",
+              "value": "={{ $('START').item.json.IN_SECOND }}",
+              "type": "number"
+            },
+            {
+              "id": "d8f36a2b-a52e-42c4-a063-aef4e794af6c",
+              "name": "IN_DURATION",
+              "value": "={{ $('START').item.json.IN_DURATION }}",
+              "type": "number"
+            },
+            {
+              "id": "844581b5-0045-4263-a9a5-d45e66ba21ec",
+              "name": "OUT_SECOND",
+              "value": "={{ $('START').item.json.OUT_SECOND }}",
+              "type": "number"
+            },
+            {
+              "id": "296ca2a1-20ea-4d54-9adb-b11ea5171490",
+              "name": "OUT_DURATION",
+              "value": "={{ $('START').item.json.OUT_DURATION }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        -112
+      ],
+      "id": "f0e92389-10e7-4ba7-8592-86f71a880783",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4aa43995-1d25-4eac-949f-6ed21d4ab940",
+              "name": "=RESULT",
+              "value": "={{ $json.exitCode === 0? \"SUCCESS\":\"ERROR\"}}",
+              "type": "string"
+            },
+            {
+              "id": "9f2ff60c-73ff-49b8-993b-437ec8110df2",
+              "name": "FILENAME",
+              "value": "={{ $('VAR').item.json.FILENAME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -208
+      ],
+      "id": "184bbabc-fb4f-4ecd-85d8-b26b0d6fc178",
+      "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "errorMessage": "CHANNEL ID NOT FOUND"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -32
+      ],
+      "id": "6a403037-61f2-418f-9b1b-733d9daa5167",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "={{ $json.VIDEO_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "f4dca3d0-ecca-4dd7-b34e-de3eaf0e2528",
+      "name": "HAS_CHANNEL_ID"
+    },
+    {
+      "parameters": {
+        "command": "=# Caminho do arquivo (n8n)\nIN=\"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/{{ $json.FILENAME }}\"\n\n# 1) Duração real do VÍDEO (stream v:0). Se vier N/A, cai no fallback do container.\nVDUR=\"$(ffprobe -v error -select_streams v:0 -show_entries stream=duration \\\n       -of default=nk=1:nw=1 \"$IN\")\"\nif [ -z \"$VDUR\" ] || [ \"$VDUR\" = \"N/A\" ]; then\n  VDUR=\"$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 \"$IN\")\"\nfi\n\n# 2) Calcula início do fade-out sem extrapolar o fim do VÍDEO\nEPS=\"0.05\"\nOUT_START=\"$(awk -v d=\"$VDUR\" -v od=\"{{ $json.OUT_DURATION }}\" -v os=\"{{ $json.OUT_SECOND }}\" -v eps=\"$EPS\" \\\n  'BEGIN{ max=d-od-eps; s=os; if(s>max) s=max; if(s<0) s=0; printf \"%.6f\", s }')\"\n\n# 3) Aplica fade in/out em VÍDEO e ÁUDIO, e aparo ambos a VDUR\nffmpeg -y \\\n  -fflags +genpts \\\n  -i \"$IN\" \\\n  -filter_complex \"\\\n    [0:v]setpts=PTS-STARTPTS, \\\n         fade=t=in:st={{ $json.IN_SECOND }}:d={{ $json.IN_DURATION }}, \\\n         fade=t=out:st=${OUT_START}:d={{ $json.OUT_DURATION }}, \\\n         trim=end=${VDUR},setpts=PTS-STARTPTS[v]; \\\n    [0:a]asetpts=PTS-STARTPTS, \\\n         afade=t=in:st={{ $json.IN_SECOND }}:d={{ $json.IN_DURATION }}, \\\n         afade=t=out:st=${OUT_START}:d={{ $json.OUT_DURATION }}, \\\n         atrim=end=${VDUR},asetpts=PTS-STARTPTS[a]\" \\\n  -map \"[v]\" -map \"[a]\" \\\n  -c:v libx264 -preset veryfast -crf 18 \\\n  -c:a aac -b:a 192k \\\n  -movflags +faststart -shortest \\\n  \"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/FADE_IN_FADE_OUT_{{ $json.FILENAME }}\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -208
+      ],
+      "id": "cc09a11e-3956-4e5d-8283-a161537fcc94",
+      "name": "SPLIT",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        -112
+      ],
+      "id": "dbbdbbfe-dc2b-43e9-a905-77a6c97650e4",
+      "name": "@GLOBAL_ANCAPSU"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "HAS_CHANNEL_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_CHANNEL_ID": {
+      "main": [
+        [
+          {
+            "node": "SPLIT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SPLIT": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILE_NAME": "F4nBHarrivE_0_525.mp4",
+          "IN_SECOND": 1,
+          "IN_DURATION": 4,
+          "OUT_SECOND": 521.066341,
+          "OUT_DURATION": 3
+        }
+      }
+    ]
+  },
+  "versionId": "1c526e00-2d0a-4556-958d-d52b5ef410b9",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-21T11:01:01.529Z",
+      "updatedAt": "2025-08-21T11:01:01.529Z",
+      "role": "workflow:owner",
+      "workflowId": "3d92D6TV6oLVwDrh",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

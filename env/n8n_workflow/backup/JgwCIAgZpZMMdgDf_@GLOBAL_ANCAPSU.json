@@ -1,0 +1,169 @@
+{
+  "createdAt": "2025-10-04T17:26:13.261Z",
+  "updatedAt": "2025-10-07T09:18:36.000Z",
+  "id": "JgwCIAgZpZMMdgDf",
+  "name": "@GLOBAL_ANCAPSU",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "f0da06f1-dbb7-4b79-8114-8c18c8e083f8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e437a1bd-4a0b-42be-846d-caff4c5e5e74",
+              "name": "CHANNEL_NAME",
+              "value": "CANAL_ANCAPSU",
+              "type": "string"
+            },
+            {
+              "id": "5bec419c-553f-4463-a6c2-26a7b2684eb2",
+              "name": "CHANNEL_ID",
+              "value": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+              "type": "string"
+            },
+            {
+              "id": "7335c9ca-4ed6-4fd5-bb77-f694a202e523",
+              "name": "LAST_N_HOURS",
+              "value": "={{\n(() => {\n  const now = new Date();\n  const midnight = new Date(now);\n  midnight.setHours(0,0,0,0);\n  return Math.floor((now - midnight) / 3_600_000)+1;\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "dcbf1dee-e038-4f05-a50d-f9b0f4980282",
+              "name": "MIN_DURATION",
+              "value": "182",
+              "type": "string"
+            },
+            {
+              "id": "1f6ea11f-e6a3-421f-a25b-00f915e7381b",
+              "name": "MAX_DURATION",
+              "value": "1800",
+              "type": "string"
+            },
+            {
+              "id": "ce77e3fe-b0d5-4766-a3df-5ac2dda4f853",
+              "name": "PLAYLISTS",
+              "value": "={{\nJSON.stringify(\n  [\n    { nome: \"justiça\", id: \"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\" },\n    { nome: \"Geopolítica\", id: \"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\" },\n    { nome: \"politica\", id: \"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\" },\n    { nome: \"cultura e sociedade\", id: \"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\" },\n    { nome: \"Liberdade e mercado\", id: \"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\" },\n    { nome: \"Economia\", id: \"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\" },\n    { nome: \"Corrupção\", id: \"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\" },\n    { nome: \"Tecnologia\", id: \"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\" }\n  ]\n)\n}}\n",
+              "type": "string"
+            },
+            {
+              "id": "e7c92207-4d3a-441b-b65a-8c4437a365e5",
+              "name": "NOTIFY_NUMBERS",
+              "value": "[\"5561982086449\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        16
+      ],
+      "id": "57a60776-aeed-4086-bf2e-801dfa6885fe",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "d5c8915b-78f1-4cb1-adfd-dd6297d6913b",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-04T17:26:13.284Z",
+      "updatedAt": "2025-10-04T17:26:13.284Z",
+      "role": "workflow:owner",
+      "workflowId": "JgwCIAgZpZMMdgDf",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

@@ -1,0 +1,1040 @@
+{
+  "createdAt": "2025-10-02T15:52:42.017Z",
+  "updatedAt": "2025-10-07T08:51:10.000Z",
+  "id": "hRXzf6dN01dP2o29",
+  "name": "@UPLOAD_TO_YOUTUBE",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Loop Over Items1').item.json.fileName}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        448
+      ],
+      "id": "1f83a8f8-6d5a-4f84-9ccd-a3df5cc45efa",
+      "name": "Read File"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Retorna um único item com a string 'DONE'\nreturn [\n  {\n    json: { result: 'DONE' }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        304
+      ],
+      "id": "37820d6b-e27f-41da-a69e-48b968a5c68c",
+      "name": "DONE"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/*.mp4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        784,
+        704
+      ],
+      "id": "1bf93058-4d0f-4b94-bd95-9522c39abf2f",
+      "name": "List Videos to Upload1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1600,
+        448
+      ],
+      "id": "f8bd5f12-4bb3-4e1d-b8b6-ea6b7d6e2346",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "content": "## Upload shorts",
+        "height": 464,
+        "width": 1648,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        224
+      ],
+      "id": "76097924-a762-4927-8dce-8a3583c0f152",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1h9d9qP7tdTR7izH",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/1h9d9qP7tdTR7izH",
+          "cachedResultName": "@SHORT_SCHEDULE_MANAGER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        448
+      ],
+      "id": "bdf6ff81-eed6-4c67-80e9-45fa0c83d93b",
+      "name": "@SHORT_SCHEDULE_MANAGER1"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"channelId\": \"a string\",\n  \"videoId\": \"a string\",\n  \"uploadLongVideoData\": [],\n  \"uploadShortVideoData\": []\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        704
+      ],
+      "id": "da70e806-c692-4962-a0fc-25f09b1eab95",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $('START').first().json.uploadShortVideoData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        448
+      ],
+      "id": "9d0cd348-533b-4637-86b2-f0ae4190cf08",
+      "name": "Get Short Video Info"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza a entrada para sempre virar um array de arquivos\nconst inputItems = $input.all();\nconst files = Array.isArray(inputItems[0]?.json)\n  ? inputItems[0].json                       // caso o 1º item seja um array de arquivos\n  : inputItems.map(i => i.json);             // caso cada item seja um arquivo\n\n// Escolhe o vídeo \"longo\": fileType === 'video' e NÃO contém \"_SHORT_\" no nome\nconst longVideo = files.find(f =>\n  f?.fileType === 'video' &&\n  typeof f?.fileName === 'string' &&\n  !f.fileName.includes('_SHORT_')\n);\n\n// Pega o payload original do START\nconst payload = $('START').first().json.uploadLongVideoData;\n\n// Normaliza/pega o thumbnail do node \"List Thumbnail Upload\" (pode vir item único ou array de itens)\nconst thumbItems = $('List Thumbnail Upload').all();\nconst thumbList = Array.isArray(thumbItems[0]?.json) ? thumbItems[0].json : thumbItems.map(i => i.json);\nconst thumbnailEntry = thumbList.find(t =>\n  t?.fileType === 'image' && typeof t?.fileName === 'string'\n);\nconst thumbnail = thumbnailEntry ? thumbnailEntry.fileName : null;\n\n// Garante que payload é array\nconst list = Array.isArray(payload) ? payload : [payload];\n\n// Monta saída adicionando fileName e thumbnail\nconst out = list.map(item => ({\n  ...item,\n  fileName: longVideo ? longVideo.fileName : null,\n  thumbnail\n}));\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        1056
+      ],
+      "id": "b4b4b5b9-939c-409c-a1f3-8bdbefb7247f",
+      "name": "Get Long Video Info"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node (JavaScript) — Enriquecer cortes com fileName dos vídeos\n// Funciona mesmo que o node esteja conectado após o SplitInBatches,\n// pois lê explicitamente dos nodes nomeados abaixo.\n\nconst DEBUG = false; // troque para true se quiser inspecionar a estratégia de match\n\n// 1) Pega os cortes do node \"Get Short Video Info\"\nconst cuts = $(\"Get Short Video Info\").all().map(i => i.json);\n\n// 2) Pega os arquivos do node \"List Videos to Upload\" (onde estão os .mp4)\nconst fileItems = $(\"List Videos to Upload1\").all().map(i => i.json || i);\nconst fileNames = Array.from(new Set(\n  fileItems\n    .map(f => f?.fileName)\n    .filter(fn => typeof fn === \"string\" && fn.endsWith(\".mp4\"))\n));\n\n// 3) Índices para match rápido\n// 3a) Por IDX: READY_TO_UPLOAD_..._IDX_<n>_...\nconst idxMap = new Map();\nfor (const fn of fileNames) {\n  const m = fn.match(/_IDX_(\\d+)_/);\n  if (m) idxMap.set(Number(m[1]), fn);\n}\n\n// 3b) Por timeStamp: READY_TO_UPLOAD_<ts>_...\nconst tsMap = new Map();\nfor (const fn of fileNames) {\n  const m = fn.match(/^READY_TO_UPLOAD_(\\d+)_/);\n  if (m) tsMap.set(m[1], fn);\n}\n\n// 4) Monta saída: original + fileName (com fallback)\nconst out = [];\n\nfor (const cut of cuts) {\n  const idx = Number(cut.idx);\n  const tsStr = cut.timeStamp != null ? String(cut.timeStamp) : \"\";\n  let fileName = null;\n  let strategy = null;\n\n  if (Number.isFinite(idx) && idxMap.has(idx)) {\n    fileName = idxMap.get(idx);\n    strategy = \"IDX\";\n  } else if (tsStr && tsMap.has(tsStr)) {\n    fileName = tsMap.get(tsStr);\n    strategy = \"timeStamp\";\n  } else {\n    // Fallback extra: busca por substring (mais caro, mas salva casos fora do padrão)\n    fileName = fileNames.find(fn =>\n      (Number.isFinite(idx) && fn.includes(`_IDX_${idx}_`)) ||\n      (tsStr && fn.includes(tsStr))\n    ) || null;\n    strategy = \"fallback-search\";\n  }\n\n  const enriched = { ...cut, fileName };\n  if (DEBUG) enriched.__debug = { strategy, candidates: fileNames };\n\n  out.push({ json: enriched });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        448
+      ],
+      "id": "63b3491a-f2c9-40be-a755-d8406764296c",
+      "name": "Map File Names"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/*.png",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        592,
+        704
+      ],
+      "id": "67779c1d-10a1-4e80-b95b-29a67245dce1",
+      "name": "List Thumbnail Upload"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0ap9qlRsEhZwRkS3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0ap9qlRsEhZwRkS3",
+          "cachedResultName": "@LONG_SCHEDULE_MANAGER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        1056
+      ],
+      "id": "1f95ab48-de31-4d4a-ac00-1dd18003c9bd",
+      "name": "@LONG_SCHEDULE_MANAGER"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Get Long Video Info').item.json.fileName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        1056
+      ],
+      "id": "1688da31-29fa-4d56-a52d-64a3fd35fd08",
+      "name": "Read File Video"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Get Long Video Info').item.json.thumbnail }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        1056
+      ],
+      "id": "fc27c7df-3eec-45b0-a11f-34539d433de3",
+      "name": "Read File Thumb"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $('Upload a long').item.json.uploadId }}"
+            },
+            {
+              "name": "uploadType",
+              "value": "multipart"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "32da164d-c3ec-43cd-868e-4947549ea447",
+      "name": "Set Thumbnail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1968,
+        1056
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Upload longs",
+        "height": 544,
+        "width": 1536
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        848
+      ],
+      "id": "9418625a-fa0a-4de7-befe-c1782c701efa",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        704
+      ],
+      "id": "9ab7e090-578a-4336-a4af-0041927233c7",
+      "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/youtube/v3/playlistItems",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const info = $('Get Long Video Info')?.item?.json ?? {};\n  const upload = $('Upload a long')?.item?.json ?? {};\n\n  const playlistId =\n    info?.playlist?.id ??\n    info?.playlistId ??\n    $json.playlistId;\n\n  const videoId = upload?.uploadId ?? $json.videoId;\n\n  if (!playlistId) throw new Error('playlistId ausente (esperado em Get Long Video Info.playlist.id ou playlistId).');\n  if (!videoId)   throw new Error('videoId ausente (use Upload a long.uploadId ou $json.videoId).');\n\n  return JSON.stringify({\n    snippet: {\n      playlistId,\n      resourceId: { kind: 'youtube#video', videoId }      \n    }\n  });\n})()\n}}\n",
+        "options": {}
+      },
+      "id": "3aafbafa-8ecb-4436-bf7f-0c7c91ea8b79",
+      "name": "Set Video To Playlist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2144,
+        1056
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Loop Over Items1').item.json.videoCutTitle }}",
+        "regionCode": "BR",
+        "categoryId": "=",
+        "binaryProperty": "=data",
+        "options": {
+          "description": "={{ $('Loop Over Items1').item.json.videoCutDescription }}",
+          "notifySubscribers": false,
+          "privacyStatus": "private",
+          "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');  \n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n\n  const y = d.getFullYear();\n  const M   = pad(d.getMonth() + 1);\n  const D   = pad(d.getDate());\n\n  return `${y}-${M}-${D}T`+$('@SHORT_SCHEDULE_MANAGER1').item.json.APPOINTMENT;\n})()\n}}\n",
+          "selfDeclaredMadeForKids": false,
+          "tags": "={{ $('Loop Over Items1').first().json.videoTags.map(t => JSON.stringify(t)).join(',').trim() }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2176,
+        448
+      ],
+      "id": "e8864b1a-cc8e-4a36-a4dc-5faf7adf8e84",
+      "name": "Upload a short",
+      "alwaysOutputData": false,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Get Long Video Info').item.json.videoCutTitle }}",
+        "regionCode": "BR",
+        "categoryId": "=",
+        "binaryProperty": "=data",
+        "options": {
+          "description": "={{ $('Get Long Video Info').item.json.videoCutDescription }}",
+          "notifySubscribers": false,
+          "privacyStatus": "private",
+          "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');\n\n  const appointmentUtc = $('@LONG_SCHEDULE_MANAGER').item.json.APPOINTMENT;\n\n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n  const [y, M, D] = [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())];\n\n  const t = new Date(`1970-01-01T${appointmentUtc}`);\n  t.setHours(t.getHours() + 6);\n\n  const hh = pad(t.getHours());\n  const mm = pad(t.getMinutes());\n  const ss = pad(t.getSeconds());\n\n  return `${y}-${M}-${D}T${hh}:${mm}:${ss}`;\n})()\n}}\n",
+          "selfDeclaredMadeForKids": false,
+          "tags": "={{ $('Get Long Video Info').first().json.videoTags.map(t => JSON.stringify(t)).join(',').trim() }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        1056
+      ],
+      "id": "6830a84e-5933-429c-9b7c-67d637ea63bc",
+      "name": "Upload a long",
+      "alwaysOutputData": false,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Iniciando Upload dos SHORTS..."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1200,
+        304
+      ],
+      "id": "94b2148a-b9c7-473a-b9c1-1787b530bc27",
+      "name": "@NOTIFIER"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Iniciando Upload dos LONGOS..."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        864
+      ],
+      "id": "b32f9b43-8ed2-4a20-9e47-c4bf8a742dbb",
+      "name": "@NOTIFIER1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Shorts FINALIZADOS !"
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1984,
+        304
+      ],
+      "id": "f0ea8c39-dc92-4d3d-96e1-f807ce1782e0",
+      "name": "@NOTIFIER2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "=[FALHA AO ENVIAR Short de ID:{{ $('Loop Over Items1').item.json.idx }} e título {{ $('Loop Over Items1').item.json.videoCutTitle }}]"
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2384,
+        496
+      ],
+      "id": "6f4e1420-bba1-4950-a3ce-442e018dfc5e",
+      "name": "@NOTIFIER3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "[FALHA AO ENVIAR vídeo LONGO !"
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1776,
+        1232
+      ],
+      "id": "490decd7-9997-431c-8b4c-afce046d898a",
+      "name": "@NOTIFIER4"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Vídeo LONGO de enviado com SUCESSO!"
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2320,
+        1056
+      ],
+      "id": "b48222c1-2d3c-4a39-a2c9-5ee21713f2d9",
+      "name": "@NOTIFIER5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — wrap simples em 1 item\nconst items = $input.all();\n\n// Se já veio um único item que é um array, usa-o;\n// senão, junta todos os items em um array.\nconst list = (items.length === 1 && Array.isArray(items[0].json))\n  ? items[0].json\n  : items.map(i => i.json);\n\n// Retorna 1 item com a lista embrulhada\nreturn [{ json: { files: list } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        304
+      ],
+      "id": "33c8b807-1749-4e1a-ac04-4a3bf189ed20",
+      "name": "Reduce List"
+    }
+  ],
+  "connections": {
+    "Read File": {
+      "main": [
+        [
+          {
+            "node": "Upload a short",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DONE": {
+      "main": [
+        [
+          {
+            "node": "@NOTIFIER2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Videos to Upload1": {
+      "main": [
+        [
+          {
+            "node": "Get Long Video Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Short Video Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reduce List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "DONE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "@SHORT_SCHEDULE_MANAGER1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@SHORT_SCHEDULE_MANAGER1": {
+      "main": [
+        [
+          {
+            "node": "Read File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "START": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Short Video Info": {
+      "main": [
+        [
+          {
+            "node": "Map File Names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map File Names": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Thumbnail Upload": {
+      "main": [
+        [
+          {
+            "node": "List Videos to Upload1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Long Video Info": {
+      "main": [
+        [
+          {
+            "node": "@LONG_SCHEDULE_MANAGER",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@NOTIFIER1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@LONG_SCHEDULE_MANAGER": {
+      "main": [
+        [
+          {
+            "node": "Read File Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read File Video": {
+      "main": [
+        [
+          {
+            "node": "Upload a long",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read File Thumb": {
+      "main": [
+        [
+          {
+            "node": "Set Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Set Video To Playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "List Thumbnail Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Video To Playlist": {
+      "main": [
+        [
+          {
+            "node": "@NOTIFIER5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Upload a short": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "@NOTIFIER3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a long": {
+      "main": [
+        [
+          {
+            "node": "Read File Thumb",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "@NOTIFIER4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@NOTIFIER3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reduce List": {
+      "main": [
+        [
+          {
+            "node": "@NOTIFIER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "mimeType": "video/mp4",
+          "fileType": "video",
+          "fileName": "READY_TO_UPLOAD_0_LONG_1759785781.mp4",
+          "fileExtension": "mp4",
+          "fileSize": "78.1 MB"
+        }
+      },
+      {
+        "json": {
+          "mimeType": "video/mp4",
+          "fileType": "video",
+          "fileName": "READY_TO_UPLOAD_1759785199466_IDX_0_SHORT_1759785247.mp4",
+          "fileExtension": "mp4",
+          "fileSize": "24.5 MB"
+        }
+      },
+      {
+        "json": {
+          "mimeType": "video/mp4",
+          "fileType": "video",
+          "fileName": "READY_TO_UPLOAD_1759785200466_IDX_1_SHORT_1759785319.mp4",
+          "fileExtension": "mp4",
+          "fileSize": "27 MB"
+        }
+      }
+    ]
+  },
+  "versionId": "a6a7300f-291f-40fc-9c2b-c110f552fe49",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-02T15:52:42.042Z",
+      "updatedAt": "2025-10-02T15:52:42.042Z",
+      "role": "workflow:owner",
+      "workflowId": "hRXzf6dN01dP2o29",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

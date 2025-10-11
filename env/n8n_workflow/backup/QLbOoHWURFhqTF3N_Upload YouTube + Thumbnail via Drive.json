@@ -1,0 +1,563 @@
+{
+  "createdAt": "2025-10-04T11:35:52.019Z",
+  "updatedAt": "2025-10-04T11:36:07.000Z",
+  "id": "QLbOoHWURFhqTF3N",
+  "name": "Upload YouTube + Thumbnail via Drive",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "value": "REPLACE_WITH_YOUR_FOLDER_ID",
+          "mode": "list"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "d7c8ab0d-9b11-435a-a9db-e69d9fef28a1",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "='{{$json[\"id\"]}}' in parents",
+        "filter": {},
+        "options": {}
+      },
+      "id": "5f2df15e-ef74-446f-8d33-72296c5f5c98",
+      "name": "Google Drive - List Folder Items",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -560,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json[\"name\"]}}",
+              "rightValue": ".mp4",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            },
+            {
+              "leftValue": "={{$json[\"name\"]}}",
+              "rightValue": ".mov",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "8a3175b0-4937-497b-989a-d590e545b25b",
+      "name": "IF Video",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "c56235db-5404-4833-a560-06edaeb7f954",
+      "name": "Drive Download Video",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json[\"name\"]}}",
+              "rightValue": ".jpg",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            },
+            {
+              "leftValue": "={{$json[\"name\"]}}",
+              "rightValue": ".png",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "d343b046-1524-449d-9b84-635c8a6e268c",
+      "name": "IF Thumbnail",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "eed3f82c-3cd6-49f2-aa01-30582a53ba4e",
+      "name": "Drive Download Thumbnail",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json[\"name\"]}}",
+              "rightValue": ".txt",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fc305a8d-882d-47d6-b690-98eacaa0565d",
+      "name": "IF Description",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "42f6e3d8-9b5f-4d6d-8f4a-daaee3e49414",
+      "name": "Drive Download Description",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "description_text",
+        "options": {}
+      },
+      "id": "7451807a-68c0-4f75-84f2-3fcd693a2e96",
+      "name": "Extract From File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        48,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "description",
+              "value": "={{ $json[\"description_text\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cc7c392f-4ee3-4138-b82d-bf8b5e181079",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "5d506e18-6d23-403e-8c29-2c485044a8cf",
+      "name": "Merge Video+Desc",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $json.name ? $json.name.replace(/\\.(mp4|mov)$/i, '') : 'Untitled Video' }}",
+        "regionCode": "US",
+        "categoryId": "20",
+        "options": {
+          "description": "={{ $('Edit Fields').item.json.description }}",
+          "notifySubscribers": true,
+          "privacyStatus": "private"
+        }
+      },
+      "id": "9324a6e4-457b-42b3-8b92-a2d3d3c2d854",
+      "name": "YouTube - Upload",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "fb7a8a34-1a39-4bd7-bcf2-bd07134388cc",
+      "name": "Merge YouTube+Thumb",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        592,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "uploadType",
+              "value": "multipart"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dfdc720f-f26a-40bf-9f74-9a847a4df233",
+      "name": "YouTube - Set Thumbnail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        864,
+        128
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive - List Folder Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive - List Folder Items": {
+      "main": [
+        [
+          {
+            "node": "IF Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF Thumbnail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Video": {
+      "main": [
+        [
+          {
+            "node": "Drive Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive Download Video": {
+      "main": [
+        [
+          {
+            "node": "Merge Video+Desc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Description": {
+      "main": [
+        [
+          {
+            "node": "Drive Download Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive Download Description": {
+      "main": [
+        [
+          {
+            "node": "Extract From File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract From File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge Video+Desc",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Video+Desc": {
+      "main": [
+        [
+          {
+            "node": "YouTube - Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube - Upload": {
+      "main": [
+        [
+          {
+            "node": "Merge YouTube+Thumb",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Drive Download Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive Download Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Merge YouTube+Thumb",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge YouTube+Thumb": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "ab553e6a-bd00-4622-8f16-0680c2764d3e",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-04T11:35:52.039Z",
+      "updatedAt": "2025-10-04T11:35:52.039Z",
+      "role": "workflow:owner",
+      "workflowId": "QLbOoHWURFhqTF3N",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

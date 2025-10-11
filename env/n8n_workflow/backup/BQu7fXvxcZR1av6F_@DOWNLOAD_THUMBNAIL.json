@@ -1,0 +1,323 @@
+{
+  "createdAt": "2025-08-20T21:44:14.723Z",
+  "updatedAt": "2025-10-10T00:23:32.000Z",
+  "id": "BQu7fXvxcZR1av6F",
+  "name": "@DOWNLOAD_THUMBNAIL",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"VIDEO_ID\": \"a string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        -112
+      ],
+      "id": "5f014126-2e95-4fc6-9188-dda3926bfb6c",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dff10386-aac1-4bf2-a53e-24e2e7441381",
+              "name": "VIDEO_ID",
+              "value": "={{ $json.VIDEO_ID }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        -112
+      ],
+      "id": "5f484c24-ae6f-4d58-9234-d88e5d6c44fb",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "command": "=yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg \\\n  -o \"/home/node/download/CANAL_ANCAPSU/{{$('START').item.json.VIDEO_ID}}/{{$('START').item.json.VIDEO_ID}}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{$('START').item.json.VIDEO_ID}}\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -208
+      ],
+      "id": "0205c871-0d3c-4c8f-b77f-c7e4bd1a02ca",
+      "name": "DOWNLOAD",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "={{ $('START').item.json.VIDEO_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -112
+      ],
+      "id": "9c902417-8535-4642-8b25-3def674fc71a",
+      "name": "HAS_CHANNEL_ID"
+    },
+    {
+      "parameters": {
+        "errorMessage": "CHANNEL ID NOT FOUND"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        336,
+        0
+      ],
+      "id": "205b1023-fd4a-4adc-a9f9-75546ff113ce",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4aa43995-1d25-4eac-949f-6ed21d4ab940",
+              "name": "=RESULT",
+              "value": "={{ $json.exitCode === 0? \"SUCCESS\":\"ERROR\"}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -208
+      ],
+      "id": "b1dd7f55-910e-4421-a43d-c3d5fdb171e6",
+      "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DOfnd0M834V8kbv2",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/DOfnd0M834V8kbv2",
+          "cachedResultName": "@CREATE_FOLDER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "path": "=/home/node/download/CANAL_ANCAPSU/{{ $('START').item.json.VIDEO_ID}}"
+          },
+          "matchingColumns": [
+            "path"
+          ],
+          "schema": [
+            {
+              "id": "path",
+              "displayName": "path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        -208
+      ],
+      "id": "35469c71-f6d4-4ac3-a907-5ece472c0b32",
+      "name": "Create Folder"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "HAS_CHANNEL_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_CHANNEL_ID": {
+      "main": [
+        [
+          {
+            "node": "Create Folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Folder": {
+      "main": [
+        [
+          {
+            "node": "DOWNLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "VIDEO_ID": "JO_0iF4XPYk"
+        }
+      }
+    ]
+  },
+  "versionId": "3522be27-a084-4a60-9b65-dc82876ebd36",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-20T21:44:14.739Z",
+      "updatedAt": "2025-08-20T21:44:14.739Z",
+      "role": "workflow:owner",
+      "workflowId": "BQu7fXvxcZR1av6F",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

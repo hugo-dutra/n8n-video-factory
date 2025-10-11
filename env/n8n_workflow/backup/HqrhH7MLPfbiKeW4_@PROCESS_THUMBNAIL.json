@@ -1,0 +1,251 @@
+{
+  "createdAt": "2025-09-30T12:06:48.735Z",
+  "updatedAt": "2025-10-05T09:43:41.000Z",
+  "id": "HqrhH7MLPfbiKeW4",
+  "name": "@PROCESS_THUMBNAIL",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "command": "=/bin/bash -lc '\nset -euo pipefail\n\n# ====== ENTRADAS ======\nORIGINAL=\"/home/node/download/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/{{ $('Edit Fields').item.json.videoId }}/{{ $('Edit Fields').item.json.videoId }}.jpg\"\nOVERLAY=\"/home/node/assets/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/overlay_thumbs/{{ $json.filename }}\"\nPCT=\"{{ $json.PERCENTUAL_DESLOCAMENTO_IMAGEM || 20 }}\"   # % CORTADO do lado direito e deslocamento da base p/ DIREITA\nOUT=\"{{ $json.OUTPUT_FILE || `/home/node/processing/${$('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME}/${$('Start').item.json.videoId}_thumbnail.png` }}\"\nFONT=\"{{ $json.FONT_PATH || `/home/node/assets/${$('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME}/fonts/impact.ttf` }}\"\n\n\n# Overlay (fica por cima)\nOVERLAY_X=\"{{ $json.OVERLAY_X || 0 }}\"\nOVERLAY_Y=\"{{ $json.OVERLAY_Y || 0 }}\"\n\n# Textos\nT1=\"{{ String($('Start').item.json.texto1 ?? \"\") }}\"\nT2=\"{{ String($('Start').item.json.texto2 ?? \"\") }}\"\nT3=\"{{ String($('Start').item.json.texto3 ?? \"\") }}\"\nT4=\"{{ String($('Start').item.json.texto4 ?? \"\") }}\"\n\n# Specs estilo \"x,y,fontsize,color\" (opcionais). Se não vier, uso defaults.\nP1=\"${P1-}\"; P2=\"${P2-}\"; P3=\"${P3-}\"; P4=\"${P4-}\"\n\n# ====== OVERRIDES por texto (cada N controla o texto N) ======\nX1=\"{{ $('Start').item.json.posXTexto1 || \"\" }}\"; Y1=\"{{ $('Start').item.json.posYTexto1 || \"\" }}\"; FS1=\"{{ $('Start').item.json.fontSize1 || \"\" }}\"; C1=\"{{ $('Start').item.json.colorTexto1 || \"\" }}\";\nX2=\"{{ $('Start').item.json.posXTexto2 || \"\" }}\"; Y2=\"{{ $('Start').item.json.posYTexto2 || \"\" }}\"; FS2=\"{{ $('Start').item.json.fontSize2 || \"\" }}\"; C2=\"{{ $('Start').item.json.colorTexto2 || \"\" }}\";\nX3=\"{{ $('Start').item.json.posXTexto3 || \"\" }}\"; Y3=\"{{ $('Start').item.json.posYTexto3 || \"\" }}\"; FS3=\"{{ $('Start').item.json.fontSize3 || \"\" }}\"; C3=\"{{ $('Start').item.json.colorTexto3 || \"\" }}\";\nX4=\"{{ $('Start').item.json.posXTexto4 || \"\" }}\"; Y4=\"{{ $('Start').item.json.posYTexto4 || \"\" }}\"; FS4=\"{{ $('Start').item.json.fontSize4 || \"\" }}\"; C4=\"{{ $('Start').item.json.colorTexto4 || \"\" }}\"\n\n# ====== VALIDAÇÕES ======\n[ -f \"$ORIGINAL\" ] || { echo \"ERRO: ORIGINAL nao encontrado: $ORIGINAL\" >&2; exit 1; }\n[ -f \"$OVERLAY\" ]  || { echo \"ERRO: OVERLAY nao encontrado: $OVERLAY\" >&2; exit 1; }\n[[ \"$PCT\" =~ ^[0-9]+$ ]] || { echo \"ERRO: PCT deve ser inteiro (1-90).\" >&2; exit 1; }\n(( PCT > 0 && PCT < 90 )) || { echo \"ERRO: PCT fora do intervalo (1-90).\" >&2; exit 1; }\n\nif [ ! -f \"$FONT\" ]; then\n  ALT=\"/home/node/assets/fonts/impact.ttf\"\n  [ -f \"$ALT\" ] && FONT=\"$ALT\" || { echo \"ERRO: fonte nao encontrada.\" >&2; exit 1; }\nfi\n\n# ====== FUNÇÕES AUX ======\n# parse_pos:\n# - \"x,y,s,color\" -> usa com defaults por campo\n# - vazio ou \"N\"  -> defaults (10,0,36,white)\nparse_pos() {\n  local spec=\"$1\" X Y S C\n  if [[ -z \"$spec\" || \"$spec\" == \"N\" || \"$spec\" == \"n\" ]]; then\n    X=\"10\"; Y=\"0\"; S=\"36\"; C=\"white\"\n  elif [[ \"$spec\" == *,* ]]; then\n    IFS=, read -r X Y S C <<<\"$spec\"\n    X=\"${X:-10}\"; Y=\"${Y:-0}\"; S=\"${S:-36}\"; C=\"${C:-white}\"\n  else\n    X=\"10\"; Y=\"$spec\"; S=\"36\"; C=\"white\"\n  fi\n  printf \"%s:%s:%s:%s\" \"$X\" \"$Y\" \"$S\" \"$C\"\n}\n\n# normaliza cor para drawtext: \"#RRGGBB\" -> \"0xRRGGBB\"\nnorm_color() {\n  local c=\"$1\"\n  if [[ \"$c\" =~ ^#[0-9A-Fa-f]{6}$ ]]; then\n    echo \"0x${c#\\#}\"\n  else\n    echo \"${c:-white}\"\n  fi\n}\n\n# resolve specs aplicando overrides Xn/Yn/FSn/Cn se vierem\nresolve_specs() {\n  local spec=\"$1\" ox=\"$2\" oy=\"$3\" os=\"$4\" oc=\"$5\"\n  local x y s c\n  IFS=: read -r x y s c <<<\"$(parse_pos \"$spec\")\"\n  [[ -n \"$ox\" ]] && x=\"$ox\"\n  [[ -n \"$oy\" ]] && y=\"$oy\"\n  [[ -n \"$os\" ]] && s=\"$os\"\n  [[ -n \"$oc\" ]] && c=\"$oc\"\n  c=\"$(norm_color \"$c\")\"\n  printf \"%s:%s:%s:%s\" \"$x\" \"$y\" \"$s\" \"$c\"\n}\n\n# ====== MEDIDAS ======\nW=\"$(magick identify -format \"%w\" \"$ORIGINAL\")\"\nH=\"$(magick identify -format \"%h\" \"$ORIGINAL\")\"\nGUTTER=$(( W * PCT / 100 ))      # largura \"vazia\" à esquerda\nKEEP_W=$(( W - GUTTER ))\n[ \"$KEEP_W\" -gt 0 ] || { echo \"ERRO: KEEP_W <= 0 (PCT alto demais?).\" >&2; exit 1; }\n\nBG=\"/tmp/bg-$$.png\"\n\n# ====== 1) CORTA À DIREITA e DESLOCA BASE PARA A DIREITA ======\nmagick \"$ORIGINAL\" \\\n  -crop \"${KEEP_W}x${H}+0+0\" +repage \\\n  -background none -gravity East -extent \"${W}x${H}\" \\\n  \"$BG\"\n\n# ====== 2) TEXTOS -> arquivos temporários ======\nmktext() { [ -n \"$2\" ] && printf \"%s\" \"$2\" > \"$1\" || true; }\nT1F=\"/tmp/t1-$$.txt\"; T2F=\"/tmp/t2-$$.txt\"; T3F=\"/tmp/t3-$$.txt\"; T4F=\"/tmp/t4-$$.txt\"\nmktext \"$T1F\" \"$T1\"; mktext \"$T2F\" \"$T2\"; mktext \"$T3F\" \"$T3\"; mktext \"$T4F\" \"$T4\"\n\n# ====== 3) MONTA FILTER: overlay por cima, depois textos ======\nFILTER=\"[0:v][1:v]overlay=x=${OVERLAY_X}:y=${OVERLAY_Y}:format=auto,format=rgba\"\n\nadd_text() {\n  local tf=\"$1\" spec=\"$2\" ox=\"$3\" oy=\"$4\" os=\"$5\" oc=\"$6\"\n  if [ -s \"$tf\" ]; then\n    local X Y S C\n    IFS=: read -r X Y S C <<<\"$(resolve_specs \"$spec\" \"$ox\" \"$oy\" \"$os\" \"$oc\")\"\n    FILTER=\"$FILTER,drawtext=fontfile=$FONT:textfile=$tf:fontsize=$S:fontcolor=$C:x=$X:y=$Y:box=0\"\n  fi\n}\n\nadd_text \"$T1F\" \"$P1\" \"$X1\" \"$Y1\" \"$FS1\" \"$C1\"\nadd_text \"$T2F\" \"$P2\" \"$X2\" \"$Y2\" \"$FS2\" \"$C2\"\nadd_text \"$T3F\" \"$P3\" \"$X3\" \"$Y3\" \"$FS3\" \"$C3\"\nadd_text \"$T4F\" \"$P4\" \"$X4\" \"$Y4\" \"$FS4\" \"$C4\"\n\n# ====== 4) EXPORTA (PNG único) ======\nffmpeg -loglevel error -y -i \"$BG\" -i \"$OVERLAY\" -filter_complex \"$FILTER\" -frames:v 1 \"$OUT\"\n\n# ====== LIMPEZA ======\nrm -f \"$BG\" \"$T1F\" \"$T2F\" \"$T3F\" \"$T4F\"\n\necho \"OK: $OUT (corte direita=${PCT}% | shift direita=${PCT}% | W=${W} H=${H})\"\n'\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -32
+      ],
+      "id": "100b6de2-8b8f-4826-b782-f0afdfed0618",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4d5c3e7-d2dd-4ff2-873d-1d18a8f7887d",
+              "name": "videoId",
+              "value": "={{ $('Start').item.json.videoId }}",
+              "type": "string"
+            },
+            {
+              "id": "159a8944-a248-4cb1-9272-75c63b153546",
+              "name": "fontSize",
+              "value": 30,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        -32
+      ],
+      "id": "142ad1c8-f87c-41f8-b5f9-fa6b1fe85785",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"videoId\": \"a string\",\n  \"texto1\": \"a string\",\n  \"posXTexto1\": 0,\n  \"posYTexto1\": 0,\n  \"colorTexto1\": \"a string\",\n  \"fontSize1\": 12,\n  \"texto2\": \"a string\",\n  \"posXTexto2\": 0,\n  \"posYTexto2\": 0,\n  \"colorTexto2\": \"a string\",\n  \"fontSize2\": 12,\n  \"texto3\": \"a string\",\n  \"posXTexto3\": 0,\n  \"posYTexto3\": 0,\n  \"colorTexto3\": \"a string\",\n  \"fontSize3\": 12,\n  \"texto4\": \"a string\",\n  \"posXTexto4\": 0,\n  \"posYTexto4\": 0,\n  \"colorTexto4\": \"a string\",\n  \"fontSize4\": 12  \n}"
+      },
+      "id": "63d52b53-6f2a-4564-88c6-fe052f15dca3",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        208,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        -32
+      ],
+      "id": "0f6e1d8a-73eb-4b94-bc37-cfa27134583b",
+      "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "jsCode": "const min = 0;\nconst max = 11;\nconst n = Math.floor(Math.random() * (max - min + 1)) + min;\nconst filename = `thumb_template_${n}.png`;\nreturn [{ json: { filename } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        -32
+      ],
+      "id": "66e98f26-f1e7-4903-99c0-7a189e82790d",
+      "name": "Select Thumb"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Select Thumb",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Thumb": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "videoId": "EG7qAwnz394",
+          "texto1": "TRUMP ALERTA",
+          "posXTexto1": 50,
+          "posYTexto1": 47,
+          "colorTexto1": "#FFFFFF",
+          "fontSize1": 35,
+          "texto2": "FOLHA EXAGERA NOTÍCIA",
+          "posXTexto2": 98,
+          "posYTexto2": 175,
+          "colorTexto2": "#000000",
+          "fontSize2": 45,
+          "texto3": "DIREITA SOB ATAQUE",
+          "posXTexto3": 25,
+          "posYTexto3": 250,
+          "colorTexto3": "#FFFFFF",
+          "fontSize3": 60,
+          "texto4": "Jogo Sujo Mídia",
+          "posXTexto4": 25,
+          "posYTexto4": 315,
+          "colorTexto4": "#FFFFFF",
+          "fontSize4": 60
+        }
+      }
+    ]
+  },
+  "versionId": "9be69926-d2bc-4a95-af0b-5f57ff1705c5",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-30T12:06:48.767Z",
+      "updatedAt": "2025-09-30T12:06:48.767Z",
+      "role": "workflow:owner",
+      "workflowId": "HqrhH7MLPfbiKeW4",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

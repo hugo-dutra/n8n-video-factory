@@ -1,0 +1,328 @@
+{
+  "createdAt": "2025-09-07T12:53:43.893Z",
+  "updatedAt": "2025-10-09T00:22:27.000Z",
+  "id": "1nQSE6xkyPf6lCyw",
+  "name": "@SILENCE_DETECTOR",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILE_PATH\": \"\"  \n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        -112
+      ],
+      "id": "ddac837d-8830-40fa-9257-5287b3e33856",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d3afe09-9721-421b-9beb-a4a910b000e1",
+              "name": "FILE_PATH",
+              "value": "={{ $('START').item.json.FILE_PATH }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -112
+      ],
+      "id": "48826e16-6b65-40d7-bb1d-f9667e1a0bfb",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ac0d01c-2852-4bd1-9cd0-83f4beadf2d1",
+              "name": "periods",
+              "value": "={{ $json.periods }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        -176
+      ],
+      "id": "904609fa-20ab-4da4-bf5a-9367998e9296",
+      "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "errorMessage": "CHANNEL ID NOT FOUND"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -16
+      ],
+      "id": "9f7f9b12-d3dc-4bc7-9b46-9e6750d2aacc",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "command": "=#!/bin/sh\nset -eu\nexport LC_ALL=C\n\nAUDIO=\"{{ $json.FILE_PATH }}\"\nTHRESH=\"{{ $json.THRESH || 2 }}\"      # duração mínima (s)\nNOISE_DB=\"{{ $json.NOISE_DB || -30 }}\"  # igual ao NestJS (-25/-20 se quiser mais “generoso”)\n\nTMP_LOG=\"$(mktemp)\"\nTMP_OUT=\"/tmp/ffsil_$$.wav\"\ncleanup() { rm -f \"$TMP_LOG\" \"$TMP_OUT\"; }\ntrap cleanup EXIT\n\nrun_detect() {\n  # $1 = extra -map (pode ser vazio)\n  ffmpeg -hide_banner -nostats -v info -vn -sn -i \"$AUDIO\" \\\n    $1 \\\n    -af \"silencedetect=noise=${NOISE_DB}dB:d=${THRESH}\" \\\n    -acodec pcm_s16le -f wav \"$TMP_OUT\" -y \\\n    1>/dev/null 2>\"$TMP_LOG\" || true\n}\n\nhas_events() { grep -q 'silence_\\(start\\|end\\):' \"$TMP_LOG\"; }\n\n# tenta 0:a:0 -> a:0 -> sem map (deixa o ffmpeg escolher)\nrun_detect \"-map 0:a:0\"\nhas_events || run_detect \"-map a:0\"\nhas_events || run_detect \"\"\n\n# === SAÍDA COMPATÍVEL COM A TUA LIB ===\n# (só as linhas que interessam, em stdout)\nsed -n '\n  s/.*\\(silence_start:[^|]*\\).*/\\1/p;\n  s/.*\\(silence_end:[^|]*\\)/\\1/p\n' \"$TMP_LOG\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -176
+      ],
+      "id": "1793f2f0-f884-4517-9298-dcb627df1575",
+      "name": "SPLIT",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "={{ $json.FILE_PATH }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "9d398dff-5f1d-45dd-be9b-5b4382cb35d0",
+      "name": "HAS_FILE_PATH"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entrada esperada (de um Execute Command, por exemplo):\n// items[0].json.stdout = \"silence_start: 257.047\\nsilence_end: 259.402 | silence_duration: 2.35465\\n...\"\n//\n// Saída deste Code:\n// [{ json: { periods: [ { startSilence, endeSilence, duration }, ... ] } }]\n\nfunction parseSilences(stdout) {\n  const lines = String(stdout || \"\").split(/\\r?\\n/).filter(Boolean);\n  const periods = [];\n  let start = null;\n\n  for (const line of lines) {\n    // silence_start: <num>\n    let m = line.match(/silence_start:\\s*([0-9.]+)/);\n    if (m) {\n      start = parseFloat(m[1]);\n      continue;\n    }\n\n    // silence_end: <num> | silence_duration: <num>\n    m = line.match(/silence_end:\\s*([0-9.]+)\\s*(?:\\|\\s*silence_duration:\\s*([0-9.]+))?/);\n    if (m) {\n      const end = parseFloat(m[1]);\n      const duration = m[2] != null ? parseFloat(m[2]) : (start != null ? (end - start) : undefined);\n\n      if (start != null) {\n        periods.push({\n          startSilence: start,\n          endSilence: end,\n          ...(duration != null ? { duration } : {}),\n        });\n      } else {\n        // Caso raro: end sem start anterior — ainda assim registramos\n        periods.push({\n          startSilence: null,\n          endSilence: end,\n          ...(duration != null ? { duration } : {}),\n        });\n      }\n      start = null;\n    }\n  }\n  return periods;\n}\n\nreturn items.map(item => {\n  const stdout = item?.json?.stdout ?? item?.stdout ?? \"\";\n  const periods = parseSilences(stdout);\n  return { json: { periods } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -176
+      ],
+      "id": "6d3b0c69-f6e8-4562-810c-0c49c5a82d15",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        -112
+      ],
+      "id": "b6f2c612-2655-4d58-8806-22d6eb2395cb",
+      "name": "@GLOBAL_ANCAPSU"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "HAS_FILE_PATH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SPLIT": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_FILE_PATH": {
+      "main": [
+        [
+          {
+            "node": "SPLIT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILE_PATH": "/home/node/download/97nFoYay0IQ/97nFoYay0IQ.mp4"
+        }
+      }
+    ]
+  },
+  "versionId": "ca22d73f-e082-4550-ae14-6e16761dcbdb",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-07T12:53:43.918Z",
+      "updatedAt": "2025-09-07T12:53:43.918Z",
+      "role": "workflow:owner",
+      "workflowId": "1nQSE6xkyPf6lCyw",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

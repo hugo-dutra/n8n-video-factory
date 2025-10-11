@@ -1,0 +1,292 @@
+{
+  "createdAt": "2025-10-04T13:16:00.065Z",
+  "updatedAt": "2025-10-07T19:15:11.000Z",
+  "id": "FOC826UnuMrsQvTf",
+  "name": "@SET_VIDEO_AS_PROCESSED",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $('Edit Fields').item.json.id }}",
+        "value": "={{\n(() => {\n  const raw = String($json.video || '');\n  const obj = JSON.parse(raw);     // levanta erro se não for JSON válido\n  obj.processed = true;            // força true\n  return JSON.stringify(obj);\n})()\n}}\n",
+        "keyType": "string"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -128
+      ],
+      "id": "cd52e17b-eacc-4290-b066-b8c40848be52",
+      "name": "Set Processed",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"channelId\": \"a string\",\n  \"videoId\": \"a string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -576,
+        -128
+      ],
+      "id": "5a5de88a-dc49-4403-8d91-8600a4ac9ce4",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "280fd4ba-2379-457a-889c-93f0d843217a",
+              "name": "id",
+              "value": "=video:{{ $json.channelId }}_{{ $json.videoId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -128
+      ],
+      "id": "4ed91467-c57b-4ef3-be55-46bab0ef88d4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "1118e950-8511-4665-91ff-26e80d943c88",
+      "name": "Get to Process",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ $('Edit Fields').item.json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -128
+      ],
+      "id": "195ba0ac-c711-4883-847a-d01b10da2d2a",
+      "name": "Get after process",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Processamento do vídeo atual FINALIZADO."
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        -304
+      ],
+      "id": "85522272-e0e3-413d-b9df-162f42ac8ac5",
+      "name": "@NOTIFIER "
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@NOTIFIER ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get to Process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get to Process": {
+      "main": [
+        [
+          {
+            "node": "Set Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Processed": {
+      "main": [
+        [
+          {
+            "node": "Get after process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+          "videoId": "TBvmFpv8thI"
+        }
+      }
+    ]
+  },
+  "versionId": "b27b05a1-6d85-4b87-a669-595e7ce3ebda",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-04T13:16:00.087Z",
+      "updatedAt": "2025-10-04T13:16:00.087Z",
+      "role": "workflow:owner",
+      "workflowId": "FOC826UnuMrsQvTf",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

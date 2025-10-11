@@ -1,0 +1,1009 @@
+{
+  "createdAt": "2025-08-26T22:27:37.132Z",
+  "updatedAt": "2025-09-07T12:04:20.000Z",
+  "id": "CaksGCAScF5dmOYL",
+  "name": "Test 2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        240
+      ],
+      "id": "38b479ec-f505-420d-8d00-f9ad35f5126a",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f152fe36-6ce2-4f6e-997e-de15824780c9",
+              "name": "VIDEO_ID",
+              "value": "_LMpN6o26E0",
+              "type": "string"
+            },
+            {
+              "id": "18935ee0-1385-414f-9ee2-bb99bd0be68d",
+              "name": "START_TIME",
+              "value": "00:00:00",
+              "type": "string"
+            },
+            {
+              "id": "0eb1be84-ec0f-4222-a011-7e9d06ecdabf",
+              "name": "END_TIME",
+              "value": "00:00:13",
+              "type": "string"
+            },
+            {
+              "id": "f404bd5b-d0ea-4b1c-b064-3aa734423f83",
+              "name": "IN_SECOND",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "22444b9f-2fdf-4251-bc1e-e4a785e8a666",
+              "name": "IN_DURATION",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "268d9ef3-7709-4301-a8e1-7d9e59e7fc9e",
+              "name": "OUT_SECOND",
+              "value": 11,
+              "type": "number"
+            },
+            {
+              "id": "999a2813-b847-412c-949b-f6e7bbd83032",
+              "name": "OUT_DURATION",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "fa4445a4-86d2-48d2-822c-fd2d25a13fc8",
+              "name": "START_TIME_SPLIT_1",
+              "value": "00:00:00",
+              "type": "string"
+            },
+            {
+              "id": "c66fe153-c11e-4d5f-a4ae-346f265a4e4b",
+              "name": "START_TIME_SPLIT_2",
+              "value": "00:00:06",
+              "type": "string"
+            },
+            {
+              "id": "21523e71-7ad3-40b7-b329-71c5d8f2f8f5",
+              "name": "END_TIME_SPLIT_1",
+              "value": "00:00:06",
+              "type": "string"
+            },
+            {
+              "id": "408f1ccb-9fa1-4d87-b536-3c201f29d282",
+              "name": "END_TIME_SPLIT_2",
+              "value": "00:00:12",
+              "type": "string"
+            },
+            {
+              "id": "0e40f794-aa52-4364-a582-835442d0fb39",
+              "name": "EFFECT",
+              "value": "fade",
+              "type": "string"
+            },
+            {
+              "id": "d2655155-49f4-4deb-807b-f5f427cc279c",
+              "name": "CHROMA_VIDEO",
+              "value": "overlay_02.mp4",
+              "type": "string"
+            },
+            {
+              "id": "750c8966-64ae-4d8b-a2e5-d933ec4c803a",
+              "name": "AUDIO1",
+              "value": "Fn9adh4HWUU.mp3",
+              "type": "string"
+            },
+            {
+              "id": "7f03a63f-5d80-4218-8441-1bd5d0dadc6b",
+              "name": "AUDIO2",
+              "value": "SiArv5Y1xJc.mp3",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        240
+      ],
+      "id": "f0affe1f-5b0d-4b0d-a0e1-99ca84f7c93b",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bPkDY1rLEosPYyck",
+          "mode": "list",
+          "cachedResultName": "@VIDEO_SPLIT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $('VAR').item.json.VIDEO_ID }}",
+            "START_TIME": "={{ $('VAR').item.json.START_TIME }}",
+            "END_TIME": "={{ $('VAR').item.json.END_TIME }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "START_TIME",
+              "displayName": "START_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "END_TIME",
+              "displayName": "END_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        240
+      ],
+      "id": "e503eccc-5a17-421b-aa5c-d10f6b4fd732",
+      "name": "@SPLIT"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3d92D6TV6oLVwDrh",
+          "mode": "list",
+          "cachedResultName": "@VIDEO_FADEIN_FADEOUT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FILE_NAME": "={{ $json.FILENAME }}",
+            "IN_SECOND": "={{ $('VAR').item.json.IN_SECOND }}",
+            "IN_DURATION": "={{ $('VAR').item.json.IN_DURATION }}",
+            "OUT_SECOND": "={{ $('VAR').item.json.OUT_SECOND }}",
+            "OUT_DURATION": "={{ $('VAR').item.json.OUT_DURATION }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "FILE_NAME",
+              "displayName": "FILE_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "IN_SECOND",
+              "displayName": "IN_SECOND",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "IN_DURATION",
+              "displayName": "IN_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "OUT_SECOND",
+              "displayName": "OUT_SECOND",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "OUT_DURATION",
+              "displayName": "OUT_DURATION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        240
+      ],
+      "id": "320e41a9-948b-45ba-a843-9a752e482537",
+      "name": "@FADEIN_FADEOUT"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BQu7fXvxcZR1av6F",
+          "mode": "list",
+          "cachedResultName": "@DOWNLOAD_THUMBNAIL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $('VAR').item.json.VIDEO_ID }}"
+          },
+          "matchingColumns": [
+            "CHANNEL_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        400
+      ],
+      "id": "14b7d392-f656-45da-abc3-0415d035acc8",
+      "name": "@THUMBNAIL"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "UjPnRRupZJq5pbs0",
+          "mode": "list",
+          "cachedResultName": "@DOWNLOAD_YOUTUBE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $json.VIDEO_ID }}"
+          },
+          "matchingColumns": [
+            "CHANNEL_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        240
+      ],
+      "id": "ef983da6-989c-427f-ba9a-ab686130753f",
+      "name": "@DOWNLOAD"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "sk6qHDqmsTEMLNsp",
+          "mode": "list",
+          "cachedResultName": "@AUDIO_EXTRACTOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $('VAR').item.json.VIDEO_ID }}"
+          },
+          "matchingColumns": [
+            "CHANNEL_ID"
+          ],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        544
+      ],
+      "id": "7a622c36-fde6-4cd5-bb35-416c77b741d4",
+      "name": "@AUDIO_EXTRACTOR"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bPkDY1rLEosPYyck",
+          "mode": "list",
+          "cachedResultName": "@VIDEO_SPLIT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $('VAR').item.json.VIDEO_ID }}",
+            "START_TIME": "={{ $('VAR').item.json.START_TIME_SPLIT_1 }}",
+            "END_TIME": "={{ $('VAR').item.json.START_TIME_SPLIT_2 }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "START_TIME",
+              "displayName": "START_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "END_TIME",
+              "displayName": "END_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        96
+      ],
+      "id": "6056b8bc-484d-4891-acff-c6b5f2316e99",
+      "name": "@SPLIT_TO_JOIN_1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bPkDY1rLEosPYyck",
+          "mode": "list",
+          "cachedResultName": "@VIDEO_SPLIT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VIDEO_ID": "={{ $('VAR').item.json.VIDEO_ID }}",
+            "START_TIME": "={{ $('VAR').item.json.START_TIME_SPLIT_1 }}",
+            "END_TIME": "={{ $('VAR').item.json.START_TIME_SPLIT_2 }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "VIDEO_ID",
+              "displayName": "VIDEO_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "START_TIME",
+              "displayName": "START_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "END_TIME",
+              "displayName": "END_TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        -32
+      ],
+      "id": "c3f16c05-d09f-4570-9973-c9174882c11e",
+      "name": "@SPLIT_TO_JOIN_2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -128,
+        16
+      ],
+      "id": "bc3fe734-725c-4c95-833b-e5139b57ac18",
+      "name": "MERGE"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bRbAM3zoHUE6bMWh",
+          "mode": "list",
+          "cachedResultName": "@JOIN_VIDEO"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FILE_1": "={{ $('@SPLIT_TO_JOIN_2').item.json.FILENAME }}",
+            "FILE_2": "={{ $json.FILENAME }}",
+            "EFFECT": "FADE"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "FILE_1",
+              "displayName": "FILE_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "FILE_2",
+              "displayName": "FILE_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "EFFECT",
+              "displayName": "EFFECT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        16
+      ],
+      "id": "243caed7-3a2d-4944-aa8a-79b811779170",
+      "name": "@JOIN_VIDEO"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6nUIHD7vPkpzpiWg",
+          "mode": "list",
+          "cachedResultName": "@CHROMAKEY"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "START": 0,
+            "TOL": 0.3,
+            "SOFT": 0.2,
+            "Y": 0,
+            "MAIN_VIDEO": "={{ $('MERGE').item.json.FILENAME }}",
+            "CHROMA_VIDEO": "={{ $('VAR').item.json.CHROMA_VIDEO }}",
+            "KEY_COLOR": "0x00FF00",
+            "X": 100
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MAIN_VIDEO",
+              "displayName": "MAIN_VIDEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "CHROMA_VIDEO",
+              "displayName": "CHROMA_VIDEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "START",
+              "displayName": "START",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "END",
+              "displayName": "END",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "KEY_COLOR",
+              "displayName": "KEY_COLOR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "TOL",
+              "displayName": "TOL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "SOFT",
+              "displayName": "SOFT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "X",
+              "displayName": "X",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "Y",
+              "displayName": "Y",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        16
+      ],
+      "id": "ad65001c-7419-4b39-a988-e72798dfabb9",
+      "name": "@CHROMAKEY"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "YoOOXTuF3tKqMBy9",
+          "mode": "list",
+          "cachedResultName": "@MIX_AUDIO"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MAIN_VIDEO": "={{ $('MERGE').item.json.FILENAME }}",
+            "VOL2 ": 1,
+            "VOL1 ": 1,
+            "XFADE_DUR ": 2,
+            "XFADE_START ": 1,
+            "A1_START ": 2,
+            "AUDIO1": "={{ $('VAR').item.json.AUDIO1 }}",
+            "AUDIO2": "={{ $('VAR').item.json.AUDIO2 }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MAIN_VIDEO",
+              "displayName": "MAIN_VIDEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "AUDIO1",
+              "displayName": "AUDIO1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "AUDIO2",
+              "displayName": "AUDIO2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "A1_START ",
+              "displayName": "A1_START ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "XFADE_START ",
+              "displayName": "XFADE_START ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "XFADE_DUR ",
+              "displayName": "XFADE_DUR ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "VOL1 ",
+              "displayName": "VOL1 ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "VOL2 ",
+              "displayName": "VOL2 ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        16
+      ],
+      "id": "89449172-ee52-4112-8438-dc14edde0800",
+      "name": "@MIX_AUDIO"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "@DOWNLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@SPLIT": {
+      "main": [
+        [
+          {
+            "node": "@FADEIN_FADEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "@SPLIT",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@THUMBNAIL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@AUDIO_EXTRACTOR",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@SPLIT_TO_JOIN_1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@SPLIT_TO_JOIN_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@SPLIT_TO_JOIN_2": {
+      "main": [
+        [
+          {
+            "node": "MERGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@SPLIT_TO_JOIN_1": {
+      "main": [
+        [
+          {
+            "node": "MERGE",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "MERGE": {
+      "main": [
+        [
+          {
+            "node": "@JOIN_VIDEO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@JOIN_VIDEO": {
+      "main": [
+        [
+          {
+            "node": "@CHROMAKEY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@CHROMAKEY": {
+      "main": [
+        [
+          {
+            "node": "@MIX_AUDIO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f43e0f7b-95ef-4bce-9a33-321d85eff153",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-26T22:27:37.166Z",
+      "updatedAt": "2025-08-26T22:27:37.166Z",
+      "role": "workflow:owner",
+      "workflowId": "CaksGCAScF5dmOYL",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
