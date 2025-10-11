@@ -1,22 +1,11 @@
 {
   "createdAt": "2025-10-11T13:24:52.055Z",
-  "updatedAt": "2025-10-11T16:41:38.000Z",
+  "updatedAt": "2025-10-11T16:49:25.000Z",
   "id": "mq3jTX8e0pQJdiyS",
   "name": "List Workflows",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -304,
-        0
-      ],
-      "id": "d726625f-4e4f-4226-b7c5-577dcf956d82",
-      "name": "When clicking ‘Execute workflow’"
-    },
     {
       "parameters": {
         "filters": {},
@@ -63,8 +52,8 @@
       "type": "n8n-nodes-base.n8n",
       "typeVersion": 1,
       "position": [
-        384,
-        96
+        304,
+        0
       ],
       "id": "a40d051f-fce0-4b4e-b639-d5f67382ebc0",
       "name": "Get a workflow",
@@ -85,8 +74,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1040,
-        96
+        960,
+        0
       ],
       "id": "3c8b30d0-1f8c-4c76-abdd-eac50297bc7f",
       "name": "Read/Write Files from Disk"
@@ -108,8 +97,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        592,
-        96
+        512,
+        0
       ],
       "id": "f1fd1866-7fbb-4bdb-bf5f-e5f72222f0ca",
       "name": "Edit Fields"
@@ -123,25 +112,94 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        800,
-        96
+        720,
+        0
       ],
       "id": "0632e0b1-3988-46cc-814c-1c6198672502",
       "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        0
+      ],
+      "id": "012e54fc-10bc-473a-88b0-7985738abdde",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "fileName"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -176
+      ],
+      "id": "42231f9e-f1dc-48f5-a458-9509462f61f7",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "=Backup dos {{ $('Loop Over Items').all().length }} workflows ATUALIZADO"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        -176
+      ],
+      "id": "6734895d-079f-4dd7-8dac-d700a0bfb569",
+      "name": "@NOTIFIER"
     }
   ],
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Get many workflows",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get many workflows": {
       "main": [
         [
@@ -155,7 +213,13 @@
     },
     "Loop Over Items": {
       "main": [
-        [],
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Get a workflow",
@@ -208,18 +272,44 @@
           }
         ]
       ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "@NOTIFIER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "d9ccc41a-98f3-4ad3-9522-14004d12fc85",
-  "triggerCount": 0,
+  "versionId": "867c76a2-2b57-4bcf-aa81-70104d37287b",
+  "triggerCount": 1,
   "shared": [
     {
       "createdAt": "2025-10-11T13:24:52.078Z",
