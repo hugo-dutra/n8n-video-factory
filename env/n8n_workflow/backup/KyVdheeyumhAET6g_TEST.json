@@ -1,10 +1,10 @@
 {
   "createdAt": "2025-08-21T11:01:01.543Z",
-  "updatedAt": "2025-09-07T12:04:21.000Z",
+  "updatedAt": "2025-10-11T18:13:05.000Z",
   "id": "KyVdheeyumhAET6g",
   "name": "TEST",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {},
@@ -521,7 +521,7 @@
     "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
   },
   "pinData": {},
-  "versionId": "0d50f7b2-a06a-42db-acb1-6132c67fb5c3",
+  "versionId": "ba490504-e317-414e-921e-5acc4737bebb",
   "triggerCount": 0,
   "shared": [
     {
@@ -546,7 +546,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "updatedAt": "2025-10-16T23:07:48.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -580,7 +580,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-11",
+              "lastActiveAt": "2025-10-16",
               "isPending": false
             }
           }

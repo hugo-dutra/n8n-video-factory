@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-06T20:11:41.644Z",
-  "updatedAt": "2025-10-07T19:02:17.000Z",
+  "updatedAt": "2025-10-16T16:03:11.000Z",
   "id": "ee2vyA9GjQWfLSET",
   "name": "@LIST_VIDEOS_YOUTUBE",
   "active": false,
@@ -757,34 +757,8 @@
     "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692",
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "LAST_N_HOURS": "8",
-          "MIN_DURATION": "182",
-          "MAX_DURATION": "1800"
-        }
-      }
-    ],
-    "@GLOBAL_ANCAPSU": [
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_ANCAPSU",
-          "CHANNEL_ID": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "LAST_N_HOURS": "1",
-          "MIN_DURATION": "182",
-          "MAX_DURATION": "1800",
-          "PLAYLISTS": "[{\"nome\":\"justiça\",\"id\":\"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\"},{\"nome\":\"Geopolítica\",\"id\":\"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\"},{\"nome\":\"politica\",\"id\":\"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\"},{\"nome\":\"cultura e sociedade\",\"id\":\"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\"},{\"nome\":\"Liberdade e mercado\",\"id\":\"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\"},{\"nome\":\"Economia\",\"id\":\"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\"},{\"nome\":\"Corrupção\",\"id\":\"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\"},{\"nome\":\"Tecnologia\",\"id\":\"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\"}]\n",
-          "NOTIFY_NUMBERS": [
-            "5561982086449"
-          ]
-        }
-      }
-    ]
-  },
-  "versionId": "e4f62fe0-8c96-4fe9-b23e-94d382447dbe",
+  "pinData": {},
+  "versionId": "84a4d7c2-e85a-4a04-a363-3228f0478265",
   "triggerCount": 0,
   "shared": [
     {
@@ -809,7 +783,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "updatedAt": "2025-10-16T23:07:48.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -843,7 +817,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-11",
+              "lastActiveAt": "2025-10-16",
               "isPending": false
             }
           }

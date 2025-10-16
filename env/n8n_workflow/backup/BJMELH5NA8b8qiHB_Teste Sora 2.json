@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-07T21:35:15.950Z",
-  "updatedAt": "2025-10-07T21:45:06.000Z",
+  "updatedAt": "2025-10-11T18:13:14.000Z",
   "id": "BJMELH5NA8b8qiHB",
   "name": "Teste Sora 2",
   "active": false,
@@ -76,7 +76,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        16,
+        -48,
         -160
       ],
       "id": "ebfbd208-99a1-428d-9c29-83558424605e",
@@ -196,7 +196,7 @@
       }
     ]
   },
-  "versionId": "3bd02891-203d-4691-b018-7dd8874c579f",
+  "versionId": "bd0cee3c-da97-4166-9882-d861ce25b9d1",
   "triggerCount": 1,
   "shared": [
     {
@@ -221,7 +221,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "updatedAt": "2025-10-16T23:07:48.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -255,7 +255,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-11",
+              "lastActiveAt": "2025-10-16",
               "isPending": false
             }
           }

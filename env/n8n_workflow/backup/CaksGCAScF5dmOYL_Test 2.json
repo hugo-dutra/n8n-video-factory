@@ -1,10 +1,10 @@
 {
   "createdAt": "2025-08-26T22:27:37.132Z",
-  "updatedAt": "2025-09-07T12:04:20.000Z",
+  "updatedAt": "2025-10-11T18:13:07.000Z",
   "id": "CaksGCAScF5dmOYL",
   "name": "Test 2",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {},
@@ -938,7 +938,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "f43e0f7b-95ef-4bce-9a33-321d85eff153",
+  "versionId": "9ba56b2b-f285-4072-8e9e-6806a1a2f1e4",
   "triggerCount": 0,
   "shared": [
     {
@@ -963,7 +963,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-11T16:12:24.000Z",
+              "updatedAt": "2025-10-16T23:07:48.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -997,7 +997,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-11",
+              "lastActiveAt": "2025-10-16",
               "isPending": false
             }
           }

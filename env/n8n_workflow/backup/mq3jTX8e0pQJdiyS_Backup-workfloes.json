@@ -1,55 +1,93 @@
 {
-  "createdAt": "2025-10-04T13:16:00.065Z",
-  "updatedAt": "2025-10-07T19:15:11.000Z",
-  "id": "FOC826UnuMrsQvTf",
-  "name": "@SET_VIDEO_AS_PROCESSED",
+  "createdAt": "2025-10-11T13:24:52.055Z",
+  "updatedAt": "2025-10-11T23:51:29.000Z",
+  "id": "mq3jTX8e0pQJdiyS",
+  "name": "Backup-workfloes",
   "active": false,
   "isArchived": false,
   "nodes": [
     {
       "parameters": {
-        "operation": "set",
-        "key": "={{ $('Edit Fields').item.json.id }}",
-        "value": "={{\n(() => {\n  const raw = String($json.video || '');\n  const obj = JSON.parse(raw);     // levanta erro se não for JSON válido\n  obj.processed = true;            // força true\n  return JSON.stringify(obj);\n})()\n}}\n",
-        "keyType": "string"
+        "filters": {},
+        "requestOptions": {}
       },
-      "type": "n8n-nodes-base.redis",
+      "type": "n8n-nodes-base.n8n",
       "typeVersion": 1,
       "position": [
-        -16,
-        -128
+        -96,
+        0
       ],
-      "id": "cd52e17b-eacc-4290-b066-b8c40848be52",
-      "name": "Set Processed",
+      "id": "7cfc79df-cf9b-47a2-b212-a45f4422f87e",
+      "name": "Get many workflows",
       "credentials": {
-        "redis": {
-          "id": "H9ySyNyj1MBc1lrU",
-          "name": "Redis account"
+        "n8nApi": {
+          "id": "6Eul3T2l5NQI3xSO",
+          "name": "n8n account"
         }
       }
     },
     {
       "parameters": {
-        "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"channelId\": \"a string\",\n  \"videoId\": \"a string\"\n}"
+        "options": {}
       },
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1.1,
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
       "position": [
-        -576,
-        -128
+        112,
+        0
       ],
-      "id": "5a5de88a-dc49-4403-8d91-8600a4ac9ce4",
-      "name": "Start"
+      "id": "04a499cd-363f-4078-9161-51a2173a46b2",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $('Loop Over Items').item.json.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        304,
+        0
+      ],
+      "id": "a40d051f-fce0-4b4e-b639-d5f67382ebc0",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "6Eul3T2l5NQI3xSO",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/n8n_workflow/backup/{{ $('Loop Over Items').item.json.id }}_{{ $('Loop Over Items').item.json.name }}.json",
+        "dataPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "id": "3c8b30d0-1f8c-4c76-abdd-eac50297bc7f",
+      "name": "Read/Write Files from Disk"
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "280fd4ba-2379-457a-889c-93f0d843217a",
-              "name": "id",
-              "value": "=video:{{ $json.channelId }}_{{ $json.videoId }}",
+              "id": "2bd4c26e-8954-4b7c-bf4f-79f32fdbaf83",
+              "name": "data",
+              "value": "={{ JSON.stringify($json, null, 2) }}",
               "type": "string"
             }
           ]
@@ -59,55 +97,65 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -400,
-        -128
+        512,
+        0
       ],
-      "id": "4ed91467-c57b-4ef3-be55-46bab0ef88d4",
+      "id": "f1fd1866-7fbb-4bdb-bf5f-e5f72222f0ca",
       "name": "Edit Fields"
     },
     {
       "parameters": {
-        "operation": "get",
-        "propertyName": "video",
-        "key": "={{ $json.id }}",
+        "operation": "toText",
+        "sourceProperty": "data",
         "options": {}
       },
-      "type": "n8n-nodes-base.redis",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
       "position": [
-        -208,
-        -128
+        720,
+        0
       ],
-      "id": "1118e950-8511-4665-91ff-26e80d943c88",
-      "name": "Get to Process",
-      "credentials": {
-        "redis": {
-          "id": "H9ySyNyj1MBc1lrU",
-          "name": "Redis account"
-        }
-      }
+      "id": "0632e0b1-3988-46cc-814c-1c6198672502",
+      "name": "Convert to File"
     },
     {
       "parameters": {
-        "operation": "get",
-        "propertyName": "video",
-        "key": "={{ $('Edit Fields').item.json.id }}",
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        0
+      ],
+      "id": "012e54fc-10bc-473a-88b0-7985738abdde",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "fileName"
+            }
+          ]
+        },
         "options": {}
       },
-      "type": "n8n-nodes-base.redis",
+      "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        176,
-        -128
+        304,
+        -176
       ],
-      "id": "195ba0ac-c711-4883-847a-d01b10da2d2a",
-      "name": "Get after process",
-      "credentials": {
-        "redis": {
-          "id": "H9ySyNyj1MBc1lrU",
-          "name": "Redis account"
-        }
-      }
+      "id": "42231f9e-f1dc-48f5-a458-9509462f61f7",
+      "name": "Aggregate"
     },
     {
       "parameters": {
@@ -121,11 +169,9 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "MESSAGE": "Processamento do vídeo atual FINALIZADO."
+            "MESSAGE": "=Backup dos {{ $('Loop Over Items').all().length }} workflows ATUALIZADO"
           },
-          "matchingColumns": [
-            "MESSAGE"
-          ],
+          "matchingColumns": [],
           "schema": [
             {
               "id": "MESSAGE",
@@ -146,24 +192,59 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -400,
-        -304
+        496,
+        -176
       ],
-      "id": "85522272-e0e3-413d-b9df-162f42ac8ac5",
-      "name": "@NOTIFIER "
+      "id": "6734895d-079f-4dd7-8dac-d700a0bfb569",
+      "name": "@NOTIFIER"
     }
   ],
   "connections": {
-    "Start": {
+    "Get many workflows": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
       "main": [
         [
           {
             "node": "Edit Fields",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
           {
-            "node": "@NOTIFIER ",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -174,29 +255,40 @@
       "main": [
         [
           {
-            "node": "Get to Process",
+            "node": "Convert to File",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Get to Process": {
+    "Convert to File": {
       "main": [
         [
           {
-            "node": "Set Processed",
+            "node": "Read/Write Files from Disk",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Set Processed": {
+    "Aggregate": {
       "main": [
         [
           {
-            "node": "Get after process",
+            "node": "@NOTIFIER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
             "type": "main",
             "index": 0
           }
@@ -207,28 +299,23 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "Start": [
-      {
-        "json": {
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "TBvmFpv8thI"
-        }
-      }
-    ]
-  },
-  "versionId": "b27b05a1-6d85-4b87-a669-595e7ce3ebda",
-  "triggerCount": 0,
+  "pinData": {},
+  "versionId": "b735a1d2-f3e4-4fdf-8031-1967abd776b8",
+  "triggerCount": 1,
   "shared": [
     {
-      "createdAt": "2025-10-04T13:16:00.087Z",
-      "updatedAt": "2025-10-04T13:16:00.087Z",
+      "createdAt": "2025-10-11T13:24:52.078Z",
+      "updatedAt": "2025-10-11T13:24:52.078Z",
       "role": "workflow:owner",
-      "workflowId": "FOC826UnuMrsQvTf",
+      "workflowId": "mq3jTX8e0pQJdiyS",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "createdAt": "2025-08-20T20:52:17.088Z",
