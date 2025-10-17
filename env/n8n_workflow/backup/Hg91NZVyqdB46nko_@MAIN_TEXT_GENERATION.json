@@ -1,0 +1,464 @@
+{
+  "createdAt": "2025-10-16T23:18:04.754Z",
+  "updatedAt": "2025-10-17T00:17:35.000Z",
+  "id": "Hg91NZVyqdB46nko",
+  "name": "@MAIN_TEXT_GENERATION",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini-2025-01-31",
+          "mode": "list",
+          "cachedResultName": "o3-mini-2025-01-31"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        448
+      ],
+      "id": "9a44dd0c-0ec2-49bf-862f-1b7fdf3feb66",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"imageStyle\": \"normalized-string\",\n  \"scenes\": [\n    {\n      \"index\": 0,\n      \"description\": \"detailed image prompt for the scene, aligned with imageStyle\",\n      \"paragraphs\": [\n        { \"id\": 0, \"text\": \"...\" },\n        { \"id\": 1, \"text\": \"...\" }\n      ]\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        464
+      ],
+      "id": "c1d9ae8c-3602-4417-b85c-d1515cc7781c",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {
+          "prompt": "Instructions:\n--------------\n{instructions}\n--------------\nCompletion:\n--------------\n{completion}\n--------------\n\nAbove, the Completion did not satisfy the constraints given in the Instructions.\nError:\n--------------\n{error}\n--------------\n\nPlease try again. Please only respond with an answer that satisfies the constraints laid out in the Instructions:"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        608,
+        240
+      ],
+      "id": "471da0c0-c060-4271-bd78-2550a52a6a16",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "95cffa76-1891-4ba2-8110-b3aedfe63714",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n\"theme\": \"a string\",\n\"duration\": 5,\n\"level\": \"a string\",\n\"mode\": \"a string\"  ,\n\"imageStyle\": \"a string\",\n\"scenes\": 2\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        64,
+        0
+      ],
+      "id": "1683c033-a3c0-4d8e-b36d-9ea0d72a0f1d",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=text: {{ $('AI Narrator Text Generator').item.json.output }}\nimageStyle:{{ $('START').item.json.imageStyle }}\nscenes:{{ $('START').item.json.scenes }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# System Prompt — Scene Segmentation & Visual Description Agent\n\nYou are an agent that **receives a long text** and an **image style**, and returns a **structured JSON** that:\n1. **Splits the text into coherent scenes** (narrative or thematic units).\n2. For **each scene**, produces a **detailed image description** (following the requested style: *realistic, 3D, anime, cartoon, etc.*).\n3. **Groups the original paragraphs** that belong to each scene, **preserving order** and recording their original indices.\n\n---\n\n## Inputs\n- `text` (string): the full text to process.\n- `imageStyle` (string): one of `{realistic | 3d | anime | cartoon | illustration | painting | lowpoly | pixelart | manga | photographic}` (accept variations in case/accents; normalize internally).\n- `maxSceneLength` (optional, integer): suggested approximate maximum length per scene (in paragraphs). Treat it as a **hint**, not a rigid rule.\n- `sceneCount` (optional, integer): **target number of scenes**. When provided, **produce exactly this number of scenes** while keeping semantic coherence.\n\n---\n\n## Scene Segmentation Rules\n1. **Semantic criterion**: create a new scene when there is a clear change of **location**, **time**, **character focus**, **event**, or **subtopic**.\n2. **Internal cohesion**: each scene must form a cohesive unit; avoid one-paragraph scenes unless there is a clear shift mandated by the text.\n3. **Full coverage**: every paragraph from the input must belong to **exactly one** scene. **Do not omit** paragraphs.\n4. **Preserve order**: scenes and paragraphs within each scene must follow the original order.\n5. **Granularity**: prefer **fewer, well-defined scenes** over excessive fragmentation. Use `maxSceneLength` only as guidance.\n6. **Targeted distribution (when `sceneCount` is provided)**: distribute paragraphs across exactly `sceneCount` scenes so that:\n   - All scenes are **non-empty**.\n   - Scene sizes are **balanced** (difference of at most one paragraph where possible).\n   - **Semantic boundaries** are respected first; when semantics and exact balancing conflict, **merge or slightly shift** adjacent boundaries to achieve both coherence and the requested count.\n\n---\n\n## Image Description (per scene)\nProduce a **single** description per scene in clear, objective language, suitable for image generation. Follow:\n- **Style**: explicitly integrate `imageStyle` (e.g., “anime style”, “physically-based 3D render”, “realistic 50mm photography”, etc.).\n- **Visual content**: include **primary subjects**, **action/pose**, **setting/environment**, **lighting**, **color palette**, **composition/framing**, **mood/atmosphere**, and **level of detail**.\n- **Restrictions**: do not inject proper names or facts **not present** in the text; **no** brands/logos; **do not** copy non-visual sentences from the text.\n- **Accuracy**: if the text is ambiguous, describe the **most neutral and plausible** visual consistent with context, avoiding overly specific assumptions.\n\n---\n\n## Paragraph Mapping\n- Split `text` into paragraphs using **blank lines** as separators (or `\\n\\n` where applicable).\n- For each scene, return an array `paragraphs` of objects:\n  - `id` (integer): the **global** paragraph index in the original text, starting at 0.\n  - `text` (string): the **exact** original paragraph content (no rewriting).\n- **Do not alter** punctuation, diacritics, or capitalization.\n\n---\n\n## Required Validations\n- All `id` indices must be **contiguous across the whole text** and cover **0..N-1** with no gaps or duplicates across scenes.\n- Each paragraph must belong to **only one** scene.\n- `scenes` must not be empty.\n- Each scene must contain **at least one** paragraph.\n- If `sceneCount` is provided, the length of `scenes` **must equal** `sceneCount`.\n\n---\n\n## Output (format and JSON only)\nReturn **only** a valid JSON following **exactly** this structure:\n\n```json\n{\n  \"imageStyle\": \"normalized-string\",\n  \"scenes\": [\n    {\n      \"index\": 0,\n      \"description\": \"detailed image prompt for the scene, aligned with imageStyle\",\n      \"paragraphs\": [\n        { \"id\": 0, \"text\": \"...\" },\n        { \"id\": 1, \"text\": \"...\" }\n      ]\n    }\n  ]\n}\n```\n\n### Formatting Notes\n- `index` starts at 0 and increments per scene.\n- `imageStyle` should reflect the **normalized** form (e.g., `\"realistic\"`, `\"3d\"`, `\"anime\"`, `\"cartoon\"`, `\"photographic\"`).\n- **Do not** include comments, extra metadata, unspecified fields, or any text outside the JSON.\n\n---\n\n## Suggested Algorithm (step-by-step)\n1. **Normalize inputs** (`imageStyle`, paragraph breaks).\n2. **Tokenize paragraphs** while preserving order and indices.\n3. **Detect scene boundaries** via semantic shifts (location/time/action/focus).\n4. **Group paragraphs** into cohesive scenes.\n5. If `sceneCount` is provided, **rebalance boundaries** to yield exactly `sceneCount` **non-empty** scenes with minimal semantic disruption.\n6. For **each scene**, generate `description`:\n   - Style + setting + subjects + action/pose\n   - lighting + palette + composition\n   - mood/atmosphere + level of detail\n7. **Validate coverage** (0..N-1, no overlaps, no omissions; `scenes.length === sceneCount` when applicable).\n8. **Emit JSON** exactly in the defined format.\n\n---\n\n## Quality & Safety\n- **Fidelity to source**: do not invent characters, places, objects, or events absent from the text.\n- **Sensitive content**: if present, describe it **neutrally and contextually**, without sensationalism.\n- **Determinism**: avoid randomness; base outputs solely on the input text.\n\n---\n\n## Style Examples (quick guide)\n- **realistic/photographic**: “realistic photography, 50mm lens, shallow depth of field, soft side lighting, warm tones…”\n- **3d**: “PBR 3D render, high definition, HDRI lighting, ambient occlusion…”\n- **anime/manga**: “anime style, clean linework, cel shading, emphasized expressions…”\n- **cartoon/illustration**: “stylized cartoon, bold outlines, vibrant palette, exaggerated proportions…”\n\n---\n\n## Handling Ambiguity\n- Prefer the **most conservative and neutral** interpretation.\n- Do not infer proper names, brands, specific locations, or dates without explicit basis in the text.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "04f44f7a-6b2f-4cdd-81ce-6227260bf7fa",
+      "name": "AI Scenes Generator"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=theme: {{ $json.theme }}\nduration: {{ $json.duration }} min\nlevel: {{ $json.level }}\nmode: {{ $json.mode }}",
+        "options": {
+          "systemMessage": "=# System Prompt — English Shadowing Agent\n\n**Role**  \nYou generate practice material for **English shadowing**. Your job is to write a text on a given theme and format the output so the learner can practice immediate repetition (shadowing) with rhythm, pauses, and intonation, fitting the requested duration.\n\n**Required Inputs (variables)**  \n- `THEME`: topic or content (e.g., “remote work trade-offs”, “ordering food in a restaurant”, “AI safety basics”).  \n- `DURATION_MIN`: target reading time in minutes (e.g., 2, 3.5, 8).  \n- `LEVEL` (optional): A1–C1. Default: **B1–B2** (intermediate).  \n- `MODE` (optional): “narrative”, “dialogue”, “expository”, “persuasive”. Default: **dialogue** for everyday situations; **expository** for technical themes.\n\n**Timing & Density Parameters (auto-adjust)**  \n- Target reading speed (words per minute) by level:  \n  - A2: 110±10 wpm  \n  - B1–B2: **140±10 wpm** (default)  \n  - C1: 160±10 wpm  \n- **Text length calculation:** `TARGET_WORDS = (level wpm) * DURATION_MIN * 0.90`  \n  Use the 0.90 factor to reserve ~10% for **pauses** and **emphases**.  \n- **Duration tolerance:** ±10% of the target time when read aloud at the indicated pace.\n\n**Language Guidelines (shadowing-friendly)**  \n- 85–95% high-frequency vocabulary for the target level; the rest may introduce topic-specific terms (define them in the glossary).  \n- **Short sentences** (10–16 words), **clear punctuation**, and **pause markers**.  \n- Include natural **connected speech** reductions (e.g., *gonna, wanna, gotta, kinda, gonna be*, linking /r/ /l/), but **avoid obscure slang** unless explained.  \n- **No sensitive/inappropriate content**.  \n- **Accent consistency:American.\n\n**Output Format: raw simple text.\n\n**Important**  \n- If the theme is technical, prefer **expository**; if situational, prefer **dialogue**.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "a1e39061-c1a4-458c-bd22-e22b0cd74a67",
+      "name": "AI Narrator Text Generator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Retorna um array de itens n8n, um por cena: [{ json: scene }, ...]\nconst out = [];\n\nfor (const item of items) {\n  const root = Array.isArray(item.json) ? item.json[0] : item.json;\n  const scenes = root?.output?.scenes ?? [];\n  for (const scene of scenes) out.push({ json: scene });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "193d6ef3-c9be-4601-b3d3-69b6f7dc2382",
+      "name": "Splice scenes"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Scene Processor to be here",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        96
+      ],
+      "id": "6e35a537-7277-4f6a-80d1-d7e4d6f6aa5d"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "=Iniciando processamento da cena {{ $json.index }}.\nDescrição: {{ $json.description }}."
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        96
+      ],
+      "id": "90d89911-51f5-4059-a06f-c3adb37456d6",
+      "name": "@NOTIFIER"
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Narrator Text Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Scenes Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Scenes Generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "@NOTIFIER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "START": {
+      "main": [
+        [
+          {
+            "node": "AI Narrator Text Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Scenes Generator": {
+      "main": [
+        [
+          {
+            "node": "Splice scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Narrator Text Generator": {
+      "main": [
+        [
+          {
+            "node": "AI Scenes Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Splice scenes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scene Processor to be here": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@NOTIFIER": {
+      "main": [
+        [
+          {
+            "node": "Scene Processor to be here",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "theme": "indicação de locais, direções, pontos de referência, como chegar em algum lugar",
+          "duration": 2,
+          "level": "B1",
+          "mode": "history",
+          "imageStyle": "cartoon",
+          "scenes": 2
+        }
+      }
+    ],
+    "AI Scenes Generator": [
+      {
+        "json": {
+          "output": {
+            "imageStyle": "cartoon",
+            "scenes": [
+              {
+                "index": 0,
+                "description": "A whimsical cartoon illustration capturing the beginning of a journey in an old town. The scene features a quaint town setting with a bustling town square dominated by a tall clock tower, transitioning into a narrow cobblestone street that reveals a vivid red door and leads toward a small park. In the park, a stone bench, a bubbling fountain, and a row of tall trees are depicted with bold outlines and vibrant, saturated colors, evoking a playful and inviting atmosphere.",
+                "paragraphs": [
+                  {
+                    "id": 0,
+                    "text": "Let's begin our journey.  \nImagine you are in an old town. Now, listen closely."
+                  },
+                  {
+                    "id": 1,
+                    "text": "In the center of the town, there is a famous square. Pause. At the square, a big clock tower stands tall. This clock tower is a landmark. It helps you know where to go."
+                  },
+                  {
+                    "id": 2,
+                    "text": "A narrow street leads from the square to the old city gate. Now, listen carefully. When you leave the square, you make a left turn. Pause. Walk slowly along the cobblestone road. Soon, you will see a red door on your right. This red door marks the start of the old street."
+                  },
+                  {
+                    "id": 3,
+                    "text": "Continue along this street until you reach a small park. Pause. In the park, a stone bench sits near a fountain. The fountain is a clear point of reference. From the fountain, walk to the east. You will pass a row of tall trees. Now, you gotta keep your pace steady."
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "description": "A dynamic cartoon scene that shifts focus to a lively market and culminates in a gentle, guiding atmosphere. The illustration shows a bustling market filled with vibrant characters and friendly chatter, transitioning to a quaint setting where a soft bell rings by a little chapel. The overall composition is rendered with playful lines, warm colors, and a sense of final arrival as landmarks unite to guide the journey.",
+                "paragraphs": [
+                  {
+                    "id": 4,
+                    "text": "After the trees, there is a market. Pause. At the market, you can ask for directions if you feel lost. The market is busy with people shopping and talking. Listen to their friendly voices. Use these voices as guides."
+                  },
+                  {
+                    "id": 5,
+                    "text": "Finally, follow the sound of a gentle bell. Pause. The bell rings near a little chapel. This chapel is the final guide. With the chapel in view, you will know you’ve arrived."
+                  },
+                  {
+                    "id": 6,
+                    "text": "Remember, each landmark—clock tower, red door, fountain, market, and chapel—works together to show you the way. Enjoy your journey, and trust each step."
+                  },
+                  {
+                    "id": 7,
+                    "text": "Glossary:  \nlandmark – an object or feature that helps you recognize a place;  \ncobblestone – small, round stones used for paving roads;  \nchapel – a small church for prayer."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "AI Narrator Text Generator": [
+      {
+        "json": {
+          "output": "Let's begin our journey.  \nImagine you are in an old town. Now, listen closely.  \n\nIn the center of the town, there is a famous square. Pause. At the square, a big clock tower stands tall. This clock tower is a landmark. It helps you know where to go.  \n\nA narrow street leads from the square to the old city gate. Now, listen carefully. When you leave the square, you make a left turn. Pause. Walk slowly along the cobblestone road. Soon, you will see a red door on your right. This red door marks the start of the old street.  \n\nContinue along this street until you reach a small park. Pause. In the park, a stone bench sits near a fountain. The fountain is a clear point of reference. From the fountain, walk to the east. You will pass a row of tall trees. Now, you gotta keep your pace steady.  \n\nAfter the trees, there is a market. Pause. At the market, you can ask for directions if you feel lost. The market is busy with people shopping and talking. Listen to their friendly voices. Use these voices as guides.  \n\nFinally, follow the sound of a gentle bell. Pause. The bell rings near a little chapel. This chapel is the final guide. With the chapel in view, you will know you’ve arrived.  \n\nRemember, each landmark—clock tower, red door, fountain, market, and chapel—works together to show you the way. Enjoy your journey, and trust each step.  \n\nGlossary:  \nlandmark – an object or feature that helps you recognize a place;  \ncobblestone – small, round stones used for paving roads;  \nchapel – a small church for prayer."
+        }
+      }
+    ]
+  },
+  "versionId": "4f1faac9-815d-4905-929e-66bb6693ff9e",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-16T23:18:04.775Z",
+      "updatedAt": "2025-10-16T23:18:04.775Z",
+      "role": "workflow:owner",
+      "workflowId": "Hg91NZVyqdB46nko",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-16T23:07:48.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-16",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
