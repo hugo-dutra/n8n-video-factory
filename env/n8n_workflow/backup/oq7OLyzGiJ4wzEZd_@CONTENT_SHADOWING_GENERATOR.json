@@ -1,0 +1,483 @@
+{
+  "createdAt": "2025-10-17T11:48:08.284Z",
+  "updatedAt": "2025-10-17T23:57:32.000Z",
+  "id": "oq7OLyzGiJ4wzEZd",
+  "name": "@CONTENT_SHADOWING_GENERATOR",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DOfnd0M834V8kbv2",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/DOfnd0M834V8kbv2",
+          "cachedResultName": "@CREATE_FOLDER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "path": "=/home/node/download/{{ $json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "path",
+              "displayName": "path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7c3142b7-e3a7-4e7d-8487-b7066ead4ba2",
+      "name": "@CREATE_FOLDER"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VdmO0DZ3i6iBFRiU",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/VdmO0DZ3i6iBFRiU",
+          "cachedResultName": "@GLOBAL_SHADOWING"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "dd69cc03-0863-4431-9487-d57bb51fd6c6",
+      "name": "@GLOBAL_SHADOWING"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        960,
+        0
+      ],
+      "id": "bea163aa-32b4-4b06-ba72-70e7e014d0d9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "paragraphs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "9e2049f4-4b70-4d27-987a-3654df8dbeb6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "\n{\n  \"videoId\":\"1760740412013\",\n  \"index\": 0,\n  \"description\": \"Anime Ghibli style scene featuring a serene, enchanted forest bathed in soft, warm light. In the foreground, a curious, wide-eyed rabbit appears lost while a wise old owl perches on a tree branch, offering gentle guidance. The scene exudes a magical, inviting atmosphere with lush, hand-painted textures, whimsical details, and a dreamy color palette.\",\n  \"paragraphs\": [\n    {\n      \"id\": 0,\n      \"text\": \"Once upon a time, a curious rabbit lost its way in a quiet forest.\"\n    }\n   ]\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        0
+      ],
+      "id": "34f9c491-3eea-4fd7-a0bd-e7aed0d95760",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/4YYIPFl9wE5c4L2eu2Gb",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_format",
+              "value": "mp3_44100_128"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key"
+            },
+            {
+              "name": "Accept",
+              "value": "audio/mpeg"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ ($json.text || '')\n              .toString()\n              .replace(/[\"'“”‘’]/g, '') }}\",\n  \"model_id\": \"eleven_flash_v2_5\",\n  \"voice_settings\": {\n    \"stability\": 0.55,\n    \"similarity_boost\": 0.65,\n    \"style\": 0.2,\n    \"use_speaker_boost\": true,\n    \"speed\": \"0.90\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "=audio"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        64
+      ],
+      "id": "a6994664-4521-4f5d-b7dd-766e5ca55886",
+      "name": "Get Speech"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/download/{{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.index }}_{{ $json.id }}_{{ $('Start').item.json.videoId }}.mp3",
+        "dataPropertyName": "=audio",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        64
+      ],
+      "id": "50c614da-aae6-4dac-8096-add9d7f6d1f6",
+      "name": "Write Audio Speech"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        64
+      ],
+      "id": "4768356c-8899-4974-bf7b-891f4e16bad3",
+      "name": "5s",
+      "webhookId": "e25520fa-52d3-436a-8386-df15e0b363a8"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "={{ $json.fileName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        -96
+      ],
+      "id": "7ac3f9cc-8ba4-4cc6-b5c1-80112df87fab",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/download/{{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.index }}_{{ $('Start').item.json.videoId }}.png",
+        "dataPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        -96
+      ],
+      "id": "faa97da6-7a3e-4c20-97f8-c8d867aea25e",
+      "name": "Write Image Scene"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "={{ $('Start').item.json.description }}",
+        "options": {
+          "size": "1536x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1344,
+        -96
+      ],
+      "id": "32817e7b-4ed6-47c4-8bd4-611a66d71bcd",
+      "name": "Generate Scene Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "093b7464-74b1-48b0-981c-ee8d5c7410ec",
+              "name": "paragraphs",
+              "value": "={{ $('Start').item.json.paragraphs }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        0
+      ],
+      "id": "9a63d0d3-c6f2-43cf-a0d8-65674b345354",
+      "name": "Get paragrahs"
+    }
+  ],
+  "connections": {
+    "@GLOBAL_SHADOWING": {
+      "main": [
+        [
+          {
+            "node": "@CREATE_FOLDER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@CREATE_FOLDER": {
+      "main": [
+        [
+          {
+            "node": "Get paragrahs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_SHADOWING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Speech": {
+      "main": [
+        [
+          {
+            "node": "Write Audio Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Audio Speech": {
+      "main": [
+        [
+          {
+            "node": "5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5s": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Generate Scene Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Scene Image": {
+      "main": [
+        [
+          {
+            "node": "Write Image Scene",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get paragrahs": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "7dfc2ddf-750a-4b0b-a95a-0002d9add648",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-17T11:48:08.305Z",
+      "updatedAt": "2025-10-17T11:48:08.305Z",
+      "role": "workflow:owner",
+      "workflowId": "oq7OLyzGiJ4wzEZd",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-17T11:19:06.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-17",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

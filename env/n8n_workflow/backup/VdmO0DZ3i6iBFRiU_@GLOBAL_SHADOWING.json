@@ -1,24 +1,11 @@
 {
-  "createdAt": "2025-10-04T17:26:13.261Z",
-  "updatedAt": "2025-10-16T16:02:49.000Z",
-  "id": "JgwCIAgZpZMMdgDf",
-  "name": "@GLOBAL_ANCAPSU",
+  "createdAt": "2025-10-17T11:57:19.760Z",
+  "updatedAt": "2025-10-17T11:59:06.000Z",
+  "id": "VdmO0DZ3i6iBFRiU",
+  "name": "@GLOBAL_SHADOWING",
   "active": false,
   "isArchived": false,
   "nodes": [
-    {
-      "parameters": {
-        "inputSource": "passthrough"
-      },
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        -320,
-        16
-      ],
-      "id": "f0da06f1-dbb7-4b79-8114-8c18c8e083f8",
-      "name": "When Executed by Another Workflow"
-    },
     {
       "parameters": {
         "assignments": {
@@ -26,31 +13,7 @@
             {
               "id": "e437a1bd-4a0b-42be-846d-caff4c5e5e74",
               "name": "CHANNEL_NAME",
-              "value": "CANAL_ANCAPSU",
-              "type": "string"
-            },
-            {
-              "id": "5bec419c-553f-4463-a6c2-26a7b2684eb2",
-              "name": "CHANNEL_ID",
-              "value": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-              "type": "string"
-            },
-            {
-              "id": "7335c9ca-4ed6-4fd5-bb77-f694a202e523",
-              "name": "LAST_N_HOURS",
-              "value": "={{\n(() => {\n  const now = new Date();\n  const midnight = new Date(now);\n  midnight.setHours(0,0,0,0);\n  return Math.floor((now - midnight) / 3_600_000)+2;\n})()\n}}",
-              "type": "string"
-            },
-            {
-              "id": "dcbf1dee-e038-4f05-a50d-f9b0f4980282",
-              "name": "MIN_DURATION",
-              "value": "182",
-              "type": "string"
-            },
-            {
-              "id": "1f6ea11f-e6a3-421f-a25b-00f915e7381b",
-              "name": "MAX_DURATION",
-              "value": "1800",
+              "value": "CANAL_SHADOWING",
               "type": "string"
             },
             {
@@ -75,12 +38,25 @@
         -112,
         16
       ],
-      "id": "57a60776-aeed-4086-bf2e-801dfa6885fe",
+      "id": "0f7fe00b-cf47-402c-bb57-d1dd3520a9e0",
       "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "49ae87fa-52ad-4dbf-8f81-ffdf1f651a69",
+      "name": "START"
     }
   ],
   "connections": {
-    "When Executed by Another Workflow": {
+    "START": {
       "main": [
         [
           {
@@ -98,14 +74,14 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "5bf47679-83cf-41ed-8bbe-515d873d7dbd",
+  "versionId": "fee7b48f-a0dc-4ed4-895a-f129fb69bbe8",
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-04T17:26:13.284Z",
-      "updatedAt": "2025-10-04T17:26:13.284Z",
+      "createdAt": "2025-10-17T11:57:19.783Z",
+      "updatedAt": "2025-10-17T11:57:19.783Z",
       "role": "workflow:owner",
-      "workflowId": "JgwCIAgZpZMMdgDf",
+      "workflowId": "VdmO0DZ3i6iBFRiU",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "createdAt": "2025-08-20T20:52:17.088Z",
