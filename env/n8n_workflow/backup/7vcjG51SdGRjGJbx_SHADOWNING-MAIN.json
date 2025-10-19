@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-16T23:15:45.583Z",
-  "updatedAt": "2025-10-17T23:46:00.000Z",
+  "updatedAt": "2025-10-18T13:21:36.000Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
   "active": false,
@@ -107,7 +107,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        240,
+        448,
         0
       ],
       "id": "c695bc88-d3cf-47d8-a0eb-b96610c27675",
@@ -120,7 +120,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        432,
+        640,
         0
       ],
       "id": "8a03e1e1-fa2d-4bed-beb6-b3c2ebee189b",
@@ -194,11 +194,12 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        656,
+        864,
         96
       ],
       "id": "d2e9e437-fef3-4aa7-84dc-3285d3fca2aa",
-      "name": "@AUDIO_SHADOWING_GENERATOR"
+      "name": "@AUDIO_SHADOWING_GENERATOR",
+      "disabled": true
     },
     {
       "parameters": {
@@ -217,11 +218,118 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        64,
+        272,
         0
       ],
       "id": "1d9012fa-d14b-4840-9e74-a68aaec1ade9",
       "name": "Get videoId"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VdmO0DZ3i6iBFRiU",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/VdmO0DZ3i6iBFRiU",
+          "cachedResultName": "@GLOBAL_SHADOWING"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        0
+      ],
+      "id": "73780dbf-e030-45b8-93e0-f401cb3a0dd3",
+      "name": "@GLOBAL_SHADOWING"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "paragraphs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        112
+      ],
+      "id": "3bce158b-ae13-4393-9452-29a422c91acc",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        864,
+        -16
+      ],
+      "id": "bdc2e74b-0480-4392-85aa-0ed3cf17a0b8",
+      "name": "Loop Over Scenes"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1296,
+        112
+      ],
+      "id": "9a7a594d-9371-4246-b038-321e086e3fca",
+      "name": "Loop Over Paragraphs"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "U2B3b3K36MwEByEd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/U2B3b3K36MwEByEd",
+          "cachedResultName": "@VIDEO_META_DATA_V2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FILE_PATH": "=/home/node/download/{{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}/{{ $('Get videoId').item.json.videoId }}/{{ $('Loop Over Scenes').item.json.index }}_{{ $('Loop Over Paragraphs').item.json.id }}_{{ $('Get videoId').item.json.videoId }}.mp3"
+          },
+          "matchingColumns": [
+            "FILE_NAME"
+          ],
+          "schema": [
+            {
+              "id": "FILE_PATH",
+              "displayName": "FILE_PATH",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1536,
+        128
+      ],
+      "id": "7eabaeb5-38d4-4b0a-98d3-024721af206d",
+      "name": "@VIDEO_META_DATA_V2"
     }
   ],
   "connections": {
@@ -229,7 +337,7 @@
       "main": [
         [
           {
-            "node": "Get videoId",
+            "node": "@GLOBAL_SHADOWING",
             "type": "main",
             "index": 0
           }
@@ -249,7 +357,13 @@
     },
     "Loop Over Content": {
       "main": [
-        [],
+        [
+          {
+            "node": "Loop Over Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "@AUDIO_SHADOWING_GENERATOR",
@@ -275,6 +389,52 @@
         [
           {
             "node": "Loop Over Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@GLOBAL_SHADOWING": {
+      "main": [
+        [
+          {
+            "node": "Get videoId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Paragraphs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Scenes": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Paragraphs": {
+      "main": [
+        [],
+        [
+          {
+            "node": "@VIDEO_META_DATA_V2",
             "type": "main",
             "index": 0
           }
@@ -366,7 +526,7 @@
       }
     ]
   },
-  "versionId": "2306d406-422e-42e8-827c-2ac8c1af1c54",
+  "versionId": "bc7a0bfe-72d0-42cd-ac54-121b7a3741d4",
   "triggerCount": 0,
   "shared": [
     {
@@ -391,7 +551,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-17T11:19:06.000Z",
+              "updatedAt": "2025-10-19T12:29:09.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -425,7 +585,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-17",
+              "lastActiveAt": "2025-10-19",
               "isPending": false
             }
           }

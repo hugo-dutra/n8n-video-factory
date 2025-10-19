@@ -13,7 +13,9 @@ RUN apk add --no-cache \
     curl \
     bash \
     ca-certificates \
-    dos2unix
+    dos2unix \
+    jq \
+    file
 
 # Pacotes essenciais
 RUN apk add --no-cache ffmpeg python3 curl bash ca-certificates dos2unix \
