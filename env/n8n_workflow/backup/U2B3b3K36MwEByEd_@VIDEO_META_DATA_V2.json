@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-18T13:10:57.267Z",
-  "updatedAt": "2025-10-19T12:30:51.000Z",
+  "updatedAt": "2025-10-19T15:16:24.000Z",
   "id": "U2B3b3K36MwEByEd",
   "name": "@VIDEO_META_DATA_V2",
   "active": false,
@@ -231,16 +231,8 @@
   "meta": {
     "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
   },
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "FILE_PATH": "/home/node/download/CANAL_SHADOWING/1760740495827/0_0_1760740495827.mp3"
-        }
-      }
-    ]
-  },
-  "versionId": "8fd0e79b-4f28-4697-b20d-89723eb59dbc",
+  "pinData": {},
+  "versionId": "2ea01cf3-08b9-42e7-9f84-ef6a1b6181b2",
   "triggerCount": 0,
   "shared": [
     {

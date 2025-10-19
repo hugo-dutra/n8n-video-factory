@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-16T23:15:45.583Z",
-  "updatedAt": "2025-10-18T13:21:36.000Z",
+  "updatedAt": "2025-10-19T15:17:10.000Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
   "active": false,
@@ -34,7 +34,8 @@
             "level": "={{ $('START').item.json.level }}",
             "mode": "={{ $('START').item.json.mode }}",
             "imageStyle": "={{ $('START').item.json.imageStyle }}",
-            "scenes": "={{ $('START').item.json.scenes }}"
+            "scenes": "={{ $('START').item.json.scenes }}",
+            "targetWordsPerParagraph": "={{ $('START').item.json.targetWordsPerParagraph }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -97,6 +98,16 @@
               "canBeUsedToMatch": true,
               "type": "number",
               "removed": false
+            },
+            {
+              "id": "targetWordsPerParagraph",
+              "displayName": "targetWordsPerParagraph",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -130,10 +141,119 @@
       "parameters": {
         "workflowId": {
           "__rl": true,
+          "value": "VdmO0DZ3i6iBFRiU",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/VdmO0DZ3i6iBFRiU",
+          "cachedResultName": "@GLOBAL_SHADOWING"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        0
+      ],
+      "id": "73780dbf-e030-45b8-93e0-f401cb3a0dd3",
+      "name": "@GLOBAL_SHADOWING"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "sWBnl4vvj9HqqkTW",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/sWBnl4vvj9HqqkTW",
+          "cachedResultName": "@SCENE_METADATA_MAPPER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "index": "={{ $json.index }}",
+            "description": "={{ $json.description }}",
+            "paragraphs": "={{ $json.paragraphs }}",
+            "CHANNEL_NAME": "={{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}",
+            "videoId": "={{ $('Get videoId from timestamp').item.json.videoId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "index",
+              "displayName": "index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "paragraphs",
+              "displayName": "paragraphs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "CHANNEL_NAME",
+              "displayName": "CHANNEL_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        816,
+        0
+      ],
+      "id": "ba0edc34-0978-4d93-921d-4a822649c8d9",
+      "name": "@SCENE_METADATA_MAPPER"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
           "value": "oq7OLyzGiJ4wzEZd",
           "mode": "list",
           "cachedResultUrl": "/workflow/oq7OLyzGiJ4wzEZd",
-          "cachedResultName": "@AUDIO_SHADOWING_GENERATOR"
+          "cachedResultName": "@CONTENT_SHADOWING_GENERATOR"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -141,7 +261,7 @@
             "index": "={{ $('Loop Over Content').first().json.index }}",
             "description": "={{ $('Loop Over Content').first().json.description }}",
             "paragraphs": "={{ $('Loop Over Content').first().json.paragraphs }}",
-            "videoId": "={{ $('Get videoId').item.json.videoId }}"
+            "videoId": "={{ $('Get videoId from timestamp').item.json.videoId }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -194,11 +314,11 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        864,
-        96
+        816,
+        160
       ],
       "id": "d2e9e437-fef3-4aa7-84dc-3285d3fca2aa",
-      "name": "@AUDIO_SHADOWING_GENERATOR",
+      "name": "@CONTENT_SHADOWING_GENERATOR",
       "disabled": true
     },
     {
@@ -222,114 +342,7 @@
         0
       ],
       "id": "1d9012fa-d14b-4840-9e74-a68aaec1ade9",
-      "name": "Get videoId"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "VdmO0DZ3i6iBFRiU",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/VdmO0DZ3i6iBFRiU",
-          "cachedResultName": "@GLOBAL_SHADOWING"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {}
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        80,
-        0
-      ],
-      "id": "73780dbf-e030-45b8-93e0-f401cb3a0dd3",
-      "name": "@GLOBAL_SHADOWING"
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "paragraphs",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        1088,
-        112
-      ],
-      "id": "3bce158b-ae13-4393-9452-29a422c91acc",
-      "name": "Split Out"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        864,
-        -16
-      ],
-      "id": "bdc2e74b-0480-4392-85aa-0ed3cf17a0b8",
-      "name": "Loop Over Scenes"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1296,
-        112
-      ],
-      "id": "9a7a594d-9371-4246-b038-321e086e3fca",
-      "name": "Loop Over Paragraphs"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "U2B3b3K36MwEByEd",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/U2B3b3K36MwEByEd",
-          "cachedResultName": "@VIDEO_META_DATA_V2"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "FILE_PATH": "=/home/node/download/{{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}/{{ $('Get videoId').item.json.videoId }}/{{ $('Loop Over Scenes').item.json.index }}_{{ $('Loop Over Paragraphs').item.json.id }}_{{ $('Get videoId').item.json.videoId }}.mp3"
-          },
-          "matchingColumns": [
-            "FILE_NAME"
-          ],
-          "schema": [
-            {
-              "id": "FILE_PATH",
-              "displayName": "FILE_PATH",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        1536,
-        128
-      ],
-      "id": "7eabaeb5-38d4-4b0a-98d3-024721af206d",
-      "name": "@VIDEO_META_DATA_V2"
+      "name": "Get videoId from timestamp"
     }
   ],
   "connections": {
@@ -359,36 +372,14 @@
       "main": [
         [
           {
-            "node": "Loop Over Scenes",
+            "node": "@SCENE_METADATA_MAPPER",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "@AUDIO_SHADOWING_GENERATOR",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get videoId": {
-      "main": [
-        [
-          {
-            "node": "@CONTENT_GENERATION",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "@AUDIO_SHADOWING_GENERATOR": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Content",
+            "node": "@CONTENT_SHADOWING_GENERATOR",
             "type": "main",
             "index": 0
           }
@@ -399,42 +390,29 @@
       "main": [
         [
           {
-            "node": "Get videoId",
+            "node": "Get videoId from timestamp",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Split Out": {
+    "@CONTENT_SHADOWING_GENERATOR": {
       "main": [
         [
           {
-            "node": "Loop Over Paragraphs",
+            "node": "Loop Over Content",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Loop Over Scenes": {
+    "Get videoId from timestamp": {
       "main": [
-        [],
         [
           {
-            "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Paragraphs": {
-      "main": [
-        [],
-        [
-          {
-            "node": "@VIDEO_META_DATA_V2",
+            "node": "@CONTENT_GENERATION",
             "type": "main",
             "index": 0
           }
@@ -452,11 +430,12 @@
       {
         "json": {
           "theme": "indicação de locais, direções, pontos de referência, como chegar em algum lugar",
-          "duration": 1,
-          "level": "B1",
-          "mode": "Fábula",
-          "imageStyle": "Anime ghibli ",
-          "scenes": 3
+          "duration": 2,
+          "level": "B2",
+          "mode": "Diálogo fictício de um turista brasileiro nos estados unidos.",
+          "imageStyle": "3D fotorealista",
+          "scenes": 3,
+          "targetWordsPerParagraph": 18
         }
       }
     ],
@@ -464,19 +443,23 @@
       {
         "json": {
           "index": 0,
-          "description": "Anime Ghibli style scene featuring a serene, enchanted forest bathed in soft, warm light. In the foreground, a curious, wide-eyed rabbit appears lost while a wise old owl perches on a tree branch, offering gentle guidance. The scene exudes a magical, inviting atmosphere with lush, hand-painted textures, whimsical details, and a dreamy color palette.",
+          "description": "A 3D photorealistic urban scene capturing an initial conversation between a curious tourist and a friendly local. The setting shows a bustling street with a prominent bakery and modern storefronts, rendered in high detail with natural daylight and realistic textures, establishing a warm and inviting atmosphere.",
           "paragraphs": [
             {
               "id": 0,
-              "text": "Once upon a time, a curious rabbit lost its way in a quiet forest."
+              "text": "Tourist: Hi there. I’m new in town. Can you help me get to Central Park?"
             },
             {
               "id": 1,
-              "text": "The wise old owl saw the rabbit searching and said, \"Listen closely. Go straight along the winding path. When you reach the big oak tree, turn left at the small stone bridge.\""
+              "text": "Local: Sure, I’d be glad to help. First, walk two blocks north on Main Street. Then, turn right at the bakery."
             },
             {
               "id": 2,
-              "text": "The rabbit replied, \"I will keep my eyes open for the oak tree.\""
+              "text": "Tourist: Great, I see the bakery ahead. After that, what should I do?"
+            },
+            {
+              "id": 3,
+              "text": "Local: Keep walking straight until you reach the big intersection. At the intersection, turn left. You will see a tall clock tower on your right. That is a good landmark."
             }
           ]
         }
@@ -484,15 +467,23 @@
       {
         "json": {
           "index": 1,
-          "description": "Anime Ghibli style scene depicting the journey along a mysterious forest path. The composition shows the rabbit hopping along a winding trail, with hints of a stone bridge in the distance and the gentle murmur of a stream. The lighting is soft and natural, and the environment feels alive with vibrant greenery and subtle magic, inviting the viewer into the adventure.",
+          "description": "A detailed 3D photorealistic render of a dynamic urban intersection scene. The composition focuses on a local providing clear navigational instructions near a tall clock tower, with visible sidewalks, street elements, and ambient daylight emphasizing realistic shadows and textures. The atmosphere is practical and clearly directional.",
           "paragraphs": [
             {
-              "id": 3,
-              "text": "The owl continued, \"After the bridge, follow the soft sound of the stream until you see a bright meadow.\""
+              "id": 4,
+              "text": "Tourist: Okay, so after the clock tower, I turn left. How much further is it?"
             },
             {
-              "id": 4,
-              "text": "The rabbit hopped along, trusting the clear directions."
+              "id": 5,
+              "text": "Local: It is about a five-minute walk from the clock tower. Follow the sidewalk until you reach the river. When you see the small café by the river, you have gone too far. So, stop before the café."
+            },
+            {
+              "id": 6,
+              "text": "Tourist: I understand. I’ll turn right after the clock tower and then look for the river. What if I miss the turn?"
+            },
+            {
+              "id": 7,
+              "text": "Local: Don’t worry. You might ask another local. Most people here are friendly and know the route well. Also, you can use your smartphone map if needed."
             }
           ]
         }
@@ -500,33 +491,37 @@
       {
         "json": {
           "index": 2,
-          "description": "Anime Ghibli style scene capturing the moment of relief and moral reflection in an open, bright meadow. The scene features the rabbit standing in a sunlit, vibrant field with flowers and gentle winds, exuding a sense of resolution and calm. The background has a soft, painterly quality with delicate textures and a warm, uplifting color scheme that echoes the fable's gentle message.",
+          "description": "A 3D photorealistic urban farewell scene depicting a final exchange between a grateful tourist and a courteous local. The setting features a softly lit city backdrop with realistic textures, where warm ambient light highlights subtle expressions and the calm, concluding atmosphere of a day spent navigating the city.",
           "paragraphs": [
             {
-              "id": 5,
-              "text": "Soon, it found the meadow and felt relief."
+              "id": 8,
+              "text": "Tourist: Thanks, that helps a lot. I’m excited to see Central Park and all the sights around the area."
             },
             {
-              "id": 6,
-              "text": "This little fable shows how clear signs and kind advice can help us find our way."
+              "id": 9,
+              "text": "Local: You’re welcome. Enjoy your visit, and have a great day exploring the city!"
             },
             {
-              "id": 7,
-              "text": "Always value guidance when journeys seem confusing."
+              "id": 10,
+              "text": "Tourist: I certainly will. Thank you again for your clear directions and kind smile. Goodbye!"
+            },
+            {
+              "id": 11,
+              "text": "Local: Goodbye, and have a safe walk ahead!"
             }
           ]
         }
       }
     ],
-    "Get videoId": [
+    "Get videoId from timestamp": [
       {
         "json": {
-          "videoId": "1760740495827"
+          "videoId": "1760886294860"
         }
       }
     ]
   },
-  "versionId": "bc7a0bfe-72d0-42cd-ac54-121b7a3741d4",
+  "versionId": "dec9ac98-32a6-4984-a3c8-32e135f6180e",
   "triggerCount": 0,
   "shared": [
     {

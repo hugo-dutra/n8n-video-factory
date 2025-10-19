@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-17T11:48:08.284Z",
-  "updatedAt": "2025-10-17T23:57:32.000Z",
+  "updatedAt": "2025-10-19T15:18:07.000Z",
   "id": "oq7OLyzGiJ4wzEZd",
   "name": "@CONTENT_SHADOWING_GENERATOR",
   "active": false,
@@ -114,56 +114,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.elevenlabs.io/v1/text-to-speech/4YYIPFl9wE5c4L2eu2Gb",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "output_format",
-              "value": "mp3_44100_128"
-            }
-          ]
-        },
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "xi-api-key"
-            },
-            {
-              "name": "Accept",
-              "value": "audio/mpeg"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \"{{ ($json.text || '')\n              .toString()\n              .replace(/[\"'“”‘’]/g, '') }}\",\n  \"model_id\": \"eleven_flash_v2_5\",\n  \"voice_settings\": {\n    \"stability\": 0.55,\n    \"similarity_boost\": 0.65,\n    \"style\": 0.2,\n    \"use_speaker_boost\": true,\n    \"speed\": \"0.90\"\n  }\n}",
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "file",
-              "outputPropertyName": "=audio"
-            }
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1168,
-        64
-      ],
-      "id": "a6994664-4521-4f5d-b7dd-766e5ca55886",
-      "name": "Get Speech"
-    },
-    {
-      "parameters": {
         "operation": "write",
         "fileName": "=/home/node/download/{{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.index }}_{{ $json.id }}_{{ $('Start').item.json.videoId }}.mp3",
         "dataPropertyName": "=audio",
@@ -272,6 +222,56 @@
       ],
       "id": "9a63d0d3-c6f2-43cf-a0d8-65674b345354",
       "name": "Get paragrahs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/4YYIPFl9wE5c4L2eu2Gb",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_format",
+              "value": "mp3_44100_128"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key"
+            },
+            {
+              "name": "Accept",
+              "value": "audio/mpeg"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ ($json.text || '')\n              .toString()\n              .replace(/[\"'“”‘’]/g, '') }}\",\n  \"model_id\": \"eleven_flash_v2_5\",\n  \"voice_settings\": {\n    \"stability\": 0.55,\n    \"similarity_boost\": 0.65,\n    \"style\": 0.2,\n    \"use_speaker_boost\": true,\n    \"speed\": \"0.90\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "=audio"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        64
+      ],
+      "id": "dd1a11b0-4401-46cf-af06-6374fd3093e9",
+      "name": "Get Speech1"
     }
   ],
   "connections": {
@@ -308,7 +308,7 @@
         ],
         [
           {
-            "node": "Get Speech",
+            "node": "Get Speech1",
             "type": "main",
             "index": 0
           }
@@ -331,17 +331,6 @@
         [
           {
             "node": "@GLOBAL_SHADOWING",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Speech": {
-      "main": [
-        [
-          {
-            "node": "Write Audio Speech",
             "type": "main",
             "index": 0
           }
@@ -402,6 +391,17 @@
           }
         ]
       ]
+    },
+    "Get Speech1": {
+      "main": [
+        [
+          {
+            "node": "Write Audio Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -411,8 +411,24 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "7dfc2ddf-750a-4b0b-a95a-0002d9add648",
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "videoId": "1760885080172",
+          "index": 0,
+          "description": "3D fotorealistic scene depicting the initial exchange on a bustling urban street. The tourist, looking curious and slightly tentative, addresses a friendly local as they converse amidst an urban backdrop. Subtle hints of a blue building and clear city elements are visible, rendered with realistic textures and dynamic natural lighting to emphasize the start of a directional exchange.",
+          "paragraphs": [
+            {
+              "id": 0,
+              "text": "Tourist: Hi there, excuse me. I’m looking for the art museum. Can you help me?"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "versionId": "d3850d56-15ba-46b0-949e-abe4ec208ee8",
   "triggerCount": 0,
   "shared": [
     {
