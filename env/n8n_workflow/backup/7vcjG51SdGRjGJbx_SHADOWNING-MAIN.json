@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-16T23:15:45.583Z",
-  "updatedAt": "2025-10-20T21:13:33.000Z",
+  "updatedAt": "2025-10-24T12:45:03.000Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
   "active": false,
@@ -11,7 +11,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -112,
+        -80,
         0
       ],
       "id": "12695a2f-a310-43a4-9f95-e5001a8f3390",
@@ -155,7 +155,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        80,
+        96,
         0
       ],
       "id": "73780dbf-e030-45b8-93e0-f401cb3a0dd3",
@@ -346,12 +346,12 @@
     },
     {
       "parameters": {
-        "command": "=set -Eeuo pipefail\n\n############# CONFIG #############\n# => PAISAGEM (deitado)\nCANVAS_W=1920\nCANVAS_H=1080\n\nBG_COLOR=\"black\"\nTEXT_COLOR=\"white\"\n\n# Para texto com QUEBRA automática, uso de legendas ASS (libass)\nFONT_FILE=\"/home/node/assets/COMMON/fonts/impact.ttf\"\nFONT_SIZE=42\n\nSAFE_MARGIN=96     # margens (px) esquerda/direita/superior/inferior\nFADE_SEC=0.25     # usado só no xfade de cena (imagem->imagem)\nX_PAUSE_SEC=1.5\nSCENE_CARD_SEC=1.2\nSCENE_XFADE_SEC=0.6\nSHOW_SCENE_CARDS=0\nSCENE_CARD_TEXT_PREFIX=\"Scene\"\n\nX264_PRESET=\"veryfast\"\nX264_CRF=21\nAUDIO_BR=\"160k\"\n##################################\n\n# Workdir temporário\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"; : > \"$LIST\"\n\n# Fonte fallback (para bg quando não houver imagem)\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"/home/node/assets/COMMON/fonts/impact.ttf\" ]; then\n    FONT_FILE=\"/home/node/assets/COMMON/fonts/impact.ttf\"\n  elif [ -f \"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf\" ]; then\n    FONT_FILE=\"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf\"\n  fi\nfi\n\n# =========== Entrada JSON (todos os itens do nó anterior) ===========\nIN_JSON=\"$TMPDIR/in.json\"\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n\nif [ ! -s \"$IN_JSON\" ]; then\n  echo \"ERRO: Entrada JSON vazia. Garanta que este nó recebe o array do nó anterior e Execute Once = ON.\"\n  exit 1\nfi\n\n# ==================== FUNÇÕES ====================\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\nscale_to_canvas () { echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\"; }\n\n# Gera um .ass centralizado (Alignment 5), wrap automático e SEM espaçamento entre letras\nmake_ass_file () { # $1: caminho .ass ; $2: texto\n  local ASS=\"$1\" RAW=\"$2\"\n  # sanitiza para não interpretar tags {\\...} e barras\n  local TXT\n  TXT=\"$(printf '%s' \"$RAW\" | sed -e 's/[{}]/()/g' -e 's/\\\\/\\\\\\\\/g')\"\n\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\n; Spacing=0 (sem espaçamento de letras). Outline para legibilidade.\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, Impact, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00000000, &H7F000000, -1, 0, 0, 0, 100, 100, 0, 0, 1, 2.5, 0, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\n# BG puro (sem fade — fade só quando troca IMAGEM)\nmake_bg_clip () { # $1 IMG, $2 OUT, $3 DUR\n  local IMG=\"$1\" OUT=\"$2\" DUR=\"$3\"\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas),fps=30,format=yuv420p,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]format=yuv420p,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Texto + Áudio (SEM fade quando só muda o texto)\nmake_text_over_audio () { # $1 SRC, $2 OUT, $3 TXT, $4 IMG\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -filter_complex \"[1:v]$(scale_to_canvas)[bg];[bg]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -filter_complex \"[1:v]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Silêncio + Texto (SEM fade quando só muda o texto)\nmake_silence_with_text () { # $1 OUT, $2 DUR, $3 TXT, $4 IMG\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas)[bg];[bg]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# XFADE ENTRE IMAGENS (apenas quando muda de cena)\nmake_scene_xfade () { # $1 P, $2 N, $3 OUT, $4 DUR\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  if [ -n \"${P:-}\" ] && [ -f \"$P\" ] && [ -n \"${N:-}\" ] && [ -f \"$N\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    make_bg_clip \"${P:-}\" \"$OUT\" \"$DUR\"\n  fi\n}\n\n# =========== Constrói TSV a partir do JSON ===========\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\n\nconst path = process.argv[2] || process.argv[1];\nif (!path) { console.error('sem caminho JSON'); process.exit(1); }\n\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = arr[0].videoId || String(Date.now());\n\nconsole.log(`#DEST_DIR=/home/node/download/${ch}/${vid}`);\nconsole.log(`#FINAL_OUT=/home/node/download/${ch}/${vid}/shadow_${Date.now()}.mp4`);\n\nfunction exists(p){ try{ fs.accessSync(p); return true; }catch{ return false; } }\n\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '').replace(/\\r?\\n/g,' ');\n  const baseCh = it.CHANNEL_NAME || ch;\n  const baseVid= it.videoId || vid;\n  // ajuste se seu padrão de imagem for outro\n  const guess  = `/home/node/download/${baseCh}/${baseVid}/${scene}_${baseVid}.png`;\n  const img    = exists(guess) ? guess : '';\n  console.log([audio, text, scene, img].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nFINAL_OUT=$(grep '^#FINAL_OUT=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n[ -z \"${DEST_DIR:-}\" ] && { echo \"Falha ao obter DEST_DIR do JSON\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n# ============== Loop principal =================\nlast_scene=\"\"; last_img=\"\"; idx=0; read_first_line=1\n\nexec 9< \"$DATA_FILE\"\nwhile IFS='|' read -r -u 9 SRC TXT SCENE IMG; do\n  [ -z \"${SRC:-}\" ] && continue\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n\n  # XFADE somente quando a IMAGEM muda (mudança de cena)\n  if [ \"$read_first_line\" -eq 0 ] && [ \"$SCENE\" != \"$last_scene\" ]; then\n    XF=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_${last_scene}_${SCENE}.mp4\"\n    make_scene_xfade \"$last_img\" \"$IMG\" \"$XF\" \"$SCENE_XFADE_SEC\"\n    printf \"file '%s'\\n\" \"$XF\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n\n  # card opcional de cena (também sem fade)\n  if [ \"$SHOW_SCENE_CARDS\" -eq 1 ] && { [ \"$read_first_line\" -eq 1 ] || [ \"$SCENE\" != \"$last_scene\" ]; }; then\n    CARD=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_scene_${SCENE}.mp4\"\n    make_silence_with_text \"$CARD\" \"$SCENE_CARD_SEC\" \"${SCENE_CARD_TEXT_PREFIX} ${SCENE}\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$CARD\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n\n  read_first_line=0; last_scene=\"$SCENE\"; last_img=\"$IMG\"\n\n  # 1) play\n  P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_play1_s${SCENE}.mp4\"\n  make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$IMG\"\n  printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n\n  # 2) pausa curta\n  PX=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_pauseX_s${SCENE}.mp4\"\n  make_silence_with_text \"$PX\" \"$X_PAUSE_SEC\" \"Prepare-se: repita em seguida\" \"$IMG\"\n  printf \"file '%s'\\n\" \"$PX\" >> \"$LIST\"; idx=$((idx+1))\n\n  # 3) pausa do tamanho do áudio\n  PY=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_pauseY_s${SCENE}.mp4\"\n  make_silence_with_text \"$PY\" \"$DUR\" \"$TXT\" \"$IMG\"\n  printf \"file '%s'\\n\" \"$PY\" >> \"$LIST\"; idx=$((idx+1))\n\n  # 4) replay\n  P3=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_play3_s${SCENE}.mp4\"\n  make_text_over_audio \"$SRC\" \"$P3\" \"$TXT\" \"$IMG\"\n  printf \"file '%s'\\n\" \"$P3\" >> \"$LIST\"; idx=$((idx+1))\ndone\nexec 9<&-\n\n# ============== Concat final ====================\nffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK: $FINAL_OUT\"\n"
+        "command": "=set -Eeuo pipefail\n\n############# CONFIG #############\n# Como a imagem deve se ajustar ao canvas: contain | cover | stretch\nSCALE_MODE=\"${SCALE_MODE:-stretch}\"\n# ...\n\n# => PAISAGEM (deitado)\nCANVAS_W=1920\nCANVAS_H=1080\n\nBG_COLOR=\"black\"\nTEXT_COLOR=\"white\"\n\n# Para texto com QUEBRA automática, uso de legendas ASS (libass)\nFONT_FILE=\"/home/node/assets/COMMON/fonts/impact.ttf\"\nFONT_SIZE=96\n\nSAFE_MARGIN=96     # margens (px) esquerda/direita/superior/inferior\nFADE_SEC=0.50     # usado só no xfade de cena (imagem->imagem)\nX_PAUSE_SEC=2.5\nSCENE_CARD_SEC=1.2\nSCENE_XFADE_SEC=0.6\nSHOW_SCENE_CARDS=0\nSCENE_CARD_TEXT_PREFIX=\"Scene\"\n\n# >>> ÚNICA ALTERAÇÃO: mensagem configurável da pausa curta\nPREPARE_MSG=\"${PREPARE_MSG:-\"Get ready. Repeat right after.\"}\"\n\nX264_PRESET=\"veryfast\"\nX264_CRF=21\nAUDIO_BR=\"160k\"\n##################################\n\n# Workdir temporário\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"; : > \"$LIST\"\n\n# Fonte fallback (para bg quando não houver imagem)\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"/home/node/assets/COMMON/fonts/impact.ttf\" ]; then\n    FONT_FILE=\"/home/node/assets/COMMON/fonts/impact.ttf\"\n  elif [ -f \"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf\" ]; then\n    FONT_FILE=\"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf\"\n  fi\nfi\n\n# =========== Entrada JSON (todos os itens do nó anterior) ===========\nIN_JSON=\"$TMPDIR/in.json\"\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n\nif [ ! -s \"$IN_JSON\" ]; then\n  echo \"ERRO: Entrada JSON vazia. Garanta que este nó recebe o array do nó anterior e Execute Once = ON.\"\n  exit 1\nfi\n\n# ==================== FUNÇÕES ====================\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\n\nscale_to_canvas () {\n  case \"$SCALE_MODE\" in\n    cover)\n      echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=increase,crop=${CANVAS_W}:${CANVAS_H}\"\n      ;;\n    stretch)\n      echo \"scale=${CANVAS_W}:${CANVAS_H}\"\n      ;;\n    *)\n      echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\"\n      ;;\n  esac\n}\n\n# Gera um .ass centralizado (Alignment 5), wrap automático e SEM espaçamento entre letras\nmake_ass_file () { # $1: caminho .ass ; $2: texto\n  local ASS=\"$1\" RAW=\"$2\"\n  local TXT\n  TXT=\"$(printf '%s' \"$RAW\" | sed -e 's/[{}]/()/g' -e 's/\\\\/\\\\\\\\/g')\"\n\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\n; Spacing=0 (sem espaçamento de letras). Outline para legibilidade.\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, Impact, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00000000, &H7F000000, -1, 0, 0, 0, 100, 100, 0, 0, 1, 2.5, 0, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\n# BG puro (sem fade — fade só quando troca IMAGEM)\nmake_bg_clip () { # $1 IMG, $2 OUT, $3 DUR\n  local IMG=\"$1\" OUT=\"$2\" DUR=\"$3\"\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas),fps=30,format=yuv420p,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]format=yuv420p,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Texto + Áudio (SEM fade quando só muda o texto)\nmake_text_over_audio () { # $1 SRC, $2 OUT, $3 TXT, $4 IMG\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -filter_complex \"[1:v]$(scale_to_canvas)[bg];[bg]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -filter_complex \"[1:v]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Silêncio + Texto (SEM fade quando só muda o texto)\nmake_silence_with_text () { # $1 OUT, $2 DUR, $3 TXT, $4 IMG\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas)[bg];[bg]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]ass='$ASSF':shaping=1,format=yuv420p,fps=30,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# XFADE ENTRE IMAGENS (apenas quando muda de cena)\nmake_scene_xfade () { # $1 P, $2 N, $3 OUT, $4 DUR\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  if [ -n \"${P:-}\" ] && [ -f \"$P\" ] && [ -n \"${N:-}\" ] && [ -f \"$N\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    make_bg_clip \"${P:-}\" \"$OUT\" \"$DUR\"\n  fi\n}\n\n# =========== Constrói TSV a partir do JSON ===========\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\n\nconst path = process.argv[2] || process.argv[1];\nif (!path) { console.error('sem caminho JSON'); process.exit(1); }\n\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = arr[0].videoId || String(Date.now());\n\nconsole.log(`#DEST_DIR=/home/node/download/${ch}/${vid}`);\nconsole.log(`#FINAL_OUT=/home/node/download/${ch}/${vid}/shadow_${Date.now()}.mp4`);\n\nfunction exists(p){ try{ fs.accessSync(p); return true; }catch{ return false; } }\n\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '').replace(/\\r?\\n/g,' ');\n  const baseCh = it.CHANNEL_NAME || ch;\n  const baseVid= it.videoId || vid;\n  const guess  = `/home/node/download/${baseCh}/${baseVid}/${scene}_${baseVid}.png`;\n  const img    = exists(guess) ? guess : '';\n  console.log([audio, text, scene, img].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nFINAL_OUT=$(grep '^#FINAL_OUT=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n[ -z \"${DEST_DIR:-}\" ] && { echo \"Falha ao obter DEST_DIR do JSON\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n# ============== Loop principal =================\nlast_scene=\"\"; last_img=\"\"; idx=0; read_first_line=1\n\nexec 9< \"$DATA_FILE\"\nwhile IFS='|' read -r -u 9 SRC TXT SCENE IMG; do\n  [ -z \"${SRC:-}\" ] && continue\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n\n  # XFADE somente quando a IMAGEM muda (mudança de cena)\n  if [ \"$read_first_line\" -eq 0 ] && [ \"$SCENE\" != \"$last_scene\" ]; then\n    XF=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_${last_scene}_${SCENE}.mp4\"\n    make_scene_xfade \"$last_img\" \"$IMG\" \"$XF\" \"$SCENE_XFADE_SEC\"\n    printf \"file '%s'\\n\" \"$XF\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n\n  # card opcional de cena (também sem fade)\n  if [ \"$SHOW_SCENE_CARDS\" -eq 1 ] && { [ \"$read_first_line\" -eq 1 ] || [ \"$SCENE\" != \"$last_scene\" ]; }; then\n    CARD=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_scene_${SCENE}.mp4\"\n    make_silence_with_text \"$CARD\" \"$SCENE_CARD_SEC\" \"${SCENE_CARD_TEXT_PREFIX} ${SCENE}\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$CARD\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n\n  read_first_line=0; last_scene=\"$SCENE\"; last_img=\"$IMG\"\n\n  ###############################################\n  # MUDANÇA: cena 0 SEM repetições/pausas\n  ###############################################\n  if [ \"$SCENE\" -eq 0 ]; then\n    # Apenas 1x play com texto sobre o áudio\n    P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_play_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n  else\n    # Padrão antigo (3 passes + pausas)\n    # 1) play\n    P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_play1_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n\n    # 2) pausa curta (mensagem PREPARE_MSG)\n    PX=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_pauseX_s${SCENE}.mp4\"\n    make_silence_with_text \"$PX\" \"$X_PAUSE_SEC\" \"$PREPARE_MSG\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$PX\" >> \"$LIST\"; idx=$((idx+1))\n\n    # 3) pausa do tamanho do áudio\n    PY=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_pauseY_s${SCENE}.mp4\"\n    make_silence_with_text \"$PY\" \"$DUR\" \"$TXT\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$PY\" >> \"$LIST\"; idx=$((idx+1))\n\n    # 4) replay\n    P3=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_play3_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P3\" \"$TXT\" \"$IMG\"\n    printf \"file '%s'\\n\" \"$P3\" >> \"$LIST\"; idx=$((idx+1))\n  fi\ndone\nexec 9<&-\n\n# ============== Concat final ====================\nffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK: $FINAL_OUT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1008,
+        1024,
         0
       ],
       "id": "bfe467c6-73b0-4e30-a0c1-89bc6f025681",
@@ -463,80 +463,6 @@
         }
       }
     ],
-    "@CONTENT_GENERATION": [
-      {
-        "json": {
-          "index": 0,
-          "description": "A 3D photorealistic urban scene capturing an initial conversation between a curious tourist and a friendly local. The setting shows a bustling street with a prominent bakery and modern storefronts, rendered in high detail with natural daylight and realistic textures, establishing a warm and inviting atmosphere.",
-          "paragraphs": [
-            {
-              "id": 0,
-              "text": "Tourist: Hi there. I’m new in town. Can you help me get to Central Park?"
-            },
-            {
-              "id": 1,
-              "text": "Local: Sure, I’d be glad to help. First, walk two blocks north on Main Street. Then, turn right at the bakery."
-            },
-            {
-              "id": 2,
-              "text": "Tourist: Great, I see the bakery ahead. After that, what should I do?"
-            },
-            {
-              "id": 3,
-              "text": "Local: Keep walking straight until you reach the big intersection. At the intersection, turn left. You will see a tall clock tower on your right. That is a good landmark."
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 1,
-          "description": "A detailed 3D photorealistic render of a dynamic urban intersection scene. The composition focuses on a local providing clear navigational instructions near a tall clock tower, with visible sidewalks, street elements, and ambient daylight emphasizing realistic shadows and textures. The atmosphere is practical and clearly directional.",
-          "paragraphs": [
-            {
-              "id": 4,
-              "text": "Tourist: Okay, so after the clock tower, I turn left. How much further is it?"
-            },
-            {
-              "id": 5,
-              "text": "Local: It is about a five-minute walk from the clock tower. Follow the sidewalk until you reach the river. When you see the small café by the river, you have gone too far. So, stop before the café."
-            },
-            {
-              "id": 6,
-              "text": "Tourist: I understand. I’ll turn right after the clock tower and then look for the river. What if I miss the turn?"
-            },
-            {
-              "id": 7,
-              "text": "Local: Don’t worry. You might ask another local. Most people here are friendly and know the route well. Also, you can use your smartphone map if needed."
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 2,
-          "description": "A 3D photorealistic urban farewell scene depicting a final exchange between a grateful tourist and a courteous local. The setting features a softly lit city backdrop with realistic textures, where warm ambient light highlights subtle expressions and the calm, concluding atmosphere of a day spent navigating the city.",
-          "paragraphs": [
-            {
-              "id": 8,
-              "text": "Tourist: Thanks, that helps a lot. I’m excited to see Central Park and all the sights around the area."
-            },
-            {
-              "id": 9,
-              "text": "Local: You’re welcome. Enjoy your visit, and have a great day exploring the city!"
-            },
-            {
-              "id": 10,
-              "text": "Tourist: I certainly will. Thank you again for your clear directions and kind smile. Goodbye!"
-            },
-            {
-              "id": 11,
-              "text": "Local: Goodbye, and have a safe walk ahead!"
-            }
-          ]
-        }
-      }
-    ],
     "Get videoId from timestamp": [
       {
         "json": {
@@ -550,235 +476,43 @@
           "CHANNEL_NAME": "CANAL_SHADOWING",
           "videoId": "1760886294860",
           "sceneId": 0,
+          "paragraphId": -1,
+          "audioSubtitle": "Theme: historical journey in an old town. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/0_-1_1760886294860.mp3",
+            "container": "mp3",
+            "sizeBytes": 265867,
+            "bitrateKbps": 128.021,
+            "durationSeconds": 16.613875,
+            "durationHMS": "0:0:16",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1760886294860",
+          "sceneId": 1,
           "paragraphId": 0,
-          "audioSubtitle": "Tourist: Hi there. I’m new in town. Can you help me get to Central Park?",
+          "audioSubtitle": "Thomas: I remember when I first arrived in our old town. I was eager to explore its famous landmarks. \"Where do I go next?\" I asked an elderly local near the stone bridge.",
           "videoMetaData": {
             "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/0_0_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 67336,
-            "bitrateKbps": 128.085,
-            "durationSeconds": 4.205688,
-            "durationHMS": "0:0:4",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 0,
-          "paragraphId": 1,
-          "audioSubtitle": "Local: Sure, I’d be glad to help. First, walk two blocks north on Main Street. Then, turn right at the bakery.",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/0_1_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 109132,
-            "bitrateKbps": 128.052,
-            "durationSeconds": 6.817938,
-            "durationHMS": "0:0:6",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 0,
-          "paragraphId": 2,
-          "audioSubtitle": "Tourist: Great, I see the bakery ahead. After that, what should I do?",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/0_2_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 55633,
-            "bitrateKbps": 128.103,
-            "durationSeconds": 3.47425,
-            "durationHMS": "0:0:3",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 0,
-          "paragraphId": 3,
-          "audioSubtitle": "Local: Keep walking straight until you reach the big intersection. At the intersection, turn left. You will see a tall clock tower on your right. That is a good landmark.",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/0_3_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 166392,
-            "bitrateKbps": 128.034,
-            "durationSeconds": 10.396688,
-            "durationHMS": "0:0:10",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 1,
-          "paragraphId": 4,
-          "audioSubtitle": "Tourist: Okay, so after the clock tower, I turn left. How much further is it?",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_4_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 73605,
-            "bitrateKbps": 128.078,
-            "durationSeconds": 4.5975,
-            "durationHMS": "0:0:4",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 1,
-          "paragraphId": 5,
-          "audioSubtitle": "Local: It is about a five-minute walk from the clock tower. Follow the sidewalk until you reach the river. When you see the small café by the river, you have gone too far. So, stop before the café.",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_5_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 222817,
-            "bitrateKbps": 128.025,
-            "durationSeconds": 13.92325,
-            "durationHMS": "0:0:13",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 1,
-          "paragraphId": 6,
-          "audioSubtitle": "Tourist: I understand. I’ll turn right after the clock tower and then look for the river. What if I miss the turn?",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_6_1760886294860.mp3",
-            "container": "mp3",
-            "sizeBytes": 111222,
-            "bitrateKbps": 128.051,
-            "durationSeconds": 6.948563,
-            "durationHMS": "0:0:6",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1760886294860",
-          "sceneId": 1,
-          "paragraphId": 7,
-          "audioSubtitle": "Local: Don’t worry. You might ask another local. Most people here are friendly and know the route well. Also, you can use your smartphone map if needed.",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_7_1760886294860.mp3",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_0_1760886294860.mp3",
             "container": "mp3",
             "sizeBytes": 158869,
             "bitrateKbps": 128.036,
@@ -805,17 +539,49 @@
         "json": {
           "CHANNEL_NAME": "CANAL_SHADOWING",
           "videoId": "1760886294860",
-          "sceneId": 2,
-          "paragraphId": 8,
-          "audioSubtitle": "Tourist: Thanks, that helps a lot. I’m excited to see Central Park and all the sights around the area.",
+          "sceneId": 1,
+          "paragraphId": 1,
+          "audioSubtitle": "Emily: \"Walk straight ahead, Thomas. Soon, you'll see the ancient clock tower on your right. It has stood for over a hundred years,\" she replied with a gentle smile.",
           "videoMetaData": {
             "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_8_1760886294860.mp3",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_1_1760886294860.mp3",
             "container": "mp3",
-            "sizeBytes": 103280,
-            "bitrateKbps": 128.055,
-            "durationSeconds": 6.452188,
-            "durationHMS": "0:0:6",
+            "sizeBytes": 177677,
+            "bitrateKbps": 128.032,
+            "durationSeconds": 11.102,
+            "durationHMS": "0:0:11",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1760886294860",
+          "sceneId": 1,
+          "paragraphId": 2,
+          "audioSubtitle": "Thomas: I followed her words. I passed the old market square and a small park filled with history. \"This way, and then turn left at the old fountain,\" Emily added. Her directions felt like a journey through time.",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/1_2_1760886294860.mp3",
+            "container": "mp3",
+            "sizeBytes": 219055,
+            "bitrateKbps": 128.026,
+            "durationSeconds": 13.688125,
+            "durationHMS": "0:0:13",
             "tags": {
               "encoder": "Lavf60.16.100"
             },
@@ -838,16 +604,16 @@
           "CHANNEL_NAME": "CANAL_SHADOWING",
           "videoId": "1760886294860",
           "sceneId": 2,
-          "paragraphId": 9,
-          "audioSubtitle": "Local: You’re welcome. Enjoy your visit, and have a great day exploring the city!",
+          "paragraphId": 3,
+          "audioSubtitle": "Emily: \"Notice the row of old oak trees lining the cobblestone street. They have seen many changes in the town. At the corner, a red brick building marks the entrance to the historical museum. It is a landmark of our past,\" she explained.",
           "videoMetaData": {
             "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_9_1760886294860.mp3",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_3_1760886294860.mp3",
             "container": "mp3",
-            "sizeBytes": 71098,
-            "bitrateKbps": 128.081,
-            "durationSeconds": 4.440813,
-            "durationHMS": "0:0:4",
+            "sizeBytes": 254582,
+            "bitrateKbps": 128.022,
+            "durationSeconds": 15.908563,
+            "durationHMS": "0:0:15",
             "tags": {
               "encoder": "Lavf60.16.100"
             },
@@ -870,16 +636,16 @@
           "CHANNEL_NAME": "CANAL_SHADOWING",
           "videoId": "1760886294860",
           "sceneId": 2,
-          "paragraphId": 10,
-          "audioSubtitle": "Tourist: I certainly will. Thank you again for your clear directions and kind smile. Goodbye!",
+          "paragraphId": 4,
+          "audioSubtitle": "Thomas: I glanced back and saw that I was nearly at the familiar archway. My heart raced with excitement as each landmark told its story. \"I am on the main road now,\" I remarked. \"I see that arch and then a narrow alley that leads to the old library.\"",
           "videoMetaData": {
             "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_10_1760886294860.mp3",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_4_1760886294860.mp3",
             "container": "mp3",
-            "sizeBytes": 78621,
-            "bitrateKbps": 128.073,
-            "durationSeconds": 4.911,
-            "durationHMS": "0:0:4",
+            "sizeBytes": 257089,
+            "bitrateKbps": 128.022,
+            "durationSeconds": 16.06525,
+            "durationHMS": "0:0:16",
             "tags": {
               "encoder": "Lavf60.16.100"
             },
@@ -902,16 +668,48 @@
           "CHANNEL_NAME": "CANAL_SHADOWING",
           "videoId": "1760886294860",
           "sceneId": 2,
-          "paragraphId": 11,
-          "audioSubtitle": "Local: Goodbye, and have a safe walk ahead!",
+          "paragraphId": 5,
+          "audioSubtitle": "Emily: \"Yes, you got it right. The library has been here since the early days. Follow the alley, and at the end you will reach the square that locals call the Heart of History,\" she said warmly.",
           "videoMetaData": {
             "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_11_1760886294860.mp3",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_5_1760886294860.mp3",
             "container": "mp3",
-            "sizeBytes": 37661,
-            "bitrateKbps": 128.153,
-            "durationSeconds": 2.351,
-            "durationHMS": "0:0:2",
+            "sizeBytes": 207352,
+            "bitrateKbps": 128.027,
+            "durationSeconds": 12.956688,
+            "durationHMS": "0:0:12",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1760886294860",
+          "sceneId": 2,
+          "paragraphId": 6,
+          "audioSubtitle": "Thomas: I absorbed every detail. Her directions were clear and filled with memories. I felt connected to the past as I stepped forward on my historical journey.",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1760886294860/2_6_1760886294860.mp3",
+            "container": "mp3",
+            "sizeBytes": 190216,
+            "bitrateKbps": 128.03,
+            "durationSeconds": 11.885688,
+            "durationHMS": "0:0:11",
             "tags": {
               "encoder": "Lavf60.16.100"
             },
@@ -931,7 +729,7 @@
       }
     ]
   },
-  "versionId": "a540ce05-7db1-46be-bffd-197d61a9b768",
+  "versionId": "3333db01-ac8a-4c8a-a49a-126193015f48",
   "triggerCount": 0,
   "shared": [
     {
@@ -956,7 +754,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-20T18:39:11.000Z",
+              "updatedAt": "2025-10-24T12:47:31.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -990,7 +788,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-20",
+              "lastActiveAt": "2025-10-24",
               "isPending": false
             }
           }

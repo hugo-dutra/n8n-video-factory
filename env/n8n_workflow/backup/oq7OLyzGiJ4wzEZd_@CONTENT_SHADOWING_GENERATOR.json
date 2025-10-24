@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-17T11:48:08.284Z",
-  "updatedAt": "2025-10-19T15:18:07.000Z",
+  "updatedAt": "2025-10-24T11:29:51.000Z",
   "id": "oq7OLyzGiJ4wzEZd",
   "name": "@CONTENT_SHADOWING_GENERATOR",
   "active": false,
@@ -240,7 +240,8 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "xi-api-key"
+              "name": "xi-api-key",
+              "value": "sk_8aa057788b2c7c5e2a2cb35e5cbdce49ad4b7b06adfe7612"
             },
             {
               "name": "Accept",
@@ -428,7 +429,7 @@
       }
     ]
   },
-  "versionId": "d3850d56-15ba-46b0-949e-abe4ec208ee8",
+  "versionId": "e251e119-1c44-48dc-b343-142a107247d2",
   "triggerCount": 0,
   "shared": [
     {
@@ -453,7 +454,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-20T18:39:11.000Z",
+              "updatedAt": "2025-10-24T12:47:31.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -487,7 +488,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-20",
+              "lastActiveAt": "2025-10-24",
               "isPending": false
             }
           }

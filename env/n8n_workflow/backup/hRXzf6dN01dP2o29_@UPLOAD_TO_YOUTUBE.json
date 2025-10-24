@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-02T15:52:42.017Z",
-  "updatedAt": "2025-10-07T08:51:10.000Z",
+  "updatedAt": "2025-10-21T16:24:23.000Z",
   "id": "hRXzf6dN01dP2o29",
   "name": "@UPLOAD_TO_YOUTUBE",
   "active": false,
@@ -702,16 +702,6 @@
             "node": "Get Long Video Info",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Get Short Video Info",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Reduce List",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -942,34 +932,174 @@
     "START": [
       {
         "json": {
-          "mimeType": "video/mp4",
-          "fileType": "video",
-          "fileName": "READY_TO_UPLOAD_0_LONG_1759785781.mp4",
-          "fileExtension": "mp4",
-          "fileSize": "78.1 MB"
-        }
-      },
-      {
-        "json": {
-          "mimeType": "video/mp4",
-          "fileType": "video",
-          "fileName": "READY_TO_UPLOAD_1759785199466_IDX_0_SHORT_1759785247.mp4",
-          "fileExtension": "mp4",
-          "fileSize": "24.5 MB"
-        }
-      },
-      {
-        "json": {
-          "mimeType": "video/mp4",
-          "fileType": "video",
-          "fileName": "READY_TO_UPLOAD_1759785200466_IDX_1_SHORT_1759785319.mp4",
-          "fileExtension": "mp4",
-          "fileSize": "27 MB"
+          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+          "videoId": "ppK51M4rzCM",
+          "uploadLongVideoData": [
+            {
+              "videoCutStartTime": 0,
+              "videoCutEndTime": 300,
+              "videoCutTitle": "LICENÇA DE EXPLORAÇÃO: GANHAMOS DOS RUSSOS — CORTE!",
+              "videoCutDescription": "Neste trecho, o Ancapso explica a LICENÇA de exploração do bloco 059 e destaca a chance de encontrar ÓLEO de qualidade. Ele critica a atuação do Ibama, que com a ajuda dos RUSSOS impediu que a exploração fosse realizada na época do Bolsonaro. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM.",
+              "videoHardHook": "Descubra como a licença enfrenta os RUSSOS para garantir o ÓLEO!",
+              "videoTags": [
+                "licença",
+                "exploração",
+                "óleo",
+                "bloco 059",
+                "Ibama",
+                "russos",
+                "polêmica",
+                "ambiental",
+                "Brasil",
+                "politica",
+                "geopolítica",
+                "licenciamento",
+                "petróleo",
+                "Amapá",
+                "Bolsonaro",
+                "Lula",
+                "análise",
+                "energia",
+                "desenvolvimento",
+                "exploração"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "thumbTexts": [
+                "LICENÇA ATIVA",
+                "GANHAMOS DOS RUSSOS",
+                "BATALHA PELO ÓLEO",
+                "EXPLORAÇÃO DIRETA"
+              ],
+              "playlist": {
+                "nome": "Geopolítica",
+                "id": "PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR"
+              }
+            }
+          ],
+          "uploadShortVideoData": [
+            {
+              "videoCutStartTime": 49,
+              "videoCutEndTime": 94,
+              "videoCutTitle": "GANHAMOS DOS RUSSOS: LICENÇA EXPLOSIVA - CORTE!",
+              "videoCutDescription": "Neste corte, o apresentador destaca a POLÊMICA dos russos e a interferência no licenciamento ambiental. Ele critica como, na época do BOLSONARO, a autorização já estava em andamento, mas o Ibama bloqueou a medida com o suposto apoio dos RUSSOS, afirmando que \"todo esse movimento ambientalista é russo\". Descubra como essa decisão pode impactar a exploração do PETRÓLEO no país. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "videoHardHook": "Clique e descubra a VERDADE por trás do bloqueio dos russos!",
+              "videoTags": [
+                "licença de exploração",
+                "Ibama",
+                "RUSSOS",
+                "Bolsonaro",
+                "petróleo",
+                "licenciamento",
+                "exploração",
+                "controverso",
+                "notícia",
+                "energia",
+                "política brasileira",
+                "movimento ambientalista",
+                "debate",
+                "explosivo",
+                "análise de risco",
+                "futuro energético",
+                "Petrobras",
+                "pressão internacional",
+                "autonomia",
+                "conflito"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "thumbTexts": [
+                "RUSSOS vs LICENÇA"
+              ],
+              "playlist": {
+                "nome": "playlist 1,playlist 2",
+                "id": ""
+              },
+              "idx": 0,
+              "timeStamp": 1761060595365
+            },
+            {
+              "videoCutStartTime": 500,
+              "videoCutEndTime": 550,
+              "videoCutTitle": "CORAIS DO AMAZONAS: A VERDADE REVELADA - CORTE!",
+              "videoCutDescription": "Neste segmento, o apresentador expõe a POLÊMICA dos corais no Amazonas, afirmando que \"não existe PORRA NENHUMA de coral\" na região e que a ideia dos corais do Amazonas é exagero. Com referências a \"meia dúzia de coral\" e à desinformação sobre o tema, esse corte revela a VERDADE por trás das acusações ambientais. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "videoHardHook": "Veja a verdade chocante sobre os CORAIS DO AMAZONAS!",
+              "videoTags": [
+                "Corais do Amazonas",
+                "exploração",
+                "ambientalismo",
+                "teoria dos corais",
+                "verdade",
+                "meia dúzia de coral",
+                "desinformação",
+                "fake news",
+                "debate ambiental",
+                "exagero",
+                "crítica ambiental",
+                "licenciamento ambiental",
+                "meio ambiente",
+                "perfil ambiental",
+                "explosão de informação",
+                "notícia chocante",
+                "controverso",
+                "ecologia",
+                "colapso ambiental",
+                "argumento polêmico"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "thumbTexts": [
+                "VERDADE sobre CORAIS"
+              ],
+              "playlist": {
+                "nome": "playlist 1,playlist 2",
+                "id": ""
+              },
+              "idx": 1,
+              "timeStamp": 1761060596365
+            },
+            {
+              "videoCutStartTime": 771,
+              "videoCutEndTime": 820,
+              "videoCutTitle": "CONGRESSO DOMINA: LICENÇA REVOLUCIONADA - CORTE!",
+              "videoCutDescription": "Neste corte, o foco é na POLÊTICA brasileira, onde o apresentador elogia o Ibama e Lula por forçarem a licença de exploração, mas aponta que o GRANDE RESPONSÁVEL foi o CONGRESSO ao aprovar a nova lei ambiental. Com argumentos sobre a necessidade de desenvolvimento econômico no Amapá e críticas ao sistema de licenciamento, esse trecho promete sacudir o cenário político. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "videoHardHook": "Descubra como o CONGRESSO revolucionou o LICENCIAMENTO!",
+              "videoTags": [
+                "Congresso",
+                "Ibama",
+                "LULA",
+                "licença ambiental",
+                "política",
+                "controvérsia",
+                "exploração de petróleo",
+                "nova lei",
+                "desenvolvimento econômico",
+                "Brasil",
+                "poder legislativo",
+                "debate político",
+                "análise de risco",
+                "base do Amapá",
+                "licenciamento",
+                "exploração",
+                "governo",
+                "polêmica",
+                "decisão política",
+                "impacto econômico"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
+              "thumbTexts": [
+                "CONGRESSO MUDANDO REGRAS"
+              ],
+              "playlist": {
+                "nome": "playlist 1,playlist 2",
+                "id": ""
+              },
+              "idx": 2,
+              "timeStamp": 1761060597365
+            }
+          ]
         }
       }
     ]
   },
-  "versionId": "a6a7300f-291f-40fc-9c2b-c110f552fe49",
+  "versionId": "2a508943-d5aa-474a-a3a1-6cb5f8f552ff",
   "triggerCount": 0,
   "shared": [
     {
@@ -994,7 +1124,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-20T18:39:11.000Z",
+              "updatedAt": "2025-10-24T12:47:31.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -1028,7 +1158,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-20",
+              "lastActiveAt": "2025-10-24",
               "isPending": false
             }
           }
