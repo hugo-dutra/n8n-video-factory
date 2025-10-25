@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-17T11:48:08.284Z",
-  "updatedAt": "2025-10-24T11:29:51.000Z",
+  "updatedAt": "2025-10-24T16:39:12.000Z",
   "id": "oq7OLyzGiJ4wzEZd",
   "name": "@CONTENT_SHADOWING_GENERATOR",
   "active": false,
@@ -101,7 +101,7 @@
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "\n{\n  \"videoId\":\"1760740412013\",\n  \"index\": 0,\n  \"description\": \"Anime Ghibli style scene featuring a serene, enchanted forest bathed in soft, warm light. In the foreground, a curious, wide-eyed rabbit appears lost while a wise old owl perches on a tree branch, offering gentle guidance. The scene exudes a magical, inviting atmosphere with lush, hand-painted textures, whimsical details, and a dreamy color palette.\",\n  \"paragraphs\": [\n    {\n      \"id\": 0,\n      \"text\": \"Once upon a time, a curious rabbit lost its way in a quiet forest.\"\n    }\n   ]\n}"
+        "jsonExample": "\n{\n  \"videoId\":\"1760740412013\",\n  \"index\": 0,\n  \"description\": \"Anime Ghibli style scene featuring a serene, enchanted forest bathed in soft, warm light. In the foreground, a curious, wide-eyed rabbit appears lost while a wise old owl perches on a tree branch, offering gentle guidance. The scene exudes a magical, inviting atmosphere with lush, hand-painted textures, whimsical details, and a dreamy color palette.\",\n  \"paragraphs\": [\n    {\n      \"id\": 0,\n      \"text\": \"Once upon a time, a curious rabbit lost its way in a quiet forest.\",\n      \"voiceId:\":\"voiceStringId\"\n    }\n   ]\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
@@ -226,7 +226,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.elevenlabs.io/v1/text-to-speech/4YYIPFl9wE5c4L2eu2Gb",
+        "url": "=https://api.elevenlabs.io/v1/text-to-speech/{{$('Loop Over Items').item.json.voiceId }}",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -272,7 +272,7 @@
         64
       ],
       "id": "dd1a11b0-4401-46cf-af06-6374fd3093e9",
-      "name": "Get Speech1"
+      "name": "Get Speech"
     }
   ],
   "connections": {
@@ -309,7 +309,7 @@
         ],
         [
           {
-            "node": "Get Speech1",
+            "node": "Get Speech",
             "type": "main",
             "index": 0
           }
@@ -393,7 +393,7 @@
         ]
       ]
     },
-    "Get Speech1": {
+    "Get Speech": {
       "main": [
         [
           {
@@ -416,20 +416,21 @@
     "Start": [
       {
         "json": {
-          "videoId": "1760885080172",
           "index": 0,
-          "description": "3D fotorealistic scene depicting the initial exchange on a bustling urban street. The tourist, looking curious and slightly tentative, addresses a friendly local as they converse amidst an urban backdrop. Subtle hints of a blue building and clear city elements are visible, rendered with realistic textures and dynamic natural lighting to emphasize the start of a directional exchange.",
+          "introduction": true,
+          "description": "Anime 3D style title card featuring abstract motifs such as sound waves and subtle icons symbolizing communication and the 3-pass shadowing method. The design is clean with ample negative space and soft pastel colors. Ensure no text in the image.",
           "paragraphs": [
             {
-              "id": 0,
-              "text": "Tourist: Hi there, excuse me. I’m looking for the art museum. Can you help me?"
+              "id": -1,
+              "text": "Theme: A day in a language class conversation. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             }
           ]
         }
       }
     ]
   },
-  "versionId": "e251e119-1c44-48dc-b343-142a107247d2",
+  "versionId": "6d6c4d19-646f-408c-aeb0-4b6a4caa8aba",
   "triggerCount": 0,
   "shared": [
     {
@@ -454,7 +455,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-24T12:47:31.000Z",
+              "updatedAt": "2025-10-25T12:53:26.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -488,7 +489,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-24",
+              "lastActiveAt": "2025-10-25",
               "isPending": false
             }
           }

@@ -221,7 +221,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-24T12:47:31.000Z",
+              "updatedAt": "2025-10-25T12:53:26.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -255,7 +255,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-24",
+              "lastActiveAt": "2025-10-25",
               "isPending": false
             }
           }
