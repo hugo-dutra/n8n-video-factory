@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-27T11:57:16.399Z",
-  "updatedAt": "2025-10-27T18:41:28.000Z",
+  "updatedAt": "2025-10-27T23:33:37.000Z",
   "id": "dWYPzcYBySisGRMl",
   "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGE",
   "active": false,
@@ -101,7 +101,7 @@
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "\n{\n  \"videoId\":\"1760740412013\",\n  \"index\": 0,\n  \"description\": \"Anime Ghibli style scene featuring a serene, enchanted forest bathed in soft, warm light. In the foreground, a curious, wide-eyed rabbit appears lost while a wise old owl perches on a tree branch, offering gentle guidance. The scene exudes a magical, inviting atmosphere with lush, hand-painted textures, whimsical details, and a dreamy color palette.\",\n  \"paragraphs\": [\n    {\n      \"id\": 0,\n      \"text\": \"Once upon a time, a curious rabbit lost its way in a quiet forest.\",\n      \"voiceId:\":\"voiceStringId\"\n    }\n   ]\n}"
+        "jsonExample": "\n{\n  \"videoId\":\"1760740412013\",\n  \"index\": 0,  \n  \"paragraphs\": [\n    {\n      \"id\": 0,\n      \"text\": \"Once upon a time, a curious rabbit lost its way in a quiet forest.\",\n      \"voiceId:\":\"voiceStringId\"\n    }\n   ]\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
@@ -361,7 +361,6 @@
         "json": {
           "index": 0,
           "introduction": true,
-          "description": "Anime 3D style title card featuring abstract motifs such as sound waves and subtle icons symbolizing communication and the 3-pass shadowing method. The design is clean with ample negative space and soft pastel colors. Ensure no text in the image.",
           "paragraphs": [
             {
               "id": -1,
@@ -373,7 +372,7 @@
       }
     ]
   },
-  "versionId": "ab104401-65b6-4b9a-921d-eea554bde452",
+  "versionId": "37c61901-76fe-489d-9b02-532d48167628",
   "triggerCount": 0,
   "shared": [
     {

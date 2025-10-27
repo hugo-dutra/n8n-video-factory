@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-19T14:24:41.984Z",
-  "updatedAt": "2025-10-19T15:15:17.000Z",
+  "updatedAt": "2025-10-27T23:37:32.000Z",
   "id": "sWBnl4vvj9HqqkTW",
   "name": "@SCENE_METADATA_MAPPER",
   "active": false,
@@ -149,9 +149,6 @@
             {
               "name": "index",
               "type": "number"
-            },
-            {
-              "name": "description"
             },
             {
               "name": "paragraphs",
@@ -332,7 +329,7 @@
       }
     ]
   },
-  "versionId": "7a9bdca8-13bb-40e0-ac0f-64a9101a796c",
+  "versionId": "4bf12882-c1cb-4886-b141-64f9c2254a2a",
   "triggerCount": 0,
   "shared": [
     {
