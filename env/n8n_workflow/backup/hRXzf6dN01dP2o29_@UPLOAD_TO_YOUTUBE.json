@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-02T15:52:42.017Z",
-  "updatedAt": "2025-10-21T16:24:23.000Z",
+  "updatedAt": "2025-10-26T09:24:53.000Z",
   "id": "hRXzf6dN01dP2o29",
   "name": "@UPLOAD_TO_YOUTUBE",
   "active": false,
@@ -702,6 +702,16 @@
             "node": "Get Long Video Info",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Get Short Video Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reduce List",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1099,7 +1109,7 @@
       }
     ]
   },
-  "versionId": "2a508943-d5aa-474a-a3a1-6cb5f8f552ff",
+  "versionId": "0d9a09f7-4c56-4337-bb08-d0b47b17e0c2",
   "triggerCount": 0,
   "shared": [
     {
@@ -1124,7 +1134,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-25T12:53:26.000Z",
+              "updatedAt": "2025-10-27T11:31:02.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -1158,7 +1168,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-25",
+              "lastActiveAt": "2025-10-27",
               "isPending": false
             }
           }

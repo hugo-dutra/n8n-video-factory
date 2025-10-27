@@ -1,8 +1,8 @@
 {
-  "createdAt": "2025-10-17T11:48:08.284Z",
-  "updatedAt": "2025-10-24T16:39:12.000Z",
-  "id": "oq7OLyzGiJ4wzEZd",
-  "name": "@CONTENT_SHADOWING_GENERATOR",
+  "createdAt": "2025-10-27T11:57:16.399Z",
+  "updatedAt": "2025-10-27T14:57:15.000Z",
+  "id": "dWYPzcYBySisGRMl",
+  "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGE",
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -44,7 +44,7 @@
         416,
         0
       ],
-      "id": "7c3142b7-e3a7-4e7d-8487-b7066ead4ba2",
+      "id": "65cbb765-516b-4db4-be01-25ff390d569f",
       "name": "@CREATE_FOLDER"
     },
     {
@@ -68,7 +68,7 @@
         224,
         0
       ],
-      "id": "dd69cc03-0863-4431-9487-d57bb51fd6c6",
+      "id": "ef82aebc-0bf4-45fe-b975-03431e07a39d",
       "name": "@GLOBAL_SHADOWING"
     },
     {
@@ -81,7 +81,7 @@
         960,
         0
       ],
-      "id": "bea163aa-32b4-4b06-ba72-70e7e014d0d9",
+      "id": "6a2fcbe3-974e-4b35-8db5-cc8417838ed6",
       "name": "Loop Over Items"
     },
     {
@@ -95,7 +95,7 @@
         768,
         0
       ],
-      "id": "9e2049f4-4b70-4d27-987a-3654df8dbeb6",
+      "id": "133b4d2e-fec6-4478-8a20-b3f855159df2",
       "name": "Split Out"
     },
     {
@@ -109,7 +109,7 @@
         32,
         0
       ],
-      "id": "34f9c491-3eea-4fd7-a0bd-e7aed0d95760",
+      "id": "5323b363-6f86-469f-917f-0f4b409de1c8",
       "name": "Start"
     },
     {
@@ -125,7 +125,7 @@
         1344,
         64
       ],
-      "id": "50c614da-aae6-4dac-8096-add9d7f6d1f6",
+      "id": "bef25722-3f48-4848-bb5a-8adcdcc26f40",
       "name": "Write Audio Speech"
     },
     {
@@ -136,69 +136,9 @@
         1520,
         64
       ],
-      "id": "4768356c-8899-4974-bf7b-891f4e16bad3",
+      "id": "dad4dabe-34bc-441a-8767-4692e9473eb6",
       "name": "5s",
-      "webhookId": "e25520fa-52d3-436a-8386-df15e0b363a8"
-    },
-    {
-      "parameters": {
-        "fieldsToAggregate": {
-          "fieldToAggregate": [
-            {
-              "fieldToAggregate": "={{ $json.fileName }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.aggregate",
-      "typeVersion": 1,
-      "position": [
-        1168,
-        -96
-      ],
-      "id": "7ac3f9cc-8ba4-4cc6-b5c1-80112df87fab",
-      "name": "Aggregate"
-    },
-    {
-      "parameters": {
-        "operation": "write",
-        "fileName": "=/home/node/download/{{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.index }}_{{ $('Start').item.json.videoId }}.png",
-        "dataPropertyName": "=data",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        1520,
-        -96
-      ],
-      "id": "faa97da6-7a3e-4c20-97f8-c8d867aea25e",
-      "name": "Write Image Scene"
-    },
-    {
-      "parameters": {
-        "resource": "image",
-        "model": "gpt-image-1",
-        "prompt": "={{ $('Start').item.json.description }}",
-        "options": {
-          "size": "1536x1024"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 1.8,
-      "position": [
-        1344,
-        -96
-      ],
-      "id": "32817e7b-4ed6-47c4-8bd4-611a66d71bcd",
-      "name": "Generate Scene Image",
-      "credentials": {
-        "openAiApi": {
-          "id": "VYXpJ372t4VzzgvC",
-          "name": "OpenAi account"
-        }
-      }
+      "webhookId": "faecf05d-23dc-4bf8-b05b-b99284dbb8b1"
     },
     {
       "parameters": {
@@ -220,7 +160,7 @@
         592,
         0
       ],
-      "id": "9a63d0d3-c6f2-43cf-a0d8-65674b345354",
+      "id": "26911de0-1981-4ace-8b3d-6d770d4f0e75",
       "name": "Get paragrahs"
     },
     {
@@ -255,7 +195,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \"{{ ($json.text || '')\n              .toString()\n              .replace(/[\"'“”‘’]/g, '') }}\",\n  \"model_id\": \"eleven_flash_v2_5\",\n  \"voice_settings\": {\n    \"stability\": 0.55,\n    \"similarity_boost\": 0.65,\n    \"style\": 0.2,\n    \"use_speaker_boost\": true,\n    \"speed\": \"0.90\"\n  }\n}",
+        "jsonBody": "={\n  \"text\": \"{{ ($json.text || '')\n              .toString()\n              .replace(/[\"'“”‘’]/g, '').split(\":\").last() }}\",\n  \"model_id\": \"eleven_flash_v2_5\",\n  \"voice_settings\": {\n    \"stability\": 0.55,\n    \"similarity_boost\": 0.65,\n    \"style\": 0.2,\n    \"use_speaker_boost\": true,\n    \"speed\": \"0.90\"\n  }\n}",
         "options": {
           "response": {
             "response": {
@@ -271,8 +211,28 @@
         1152,
         64
       ],
-      "id": "dd1a11b0-4401-46cf-af06-6374fd3093e9",
+      "id": "c03cf6b2-9519-48ef-8f80-3ea7b66df584",
       "name": "Get Speech"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "={{ $json.fileName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -96
+      ],
+      "id": "95d9baca-f5f0-4ae5-9cfb-a87fd07cd1ac",
+      "name": "Aggregate"
     }
   ],
   "connections": {
@@ -360,28 +320,6 @@
         ]
       ]
     },
-    "Aggregate": {
-      "main": [
-        [
-          {
-            "node": "Generate Scene Image",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate Scene Image": {
-      "main": [
-        [
-          {
-            "node": "Write Image Scene",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get paragrahs": {
       "main": [
         [
@@ -402,6 +340,11 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        []
       ]
     }
   },
@@ -430,14 +373,14 @@
       }
     ]
   },
-  "versionId": "6d6c4d19-646f-408c-aeb0-4b6a4caa8aba",
+  "versionId": "7d71f7c0-4a46-4400-8581-8852c98a3122",
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-17T11:48:08.305Z",
-      "updatedAt": "2025-10-17T11:48:08.305Z",
+      "createdAt": "2025-10-27T11:57:16.426Z",
+      "updatedAt": "2025-10-27T11:57:16.426Z",
       "role": "workflow:owner",
-      "workflowId": "oq7OLyzGiJ4wzEZd",
+      "workflowId": "dWYPzcYBySisGRMl",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "createdAt": "2025-08-20T20:52:17.088Z",

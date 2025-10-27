@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-16T23:15:45.583Z",
-  "updatedAt": "2025-10-25T14:16:07.000Z",
+  "updatedAt": "2025-10-27T16:54:49.000Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
   "active": false,
@@ -11,7 +11,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -80,
+        -96,
         0
       ],
       "id": "12695a2f-a310-43a4-9f95-e5001a8f3390",
@@ -118,7 +118,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        448,
+        432,
         0
       ],
       "id": "c695bc88-d3cf-47d8-a0eb-b96610c27675",
@@ -131,7 +131,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        640,
+        624,
         0
       ],
       "id": "8a03e1e1-fa2d-4bed-beb6-b3c2ebee189b",
@@ -155,7 +155,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        96,
+        80,
         0
       ],
       "id": "73780dbf-e030-45b8-93e0-f401cb3a0dd3",
@@ -240,7 +240,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        816,
+        800,
         0
       ],
       "id": "ba0edc34-0978-4d93-921d-4a822649c8d9",
@@ -314,8 +314,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        816,
-        160
+        800,
+        -272
       ],
       "id": "d2e9e437-fef3-4aa7-84dc-3285d3fca2aa",
       "name": "@CONTENT_SHADOWING_GENERATOR",
@@ -338,7 +338,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        272,
+        256,
         0
       ],
       "id": "1d9012fa-d14b-4840-9e74-a68aaec1ade9",
@@ -351,11 +351,99 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
+        1024,
+        -272
+      ],
+      "id": "bfe467c6-73b0-4e30-a0c1-89bc6f025681",
+      "name": "Execute Command with OpenAI image"
+    },
+    {
+      "parameters": {
+        "command": "=set -Eeuo pipefail\n\n############# CONFIG #############\n# Como a imagem deve se ajustar ao canvas: contain | cover | stretch\nSCALE_MODE=\"${SCALE_MODE:-stretch}\"\n\n# LAYOUT (paisagem)\nCANVAS_W=1920\nCANVAS_H=1080\n\nBG_COLOR=\"black\"\n\n# Texto (libass): branco + contorno cinza\nFONT_FILE=\"/home/node/assets/COMMON/fonts/impact.ttf\"\nFONT_NAME=\"${FONT_NAME:-Impact}\"\nFONT_SIZE=${FONT_SIZE:-96}\nSAFE_MARGIN=${SAFE_MARGIN:-96}     # px\n\n# Encoder\nX264_PRESET=\"${X264_PRESET:-veryfast}\"\nX264_CRF=${X264_CRF:-21}\nAUDIO_BR=\"${AUDIO_BR:-160k}\"\n\n# Waveform (quando houver áudio)\nWAVEFORM_ENABLE=\"${WAVEFORM_ENABLE:-1}\"       # 1 liga, 0 desliga\nWAVEFORM_WIDTH_PCT=\"${WAVEFORM_WIDTH_PCT:-60}\" # 60% da largura  ← (ESPAÇO antes do #)\nWAVEFORM_HEIGHT=\"${WAVEFORM_HEIGHT:-200}\"     # px\nWAVEFORM_OPACITY=\"${WAVEFORM_OPACITY:-0.95}\"  # 0–1 (quase sólida)\nWAVEFORM_MARGIN_BOTTOM=\"${WAVEFORM_MARGIN_BOTTOM:-12}\"  # px do rodapé\nWAVEFORM_MODE=\"${WAVEFORM_MODE:-bar}\"         # \"bar\" é simulado engrossando a linha\n\n# Backgrounds (ciclo fixo por cena)\nBASE_BG_DIR=\"/home/node/assets/CANAL_SHADOWING\"\nLISTEN_IMG=\"${BASE_BG_DIR}/listen01.png\"\nREPEAT_IMG=\"${BASE_BG_DIR}/repeat01.png\"\nTOGETHER_IMG=\"${BASE_BG_DIR}/talk-together01.png\"\n##################################\n\n# ============ VARS DINÂMICAS DO n8n ============\nVIDEO_ID=\"{{ $('Get videoId from timestamp').item.json.videoId || $json.videoId || Date.now() }}\"\nCHANNEL_NAME=\"{{ $json.CHANNEL_NAME || 'CANAL_SHADOWING' }}\"\nexport VIDEO_ID CHANNEL_NAME\n# ==============================================\n\n# Workdir temporário\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"; : > \"$LIST\"\n\n# Fonte fallback (e nome correto p/ libass)\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"/home/node/assets/COMMON/fonts/impact.ttf\" ]; then\n    FONT_FILE=\"/home/node/assets/COMMON/fonts/impact.ttf\"; FONT_NAME=\"Impact\"\n  elif [ -f \"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf\" ]; then\n    FONT_FILE=\"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf\"; FONT_NAME=\"DejaVu Sans\"\n  fi\nfi\nFONT_DIR=\"$(dirname \"$FONT_FILE\")\"\n\n# =========== Entrada JSON (do node anterior) ===========\nIN_JSON=\"$TMPDIR/in.json\"\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n[ -s \"$IN_JSON\" ] || { echo \"ERRO: Entrada JSON vazia\"; exit 1; }\n\n# ==================== FUNÇÕES ====================\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\n\nscale_to_canvas () {\n  case \"$SCALE_MODE\" in\n    cover)   echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=increase,crop=${CANVAS_W}:${CANVAS_H}\" ;;\n    stretch) echo \"scale=${CANVAS_W}:${CANVAS_H}\" ;;\n    *)       echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\" ;;\n  esac\n}\n\n# .ass centralizado, wrap automático, fonte branca + outline cinza\nmake_ass_file () { # $1: .ass ; $2: texto\n  local ASS=\"$1\" RAW=\"$2\" TXT\n  TXT=\"$(printf '%s' \"$RAW\" | sed -e 's/[{}]/()/g' -e 's/\\\\/\\\\\\\\/g')\"\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, ${FONT_NAME}, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00808080, &H7F000000, 0, 0, 0, 0, 100, 100, 0, 0, 1, 2.0, 0.6, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\n# Clip de fundo (imagem ou cor chapada)\nmake_bg_clip () { # $1 IMG, $2 OUT, $3 DUR\n  local IMG=\"$1\" OUT=\"$2\" DUR=\"$3\"\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas),fps=30,format=yuv420p,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]format=yuv420p,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Texto + áudio + BG (+ waveform branca 60% colada no rodapé)\nmake_text_over_audio () { # $1 SRC, $2 OUT, $3 TXT, $4 IMG\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  local WF_W=$(( CANVAS_W * ${WAVEFORM_WIDTH_PCT:-60} / 100 ))\n  local WF_H=${WAVEFORM_HEIGHT:-200}\n\n  # \"bar\" simulado: engrossa multiplicando a altura\n  local REQ_MODE=\"${WAVEFORM_MODE:-bar}\"\n  local SW_MODE=\"line\"\n  local THICK_MUL=3\n  if [ \"$REQ_MODE\" = \"line\" ]; then THICK_MUL=1; fi\n  local WF_HI=$(( WF_H * THICK_MUL ))\n\n  # cadeia: showwaves (branco) com fundo removido + alpha controlado\n  local WF_CHAIN=\"\"\n  if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n    WF_CHAIN=\"[0:a]showwaves=s=${WF_W}x${WF_HI}:mode=${SW_MODE}:colors=white,format=rgba,colorkey=black:similarity=0.01:blend=0,scale=${WF_W}x${WF_H},colorchannelmixer=aa=${WAVEFORM_OPACITY:-0.95}[wv];\"\n  fi\n\n  local OVERLAY_EXPR=\"x=(W-w)/2:y=H-${WAVEFORM_MARGIN_BOTTOM:-12}-h\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR}[txt];\\\n${WF_CHAIN}\\\n[txt][wv]overlay=${OVERLAY_EXPR},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"[1:v]$(scale_to_canvas)[bg];[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  else\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"[1:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR}[bg];${WF_CHAIN}[bg][wv]overlay=${OVERLAY_EXPR},format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"[1:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},format=yuv420p,fps=30,setsar=1[v];[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  fi\n}\n\n# Silêncio + Texto (sem waveform)\nmake_silence_with_text () { # $1 OUT, $2 DUR, $3 TXT, $4 IMG\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]$(scale_to_canvas)[bg];[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},format=yuv420p,fps=30,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"[0:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},format=yuv420p,fps=30,setsar=1[v];[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n      -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Xfade entre cenas (TOGETHER -> LISTEN)\nmake_scene_xfade () { # $1 P, $2 N, $3 OUT, $4 DUR\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y \\\n    -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n    -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n    -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n}\n\n# ======== TSV a partir do JSON (sem BG da linha; BG é fixo por “passo”) ========\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\nconst env = process.env;\n\nconst path = process.argv[2];\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = env.CHANNEL_NAME || arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = env.VIDEO_ID     || arr[0].videoId      || String(Date.now());\n\nconst outDir  = `/home/node/download/${ch}/${vid}`;\nconst outName = `shadow_${vid}.mp4`;\n\nconsole.log(`#DEST_DIR=${outDir}`);\nconsole.log(`#FINAL_OUT=${outDir}/${outName}`);\nconsole.log(`#VIDEO_ID=${vid}`);\nconsole.log(`#CHANNEL_NAME=${ch}`);\n\n// Para cada item, só emitimos: audio|texto|scene\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '').replace(/\\r?\\n/g, ' ');\n  console.log([audio, text, scene].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nFINAL_OUT=$(grep '^#FINAL_OUT=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n[ -n \"$DEST_DIR\" ] || { echo \"Falha ao obter DEST_DIR\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n# ================= Loop principal =================\nlast_scene=\"\"; idx=0; read_first_line=1\nexec 9< \"$DATA_FILE\"\nwhile IFS='|' read -r -u 9 SRC TXT SCENE; do\n  [ -n \"${SRC:-}\" ] || continue\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n\n  # Inter-cena: xfade TOGETHER -> LISTEN\n  if [ \"$read_first_line\" -eq 0 ] && [ \"$SCENE\" != \"$last_scene\" ]; then\n    XF=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_scene_${last_scene}_to_${SCENE}.mp4\"\n    make_scene_xfade \"$TOGETHER_IMG\" \"$LISTEN_IMG\" \"$XF\" \"${SCENE_XFADE_SEC:-0.6}\"\n    printf \"file '%s'\\n\" \"$XF\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n  read_first_line=0; last_scene=\"$SCENE\"\n\n  # ===== Ciclo de 3 passes com BG fixos =====\n  # 1) LISTEN: áudio + texto + waveform branca no rodapé\n  P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_listen_s${SCENE}.mp4\"\n  make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$LISTEN_IMG\"\n  printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n\n  # xfade LISTEN -> REPEAT\n  if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n    X1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_listen_to_repeat_s${SCENE}.mp4\"\n    make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X1\" \"${SCENE_XFADE_SEC:-0.6}\"\n    printf \"file '%s'\\n\" \"$X1\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n\n  # 2) REPEAT: silêncio do tamanho do áudio + texto (sem waveform)\n  PR=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_repeat_s${SCENE}.mp4\"\n  make_silence_with_text \"$PR\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n  printf \"file '%s'\\n\" \"$PR\" >> \"$LIST\"; idx=$((idx+1))\n\n  # xfade REPEAT -> TOGETHER\n  if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n    X2=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_repeat_to_together_s${SCENE}.mp4\"\n    make_scene_xfade \"$REPEAT_IMG\" \"$TOGETHER_IMG\" \"$X2\" \"${SCENE_XFADE_SEC:-0.6}\"\n    printf \"file '%s'\\n\" \"$X2\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n\n  # 3) TOGETHER: replay do áudio + texto + waveform branca no rodapé\n  P3=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_together_s${SCENE}.mp4\"\n  make_text_over_audio \"$SRC\" \"$P3\" \"$TXT\" \"$TOGETHER_IMG\"\n  printf \"file '%s'\\n\" \"$P3\" >> \"$LIST\"; idx=$((idx+1))\ndone\nexec 9<&-\n\n# Concat final\nffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK: $FINAL_OUT\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
         992,
         0
       ],
-      "id": "bfe467c6-73b0-4e30-a0c1-89bc6f025681",
-      "name": "Execute Command"
+      "id": "2a0424b3-7346-482e-9816-ae8f8a115a4b",
+      "name": "Execute Command with Fixed Image"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dWYPzcYBySisGRMl",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dWYPzcYBySisGRMl",
+          "cachedResultName": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "index": "={{ $('Loop Over Content').first().json.index }}",
+            "description": "={{ $('Loop Over Content').first().json.description }}",
+            "paragraphs": "={{ $('Loop Over Content').first().json.paragraphs }}",
+            "videoId": "={{ $('Get videoId from timestamp').item.json.videoId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "index",
+              "displayName": "index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "paragraphs",
+              "displayName": "paragraphs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        208
+      ],
+      "id": "388efcf4-fd8d-425f-9853-ab96439299c2",
+      "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES",
+      "disabled": true
     }
   ],
   "connections": {
@@ -392,7 +480,7 @@
         ],
         [
           {
-            "node": "@CONTENT_SHADOWING_GENERATOR",
+            "node": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES",
             "type": "main",
             "index": 0
           }
@@ -412,13 +500,7 @@
     },
     "@CONTENT_SHADOWING_GENERATOR": {
       "main": [
-        [
-          {
-            "node": "Loop Over Content",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Get videoId from timestamp": {
@@ -436,7 +518,18 @@
       "main": [
         [
           {
-            "node": "Execute Command",
+            "node": "Execute Command with Fixed Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Content",
             "type": "main",
             "index": 0
           }
@@ -454,12 +547,92 @@
       {
         "json": {
           "theme": "Simple past, past participle, and past continuous",
-          "duration": 3,
+          "duration": 2,
           "level": "B2",
-          "mode": "Eldery man talking about resilience and self knoledge learning English",
+          "mode": "Story about An elderly grandfather shares with his grandson a hard-won truth: real learning is a patient, solitary craft that forges character long before it yields results.",
           "imageStyle": "Like 3D pixar style",
           "scenes": 4,
-          "targetWordsPerParagraph": 35
+          "targetWordsPerParagraph": 40
+        }
+      }
+    ],
+    "@CONTENT_GENERATION": [
+      {
+        "json": {
+          "index": 0,
+          "introduction": true,
+          "description": "A minimalistic title card with an abstract background evoking the theme of intergenerational wisdom and patient learning, rendered in 3D Pixar style with calm colors, ample negative space, and a clear focal point designed for caption overlay. Ensure no text in the image.",
+          "paragraphs": [
+            {
+              "id": -1,
+              "text": "Theme: intergenerational wisdom and the patient craft of learning. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "index": 1,
+          "introduction": false,
+          "description": "A warm 3D Pixar style scene depicting an elderly man sitting on a porch at sunset with a quiet street in the background. The image features soft, golden light, simple composition with clean shapes, and a clear focus on the characters for overlaid caption. No text in the image.",
+          "paragraphs": [
+            {
+              "id": 0,
+              "text": "The old man was sitting on his porch while the sun was setting and his young grandson approached from the quiet street and the grandfather had grown up in times of hard work and had learned many lessons from the life he had lived patiently and with care",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            },
+            {
+              "id": 1,
+              "text": "He began to speak of days when he was travelling on dusty roads and he had encountered hardships that seemed unyielding and he recalled times when his mind was filled with questions and his heart was driven by a quest for truth and knowledge",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "index": 2,
+          "introduction": false,
+          "description": "A 3D Pixar style scene illustrating a reflective moment on a dusty road, where the old man recounts his past filled with challenges and wisdom. The composition features warm, subdued lighting, simple yet evocative backgrounds, and a clear focal area highlighting the narrative mood. No text in the image.",
+          "paragraphs": [
+            {
+              "id": 2,
+              "text": "The old man explained that real learning had been forged in silence and that each moment had been shaped by the trials he had overcome and he noted that long before results had been seen he had already become wise and that every setback had been a teacher for him",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            },
+            {
+              "id": 3,
+              "text": "As twilight was deepening the grandson listened with wide eyes and his mind was racing with thoughts and he was wondering if he would someday have experienced the struggles his grandfather had endured and if his own journey would have been as rewarding though filled with long nights of doubt",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "index": 3,
+          "introduction": false,
+          "description": "A 3D Pixar style scene capturing a serene evening under emerging stars, where a wise elder smiles gently while a young man contemplates his future. The setting features soft, tranquil lighting, a balanced composition with clear negative space, and a calm, reflective mood. No text in the image.",
+          "paragraphs": [
+            {
+              "id": 4,
+              "text": "The wise man smiled and he shared his secret that every hour spent in learning was a brick in the foundation of character and he had always believed that hard work and persistence were the keys that unlocked any future and that success was built gradually over time",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            },
+            {
+              "id": 5,
+              "text": "The grandson was thinking as the stars were appearing in the sky and he promised himself that he would embrace the patient craft of learning and that he was ready to follow the quiet path that his grandfather had carved out with care",
+              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+            }
+          ]
+        }
+      }
+    ],
+    "Get videoId from timestamp": [
+      {
+        "json": {
+          "videoId": "1761577255627"
         }
       }
     ],
@@ -473,10 +646,6 @@
           ],
           "AVAILABLE_VOICES": [
             {
-              "voiceId": "ChO6kqkVouUn0s7HMunx",
-              "description": "young male"
-            },
-            {
               "voiceId": "4YYIPFl9wE5c4L2eu2Gb",
               "description": "deep strong eldery male narrator voice"
             },
@@ -487,93 +656,17 @@
             {
               "voiceId": "ZF6FPAbjXT4488VcRRnw",
               "description": "teenage female"
-            }
-          ]
-        }
-      }
-    ],
-    "Get videoId from timestamp": [
-      {
-        "json": {
-          "videoId": "1761401259862"
-        }
-      }
-    ],
-    "@CONTENT_GENERATION": [
-      {
-        "json": {
-          "index": 0,
-          "introduction": true,
-          "description": "A clean title card featuring abstract icons representing language exploration and the 3-pass shadowing method, rendered in Pixar 3D style with soft lighting, simple colors, and ample negative space; no text in the image.",
-          "paragraphs": [
-            {
-              "id": -1,
-              "text": "Theme: English learning and self-improvement. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 1,
-          "introduction": false,
-          "description": "A reflective study environment in Pixar 3D style showing a learner embarking on the journey of English language discovery, with warm lighting, clean shapes, and ample negative space that highlights focused practice; no text in the image.",
-          "paragraphs": [
-            {
-              "id": 0,
-              "text": "I remember when I first decided to learn English. I was young in spirit, even though I had already lived a long life. I chose to study the simple past, the past participle, and the past continuous. I wanted to understand not only a language, but also my own resilience.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             },
             {
-              "id": 1,
-              "text": "I worked hard every day. I practiced speaking in the morning, reading in the afternoon, and even writing simple sentences in the evening. I was studying English when I realized that each mistake I made was a step forward. I learned that errors, though they hurt at first, helped me grow. I had tried many different methods, and I had discovered that practice was more important than perfection.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 2,
-          "introduction": false,
-          "description": "A lively educational setting in Pixar 3D style illustrating the practical use of language with dynamic gestures and visual cues, where grammar concepts and moments of mentorship are highlighted in bright, clear colors and soft lighting; no text in the image.",
-          "paragraphs": [
-            {
-              "id": 2,
-              "text": "Every day I used verbs that showed time. I said, “I walked,” which is the simple past. I also said, “I have walked,” which is the past participle in perfect forms. And I recalled moments when I was walking, describing the past continuous. I told stories of my travel and work. I explained that I had visited old friends, and I described times when I was laughing with them.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            },
-            {
-              "id": 3,
-              "text": "One afternoon, I met a young teacher who was patient and kind. She explained that learning a language is like tending a garden. She said, “You plant seeds every day, and you water them with effort.” I took her advice to heart. I was reading books, and I was listening to old songs that reminded me of my childhood. I felt that every day was a new chance. I had embraced my past mistakes and celebrated my progress.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 3,
-          "introduction": false,
-          "description": "An inspirational scene in Pixar 3D style with a journey motif, where reflective moments and life lessons merge into a warm, inviting composition featuring gentle tones and uncluttered visuals that evoke determination; no text in the image.",
-          "paragraphs": [
-            {
-              "id": 4,
-              "text": "Now, I often think about my journey. I remember the challenges I faced and the successes I achieved. I used to feel overwhelmed, but I learned that every moment was worth the effort. I had struggled and I had succeeded. I was sharing this story with you so that you may understand the beauty of perseverance. I hope my experiences inspire you.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            },
-            {
-              "id": 5,
-              "text": "Take every lesson as a gift. Practice every form, from the simple past to the past continuous. Let your language be the testimony of your determination. I have lived and I have learned, and I am here to remind you that the journey is as important as the destination.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+              "voiceId": "EOVAuWqgSZN2Oel78Psj",
+              "description": "young malee"
             }
           ]
         }
       }
     ]
   },
-  "versionId": "080d58a0-1202-4618-8691-883614c43f3e",
+  "versionId": "e8e71720-7753-4db4-8712-5dee08342854",
   "triggerCount": 0,
   "shared": [
     {
@@ -598,7 +691,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-25T12:53:26.000Z",
+              "updatedAt": "2025-10-27T11:31:02.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -632,7 +725,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-25",
+              "lastActiveAt": "2025-10-27",
               "isPending": false
             }
           }

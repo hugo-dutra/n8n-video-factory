@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-17T11:57:19.760Z",
-  "updatedAt": "2025-10-24T17:10:57.000Z",
+  "updatedAt": "2025-10-27T14:41:44.000Z",
   "id": "VdmO0DZ3i6iBFRiU",
   "name": "@GLOBAL_SHADOWING",
   "active": false,
@@ -31,7 +31,7 @@
             {
               "id": "32b1e28b-6ecc-49c9-b2f1-ca3332e20def",
               "name": "AVAILABLE_VOICES",
-              "value": "={{ \n[\n  {\n    \"voiceId\": \"ChO6kqkVouUn0s7HMunx\",\n    \"description\": \"young male\"\n  },\n  {\n    \"voiceId\": \"4YYIPFl9wE5c4L2eu2Gb\",\n    \"description\": \"deep strong eldery male narrator voice\"\n  },\n  {\n    \"voiceId\": \"SAz9YHcvj6GT2YYXdXww\",\n    \"description\": \"middle-aged female\"\n  },\n  {\n    \"voiceId\": \"ZF6FPAbjXT4488VcRRnw\",\n    \"description\": \"teenage female\"\n  }\n]\n}}",
+              "value": "={{ \n[\n  {\n    \"voiceId\": \"4YYIPFl9wE5c4L2eu2Gb\",\n    \"description\": \"deep strong eldery male narrator voice\"\n  },\n  {\n    \"voiceId\": \"SAz9YHcvj6GT2YYXdXww\",\n    \"description\": \"middle-aged female\"\n  },\n  {\n    \"voiceId\": \"ZF6FPAbjXT4488VcRRnw\",\n    \"description\": \"teenage female\"\n  },\n  {\n    \"voiceId\": \"EOVAuWqgSZN2Oel78Psj\",\n    \"description\": \"young malee\"\n  }\n]\n}}",
               "type": "array"
             }
           ]
@@ -80,7 +80,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "aebb17de-b1f0-4f06-bdad-1451fa7dd629",
+  "versionId": "882816ae-3458-42ea-97c9-6b07056e0b24",
   "triggerCount": 0,
   "shared": [
     {
@@ -105,7 +105,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-25T12:53:26.000Z",
+              "updatedAt": "2025-10-27T11:31:02.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -139,7 +139,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-25",
+              "lastActiveAt": "2025-10-27",
               "isPending": false
             }
           }

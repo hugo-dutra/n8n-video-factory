@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-06T19:43:56.595Z",
-  "updatedAt": "2025-10-25T12:53:31.000Z",
+  "updatedAt": "2025-10-27T11:31:06.000Z",
   "id": "7zjOEpK7tOwgkO4R",
   "name": "ANCAPSU-MAIN",
   "active": false,
@@ -1270,7 +1270,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -1360,
+        -1152,
         1120
       ],
       "id": "5f3eb977-7bb0-40f4-a389-7cddcd141482",
@@ -1286,7 +1286,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1440,
+        -1328,
         -16
       ],
       "id": "7e03f84c-11fe-4c30-95d7-7640d8791f97",
@@ -1304,8 +1304,8 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "processed": true,
-            "videoId": "ppK51M4rzCM"
+            "processed": false,
+            "videoId": "rXkRDpUy11Y"
           },
           "matchingColumns": [],
           "schema": [
@@ -1338,7 +1338,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -1344,
+        -1248,
         48
       ],
       "id": "79c047d3-fd79-4801-a130-74115fd4165b",
@@ -1736,86 +1736,8 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "Find New Videos": [
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_GUKtfLlmdKY",
-          "title": "OPERAÇÃO da POLÍCIA de SÃO PAULO encontra os \"DIÁLOGOS CABULOSOS\" do PCC e pode ENVOLVER POLÍTICOS",
-          "duration": "10:15",
-          "durationSeconds": 615,
-          "publishedAt": "2025-10-21 18:15:04",
-          "publishedAtISO": "2025-10-21T18:15:04Z",
-          "publishedAtEpoch": 1761070504,
-          "url": "https://www.youtube.com/watch?v=GUKtfLlmdKY",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "GUKtfLlmdKY",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_zTE2eY0_RAM",
-          "title": "FUX decide REVISAR a GRAMÁTICA do VOTO dele no JULGAMENTO de BOLSONARO, mas POR QUE ele FARIA ISSO?",
-          "duration": "12:05",
-          "durationSeconds": 725,
-          "publishedAt": "2025-10-21 16:25:00",
-          "publishedAtISO": "2025-10-21T16:25:00Z",
-          "publishedAtEpoch": 1761063900,
-          "url": "https://www.youtube.com/watch?v=zTE2eY0_RAM",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "zTE2eY0_RAM",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_7dTirVkwXb0",
-          "title": "JULGAMENTO do NÚCLEO 4 tem NOVAMENTE FUX DESTRUÍNDO argumentação FURADA de ALEXANDRE de MORAES",
-          "duration": "18:13",
-          "durationSeconds": 1093,
-          "publishedAt": "2025-10-21 22:26:53",
-          "publishedAtISO": "2025-10-21T22:26:53Z",
-          "publishedAtEpoch": 1761085613,
-          "url": "https://www.youtube.com/watch?v=7dTirVkwXb0",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "7dTirVkwXb0",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_CqF-vgSk56Y",
-          "title": "FÁBIO SHOR quer CULPAR quem CRITICOU REGISTRO FALSO de FILIPE MARTINS por \"DESACREDITAR AUTORIDADES\"",
-          "duration": "14:31",
-          "durationSeconds": 871,
-          "publishedAt": "2025-10-21 01:46:59",
-          "publishedAtISO": "2025-10-21T01:46:59Z",
-          "publishedAtEpoch": 1761011219,
-          "url": "https://www.youtube.com/watch?v=CqF-vgSk56Y",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "CqF-vgSk56Y",
-          "processed": false
-        }
-      },
-      {
-        "json": {
-          "id": "video:UCLTWPE7XrHEe8m_xAmNbQ-Q_DDURT96tvok",
-          "title": "VALE TUDO termina com PROPAGANDA por \"SOBERANIA\" paga a PESO de OURO $$$ pelo PT: FICOU PATÉTICO",
-          "duration": "12:25",
-          "durationSeconds": 745,
-          "publishedAt": "2025-10-21 09:15:00",
-          "publishedAtISO": "2025-10-21T09:15:00Z",
-          "publishedAtEpoch": 1761038100,
-          "url": "https://www.youtube.com/watch?v=DDURT96tvok",
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "DDURT96tvok",
-          "processed": false
-        }
-      }
-    ]
-  },
-  "versionId": "bc16d997-1f90-44f4-a4e6-55f20abd4960",
+  "pinData": {},
+  "versionId": "53d70854-7ebc-45af-aef7-87c0cdaf0b93",
   "triggerCount": 1,
   "shared": [
     {
@@ -1840,7 +1762,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-25T12:53:26.000Z",
+              "updatedAt": "2025-10-27T11:31:02.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -1874,7 +1796,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-25",
+              "lastActiveAt": "2025-10-27",
               "isPending": false
             }
           }
