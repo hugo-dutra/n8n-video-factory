@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-09-06T19:43:56.595Z",
-  "updatedAt": "2025-10-27T11:31:06.000Z",
+  "updatedAt": "2025-10-28T22:01:49.000Z",
   "id": "7zjOEpK7tOwgkO4R",
   "name": "ANCAPSU-MAIN",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -1762,7 +1762,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-27T11:31:02.000Z",
+              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -1796,7 +1796,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-27",
+              "lastActiveAt": "2025-10-28",
               "isPending": false
             }
           }

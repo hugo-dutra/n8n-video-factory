@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-16T23:15:45.583Z",
-  "updatedAt": "2025-10-27T23:48:56.000Z",
+  "updatedAt": "2025-10-28T22:51:05.000Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
   "active": false,
@@ -303,8 +303,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -384,
-        -656
+        -128,
+        -432
       ],
       "id": "d2e9e437-fef3-4aa7-84dc-3285d3fca2aa",
       "name": "@CONTENT_SHADOWING_GENERATOR",
@@ -340,8 +340,8 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        -192,
-        -656
+        64,
+        -432
       ],
       "id": "bfe467c6-73b0-4e30-a0c1-89bc6f025681",
       "name": "Execute Command with OpenAI image"
@@ -506,11 +506,186 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -448,
-        -736
+        -192,
+        -512
       ],
       "id": "d3f22ac8-43f0-4af5-bcf2-cfa16a077dc3",
       "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3sxWSvgWXjPihECD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/3sxWSvgWXjPihECD",
+          "cachedResultName": "@YOUTUBE_DATA_CONTENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "theme": "={{ $('START').item.json.theme }}",
+            "videoMode": "={{ $('START').item.json.mode }}",
+            "videoContent": "={{ $('@CONTENT_GENERATION').item.json.output }}",
+            "level": "={{ $('START').item.json.level }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "videoContent",
+              "displayName": "videoContent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "videoMode",
+              "displayName": "videoMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "level",
+              "displayName": "level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        -208
+      ],
+      "id": "1f62dcd4-fcdf-4a0f-ac19-2607415c2ea0",
+      "name": "@YOUTUBE_DATA_CONTENT"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1216,
+        -96
+      ],
+      "id": "b407126d-447a-4b7e-9d68-5086f64e408d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wDmJOKsJMEGVwOLL",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/wDmJOKsJMEGVwOLL",
+          "cachedResultName": "@UPLOAD_YOUTUBE_SHADOWING"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videoId": "={{ $('Get videoId from timestamp').item.json.videoId }}",
+            "CHANNEL_NAME": "={{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}",
+            "output_VideoTitle": "={{ $('Merge').item.json.output.VideoTitle }}",
+            "output_VideoDescription": "={{ $('Merge').item.json.output.VideoDescription }}",
+            "output_Tags_map": "={{ $('Merge').item.json.output.Tags.map(a => a) }}"
+          },
+          "matchingColumns": [
+            "videoId",
+            "CHANNEL_NAME",
+            "output_VideoTitle",
+            "output_VideoDescription",
+            "output_Tags_map"
+          ],
+          "schema": [
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CHANNEL_NAME",
+              "displayName": "CHANNEL_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_VideoTitle",
+              "displayName": "output_VideoTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_VideoDescription",
+              "displayName": "output_VideoDescription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_Tags_map",
+              "displayName": "output_Tags_map",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1408,
+        -96
+      ],
+      "name": "@UPLOAD_YOUTUBE_SHADOWING",
+      "id": "5303ad5a-e0b5-47b1-8e49-7ddcc0f485cf"
     }
   ],
   "connections": {
@@ -530,6 +705,11 @@
         [
           {
             "node": "@FORMAT_TEXT_GENERATION",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "@YOUTUBE_DATA_CONTENT",
             "type": "main",
             "index": 0
           }
@@ -613,6 +793,39 @@
           }
         ]
       ]
+    },
+    "@YOUTUBE_DATA_CONTENT": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "@UPLOAD_YOUTUBE_SHADOWING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command with Fixed Image": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -624,56 +837,363 @@
     "START": [
       {
         "json": {
-          "theme": "Present continous and present perfect and Phrasal verbs",
+          "theme": "Passive voice in simple present and simple past",
           "duration": 3,
           "level": "B2",
-          "mode": "Two friends, a boy and a girl, are talking deeply about the struggles of being students today",
+          "mode": "Story: Father tell to his daughter how was his adventures in childwood.",
           "imageStyle": "",
           "scenes": 4,
           "targetWordsPerParagraph": 40
         }
       }
     ],
-    "@GLOBAL_SHADOWING": [
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "PLAYLISTS": "[{\"nome\":\"justiça\",\"id\":\"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\"},{\"nome\":\"Geopolítica\",\"id\":\"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\"},{\"nome\":\"politica\",\"id\":\"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\"},{\"nome\":\"cultura e sociedade\",\"id\":\"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\"},{\"nome\":\"Liberdade e mercado\",\"id\":\"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\"},{\"nome\":\"Economia\",\"id\":\"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\"},{\"nome\":\"Corrupção\",\"id\":\"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\"},{\"nome\":\"Tecnologia\",\"id\":\"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\"}]\n",
-          "NOTIFY_NUMBERS": [
-            "5561982086449"
-          ],
-          "AVAILABLE_VOICES": [
-            {
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb",
-              "description": "deep strong eldery male narrator voice"
-            },
-            {
-              "voiceId": "SAz9YHcvj6GT2YYXdXww",
-              "description": "middle-aged female"
-            },
-            {
-              "voiceId": "ZF6FPAbjXT4488VcRRnw",
-              "description": "teenage female"
-            },
-            {
-              "voiceId": "EOVAuWqgSZN2Oel78Psj",
-              "description": "young malee"
-            }
-          ]
-        }
-      }
-    ],
     "Get videoId from timestamp": [
       {
         "json": {
-          "videoId": "1761604711863"
+          "videoId": "1761691131885"
         }
       }
     ],
     "@CONTENT_GENERATION": [
       {
         "json": {
-          "output": "Boy: I have been feeling overwhelmed by assignments and deadlines lately I am trying to keep up with lectures and projects while I am getting up early for my classes and I have been missing sleep even though I am putting my best effort into every task\n\nGirl: I have been struggling with many challenges that come with university life I am working day and night to catch up with my reading and I have looked for advice from my teachers as I am trying to figure out a balance between study and rest in a busy day\n\nBoy: I am noticing that our courses are becoming more demanding each day I have been staying late in the library and my friends are getting up early to study together yet we have not quite found a routine that works well for all of us consistently\n\nGirl: I have been feeling the pressure from all the projects and exams I am working on my time management skills and I have looked for online tips I am trying to use new methods that I have come across recently to make my study sessions more effective\n\nBoy: I have been realizing that the pressures of education are never ending I am attending extra sessions and I am trying to get up on time every morning even though there are days when I am struggling to get out of bed and stay motivated throughout my classes\n\nGirl: I have been meeting friends to exchange ideas and I am working closely with study groups to figure out challenging topics We have been sharing our worries and we have looked for ways to reduce stress while managing heavy reading loads and long lectures\n\nBoy: I have been wondering if there is a better way to manage the heavy load I am taking on I am searching for practical solutions and I have been testing different strategies while I have looked for support online so that I can balance my studies with a healthy life\n\nGirl: I have been learning that every challenge brings a chance to improve I am trying to adjust my habits and I have been keeping a journal to record my progress I am also looking for moments to relax and I have come to learn that rest is essential for success\n\nBoy: I have been feeling more hopeful as I make small changes every day I am pushing myself to keep on trying even when the path is rough and I have been convinced that together we will figure out a smoother road ahead as we face our struggles as students"
+          "output": "Father: I begin to tell you the story of my childhood adventures that were filled with wonder and excitement I was a young boy in a small town where hidden treasures were discovered by eager eyes and unknown places were visited by my curious friends\n\nDaughter: I listen with great interest and wonder to the words that are spoken by you and I ask what magical adventures were driven by the care of those who were always present to guide us in secret moments and please explain every detail\n\nFather: I recall a time when a wooden boat was built by local craftsmen and a secret letter was written by an unknown friend The game of hide and seek was organized by the children in a garden where surprises were prepared by caring hands and mysteries were kept safe in every corner\n\nDaughter: The words of your past make me feel a deep joy and I wonder how such adventures are planned in a way that every small detail is cherished by those who are linked to a time that is lost and remembered at the same time\n\nFather: I was invited to a place where a hidden trail was marked by bright stones and a special note was given by a wise elder The secrets of that route were asked by many and the magic of those paths is celebrated by all who see that history as a living dream of childhood\n\nDaughter: I am amazed by your descriptions and I feel that every scene is painted in a gentle light that is remembered by the old and adored by the young I ask if such moments are really experienced or if they are created by the memories of a heart that never forgets\n\nFather: I close my tale with a hope that my adventures are remembered by you and that a similar journey will be offered to you by the world when a new day is begun in a place where dreams are built by the love and care of each passing moment\n\nDaughter: I feel very blessed to have heard a story that is filled with wonder and that was nurtured by experiences that were shared between all the people who value the past and look for truth in every beautiful memory always"
+        }
+      }
+    ],
+    "@YOUTUBE_DATA_CONTENT": [
+      {
+        "json": {
+          "output": {
+            "VideoTitle": "Level B2 | English Shadowing Passive Voice Story Father and Daughter Adventures",
+            "VideoDescription": "Practice your English shadowing skills with this engaging story about a father's childhood adventures told to his daughter. Listen carefully to how the passive voice is used in both simple present and simple past tenses to describe events and experiences. This video helps you get a natural sense of how passive constructions like \"were discovered,\" \"were built,\" and \"was written\" appear in real speech. The father recounts magical moments where hidden treasures were found, secret letters were written, and childhood games were organized, all while the daughter listens with wonder. You’ll come across phrasal verbs and expressions that support storytelling and memory recall, such as \"look for,\" \"keep safe,\" and \"ask for.\" Listen once to absorb the story, then repeat aloud to practice fluency, and finally shadow with the audio to enhance your speaking skills. Improve your passive voice understanding while enjoying this heartfelt conversation between father and daughter.",
+            "Tags": [
+              "english shadowing",
+              "passive voice",
+              "simple present",
+              "simple past",
+              "shadowing practice",
+              "B2 level",
+              "speaking practice",
+              "repeat after me",
+              "father and daughter",
+              "storytelling",
+              "childhood adventures",
+              "language learning",
+              "grammar focus",
+              "listening practice",
+              "learning english",
+              "phrasal verbs",
+              "look for",
+              "keep safe",
+              "ask for",
+              "speaking skills"
+            ],
+            "thumbnailText": [
+              "Listen Repeat",
+              "Shadow Together",
+              "Passive Voice"
+            ]
+          }
+        }
+      }
+    ],
+    "@SCENE_METADATA_MAPPER": [
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 0,
+          "paragraphId": -1,
+          "audioSubtitle": "Theme: childhood adventures and shared memories. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/0_-1_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 242043,
+            "bitrateKbps": 128.023,
+            "durationSeconds": 15.124875,
+            "durationHMS": "0:0:15",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 1,
+          "paragraphId": 0,
+          "audioSubtitle": "Father: I begin to tell you the story of my childhood adventures that were filled with wonder and excitement I was a young boy in a small town where hidden treasures were discovered by eager eyes and unknown places were visited by my curious friends",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/1_0_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 251656,
+            "bitrateKbps": 128.022,
+            "durationSeconds": 15.725688,
+            "durationHMS": "0:0:15",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 1,
+          "paragraphId": 1,
+          "audioSubtitle": "Daughter: I listen with great interest and wonder to the words that are spoken by you and I ask what magical adventures were driven by the care of those who were always present to guide us in secret moments and please explain every detail",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/1_1_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 237863,
+            "bitrateKbps": 128.024,
+            "durationSeconds": 14.863625,
+            "durationHMS": "0:0:14",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 1,
+          "paragraphId": 2,
+          "audioSubtitle": "Father: I recall a time when a wooden boat was built by local craftsmen and a secret letter was written by an unknown friend The game of hide and seek was organized by the children in a garden where surprises were prepared by caring hands and mysteries were kept safe in every corner",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/1_2_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 274226,
+            "bitrateKbps": 128.021,
+            "durationSeconds": 17.136313,
+            "durationHMS": "0:0:17",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 2,
+          "paragraphId": 3,
+          "audioSubtitle": "Daughter: The words of your past make me feel a deep joy and I wonder how such adventures are planned in a way that every small detail is cherished by those who are linked to a time that is lost and remembered at the same time",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/2_3_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 198157,
+            "bitrateKbps": 128.029,
+            "durationSeconds": 12.382,
+            "durationHMS": "0:0:12",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 2,
+          "paragraphId": 4,
+          "audioSubtitle": "Father: I was invited to a place where a hidden trail was marked by bright stones and a special note was given by a wise elder The secrets of that route were asked by many and the magic of those paths is celebrated by all who see that history as a living dream of childhood",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/2_4_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 291780,
+            "bitrateKbps": 128.019,
+            "durationSeconds": 18.233438,
+            "durationHMS": "0:0:18",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 2,
+          "paragraphId": 5,
+          "audioSubtitle": "Daughter: I am amazed by your descriptions and I feel that every scene is painted in a gentle light that is remembered by the old and adored by the young I ask if such moments are really experienced or if they are created by the memories of a heart that never forgets",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/2_5_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 239953,
+            "bitrateKbps": 128.024,
+            "durationSeconds": 14.99425,
+            "durationHMS": "0:0:14",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 3,
+          "paragraphId": 6,
+          "audioSubtitle": "Father: I close my tale with a hope that my adventures are remembered by you and that a similar journey will be offered to you by the world when a new day is begun in a place where dreams are built by the love and care of each passing moment",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/3_6_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 231176,
+            "bitrateKbps": 128.024,
+            "durationSeconds": 14.445688,
+            "durationHMS": "0:0:14",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "videoId": "1761691131885",
+          "sceneId": 3,
+          "paragraphId": 7,
+          "audioSubtitle": "Daughter: I feel very blessed to have heard a story that is filled with wonder and that was nurtured by experiences that were shared between all the people who value the past and look for truth in every beautiful memory always",
+          "videoMetaData": {
+            "type": "audio",
+            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/3_7_1761691131885.mp3",
+            "container": "mp3",
+            "sizeBytes": 207770,
+            "bitrateKbps": 128.027,
+            "durationSeconds": 12.982813,
+            "durationHMS": "0:0:12",
+            "tags": {
+              "encoder": "Lavf60.16.100"
+            },
+            "video": null,
+            "audios": [
+              {
+                "codec": "mp3",
+                "channels": 1,
+                "channel_layout": "mono",
+                "sample_rate_hz": 44100,
+                "bitrateKbps": 128,
+                "language": "und"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "Execute Command with Fixed Image": [
+      {
+        "json": {
+          "exitCode": 0,
+          "stderr": "",
+          "stdout": "OK: /home/node/download/CANAL_SHADOWING/1761691131885/shadow_1761691131885.mp4"
         }
       }
     ],
@@ -685,7 +1205,7 @@
           "paragraphs": [
             {
               "id": -1,
-              "text": "Theme: student struggles and balancing academic pressures. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
+              "text": "Theme: childhood adventures and the magic of nostalgic memories. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
               "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             }
           ]
@@ -698,18 +1218,18 @@
           "paragraphs": [
             {
               "id": 0,
-              "text": "Boy: I have been feeling overwhelmed by assignments and deadlines lately I am trying to keep up with lectures and projects while I am getting up early for my classes and I have been missing sleep even though I am putting my best effort into every task",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+              "text": "Father: I begin to tell you the story of my childhood adventures that were filled with wonder and excitement I was a young boy in a small town where hidden treasures were discovered by eager eyes and unknown places were visited by my curious friends",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             },
             {
               "id": 1,
-              "text": "Girl: I have been struggling with many challenges that come with university life I am working day and night to catch up with my reading and I have looked for advice from my teachers as I am trying to figure out a balance between study and rest in a busy day",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
+              "text": "Daughter: I listen with great interest and wonder to the words that are spoken by you and I ask what magical adventures were driven by the care of those who were always present to guide us in secret moments and please explain every detail",
+              "voiceId": "ZF6FPAbjXT4488VcRRnw"
             },
             {
               "id": 2,
-              "text": "Boy: I am noticing that our courses are becoming more demanding each day I have been staying late in the library and my friends are getting up early to study together yet we have not quite found a routine that works well for all of us consistently",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+              "text": "Father: I recall a time when a wooden boat was built by local craftsmen and a secret letter was written by an unknown friend The game of hide and seek was organized by the children in a garden where surprises were prepared by caring hands and mysteries were kept safe in every corner",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             }
           ]
         }
@@ -721,18 +1241,18 @@
           "paragraphs": [
             {
               "id": 3,
-              "text": "Girl: I have been feeling the pressure from all the projects and exams I am working on my time management skills and I have looked for online tips I am trying to use new methods that I have come across recently to make my study sessions more effective",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
+              "text": "Daughter: The words of your past make me feel a deep joy and I wonder how such adventures are planned in a way that every small detail is cherished by those who are linked to a time that is lost and remembered at the same time",
+              "voiceId": "ZF6FPAbjXT4488VcRRnw"
             },
             {
               "id": 4,
-              "text": "Boy: I have been realizing that the pressures of education are never ending I am attending extra sessions and I am trying to get up on time every morning even though there are days when I am struggling to get out of bed and stay motivated throughout my classes",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+              "text": "Father: I was invited to a place where a hidden trail was marked by bright stones and a special note was given by a wise elder The secrets of that route were asked by many and the magic of those paths is celebrated by all who see that history as a living dream of childhood",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             },
             {
               "id": 5,
-              "text": "Girl: I have been meeting friends to exchange ideas and I am working closely with study groups to figure out challenging topics We have been sharing our worries and we have looked for ways to reduce stress while managing heavy reading loads and long lectures",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
+              "text": "Daughter: I am amazed by your descriptions and I feel that every scene is painted in a gentle light that is remembered by the old and adored by the young I ask if such moments are really experienced or if they are created by the memories of a heart that never forgets",
+              "voiceId": "ZF6FPAbjXT4488VcRRnw"
             }
           ]
         }
@@ -744,25 +1264,20 @@
           "paragraphs": [
             {
               "id": 6,
-              "text": "Boy: I have been wondering if there is a better way to manage the heavy load I am taking on I am searching for practical solutions and I have been testing different strategies while I have looked for support online so that I can balance my studies with a healthy life",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+              "text": "Father: I close my tale with a hope that my adventures are remembered by you and that a similar journey will be offered to you by the world when a new day is begun in a place where dreams are built by the love and care of each passing moment",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
             },
             {
               "id": 7,
-              "text": "Girl: I have been learning that every challenge brings a chance to improve I am trying to adjust my habits and I have been keeping a journal to record my progress I am also looking for moments to relax and I have come to learn that rest is essential for success",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
-            },
-            {
-              "id": 8,
-              "text": "Boy: I have been feeling more hopeful as I make small changes every day I am pushing myself to keep on trying even when the path is rough and I have been convinced that together we will figure out a smoother road ahead as we face our struggles as students",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+              "text": "Daughter: I feel very blessed to have heard a story that is filled with wonder and that was nurtured by experiences that were shared between all the people who value the past and look for truth in every beautiful memory always",
+              "voiceId": "ZF6FPAbjXT4488VcRRnw"
             }
           ]
         }
       }
     ]
   },
-  "versionId": "398295cc-8602-4ebd-bee7-6f222397291c",
+  "versionId": "41b2ca73-927b-4831-8fb9-f60345623cf3",
   "triggerCount": 0,
   "shared": [
     {
@@ -787,7 +1302,7 @@
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-27T11:31:02.000Z",
+              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -821,7 +1336,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-27",
+              "lastActiveAt": "2025-10-28",
               "isPending": false
             }
           }

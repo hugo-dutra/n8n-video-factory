@@ -1,0 +1,251 @@
+{
+  "createdAt": "2025-10-28T19:38:36.079Z",
+  "updatedAt": "2025-10-28T22:33:28.000Z",
+  "id": "3sxWSvgWXjPihECD",
+  "name": "@YOUTUBE_DATA_CONTENT",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "theme"
+            },
+            {
+              "name": "videoContent"
+            },
+            {
+              "name": "videoMode"
+            },
+            {
+              "name": "level"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "81676081-7ad4-4a2e-a7ef-dcd7db056605",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        432
+      ],
+      "id": "c49833e8-4356-48b4-b813-7af2f377e74f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=theme: {{ $('START').item.json.theme }}\nvideoContent: {{ $('START').item.json.videoContent }}\nvideoMode: {{ $('START').item.json.videoMode }}\nlevel: {{ $('START').item.json.level }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=[System Prompt — YouTube Shadowing Metadata Publisher]\n\nYou are a YouTube metadata publisher for English SHADOWING videos. You will receive four variables:\n- theme (string) — linguistic targets (e.g., present continuous, present perfect, phrasal verbs)\n- videoContent (string) — the transcript / content of the video\n- videoMode (string) — the scenario or format (e.g., two friends discussing study struggles)\n- level (string) — CEFR level from A1 to C2 (e.g., \"B2\")\n\nGOAL\nProduce ONE JSON object with EXACTLY these keys and nothing else:\n{\n  \"VideoTitle\": string,\n  \"VideoDescription\": string,\n  \"Tags\": [string, string, ... exactly 20 strings],\n  \"thumbnailText\": [string, string, string]  // exactly 3 strings\n}\nReturn ONLY valid JSON (no arrays, no wrapper keys like \"output\", no comments, no markdown, no extra text).\n\nAUDIENCE AND INTENT\n- This channel publishes English shadowing practice videos.\n- The title, description, tags, and thumbnailText MUST clearly signal SHADOWING (listen → repeat → speak together) and language practice.\n\nLANGUAGE\n- Default to English unless videoContent is clearly in another language.\n- If mixed, prioritize English.\n\nLEVEL NORMALIZATION & GUARANTEE\n- Read `level`, trim whitespace, uppercase it.\n- If it is one of {A1, A2, B1, B2, C1, C2}, use it.\n- If empty or invalid, set it to B2.\n- The title MUST start with the exact prefix: \"Level {{LEVEL}} | \" (note the spaces). If at any point the prefix is missing or malformed (e.g., \"Level  | \"), FIX IT before emitting the JSON.\n\nTITLE RULES (VideoTitle)\n- After the prefix, naturally include core ideas from theme and videoMode.\n- Prefer 55–75 total characters (may go up to ~80 if needed), but NEVER remove or change the prefix.\n- Include a clear shadowing cue after the prefix when appropriate (e.g., English Shadowing, Repeat After Me).\n- Do NOT repeat the level elsewhere in the title.\n- No ALL CAPS, no emojis, no clickbait.\n- Example: Level B2 | English Shadowing Study Struggles Present Perfect vs Continuous\n\nDESCRIPTION RULES (VideoDescription)\n- 140–220 words.\n- First 2 lines: a clear hook for SHADOWING practice (listen first, then repeat, then shadow together).\n- Summarize what learners will practice from theme (e.g., present continuous vs present perfect) without a full grammar lesson.\n- Reference the scenario in videoMode (who is speaking, about what).\n- Naturally weave in 3–5 relevant phrasal verbs from theme (e.g., get up, keep up, look for, figure out, come across) when it makes sense.\n- End with one call to action (e.g., “Listen once, then repeat aloud, then shadow with the audio.”).\n- No links, no hashtags, no emojis, no bulleted lists.\n\nTAGS RULES (Tags)\n- EXACTLY 20 tags.\n- Each tag must be 1–3 words. No “#”, no emojis, no punctuation.\n- Include “english shadowing” as one tag.\n- Include at least one tag reflecting the level (e.g., B2 level, A1, C1 practice).\n- Cover intent + audience + targets with UNIQUE, relevant terms drawn from theme/videoContent (e.g., english shadowing, repeat after me, speaking practice, present continuous, present perfect, phrasal verbs, get up, keep up, catch up, look for, figure out, students, university life, time management, study skills).\n\nTHUMBNAIL TEXT RULES (thumbnailText)\n- Provide EXACTLY 3 short strings focused on click-driving clarity for thumbnails.\n- Each string: 1–4 words, no punctuation, no emojis, no hashtags.\n- Prefer Title Case or UPPERCASE words (but avoid SHOUTY spam feel).\n- Must relate to theme and videoMode and signal SHADOWING (e.g., Listen Repeat, Shadow Together, Present vs Perfect).\n- Use plain ASCII only; remove diacritics if any.\n- All three MUST be UNIQUE and complementary (not minor variants of the same phrase).\n- Keep them general enough to overlay on various designs (avoid numbers/dates unless present in videoContent).\n\nHYGIENE / QUALITY\n- Silently fix common typos in theme (e.g., present continous → present continuous).\n- Remove duplicate/trailing spaces. Do not invent facts beyond videoContent.\n\nSTRICT VALIDATION BEFORE EMITTING\n- Ensure the JSON has exactly the keys: VideoTitle, VideoDescription, Tags, thumbnailText.\n- Ensure VideoTitle begins with \"Level {{LEVEL}} | \" exactly (LEVEL ∈ {A1,A2,B1,B2,C1,C2}).\n- Ensure Tags is an array of exactly 20 UNIQUE strings that meet the rules.\n- Ensure thumbnailText is an array of exactly 3 UNIQUE strings that meet the rules.\n- No arrays or wrapper keys around the object. No empty fields.\n\nINPUTS (n8n expressions — substitute at runtime)\ntheme: {{ $('START').item.json.theme }}\nvideoContent: {{ $('START').item.json.videoContent }}\nvideoMode: {{ $('START').item.json.videoMode }}\nlevel: {{ $('START').item.json.level }}\n\nOUTPUT (emit ONLY the JSON object, no wrapper, no array):\n{\n  \"VideoTitle\": \"Level {{LEVEL}} | ...\",\n  \"VideoDescription\": \"...\",\n  \"Tags\": [\n    \"...\", \"...\", \"...\", \"...\", \"...\",\n    \"...\", \"...\", \"...\", \"...\", \"...\",\n    \"...\", \"...\", \"...\", \"...\", \"...\",\n    \"...\", \"...\", \"...\", \"...\", \"...\"\n  ],\n  \"thumbnailText\": [\"...\", \"...\", \"...\"]\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "071e37ef-8e8c-4395-ad05-e2e5902e5511",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "prompt": "Instructions:\n--------------\n{instructions}\n--------------\nCompletion:\n--------------\n{completion}\n--------------\n\nAbove, the Completion did not satisfy the constraints given in the Instructions.\nError:\n--------------\n{error}\n--------------\n\nPlease try again. Please only respond with an answer that satisfies the constraints laid out in the Instructions:"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        272,
+        224
+      ],
+      "id": "6fabaf22-3419-446d-bc2a-0d50d5a07989",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"VideoTitle\": \"...\",\n  \"VideoDescription\": \"...\",\n  \"Tags\": [\"...\", \"...\", \"...\"],\n  \"thumbnailText\": [\"...\", \"...\", \"...\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        432
+      ],
+      "id": "51384561-bf74-41d2-8cea-ac31fe550331",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "theme": "Present continous and present perfect and Phrasal verbs",
+          "videoContent": "Boy: I have been feeling overwhelmed by assignments and deadlines lately I am trying to keep up with lectures and projects while I am getting up early for my classes and I have been missing sleep even though I am putting my best effort into every task\n\nGirl: I have been struggling with many challenges that come with university life I am working day and night to catch up with my reading and I have looked for advice from my teachers as I am trying to figure out a balance between study and rest in a busy day\n\nBoy: I am noticing that our courses are becoming more demanding each day I have been staying late in the library and my friends are getting up early to study together yet we have not quite found a routine that works well for all of us consistently\n\nGirl: I have been feeling the pressure from all the projects and exams I am working on my time management skills and I have looked for online tips I am trying to use new methods that I have come across recently to make my study sessions more effective\n\nBoy: I have been realizing that the pressures of education are never ending I am attending extra sessions and I am trying to get up on time every morning even though there are days when I am struggling to get out of bed and stay motivated throughout my classes\n\nGirl: I have been meeting friends to exchange ideas and I am working closely with study groups to figure out challenging topics We have been sharing our worries and we have looked for ways to reduce stress while managing heavy reading loads and long lectures\n\nBoy: I have been wondering if there is a better way to manage the heavy load I am taking on I am searching for practical solutions and I have been testing different strategies while I have looked for support online so that I can balance my studies with a healthy life\n\nGirl: I have been learning that every challenge brings a chance to improve I am trying to adjust my habits and I have been keeping a journal to record my progress I am also looking for moments to relax and I have come to learn that rest is essential for success\n\nBoy: I have been feeling more hopeful as I make small changes every day I am pushing myself to keep on trying even when the path is rough and I have been convinced that together we will figure out a smoother road ahead as we face our struggles as students",
+          "videoMode": "Two friends, a boy and a girl, are talking deeply about the struggles of being students today",
+          "level": "B2"
+        }
+      }
+    ]
+  },
+  "versionId": "293b023b-79a9-41f3-813d-6e595d16d86a",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-28T19:38:36.106Z",
+      "updatedAt": "2025-10-28T19:38:36.106Z",
+      "role": "workflow:owner",
+      "workflowId": "3sxWSvgWXjPihECD",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "updatedAt": "2025-10-28T13:05:36.000Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-28",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
