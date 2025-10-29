@@ -1,6 +1,6 @@
 {
-  "createdAt": "2025-10-08T00:01:21.809Z",
   "updatedAt": "2025-10-08T11:56:59.000Z",
+  "createdAt": "2025-10-08T00:01:21.809Z",
   "id": "646iTE9KdvOyUJ2l",
   "name": "@EFFECTS_VINTAGE",
   "active": false,
@@ -165,14 +165,14 @@
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-08T00:01:21.822Z",
       "updatedAt": "2025-10-08T00:01:21.822Z",
+      "createdAt": "2025-10-08T00:01:21.822Z",
       "role": "workflow:owner",
       "workflowId": "646iTE9KdvOyUJ2l",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
-        "createdAt": "2025-08-20T20:52:17.088Z",
         "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
         "id": "TH7SrF7Rx9ho2z9i",
         "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
         "type": "personal",
@@ -180,13 +180,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2025-08-20T20:52:17.089Z",
             "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -220,7 +220,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-28",
+              "lastActiveAt": "2025-10-29",
               "isPending": false
             }
           }

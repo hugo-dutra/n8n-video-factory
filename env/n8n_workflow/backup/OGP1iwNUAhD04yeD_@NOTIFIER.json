@@ -1,6 +1,6 @@
 {
+  "updatedAt": "2025-10-29T22:29:16.000Z",
   "createdAt": "2025-10-06T11:30:11.278Z",
-  "updatedAt": "2025-10-06T11:36:05.000Z",
   "id": "OGP1iwNUAhD04yeD",
   "name": "@NOTIFIER",
   "active": false,
@@ -63,7 +63,8 @@
           "id": "FEzvaAKjYtvZZ6HQ",
           "name": "Evolution account"
         }
-      }
+      },
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {},
@@ -218,18 +219,18 @@
       }
     ]
   },
-  "versionId": "521d6706-65cc-4673-9dab-8e13004dfb7f",
+  "versionId": "455e2e0c-e61d-470d-b3e3-78145de24d50",
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-06T11:30:11.301Z",
       "updatedAt": "2025-10-06T11:30:11.301Z",
+      "createdAt": "2025-10-06T11:30:11.301Z",
       "role": "workflow:owner",
       "workflowId": "OGP1iwNUAhD04yeD",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
-        "createdAt": "2025-08-20T20:52:17.088Z",
         "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
         "id": "TH7SrF7Rx9ho2z9i",
         "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
         "type": "personal",
@@ -237,13 +238,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2025-08-20T20:52:17.089Z",
             "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -277,7 +278,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-28",
+              "lastActiveAt": "2025-10-29",
               "isPending": false
             }
           }

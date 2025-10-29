@@ -1,0 +1,276 @@
+{
+  "updatedAt": "2025-10-29T23:24:06.000Z",
+  "createdAt": "2025-10-29T23:24:06.183Z",
+  "id": "zhj5BKdTM2K8HPaE",
+  "name": "@SHADOWING-THUMBNAIL-CREATOR",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "generate",
+        "model": "gpt-image-1",
+        "prompt": "=Create a thumbnail image for a YouTube channel about English shadowing, based on the information below:\n\n- videoContent:  {{ $('Start').item.json.output }}\n- videoTitle: {{ $('Start').item.json.output_VideoDescription }}\n- videoTitle: {{ $('Start').item.json.output_VideoTitle }}\n- ThumbnailText: {{ $('Start').item.json.output_thumbnailText_join(',')}}\n\n- Important: If the description includes people, make them look as beautiful as possible.\n\n",
+        "options": {
+          "size": "1536x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -32
+      ],
+      "id": "61d9406a-a159-4306-b2df-c58621aeb38c",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "info": "",
+        "operation": "write",
+        "fileName": "=/home/node/download/{{ $('Start').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/thumb_{{ $('Start').item.json.videoId }}.png",
+        "dataPropertyName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        -32
+      ],
+      "id": "cbd8834b-6eca-46ba-abcc-d95ef0a31c12",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -32
+      ],
+      "id": "03b0c240-21ae-479f-857b-d6a90deeda21",
+      "name": "Execute Command",
+      "disabled": false,
+      "parameters": {
+        "executeOnce": true,
+        "command": "=bash -lc '\nset -Eeuo pipefail\n\n# ===== Inputs =====\nARG_IN=\"${1:-}\"\nFILENAME=\"{{ $('Read/Write Files from Disk').item.json.fileName || '' }}\"\n\n# ===== Config =====\nW=\"${W:-1280}\"\nH=\"${H:-720}\"\nMAX_KB=\"${MAX_KB:-2000}\"       # 2MB\nMODE=\"${MODE:-stretch}\"        # stretch | cover | pad\nBG=\"${BG:-#000000}\"\nFORCE_SAME_PATH=\"${FORCE_SAME_PATH:-0}\"  # 0 = gera .jpg; 1 = sobrescreve mesmo caminho (cuidado com MIME)\n\n# ===== Resolve caminho de entrada =====\nif [ -n \"${ARG_IN:-}\" ]; then\n  IN=\"$ARG_IN\"\nelse\n  IN=\"$FILENAME\"\nfi\n\n[ -n \"${IN:-}\" ] || { echo \"Erro: não recebi caminho de entrada (nem \\$1, nem fileName).\"; exit 2; }\n[ -e \"$IN\" ] || { echo \"Erro: caminho não existe: $IN\"; exit 2; }\n\n# ===== ImageMagick =====\nIM=\"$(command -v magick || true)\"\nif [ -z \"$IM\" ]; then IM=\"$(command -v convert || true)\"; fi\n[ -z \"$IM\" ] && { echo \"ImageMagick não encontrado (magick/convert)\"; exit 1; }\n\ndir=\"$(dirname \"$IN\")\"\nbase=\"$(basename \"$IN\")\"\nname=\"${base%.*}\"\n\ntmp=\"$(mktemp -p \"$dir\" ytfix_XXXXXXXX).jpg\"\n\n# ===== Redimensionamento =====\ncase \"$MODE\" in\n  stretch)\n    resize_args=( -resize \"${W}x${H}!\" )\n    ;;\n  pad)\n    resize_args=( -resize \"${W}x${H}\" -background \"$BG\" -gravity center -extent \"${W}x${H}\" )\n    ;;\n  cover|*)\n    resize_args=( -resize \"${W}x${H}^\" -gravity center -extent \"${W}x${H}\" )\n    ;;\nesac\n\n# 1ª tentativa: limitar por tamanho com jpeg:extent\nif [ \"$(basename \"$IM\")\" = \"magick\" ]; then\n  \"$IM\" \"$IN[0]\" -auto-orient \"${resize_args[@]}\" \\\n    -strip -sampling-factor 4:2:0 -interlace JPEG -colorspace sRGB \\\n    -define \"jpeg:extent=${MAX_KB}kb\" \"$tmp\" 2>/dev/null || true\nelse\n  \"$IM\" \"$IN\" -auto-orient \"${resize_args[@]}\" \\\n    -strip -sampling-factor 4:2:0 -interlace JPEG -colorspace sRGB \\\n    -define \"jpeg:extent=${MAX_KB}kb\" \"$tmp\" 2>/dev/null || true\nfi\n\nsize() { wc -c < \"$1\" | tr -d \" \"; }\n\n# Fallback: iterar qualidade se ainda passou do limite\nif [ ! -s \"$tmp\" ] || [ \"$(size \"$tmp\")\" -gt $(( MAX_KB * 1024 )) ]; then\n  for q in 85 80 75 70 65 60 55 50 45 40; do\n    if [ \"$(basename \"$IM\")\" = \"magick\" ]; then\n      \"$IM\" \"$IN[0]\" -auto-orient \"${resize_args[@]}\" \\\n        -strip -sampling-factor 4:2:0 -interlace JPEG -colorspace sRGB \\\n        -quality \"$q\" \"$tmp\"\n    else\n      \"$IM\" \"$IN\" -auto-orient \"${resize_args[@]}\" \\\n        -strip -sampling-factor 4:2:0 -interlace JPEG -colorspace sRGB \\\n        -quality \"$q\" \"$tmp\"\n    fi\n    [ \"$(size \"$tmp\")\" -le $(( MAX_KB * 1024 )) ] && break\n  done\nfi\n\n# ===== Saída =====\nif [ \"$FORCE_SAME_PATH\" = \"1\" ]; then\n  # sobrescreve exatamente o mesmo caminho (atenção à extensão)\n  cp -f -- \"$tmp\" \"$IN\"\n  rm -f -- \"$tmp\"\n  OUT=\"$IN\"\nelse\n  OUT=\"$dir/$name.jpg\"\n  rm -f -- \"$IN\"\n  mv -f -- \"$tmp\" \"$OUT\"\nfi\n\nprintf \"{\\\"path\\\":\\\"%s\\\",\\\"bytes\\\":%s}\\n\" \"$OUT\" \"$(size \"$OUT\")\"\n' -- \"{{ $json.path || '' }}\"\n"
+      },
+      "issues": {}
+    },
+    {
+      "type": "n8n-nodes-base.executeWorkflow",
+      "parameters": {
+        "operation": "call_workflow",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Thumbnail Criada com sucesso"
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "once",
+        "options": {}
+      },
+      "typeVersion": 1.3,
+      "position": [
+        1616,
+        -32
+      ],
+      "id": "6d82395d-1348-4c7a-a8c9-ade7136a93da",
+      "name": "Call '@NOTIFIER'",
+      "disabled": false,
+      "issues": {}
+    },
+    {
+      "id": "62fcfa31-912a-4143-ae83-6d0d35c076b3",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        864,
+        -32
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "output_thumbnailText_join",
+              "type": "any"
+            },
+            {
+              "name": "output_VideoDescription",
+              "type": "any"
+            },
+            {
+              "name": "output",
+              "type": "any"
+            },
+            {
+              "name": "output_VideoTitle",
+              "type": "any"
+            },
+            {
+              "name": "videoId",
+              "type": "any"
+            },
+            {
+              "name": "CHANNEL_NAME",
+              "type": "any"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Call '@NOTIFIER'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "7cf28afa-41ba-460a-afdd-1e0a9663ca93",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-29T23:24:06.215Z",
+      "createdAt": "2025-10-29T23:24:06.215Z",
+      "role": "workflow:owner",
+      "workflowId": "zhj5BKdTM2K8HPaE",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-10-29",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

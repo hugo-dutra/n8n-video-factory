@@ -26,28 +26,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"  
       N8N_API_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NmI2MmJlZS1lYmIxLTRmZTUtYTUxYi1jMTE2ZWY3MDY0ZWIiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTkxOTA2fQ.rDMPb66Xspvo3x2Ie7uCx25552SgCvifCjSKCoIpbNo"
-
-       # === 1) Binários no DISCO (instância única) ===
-      N8N_DEFAULT_BINARY_DATA_MODE: filesystem
-      N8N_BINARY_DATA_STORAGE_PATH: /home/node/.n8n/binaryData
-
-      # === 2) Salvar menos dados das execuções ===
-      EXECUTIONS_DATA_SAVE_ON_SUCCESS: none
-      EXECUTIONS_DATA_SAVE_ON_ERROR: all
-      EXECUTIONS_DATA_SAVE_ON_PROGRESS: "false"
-      EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS: "false"
-      EXECUTIONS_DATA_PRUNE: "true"
-      EXECUTIONS_DATA_MAX_AGE: "168"           # 7 dias
-      EXECUTIONS_DATA_PRUNE_MAX_COUNT: "50000" # ajustável
-
-      # === 3) Dar fôlego ao heap do Node (MB) ===
-      NODE_OPTIONS: --max-old-space-size=8192
-
-
-
     volumes:
       - ./env/n8n_data:/home/node/.n8n
-      - ./env/n8n_binary:/home/node/.n8n/binaryData
       - ./env/n8n_download:/home/node/download
       - ./env/n8n_processing:/home/node/processing
       - ./env/n8n_workflow:/home/node/n8n_workflow

@@ -1,6 +1,6 @@
 {
+  "updatedAt": "2025-10-29T23:21:59.000Z",
   "createdAt": "2025-10-28T22:38:18.632Z",
-  "updatedAt": "2025-10-28T22:51:45.000Z",
   "id": "wDmJOKsJMEGVwOLL",
   "name": "@UPLOAD_YOUTUBE_SHADOWING",
   "active": false,
@@ -63,7 +63,7 @@
     },
     {
       "parameters": {
-        "fileSelector": "=/home/node/processing/{{ $('@GLOBAL_ANCAPSU').first().json.CHANNEL_NAME }}/{{ $('Get Long Video Info').item.json.thumbnail }}",
+        "fileSelector": "=/home/node/download/{{ $('Start').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/thumb_{{ $('Start').item.json.videoId }}.jpg",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
@@ -73,8 +73,7 @@
         -96
       ],
       "id": "07d6e5f9-75f9-466e-aa79-3a21506f5870",
-      "name": "Read File Thumb",
-      "disabled": true
+      "name": "Read File Thumb"
     },
     {
       "parameters": {
@@ -110,11 +109,10 @@
       ],
       "credentials": {
         "youTubeOAuth2Api": {
-          "id": "lC6w9zooePykiKGj",
-          "name": "YouTube n8n account-ANCAPSU"
+          "id": "ThaPnNZElYZbX2i2",
+          "name": "YouTube n8n account-ENGLISH"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -227,7 +225,7 @@
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        1200,
+        1216,
         -96
       ]
     },
@@ -259,7 +257,7 @@
       "alwaysOutputData": false,
       "credentials": {
         "youTubeOAuth2Api": {
-          "id": "2olGKBSnDKI8MtF6",
+          "id": "ThaPnNZElYZbX2i2",
           "name": "YouTube n8n account-ENGLISH"
         }
       },
@@ -346,19 +344,59 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {},
-  "versionId": "18633655-3d46-4609-95b7-cee7e0354584",
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "videoId": "1761691131885",
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "output_VideoTitle": "Level B2 | English Shadowing Passive Voice Story Father and Daughter Adventures",
+          "output_VideoDescription": "Practice your English shadowing skills with this engaging story about a father's childhood adventures told to his daughter. Listen carefully to how the passive voice is used in both simple present and simple past tenses to describe events and experiences. This video helps you get a natural sense of how passive constructions like \"were discovered,\" \"were built,\" and \"was written\" appear in real speech. The father recounts magical moments where hidden treasures were found, secret letters were written, and childhood games were organized, all while the daughter listens with wonder. You’ll come across phrasal verbs and expressions that support storytelling and memory recall, such as \"look for,\" \"keep safe,\" and \"ask for.\" Listen once to absorb the story, then repeat aloud to practice fluency, and finally shadow with the audio to enhance your speaking skills. Improve your passive voice understanding while enjoying this heartfelt conversation between father and daughter.",
+          "output_Tags_map": [
+            "english shadowing",
+            "passive voice",
+            "simple present",
+            "simple past",
+            "shadowing practice",
+            "B2 level",
+            "speaking practice",
+            "repeat after me",
+            "father and daughter",
+            "storytelling",
+            "childhood adventures",
+            "language learning",
+            "grammar focus",
+            "listening practice",
+            "learning english",
+            "phrasal verbs",
+            "look for",
+            "keep safe",
+            "ask for",
+            "speaking skills"
+          ]
+        }
+      }
+    ],
+    "Upload to youtube": [
+      {
+        "json": {
+          "uploadId": "LXINWcBl9FQ"
+        }
+      }
+    ]
+  },
+  "versionId": "ec823019-c3ba-49c5-b1d4-7d18bd3ca2ec",
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-28T22:38:18.661Z",
       "updatedAt": "2025-10-28T22:38:18.661Z",
+      "createdAt": "2025-10-28T22:38:18.661Z",
       "role": "workflow:owner",
       "workflowId": "wDmJOKsJMEGVwOLL",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
-        "createdAt": "2025-08-20T20:52:17.088Z",
         "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
         "id": "TH7SrF7Rx9ho2z9i",
         "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
         "type": "personal",
@@ -366,13 +404,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2025-08-20T20:52:17.089Z",
             "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -406,7 +444,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-28",
+              "lastActiveAt": "2025-10-29",
               "isPending": false
             }
           }

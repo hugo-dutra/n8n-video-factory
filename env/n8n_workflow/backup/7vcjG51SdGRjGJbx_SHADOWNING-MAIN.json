@@ -1,6 +1,6 @@
 {
+  "updatedAt": "2025-10-29T23:24:25.000Z",
   "createdAt": "2025-10-16T23:15:45.583Z",
-  "updatedAt": "2025-10-28T22:51:05.000Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
   "active": false,
@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -368,
-        0
+        -288,
+        -48
       ],
       "id": "12695a2f-a310-43a4-9f95-e5001a8f3390",
       "name": "START"
@@ -118,8 +118,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        176,
-        0
+        272,
+        -48
       ],
       "id": "c695bc88-d3cf-47d8-a0eb-b96610c27675",
       "name": "@CONTENT_GENERATION"
@@ -131,8 +131,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        576,
-        0
+        784,
+        256
       ],
       "id": "8a03e1e1-fa2d-4bed-beb6-b3c2ebee189b",
       "name": "Loop Over Content"
@@ -155,8 +155,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -192,
-        0
+        -112,
+        -48
       ],
       "id": "73780dbf-e030-45b8-93e0-f401cb3a0dd3",
       "name": "@GLOBAL_SHADOWING"
@@ -229,8 +229,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        768,
-        0
+        976,
+        256
       ],
       "id": "ba0edc34-0978-4d93-921d-4a822649c8d9",
       "name": "@SCENE_METADATA_MAPPER"
@@ -303,8 +303,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -128,
-        -432
+        -48,
+        -384
       ],
       "id": "d2e9e437-fef3-4aa7-84dc-3285d3fca2aa",
       "name": "@CONTENT_SHADOWING_GENERATOR",
@@ -327,8 +327,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        0,
-        0
+        80,
+        -48
       ],
       "id": "1d9012fa-d14b-4840-9e74-a68aaec1ade9",
       "name": "Get videoId from timestamp"
@@ -340,8 +340,8 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        64,
-        -432
+        144,
+        -384
       ],
       "id": "bfe467c6-73b0-4e30-a0c1-89bc6f025681",
       "name": "Execute Command with OpenAI image"
@@ -353,8 +353,8 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        976,
-        0
+        1184,
+        256
       ],
       "id": "2a0424b3-7346-482e-9816-ae8f8a115a4b",
       "name": "Execute Command with Fixed Image"
@@ -416,8 +416,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        768,
-        208
+        976,
+        464
       ],
       "id": "388efcf4-fd8d-425f-9853-ab96439299c2",
       "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES",
@@ -491,8 +491,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        368,
-        0
+        576,
+        256
       ],
       "id": "0eee1867-5396-40c7-865c-cb8cfabc2344",
       "name": "@FORMAT_TEXT_GENERATION"
@@ -506,8 +506,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -192,
-        -512
+        -112,
+        -464
       ],
       "id": "d3f22ac8-43f0-4af5-bcf2-cfa16a077dc3",
       "name": "Sticky Note"
@@ -580,8 +580,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        368,
-        -208
+        576,
+        80
       ],
       "id": "1f62dcd4-fcdf-4a0f-ac19-2607415c2ea0",
       "name": "@YOUTUBE_DATA_CONTENT"
@@ -595,8 +595,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1216,
-        -96
+        1424,
+        160
       ],
       "id": "b407126d-447a-4b7e-9d68-5086f64e408d",
       "name": "Merge"
@@ -681,11 +681,121 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        1408,
-        -96
+        1616,
+        160
       ],
       "name": "@UPLOAD_YOUTUBE_SHADOWING",
       "id": "5303ad5a-e0b5-47b1-8e49-7ddcc0f485cf"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        912,
+        -32
+      ],
+      "id": "23ed7170-d186-4fe2-94f8-7d10d47f8918",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "zhj5BKdTM2K8HPaE",
+          "mode": "list"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "output_thumbnailText_join": "={{ $('Merge1').item.json.output.thumbnailText.join }}",
+            "output_VideoDescription": "={{ $('Merge1').item.json.output.VideoDescription }}",
+            "output": "={{ $('@CONTENT_GENERATION').item.json.output }}",
+            "output_VideoTitle": "={{ $('Merge1').item.json.output.VideoTitle }}",
+            "videoId": "={{ $('Get videoId from timestamp').item.json.videoId }}",
+            "CHANNEL_NAME": "={{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}"
+          },
+          "matchingColumns": [
+            "output_thumbnailText_join",
+            "output_VideoDescription",
+            "output",
+            "output_VideoTitle",
+            "videoId",
+            "CHANNEL_NAME"
+          ],
+          "schema": [
+            {
+              "id": "output_thumbnailText_join",
+              "displayName": "output_thumbnailText_join",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_VideoDescription",
+              "displayName": "output_VideoDescription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_VideoTitle",
+              "displayName": "output_VideoTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CHANNEL_NAME",
+              "displayName": "CHANNEL_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        -32
+      ],
+      "name": "@SHADOWING-THUMBNAIL-CREATOR",
+      "id": "25134342-e8bc-4f7b-98f8-30da1237e2bd"
     }
   ],
   "connections": {
@@ -710,6 +820,11 @@
           },
           {
             "node": "@YOUTUBE_DATA_CONTENT",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
             "type": "main",
             "index": 0
           }
@@ -801,6 +916,11 @@
             "node": "Merge",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -826,13 +946,26 @@
           }
         ]
       ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "@SHADOWING-THUMBNAIL-CREATOR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "pinData": {
     "START": [
       {
@@ -1277,18 +1410,18 @@
       }
     ]
   },
-  "versionId": "41b2ca73-927b-4831-8fb9-f60345623cf3",
+  "versionId": "46ef28f5-0b30-43e5-b923-d27c54a749b7",
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-16T23:15:45.897Z",
       "updatedAt": "2025-10-16T23:15:45.897Z",
+      "createdAt": "2025-10-16T23:15:45.897Z",
       "role": "workflow:owner",
       "workflowId": "7vcjG51SdGRjGJbx",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
-        "createdAt": "2025-08-20T20:52:17.088Z",
         "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
         "id": "TH7SrF7Rx9ho2z9i",
         "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
         "type": "personal",
@@ -1296,13 +1429,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2025-08-20T20:52:17.089Z",
             "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -1336,7 +1469,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-28",
+              "lastActiveAt": "2025-10-29",
               "isPending": false
             }
           }

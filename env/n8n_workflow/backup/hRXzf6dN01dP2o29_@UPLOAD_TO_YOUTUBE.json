@@ -1,6 +1,6 @@
 {
+  "updatedAt": "2025-10-29T19:08:09.000Z",
   "createdAt": "2025-10-02T15:52:42.017Z",
-  "updatedAt": "2025-10-26T09:24:53.000Z",
   "id": "hRXzf6dN01dP2o29",
   "name": "@UPLOAD_TO_YOUTUBE",
   "active": false,
@@ -214,49 +214,10 @@
       "typeVersion": 1,
       "position": [
         1792,
-        1056
+        944
       ],
       "id": "fc27c7df-3eec-45b0-a11f-34539d433de3",
       "name": "Read File Thumb"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "youTubeOAuth2Api",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "videoId",
-              "value": "={{ $('Upload a long').item.json.uploadId }}"
-            },
-            {
-              "name": "uploadType",
-              "value": "multipart"
-            }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "binaryData",
-        "inputDataFieldName": "data",
-        "options": {}
-      },
-      "id": "32da164d-c3ec-43cd-868e-4947549ea447",
-      "name": "Set Thumbnail",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1968,
-        1056
-      ],
-      "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "lC6w9zooePykiKGj",
-          "name": "YouTube n8n account"
-        }
-      }
     },
     {
       "parameters": {
@@ -267,7 +228,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        960,
+        1024,
         848
       ],
       "id": "9418625a-fa0a-4de7-befe-c1782c701efa",
@@ -323,12 +284,12 @@
       "typeVersion": 4.2,
       "position": [
         2144,
-        1056
+        944
       ],
       "credentials": {
         "youTubeOAuth2Api": {
           "id": "lC6w9zooePykiKGj",
-          "name": "YouTube n8n account"
+          "name": "YouTube n8n account-ANCAPSU"
         }
       }
     },
@@ -346,7 +307,7 @@
           "privacyStatus": "private",
           "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');  \n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n\n  const y = d.getFullYear();\n  const M   = pad(d.getMonth() + 1);\n  const D   = pad(d.getDate());\n\n  return `${y}-${M}-${D}T`+$('@SHORT_SCHEDULE_MANAGER1').item.json.APPOINTMENT;\n})()\n}}\n",
           "selfDeclaredMadeForKids": false,
-          "tags": "={{ $('Loop Over Items1').first().json.videoTags.map(t => JSON.stringify(t)).join(',').trim() }}"
+          "tags": "={{ $('Loop Over Items1').first().json.videoTags.join(', ')}}"
         }
       },
       "type": "n8n-nodes-base.youTube",
@@ -361,7 +322,7 @@
       "credentials": {
         "youTubeOAuth2Api": {
           "id": "lC6w9zooePykiKGj",
-          "name": "YouTube n8n account"
+          "name": "YouTube n8n account-ANCAPSU"
         }
       },
       "onError": "continueErrorOutput"
@@ -380,7 +341,7 @@
           "privacyStatus": "private",
           "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');\n\n  const appointmentUtc = $('@LONG_SCHEDULE_MANAGER').item.json.APPOINTMENT;\n\n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n  const [y, M, D] = [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())];\n\n  const t = new Date(`1970-01-01T${appointmentUtc}`);\n  t.setHours(t.getHours() + 6);\n\n  const hh = pad(t.getHours());\n  const mm = pad(t.getMinutes());\n  const ss = pad(t.getSeconds());\n\n  return `${y}-${M}-${D}T${hh}:${mm}:${ss}`;\n})()\n}}\n",
           "selfDeclaredMadeForKids": false,
-          "tags": "={{ $('Get Long Video Info').first().json.videoTags.map(t => JSON.stringify(t)).join(',').trim() }}"
+          "tags": "={{ $('Get Long Video Info').first().json.videoTags.join(', ') }}"
         }
       },
       "type": "n8n-nodes-base.youTube",
@@ -392,10 +353,12 @@
       "id": "6830a84e-5933-429c-9b7c-67d637ea63bc",
       "name": "Upload a long",
       "alwaysOutputData": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
       "credentials": {
         "youTubeOAuth2Api": {
           "id": "lC6w9zooePykiKGj",
-          "name": "YouTube n8n account"
+          "name": "YouTube n8n account-ANCAPSU"
         }
       },
       "onError": "continueErrorOutput"
@@ -437,7 +400,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1200,
+        1216,
         304
       ],
       "id": "94b2148a-b9c7-473a-b9c1-1787b530bc27",
@@ -609,7 +572,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1776,
+        2272,
         1232
       ],
       "id": "490decd7-9997-431c-8b4c-afce046d898a",
@@ -653,7 +616,7 @@
       "typeVersion": 1.3,
       "position": [
         2320,
-        1056
+        944
       ],
       "id": "b48222c1-2d3c-4a39-a2c9-5ee21713f2d9",
       "name": "@NOTIFIER5"
@@ -670,6 +633,84 @@
       ],
       "id": "33c8b807-1749-4e1a-ac04-4a3bf189ed20",
       "name": "Reduce List"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $('Upload a long').item.json.uploadId }}"
+            },
+            {
+              "name": "uploadType",
+              "value": "media"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "744076b9-f1ba-4012-ac08-a1246dbd7380",
+      "name": "Set Thumbnail1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1968,
+        944
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account-ANCAPSU"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $('Upload a long').item.json.uploadId }}"
+            },
+            {
+              "name": "uploadType",
+              "value": "multipart"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "32da164d-c3ec-43cd-868e-4947549ea447",
+      "name": "Set Thumbnail OLD",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3024,
+        224
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account-ANCAPSU"
+        }
+      }
     }
   ],
   "connections": {
@@ -704,12 +745,12 @@
             "index": 0
           },
           {
-            "node": "Get Short Video Info",
+            "node": "Reduce List",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Reduce List",
+            "node": "Get Short Video Info",
             "type": "main",
             "index": 0
           }
@@ -831,18 +872,7 @@
       "main": [
         [
           {
-            "node": "Set Thumbnail",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Set Thumbnail": {
-      "main": [
-        [
-          {
-            "node": "Set Video To Playlist",
+            "node": "Set Thumbnail1",
             "type": "main",
             "index": 0
           }
@@ -929,6 +959,23 @@
           }
         ]
       ]
+    },
+    "Set Thumbnail1": {
+      "main": [
+        [
+          {
+            "node": "Set Video To Playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Thumbnail OLD": {
+      "main": [
+        [],
+        []
+      ]
     }
   },
   "settings": {
@@ -938,189 +985,19 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "START": [
-      {
-        "json": {
-          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-          "videoId": "ppK51M4rzCM",
-          "uploadLongVideoData": [
-            {
-              "videoCutStartTime": 0,
-              "videoCutEndTime": 300,
-              "videoCutTitle": "LICENÇA DE EXPLORAÇÃO: GANHAMOS DOS RUSSOS — CORTE!",
-              "videoCutDescription": "Neste trecho, o Ancapso explica a LICENÇA de exploração do bloco 059 e destaca a chance de encontrar ÓLEO de qualidade. Ele critica a atuação do Ibama, que com a ajuda dos RUSSOS impediu que a exploração fosse realizada na época do Bolsonaro. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM.",
-              "videoHardHook": "Descubra como a licença enfrenta os RUSSOS para garantir o ÓLEO!",
-              "videoTags": [
-                "licença",
-                "exploração",
-                "óleo",
-                "bloco 059",
-                "Ibama",
-                "russos",
-                "polêmica",
-                "ambiental",
-                "Brasil",
-                "politica",
-                "geopolítica",
-                "licenciamento",
-                "petróleo",
-                "Amapá",
-                "Bolsonaro",
-                "Lula",
-                "análise",
-                "energia",
-                "desenvolvimento",
-                "exploração"
-              ],
-              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "thumbTexts": [
-                "LICENÇA ATIVA",
-                "GANHAMOS DOS RUSSOS",
-                "BATALHA PELO ÓLEO",
-                "EXPLORAÇÃO DIRETA"
-              ],
-              "playlist": {
-                "nome": "Geopolítica",
-                "id": "PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR"
-              }
-            }
-          ],
-          "uploadShortVideoData": [
-            {
-              "videoCutStartTime": 49,
-              "videoCutEndTime": 94,
-              "videoCutTitle": "GANHAMOS DOS RUSSOS: LICENÇA EXPLOSIVA - CORTE!",
-              "videoCutDescription": "Neste corte, o apresentador destaca a POLÊMICA dos russos e a interferência no licenciamento ambiental. Ele critica como, na época do BOLSONARO, a autorização já estava em andamento, mas o Ibama bloqueou a medida com o suposto apoio dos RUSSOS, afirmando que \"todo esse movimento ambientalista é russo\". Descubra como essa decisão pode impactar a exploração do PETRÓLEO no país. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "videoHardHook": "Clique e descubra a VERDADE por trás do bloqueio dos russos!",
-              "videoTags": [
-                "licença de exploração",
-                "Ibama",
-                "RUSSOS",
-                "Bolsonaro",
-                "petróleo",
-                "licenciamento",
-                "exploração",
-                "controverso",
-                "notícia",
-                "energia",
-                "política brasileira",
-                "movimento ambientalista",
-                "debate",
-                "explosivo",
-                "análise de risco",
-                "futuro energético",
-                "Petrobras",
-                "pressão internacional",
-                "autonomia",
-                "conflito"
-              ],
-              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "thumbTexts": [
-                "RUSSOS vs LICENÇA"
-              ],
-              "playlist": {
-                "nome": "playlist 1,playlist 2",
-                "id": ""
-              },
-              "idx": 0,
-              "timeStamp": 1761060595365
-            },
-            {
-              "videoCutStartTime": 500,
-              "videoCutEndTime": 550,
-              "videoCutTitle": "CORAIS DO AMAZONAS: A VERDADE REVELADA - CORTE!",
-              "videoCutDescription": "Neste segmento, o apresentador expõe a POLÊMICA dos corais no Amazonas, afirmando que \"não existe PORRA NENHUMA de coral\" na região e que a ideia dos corais do Amazonas é exagero. Com referências a \"meia dúzia de coral\" e à desinformação sobre o tema, esse corte revela a VERDADE por trás das acusações ambientais. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "videoHardHook": "Veja a verdade chocante sobre os CORAIS DO AMAZONAS!",
-              "videoTags": [
-                "Corais do Amazonas",
-                "exploração",
-                "ambientalismo",
-                "teoria dos corais",
-                "verdade",
-                "meia dúzia de coral",
-                "desinformação",
-                "fake news",
-                "debate ambiental",
-                "exagero",
-                "crítica ambiental",
-                "licenciamento ambiental",
-                "meio ambiente",
-                "perfil ambiental",
-                "explosão de informação",
-                "notícia chocante",
-                "controverso",
-                "ecologia",
-                "colapso ambiental",
-                "argumento polêmico"
-              ],
-              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "thumbTexts": [
-                "VERDADE sobre CORAIS"
-              ],
-              "playlist": {
-                "nome": "playlist 1,playlist 2",
-                "id": ""
-              },
-              "idx": 1,
-              "timeStamp": 1761060596365
-            },
-            {
-              "videoCutStartTime": 771,
-              "videoCutEndTime": 820,
-              "videoCutTitle": "CONGRESSO DOMINA: LICENÇA REVOLUCIONADA - CORTE!",
-              "videoCutDescription": "Neste corte, o foco é na POLÊTICA brasileira, onde o apresentador elogia o Ibama e Lula por forçarem a licença de exploração, mas aponta que o GRANDE RESPONSÁVEL foi o CONGRESSO ao aprovar a nova lei ambiental. Com argumentos sobre a necessidade de desenvolvimento econômico no Amapá e críticas ao sistema de licenciamento, esse trecho promete sacudir o cenário político. Veja o vídeo completo: https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "videoHardHook": "Descubra como o CONGRESSO revolucionou o LICENCIAMENTO!",
-              "videoTags": [
-                "Congresso",
-                "Ibama",
-                "LULA",
-                "licença ambiental",
-                "política",
-                "controvérsia",
-                "exploração de petróleo",
-                "nova lei",
-                "desenvolvimento econômico",
-                "Brasil",
-                "poder legislativo",
-                "debate político",
-                "análise de risco",
-                "base do Amapá",
-                "licenciamento",
-                "exploração",
-                "governo",
-                "polêmica",
-                "decisão política",
-                "impacto econômico"
-              ],
-              "videoUrl": "https://www.youtube.com/watch?v=ppK51M4rzCM",
-              "thumbTexts": [
-                "CONGRESSO MUDANDO REGRAS"
-              ],
-              "playlist": {
-                "nome": "playlist 1,playlist 2",
-                "id": ""
-              },
-              "idx": 2,
-              "timeStamp": 1761060597365
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "versionId": "0d9a09f7-4c56-4337-bb08-d0b47b17e0c2",
+  "pinData": {},
+  "versionId": "1c9f3599-0d40-4b34-a7e0-f83fee6a1255",
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-10-02T15:52:42.042Z",
       "updatedAt": "2025-10-02T15:52:42.042Z",
+      "createdAt": "2025-10-02T15:52:42.042Z",
       "role": "workflow:owner",
       "workflowId": "hRXzf6dN01dP2o29",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
-        "createdAt": "2025-08-20T20:52:17.088Z",
         "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
         "id": "TH7SrF7Rx9ho2z9i",
         "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
         "type": "personal",
@@ -1128,13 +1005,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2025-08-20T20:52:17.089Z",
             "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -1168,7 +1045,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-28",
+              "lastActiveAt": "2025-10-29",
               "isPending": false
             }
           }

@@ -1,6 +1,6 @@
 {
-  "createdAt": "2025-08-20T21:09:28.255Z",
   "updatedAt": "2025-10-09T00:20:56.000Z",
+  "createdAt": "2025-08-20T21:09:28.255Z",
   "id": "sk6qHDqmsTEMLNsp",
   "name": "@AUDIO_EXTRACTOR",
   "active": false,
@@ -316,14 +316,14 @@
   "triggerCount": 0,
   "shared": [
     {
-      "createdAt": "2025-08-20T21:09:28.278Z",
       "updatedAt": "2025-08-20T21:09:28.278Z",
+      "createdAt": "2025-08-20T21:09:28.278Z",
       "role": "workflow:owner",
       "workflowId": "sk6qHDqmsTEMLNsp",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
-        "createdAt": "2025-08-20T20:52:17.088Z",
         "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
         "id": "TH7SrF7Rx9ho2z9i",
         "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
         "type": "personal",
@@ -331,13 +331,13 @@
         "description": null,
         "projectRelations": [
           {
-            "createdAt": "2025-08-20T20:52:17.089Z",
             "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
+              "updatedAt": "2025-10-29T19:06:54.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
-              "updatedAt": "2025-10-28T13:05:36.000Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
               "firstName": "Hugo",
@@ -371,7 +371,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-28",
+              "lastActiveAt": "2025-10-29",
               "isPending": false
             }
           }
