@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-10-29T23:24:25.000Z",
+  "updatedAt": "2025-10-30T23:31:30.000Z",
   "createdAt": "2025-10-16T23:15:45.583Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
@@ -348,7 +348,7 @@
     },
     {
       "parameters": {
-        "command": "=#!/usr/bin/env bash\nset -Eeuo pipefail\n\n############# CONFIG #############\n# Como a imagem deve se ajustar ao canvas: contain | cover | stretch\nSCALE_MODE=\"${SCALE_MODE:-stretch}\"\n\n# LAYOUT (paisagem)\nCANVAS_W=1920\nCANVAS_H=1080\n\nBG_COLOR=\"black\"\n\n# Texto (libass): Impact do diretório COMMON/fonts\nFONT_ROOT=\"/home/node/assets/COMMON/fonts\"   # <- atenção: \"node\" (sem 's')\nFONT_FILE=\"${FONT_FILE:-$FONT_ROOT/impact.ttf}\"\nFONT_NAME=\"${FONT_NAME:-Impact}\"\nFONT_SIZE=${FONT_SIZE:-96}\nSAFE_MARGIN=${SAFE_MARGIN:-96}\n\n# Knobs de espessura do contorno/sombra (pode ajustar por env)\nTEXT_OUTLINE=\"${TEXT_OUTLINE:-1.0}\"   # 0.8–1.2 deixa fino/crisp\nTEXT_SHADOW=\"${TEXT_SHADOW:-0.2}\"     # 0–0.5; 0 = sem sombra\n\n# Fades nas bordas de cada clipe (além do xfade entre cenas)\nEDGE_FADE_SEC=\"${EDGE_FADE_SEC:-0.25}\"    # vídeo (in/out)\nAUDIO_FADE_SEC=\"${AUDIO_FADE_SEC:-0.12}\"  # audio (in/out)\n\n# Encoder\nX264_PRESET=\"${X264_PRESET:-veryfast}\"\nX264_CRF=${X264_CRF:-21}\nAUDIO_BR=\"${AUDIO_BR:-160k}\"\n\n# Waveform (quando houver áudio)\nWAVEFORM_ENABLE=\"${WAVEFORM_ENABLE:-1}\"        # 1 liga, 0 desliga\nWAVEFORM_WIDTH_PCT=\"${WAVEFORM_WIDTH_PCT:-60}\" # 60% da largura\nWAVEFORM_HEIGHT=\"${WAVEFORM_HEIGHT:-200}\"      # px\nWAVEFORM_OPACITY=\"${WAVEFORM_OPACITY:-0.95}\"   # 0–1 (quase sólida)\nWAVEFORM_MARGIN_BOTTOM=\"${WAVEFORM_MARGIN_BOTTOM:-12}\"  # px do rodapé\nWAVEFORM_MODE=\"${WAVEFORM_MODE:-bar}\"          # \"bar\" simulado engrossando a linha\n\n# Barra de progresso countdown (fase REPEAT)\nCOUNTDOWN_ENABLE=\"${COUNTDOWN_ENABLE:-1}\"           # 1 liga, 0 desliga\nCOUNTDOWN_HEIGHT=\"${COUNTDOWN_HEIGHT:-20}\"          # altura da barra em px\nCOUNTDOWN_MARGIN_BOTTOM=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"  # distância do rodapé\nCOUNTDOWN_COLOR=\"${COUNTDOWN_COLOR:-FFFFFF}\"        # cor em hex (branca: FFFFFF)\nCOUNTDOWN_BG_COLOR=\"${COUNTDOWN_BG_COLOR:-333333}\"  # fundo da barra (cinza escuro)\n\n# Backgrounds (ciclo fixo por cena)\nBASE_BG_DIR=\"/home/node/assets/CANAL_SHADOWING\"\nLISTEN_IMG=\"${BASE_BG_DIR}/listen01.png\"\nREPEAT_IMG=\"${BASE_BG_DIR}/repeat01.png\"\nTOGETHER_IMG=\"${BASE_BG_DIR}/talk-together01.png\"\nSCENE_XFADE_SEC=\"${SCENE_XFADE_SEC:-0.6}\"\n##################################\n\n# ============ VARS DINÂMICAS DO n8n ============\nVIDEO_ID=\"{{ $('Get videoId from timestamp').item.json.videoId || $json.videoId || Date.now() }}\"\nCHANNEL_NAME=\"{{ $json.CHANNEL_NAME || 'CANAL_SHADOWING' }}\"\nexport VIDEO_ID CHANNEL_NAME\n# ==============================================\n\n# Workdir temporário\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"; : > \"$LIST\"\n\n# Garante Impact do diretório pedido (case-insensitive + otf)\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"$FONT_ROOT/impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.otf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.otf\"\n  fi\nfi\nFONT_DIR=\"$(dirname \"$FONT_FILE\")\"\n\n# ===== utils: números com 3 casas (awk) =====\nclamp_start () {\n  # $1 = DUR, $2 = fade_sec\n  awk -v d=\"$1\" -v f=\"$2\" 'BEGIN{ s=d-f; if (s<0) s=0; printf \"%.3f\", s }'\n}\n\n# =========== Entrada JSON (do node anterior) ===========\nIN_JSON=\"$TMPDIR/in.json\"\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n[ -s \"$IN_JSON\" ] || { echo \"ERRO: Entrada JSON vazia\"; exit 1; }\n\n# ==================== FUNÇÕES ====================\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\n\nscale_to_canvas () {\n  case \"$SCALE_MODE\" in\n    cover)   echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=increase,crop=${CANVAS_W}:${CANVAS_H}\" ;;\n    stretch) echo \"scale=${CANVAS_W}:${CANVAS_H}\" ;;\n    *)       echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\" ;;\n  esac\n}\n\n# .ass centralizado, wrap automático, fonte branca + contorno cinza fino\nmake_ass_file () { # $1: .ass ; $2: texto\n  local ASS=\"$1\" RAW=\"$2\" TXT\n  TXT=\"$(printf '%s' \"$RAW\" | sed -e 's/[{}]/()/g' -e 's/\\\\/\\\\\\\\/g')\"\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\n; Cores em ASS = &HAABBGGRR (A=alpha, BB=azul, GG=verde, RR=vermelho)\n; Primary=branco, Outline=cinza escuro (#404040), sem back/shadow pesado\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, ${FONT_NAME}, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00404040, &H00000000, 0, 0, 0, 0, 100, 100, 0, 0, 1, ${TEXT_OUTLINE}, ${TEXT_SHADOW}, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\n# Texto + áudio + BG (+ waveform branco no rodapé) + fades nas bordas\nmake_text_over_audio () { # $1 SRC, $2 OUT, $3 TXT, $4 IMG (passe IMG=\"\" p/ fundo preto)\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  # calcula inícios do fade-out (clampeados)\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  local WF_W=$(( CANVAS_W * ${WAVEFORM_WIDTH_PCT:-60} / 100 ))\n  local WF_H=${WAVEFORM_HEIGHT:-200}\n\n  local REQ_MODE=\"${WAVEFORM_MODE:-bar}\"\n  local SW_MODE=\"line\"\n  local THICK_MUL=3\n  if [ \"$REQ_MODE\" = \"line\" ]; then THICK_MUL=1; fi\n  local WF_HI=$(( WF_H * THICK_MUL ))\n\n  local WF_CHAIN=\"\"\n  if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n    WF_CHAIN=\"[0:a]showwaves=s=${WF_W}x${WF_HI}:mode=${SW_MODE}:colors=white,format=rgba,colorkey=black:similarity=0.01:blend=0,scale=${WF_W}x${WF_H},colorchannelmixer=aa=${WAVEFORM_OPACITY:-0.95}[wv];\"\n  fi\n\n  local OVERLAY_EXPR=\"x=(W-w)/2:y=H-${WAVEFORM_MARGIN_BOTTOM:-12}-h\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR}[txt];\\\n${WF_CHAIN}\\\n[txt][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  else\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR}[bg];\\\n${WF_CHAIN}\\\n[bg][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  fi\n}\n\n# Silêncio + Texto + Barra de Progresso Countdown (animada via GEQ/alpha) + fades nas bordas (vídeo) + afade (mesmo com anullsrc)\nmake_silence_with_text () { # $1 OUT, $2 DUR, $3 TXT, $4 IMG\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  # calcula início do fade-out (clampeado)\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  # Geometria da barra\n  local BAR_H=\"${COUNTDOWN_HEIGHT:-20}\"\n  local BAR_MARGIN=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"\n  local BAR_W=$((CANVAS_W - 200))   # 100 px de margem por lado\n  local BAR_X=100\n  local BAR_Y=$((CANVAS_H - BAR_MARGIN - BAR_H))\n\n  # Barra animada (de cheia -> zero em DUR)\n  local COUNTDOWN_FILTER=\"\"\n  if [ \"${COUNTDOWN_ENABLE:-1}\" -eq 1 ]; then\n    COUNTDOWN_FILTER=\"\\\ncolor=c=white:size=${BAR_W}x${BAR_H}:rate=30:duration=${DUR},format=rgba,\\\ngeq=r='255':g='255':b='255':a='if(lte(X, W*max(1 - T/${DUR}, 0)), 255, 0)'[bar];\\\n[txt]drawbox=x=${BAR_X}:y=${BAR_Y}:w=${BAR_W}:h=${BAR_H}:color=0x${COUNTDOWN_BG_COLOR}:t=fill[txtbg];\\\n[txtbg][bar]overlay=${BAR_X}:${BAR_Y},\"\n  fi\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Xfade entre cenas (TOGETHER -> LISTEN)\nmake_scene_xfade () { # $1 P, $2 N, $3 OUT, $4 DUR\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y \\\n    -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n    -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n    -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n}\n\n# ======== TSV a partir do JSON ========\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\nconst env = process.env;\n\nconst path = process.argv[2];\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = env.CHANNEL_NAME || arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = env.VIDEO_ID     || arr[0].videoId      || String(Date.now());\n\nconst outDir  = `/home/node/download/${ch}/${vid}`;\nconst outName = `shadow_${vid}.mp4`;\n\nconsole.log(`#DEST_DIR=${outDir}`);\nconsole.log(`#FINAL_OUT=${outDir}/${outName}`);\nconsole.log(`#VIDEO_ID=${vid}`);\nconsole.log(`#CHANNEL_NAME=${ch}`);\n\n// Para cada item, emitimos: audio|texto|scene\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '').replace(/\\r?\\n/g, ' ');\n  console.log([audio, text, scene].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nFINAL_OUT=$(grep '^#FINAL_OUT=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n[ -n \"$DEST_DIR\" ] || { echo \"Falha ao obter DEST_DIR\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n# ================= Loop principal =================\nlast_scene=\"\"; idx=0; read_first_line=1\nexec 9< \"$DATA_FILE\"\nwhile IFS='|' read -r -u 9 SRC TXT SCENE; do\n  # Verifica se há arquivo de áudio e se ele existe\n  if [ -z \"${SRC:-}\" ]; then\n    echo \"AVISO: Linha sem arquivo de áudio (texto: ${TXT:0:50}...)\"\n    continue\n  fi\n  if [ ! -f \"$SRC\" ]; then\n    echo \"ERRO: Arquivo de áudio não encontrado: $SRC\"\n    echo \"Verifique se o processo anterior gerou os arquivos corretamente.\"\n    exit 1\n  fi\n  \n  DUR=$(probe_dur \"$SRC\")\n  if [ -z \"$DUR\" ] || [ \"$DUR\" = \"0\" ] || [ \"$DUR\" = \"0.000000\" ]; then\n    echo \"ERRO: Duração inválida para $SRC (dur=$DUR)\"\n    exit 1\n  fi\n\n  # Inter-cena: xfade TOGETHER -> LISTEN\n  if [ \"$read_first_line\" -eq 0 ] && [ \"$SCENE\" != \"$last_scene\" ]; then\n    XF=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_scene_${last_scene}_to_${SCENE}.mp4\"\n    make_scene_xfade \"$TOGETHER_IMG\" \"$LISTEN_IMG\" \"$XF\" \"${SCENE_XFADE_SEC:-0.6}\"\n    printf \"file '%s'\\n\" \"$XF\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n  read_first_line=0; last_scene=\"$SCENE\"\n\n  if [ \"$SCENE\" -eq 0 ]; then\n    # ===== Cena 0: apenas UM take, fundo preto (sem 3 repetições) =====\n    P0=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_intro_s0.mp4\"\n    # Passa IMG=\"\" para usar a cor BG_COLOR (preto)\n    make_text_over_audio \"$SRC\" \"$P0\" \"$TXT\" \"\"\n    printf \"file '%s'\\n\" \"$P0\" >> \"$LIST\"; idx=$((idx+1))\n  else\n    # ===== Demais cenas: ciclo fixo LISTEN -> REPEAT -> TOGETHER =====\n\n    # 1) LISTEN: áudio + texto + waveform branca no rodapé (com fade in/out)\n    P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_listen_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$LISTEN_IMG\"\n    printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n\n    # xfade LISTEN -> REPEAT\n    if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n      X1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_listen_to_repeat_s${SCENE}.mp4\"\n      make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X1\" \"${SCENE_XFADE_SEC:-0.6}\"\n      printf \"file '%s'\\n\" \"$X1\" >> \"$LIST\"; idx=$((idx+1))\n    fi\n\n    # 2) REPEAT: silêncio do tamanho do áudio + texto + COUNTDOWN (com fade in/out de vídeo)\n    PR=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_repeat_s${SCENE}.mp4\"\n    make_silence_with_text \"$PR\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n    printf \"file '%s'\\n\" \"$PR\" >> \"$LIST\"; idx=$((idx+1))\n\n    # xfade REPEAT -> TOGETHER\n    if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n      X2=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_repeat_to_together_s${SCENE}.mp4\"\n      make_scene_xfade \"$REPEAT_IMG\" \"$TOGETHER_IMG\" \"$X2\" \"${SCENE_XFADE_SEC:-0.6}\"\n      printf \"file '%s'\\n\" \"$X2\" >> \"$LIST\"; idx=$((idx+1))\n    fi\n\n    # 3) TOGETHER: replay do áudio + texto + waveform (com fade in/out)\n    P3=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_together_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P3\" \"$TXT\" \"$TOGETHER_IMG\"\n    printf \"file '%s'\\n\" \"$P3\" >> \"$LIST\"; idx=$((idx+1))\n  fi\ndone\nexec 9<&-\n\n# Concat final\nffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK: $FINAL_OUT\"\n"
+        "command": "=#!/usr/bin/env bash\nset -Eeuo pipefail\n\n############# CONFIG #############\n# Como a imagem deve se ajustar ao canvas: contain | cover | stretch\nSCALE_MODE=\"${SCALE_MODE:-stretch}\"\n\n# LAYOUT (paisagem)\nCANVAS_W=1920\nCANVAS_H=1080\n\nBG_COLOR=\"black\"\n\n# Texto (libass): Impact do diretório COMMON/fonts\nFONT_ROOT=\"/home/node/assets/COMMON/fonts\"   # <- atenção: \"node\" (sem 's')\nFONT_FILE=\"${FONT_FILE:-$FONT_ROOT/impact.ttf}\"\nFONT_NAME=\"${FONT_NAME:-Impact}\"\nFONT_SIZE=${FONT_SIZE:-72}\nSAFE_MARGIN=${SAFE_MARGIN:-72}\n\n# Knobs de espessura do contorno/sombra (pode ajustar por env)\nTEXT_OUTLINE=\"${TEXT_OUTLINE:-0.6}\"   # 0.8–1.2 deixa fino/crisp\nTEXT_SHADOW=\"${TEXT_SHADOW:-0.12}\"     # 0–0.5; 0 = sem sombra\n\n# Fades nas bordas de cada clipe (além do xfade entre cenas)\nEDGE_FADE_SEC=\"${EDGE_FADE_SEC:-0.25}\"    # vídeo (in/out)\nAUDIO_FADE_SEC=\"${AUDIO_FADE_SEC:-0.12}\"  # audio (in/out)\n\n# Encoder\nX264_PRESET=\"${X264_PRESET:-veryfast}\"\nX264_CRF=${X264_CRF:-21}\nAUDIO_BR=\"${AUDIO_BR:-160k}\"\n\n# Waveform (quando houver áudio)\nWAVEFORM_ENABLE=\"${WAVEFORM_ENABLE:-1}\"        # 1 liga, 0 desliga\nWAVEFORM_WIDTH_PCT=\"${WAVEFORM_WIDTH_PCT:-60}\" # 60% da largura\nWAVEFORM_HEIGHT=\"${WAVEFORM_HEIGHT:-200}\"      # px\nWAVEFORM_OPACITY=\"${WAVEFORM_OPACITY:-0.95}\"   # 0–1 (quase sólida)\nWAVEFORM_MARGIN_BOTTOM=\"${WAVEFORM_MARGIN_BOTTOM:-12}\"  # px do rodapé\nWAVEFORM_MODE=\"${WAVEFORM_MODE:-bar}\"          # \"bar\" simulado engrossando a linha\n\n# Barra de progresso countdown (fase REPEAT)\nCOUNTDOWN_ENABLE=\"${COUNTDOWN_ENABLE:-1}\"           # 1 liga, 0 desliga\nCOUNTDOWN_HEIGHT=\"${COUNTDOWN_HEIGHT:-20}\"          # altura da barra em px\nCOUNTDOWN_MARGIN_BOTTOM=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"  # distância do rodapé\nCOUNTDOWN_COLOR=\"${COUNTDOWN_COLOR:-FFFFFF}\"        # cor em hex (branca: FFFFFF)\nCOUNTDOWN_BG_COLOR=\"${COUNTDOWN_BG_COLOR:-333333}\"  # fundo da barra (cinza escuro)\n\n# Backgrounds (ciclo fixo por cena)\nBASE_BG_DIR=\"/home/node/assets/CANAL_SHADOWING\"\nLISTEN_IMG=\"${BASE_BG_DIR}/listen01.png\"\nREPEAT_IMG=\"${BASE_BG_DIR}/repeat01.png\"\nTOGETHER_IMG=\"${BASE_BG_DIR}/talk-together01.png\"\nSCENE_XFADE_SEC=\"${SCENE_XFADE_SEC:-0.6}\"\n##################################\n\n# ============ VARS DINÂMICAS DO n8n ============\nVIDEO_ID=\"{{ $('Get videoId from timestamp').item.json.videoId || $json.videoId || Date.now() }}\"\nCHANNEL_NAME=\"{{ $json.CHANNEL_NAME || 'CANAL_SHADOWING' }}\"\nexport VIDEO_ID CHANNEL_NAME\n# ==============================================\n\n# Workdir temporário\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"; : > \"$LIST\"\n\n# Garante Impact do diretório pedido (case-insensitive + otf)\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"$FONT_ROOT/impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.otf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.otf\"\n  fi\nfi\nFONT_DIR=\"$(dirname \"$FONT_FILE\")\"\n\n# Descobre o \"family name\" interno do arquivo de fonte para evitar fallback\nif command -v fc-scan >/dev/null 2>&1; then\n  INTERNAL_NAME=\"$(fc-scan --format='%{family}\\n' \"$FONT_FILE\" 2>/dev/null | head -n1 || true)\"\n  if [ -n \"$INTERNAL_NAME\" ]; then\n    FONT_NAME=\"$INTERNAL_NAME\"\n  fi\nfi\n\n# ===== utils: números com 3 casas (awk) =====\nclamp_start () {\n  # $1 = DUR, $2 = fade_sec\n  awk -v d=\"$1\" -v f=\"$2\" 'BEGIN{ s=d-f; if (s<0) s=0; printf \"%.3f\", s }'\n}\n\n# =========== Entrada JSON (do node anterior) ===========\nIN_JSON=\"$TMPDIR/in.json\"\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n[ -s \"$IN_JSON\" ] || { echo \"ERRO: Entrada JSON vazia\"; exit 1; }\n\n# ==================== FUNÇÕES ====================\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\n\nscale_to_canvas () {\n  case \"$SCALE_MODE\" in\n    cover)   echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=increase,crop=${CANVAS_W}:${CANVAS_H}\" ;;\n    stretch) echo \"scale=${CANVAS_W}:${CANVAS_H}\" ;;\n    *)       echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\" ;;\n  esac\n}\n\n# .ass centralizado, wrap automático, fonte branca + contorno cinza fino\nmake_ass_file () { # $1: .ass ; $2: texto\n  local ASS=\"$1\" RAW=\"$2\" SAN TXT STYLE_OVERRIDE\n  # Sanitize do texto do usuário (preserva as chaves do override)\n  SAN=\"$(printf '%s' \"$RAW\" | sed -e 's/[{}]/()/g' -e 's/\\\\/\\\\\\\\/g')\"\n\n  # Override para garantir fonte e espessura finas\n  STYLE_OVERRIDE=\"{\\\\fn${FONT_NAME}\\\\bord${TEXT_OUTLINE}\\\\shad${TEXT_SHADOW}\\\\b0}\"\n\n  TXT=\"${STYLE_OVERRIDE}${SAN}\"\n\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\n; Cores em ASS = &HAABBGGRR (A=alpha, BB=azul, GG=verde, RR=vermelho)\n; Primary=branco, Outline=cinza escuro (#404040), sem back/shadow pesado\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, ${FONT_NAME}, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00404040, &H00000000, 0, 0, 0, 0, 100, 100, 0, 0, 1, ${TEXT_OUTLINE}, ${TEXT_SHADOW}, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\n\n# Texto + áudio + BG (+ waveform branco no rodapé) + fades nas bordas\nmake_text_over_audio () { # $1 SRC, $2 OUT, $3 TXT, $4 IMG (passe IMG=\"\" p/ fundo preto)\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  # calcula inícios do fade-out (clampeados)\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  local WF_W=$(( CANVAS_W * ${WAVEFORM_WIDTH_PCT:-60} / 100 ))\n  local WF_H=${WAVEFORM_HEIGHT:-200}\n\n  local REQ_MODE=\"${WAVEFORM_MODE:-bar}\"\n  local SW_MODE=\"line\"\n  local THICK_MUL=3\n  if [ \"$REQ_MODE\" = \"line\" ]; then THICK_MUL=1; fi\n  local WF_HI=$(( WF_H * THICK_MUL ))\n\n  local WF_CHAIN=\"\"\n  if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n    WF_CHAIN=\"[0:a]showwaves=s=${WF_W}x${WF_HI}:mode=${SW_MODE}:colors=white,format=rgba,colorkey=black:similarity=0.01:blend=0,scale=${WF_W}x${WF_H},colorchannelmixer=aa=${WAVEFORM_OPACITY:-0.95}[wv];\"\n  fi\n\n  local OVERLAY_EXPR=\"x=(W-w)/2:y=H-${WAVEFORM_MARGIN_BOTTOM:-12}-h\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR}[txt];\\\n${WF_CHAIN}\\\n[txt][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  else\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR}[bg];\\\n${WF_CHAIN}\\\n[bg][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  fi\n}\n\n# Silêncio + Texto + Barra de Progresso Countdown (animada via GEQ/alpha) + fades nas bordas (vídeo) + afade (mesmo com anullsrc)\nmake_silence_with_text () { # $1 OUT, $2 DUR, $3 TXT, $4 IMG\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  # calcula início do fade-out (clampeado)\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  # Geometria da barra\n  local BAR_H=\"${COUNTDOWN_HEIGHT:-20}\"\n  local BAR_MARGIN=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"\n  local BAR_W=$((CANVAS_W - 200))   # 100 px de margem por lado\n  local BAR_X=100\n  local BAR_Y=$((CANVAS_H - BAR_MARGIN - BAR_H))\n\n  # Barra animada (de cheia -> zero em DUR)\n  local COUNTDOWN_FILTER=\"\"\n  if [ \"${COUNTDOWN_ENABLE:-1}\" -eq 1 ]; then\n    COUNTDOWN_FILTER=\"\\\ncolor=c=white:size=${BAR_W}x${BAR_H}:rate=30:duration=${DUR},format=rgba,\\\ngeq=r='255':g='255':b='255':a='if(lte(X, W*max(1 - T/${DUR}, 0)), 255, 0)'[bar];\\\n[txt]drawbox=x=${BAR_X}:y=${BAR_Y}:w=${BAR_W}:h=${BAR_H}:color=0x${COUNTDOWN_BG_COLOR}:t=fill[txtbg];\\\n[txtbg][bar]overlay=${BAR_X}:${BAR_Y},\"\n  fi\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]$(scale_to_canvas)[bg];\\\n[bg]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]ass='$ASSF':shaping=1:fontsdir=${FONT_DIR},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\n# Xfade entre cenas (TOGETHER -> LISTEN)\nmake_scene_xfade () { # $1 P, $2 N, $3 OUT, $4 DUR\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y \\\n    -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n    -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n    -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n}\n\n# ======== TSV a partir do JSON ========\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\nconst env = process.env;\n\nconst path = process.argv[2];\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = env.CHANNEL_NAME || arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = env.VIDEO_ID     || arr[0].videoId      || String(Date.now());\n\nconst outDir  = `/home/node/download/${ch}/${vid}`;\nconst outName = `shadow_${vid}.mp4`;\n\nconsole.log(`#DEST_DIR=${outDir}`);\nconsole.log(`#FINAL_OUT=${outDir}/${outName}`);\nconsole.log(`#VIDEO_ID=${vid}`);\nconsole.log(`#CHANNEL_NAME=${ch}`);\n\n// Para cada item, emitimos: audio|texto|scene\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '').replace(/\\r?\\n/g, ' ');\n  console.log([audio, text, scene].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nFINAL_OUT=$(grep '^#FINAL_OUT=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n[ -n \"$DEST_DIR\" ] || { echo \"Falha ao obter DEST_DIR\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n# ================= Loop principal =================\nlast_scene=\"\"; idx=0; read_first_line=1\nexec 9< \"$DATA_FILE\"\nwhile IFS='|' read -r -u 9 SRC TXT SCENE; do\n  # Verifica se há arquivo de áudio e se ele existe\n  if [ -z \"${SRC:-}\" ]; then\n    echo \"AVISO: Linha sem arquivo de áudio (texto: ${TXT:0:50}...)\"\n    continue\n  fi\n  if [ ! -f \"$SRC\" ]; then\n    echo \"ERRO: Arquivo de áudio não encontrado: $SRC\"\n    echo \"Verifique se o processo anterior gerou os arquivos corretamente.\"\n    exit 1\n  fi\n  \n  DUR=$(probe_dur \"$SRC\")\n  if [ -z \"$DUR\" ] || [ \"$DUR\" = \"0\" ] || [ \"$DUR\" = \"0.000000\" ]; then\n    echo \"ERRO: Duração inválida para $SRC (dur=$DUR)\"\n    exit 1\n  fi\n\n  # Inter-cena: xfade TOGETHER -> LISTEN\n  if [ \"$read_first_line\" -eq 0 ] && [ \"$SCENE\" != \"$last_scene\" ]; then\n    XF=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_scene_${last_scene}_to_${SCENE}.mp4\"\n    make_scene_xfade \"$TOGETHER_IMG\" \"$LISTEN_IMG\" \"$XF\" \"${SCENE_XFADE_SEC:-0.6}\"\n    printf \"file '%s'\\n\" \"$XF\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n  read_first_line=0; last_scene=\"$SCENE\"\n\n  if [ \"$SCENE\" -eq 0 ]; then\n    # ===== Cena 0: apenas UM take, fundo preto (sem 3 repetições) =====\n    P0=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_intro_s0.mp4\"\n    # Passa IMG=\"\" para usar a cor BG_COLOR (preto)\n    make_text_over_audio \"$SRC\" \"$P0\" \"$TXT\" \"\"\n    printf \"file '%s'\\n\" \"$P0\" >> \"$LIST\"; idx=$((idx+1))\n  else\n    # ===== Demais cenas: ciclo fixo LISTEN -> REPEAT -> TOGETHER =====\n\n    # 1) LISTEN: áudio + texto + waveform branca no rodapé (com fade in/out)\n    P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_listen_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$LISTEN_IMG\"\n    printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n\n    # xfade LISTEN -> REPEAT\n    if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n      X1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_listen_to_repeat_s${SCENE}.mp4\"\n      make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X1\" \"${SCENE_XFADE_SEC:-0.6}\"\n      printf \"file '%s'\\n\" \"$X1\" >> \"$LIST\"; idx=$((idx+1))\n    fi\n\n    # 2) REPEAT: silêncio do tamanho do áudio + texto + COUNTDOWN (com fade in/out de vídeo)\n    PR=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_repeat_s${SCENE}.mp4\"\n    make_silence_with_text \"$PR\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n    printf \"file '%s'\\n\" \"$PR\" >> \"$LIST\"; idx=$((idx+1))\n\n    # xfade REPEAT -> TOGETHER\n    if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n      X2=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_repeat_to_together_s${SCENE}.mp4\"\n      make_scene_xfade \"$REPEAT_IMG\" \"$TOGETHER_IMG\" \"$X2\" \"${SCENE_XFADE_SEC:-0.6}\"\n      printf \"file '%s'\\n\" \"$X2\" >> \"$LIST\"; idx=$((idx+1))\n    fi\n\n    # 3) TOGETHER: replay do áudio + texto + waveform (com fade in/out)\n    P3=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_together_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P3\" \"$TXT\" \"$TOGETHER_IMG\"\n    printf \"file '%s'\\n\" \"$P3\" >> \"$LIST\"; idx=$((idx+1))\n  fi\ndone\nexec 9<&-\n\n# Concat final\nffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK: $FINAL_OUT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -420,8 +420,7 @@
         464
       ],
       "id": "388efcf4-fd8d-425f-9853-ab96439299c2",
-      "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES",
-      "disabled": true
+      "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES"
     },
     {
       "parameters": {
@@ -707,12 +706,14 @@
         "workflowId": {
           "__rl": true,
           "value": "zhj5BKdTM2K8HPaE",
-          "mode": "list"
+          "mode": "list",
+          "cachedResultUrl": "/workflow/zhj5BKdTM2K8HPaE",
+          "cachedResultName": "@SHADOWING-THUMBNAIL-CREATOR"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "output_thumbnailText_join": "={{ $('Merge1').item.json.output.thumbnailText.join }}",
+            "output_thumbnailText_join": "={{ $('Merge1').item.json.output.thumbnailText.join() }}",
             "output_VideoDescription": "={{ $('Merge1').item.json.output.VideoDescription }}",
             "output": "={{ $('@CONTENT_GENERATION').item.json.output }}",
             "output_VideoTitle": "={{ $('Merge1').item.json.output.VideoTitle }}",
@@ -970,447 +971,18 @@
     "START": [
       {
         "json": {
-          "theme": "Passive voice in simple present and simple past",
+          "theme": "Future with will going to and present continuous",
           "duration": 3,
           "level": "B2",
-          "mode": "Story: Father tell to his daughter how was his adventures in childwood.",
+          "mode": "Narrative: Tomorrow we are going to say goodbye for the last time",
           "imageStyle": "",
           "scenes": 4,
-          "targetWordsPerParagraph": 40
-        }
-      }
-    ],
-    "Get videoId from timestamp": [
-      {
-        "json": {
-          "videoId": "1761691131885"
-        }
-      }
-    ],
-    "@CONTENT_GENERATION": [
-      {
-        "json": {
-          "output": "Father: I begin to tell you the story of my childhood adventures that were filled with wonder and excitement I was a young boy in a small town where hidden treasures were discovered by eager eyes and unknown places were visited by my curious friends\n\nDaughter: I listen with great interest and wonder to the words that are spoken by you and I ask what magical adventures were driven by the care of those who were always present to guide us in secret moments and please explain every detail\n\nFather: I recall a time when a wooden boat was built by local craftsmen and a secret letter was written by an unknown friend The game of hide and seek was organized by the children in a garden where surprises were prepared by caring hands and mysteries were kept safe in every corner\n\nDaughter: The words of your past make me feel a deep joy and I wonder how such adventures are planned in a way that every small detail is cherished by those who are linked to a time that is lost and remembered at the same time\n\nFather: I was invited to a place where a hidden trail was marked by bright stones and a special note was given by a wise elder The secrets of that route were asked by many and the magic of those paths is celebrated by all who see that history as a living dream of childhood\n\nDaughter: I am amazed by your descriptions and I feel that every scene is painted in a gentle light that is remembered by the old and adored by the young I ask if such moments are really experienced or if they are created by the memories of a heart that never forgets\n\nFather: I close my tale with a hope that my adventures are remembered by you and that a similar journey will be offered to you by the world when a new day is begun in a place where dreams are built by the love and care of each passing moment\n\nDaughter: I feel very blessed to have heard a story that is filled with wonder and that was nurtured by experiences that were shared between all the people who value the past and look for truth in every beautiful memory always"
-        }
-      }
-    ],
-    "@YOUTUBE_DATA_CONTENT": [
-      {
-        "json": {
-          "output": {
-            "VideoTitle": "Level B2 | English Shadowing Passive Voice Story Father and Daughter Adventures",
-            "VideoDescription": "Practice your English shadowing skills with this engaging story about a father's childhood adventures told to his daughter. Listen carefully to how the passive voice is used in both simple present and simple past tenses to describe events and experiences. This video helps you get a natural sense of how passive constructions like \"were discovered,\" \"were built,\" and \"was written\" appear in real speech. The father recounts magical moments where hidden treasures were found, secret letters were written, and childhood games were organized, all while the daughter listens with wonder. You’ll come across phrasal verbs and expressions that support storytelling and memory recall, such as \"look for,\" \"keep safe,\" and \"ask for.\" Listen once to absorb the story, then repeat aloud to practice fluency, and finally shadow with the audio to enhance your speaking skills. Improve your passive voice understanding while enjoying this heartfelt conversation between father and daughter.",
-            "Tags": [
-              "english shadowing",
-              "passive voice",
-              "simple present",
-              "simple past",
-              "shadowing practice",
-              "B2 level",
-              "speaking practice",
-              "repeat after me",
-              "father and daughter",
-              "storytelling",
-              "childhood adventures",
-              "language learning",
-              "grammar focus",
-              "listening practice",
-              "learning english",
-              "phrasal verbs",
-              "look for",
-              "keep safe",
-              "ask for",
-              "speaking skills"
-            ],
-            "thumbnailText": [
-              "Listen Repeat",
-              "Shadow Together",
-              "Passive Voice"
-            ]
-          }
-        }
-      }
-    ],
-    "@SCENE_METADATA_MAPPER": [
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 0,
-          "paragraphId": -1,
-          "audioSubtitle": "Theme: childhood adventures and shared memories. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/0_-1_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 242043,
-            "bitrateKbps": 128.023,
-            "durationSeconds": 15.124875,
-            "durationHMS": "0:0:15",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 1,
-          "paragraphId": 0,
-          "audioSubtitle": "Father: I begin to tell you the story of my childhood adventures that were filled with wonder and excitement I was a young boy in a small town where hidden treasures were discovered by eager eyes and unknown places were visited by my curious friends",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/1_0_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 251656,
-            "bitrateKbps": 128.022,
-            "durationSeconds": 15.725688,
-            "durationHMS": "0:0:15",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 1,
-          "paragraphId": 1,
-          "audioSubtitle": "Daughter: I listen with great interest and wonder to the words that are spoken by you and I ask what magical adventures were driven by the care of those who were always present to guide us in secret moments and please explain every detail",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/1_1_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 237863,
-            "bitrateKbps": 128.024,
-            "durationSeconds": 14.863625,
-            "durationHMS": "0:0:14",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 1,
-          "paragraphId": 2,
-          "audioSubtitle": "Father: I recall a time when a wooden boat was built by local craftsmen and a secret letter was written by an unknown friend The game of hide and seek was organized by the children in a garden where surprises were prepared by caring hands and mysteries were kept safe in every corner",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/1_2_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 274226,
-            "bitrateKbps": 128.021,
-            "durationSeconds": 17.136313,
-            "durationHMS": "0:0:17",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 2,
-          "paragraphId": 3,
-          "audioSubtitle": "Daughter: The words of your past make me feel a deep joy and I wonder how such adventures are planned in a way that every small detail is cherished by those who are linked to a time that is lost and remembered at the same time",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/2_3_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 198157,
-            "bitrateKbps": 128.029,
-            "durationSeconds": 12.382,
-            "durationHMS": "0:0:12",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 2,
-          "paragraphId": 4,
-          "audioSubtitle": "Father: I was invited to a place where a hidden trail was marked by bright stones and a special note was given by a wise elder The secrets of that route were asked by many and the magic of those paths is celebrated by all who see that history as a living dream of childhood",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/2_4_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 291780,
-            "bitrateKbps": 128.019,
-            "durationSeconds": 18.233438,
-            "durationHMS": "0:0:18",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 2,
-          "paragraphId": 5,
-          "audioSubtitle": "Daughter: I am amazed by your descriptions and I feel that every scene is painted in a gentle light that is remembered by the old and adored by the young I ask if such moments are really experienced or if they are created by the memories of a heart that never forgets",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/2_5_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 239953,
-            "bitrateKbps": 128.024,
-            "durationSeconds": 14.99425,
-            "durationHMS": "0:0:14",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 3,
-          "paragraphId": 6,
-          "audioSubtitle": "Father: I close my tale with a hope that my adventures are remembered by you and that a similar journey will be offered to you by the world when a new day is begun in a place where dreams are built by the love and care of each passing moment",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/3_6_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 231176,
-            "bitrateKbps": 128.024,
-            "durationSeconds": 14.445688,
-            "durationHMS": "0:0:14",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "videoId": "1761691131885",
-          "sceneId": 3,
-          "paragraphId": 7,
-          "audioSubtitle": "Daughter: I feel very blessed to have heard a story that is filled with wonder and that was nurtured by experiences that were shared between all the people who value the past and look for truth in every beautiful memory always",
-          "videoMetaData": {
-            "type": "audio",
-            "file": "/home/node/download/CANAL_SHADOWING/1761691131885/3_7_1761691131885.mp3",
-            "container": "mp3",
-            "sizeBytes": 207770,
-            "bitrateKbps": 128.027,
-            "durationSeconds": 12.982813,
-            "durationHMS": "0:0:12",
-            "tags": {
-              "encoder": "Lavf60.16.100"
-            },
-            "video": null,
-            "audios": [
-              {
-                "codec": "mp3",
-                "channels": 1,
-                "channel_layout": "mono",
-                "sample_rate_hz": 44100,
-                "bitrateKbps": 128,
-                "language": "und"
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "Execute Command with Fixed Image": [
-      {
-        "json": {
-          "exitCode": 0,
-          "stderr": "",
-          "stdout": "OK: /home/node/download/CANAL_SHADOWING/1761691131885/shadow_1761691131885.mp4"
-        }
-      }
-    ],
-    "@FORMAT_TEXT_GENERATION": [
-      {
-        "json": {
-          "index": 0,
-          "introduction": true,
-          "paragraphs": [
-            {
-              "id": -1,
-              "text": "Theme: childhood adventures and the magic of nostalgic memories. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Keep a steady pace, breathe, and articulate clearly.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 1,
-          "introduction": false,
-          "paragraphs": [
-            {
-              "id": 0,
-              "text": "Father: I begin to tell you the story of my childhood adventures that were filled with wonder and excitement I was a young boy in a small town where hidden treasures were discovered by eager eyes and unknown places were visited by my curious friends",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            },
-            {
-              "id": 1,
-              "text": "Daughter: I listen with great interest and wonder to the words that are spoken by you and I ask what magical adventures were driven by the care of those who were always present to guide us in secret moments and please explain every detail",
-              "voiceId": "ZF6FPAbjXT4488VcRRnw"
-            },
-            {
-              "id": 2,
-              "text": "Father: I recall a time when a wooden boat was built by local craftsmen and a secret letter was written by an unknown friend The game of hide and seek was organized by the children in a garden where surprises were prepared by caring hands and mysteries were kept safe in every corner",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 2,
-          "introduction": false,
-          "paragraphs": [
-            {
-              "id": 3,
-              "text": "Daughter: The words of your past make me feel a deep joy and I wonder how such adventures are planned in a way that every small detail is cherished by those who are linked to a time that is lost and remembered at the same time",
-              "voiceId": "ZF6FPAbjXT4488VcRRnw"
-            },
-            {
-              "id": 4,
-              "text": "Father: I was invited to a place where a hidden trail was marked by bright stones and a special note was given by a wise elder The secrets of that route were asked by many and the magic of those paths is celebrated by all who see that history as a living dream of childhood",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            },
-            {
-              "id": 5,
-              "text": "Daughter: I am amazed by your descriptions and I feel that every scene is painted in a gentle light that is remembered by the old and adored by the young I ask if such moments are really experienced or if they are created by the memories of a heart that never forgets",
-              "voiceId": "ZF6FPAbjXT4488VcRRnw"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 3,
-          "introduction": false,
-          "paragraphs": [
-            {
-              "id": 6,
-              "text": "Father: I close my tale with a hope that my adventures are remembered by you and that a similar journey will be offered to you by the world when a new day is begun in a place where dreams are built by the love and care of each passing moment",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            },
-            {
-              "id": 7,
-              "text": "Daughter: I feel very blessed to have heard a story that is filled with wonder and that was nurtured by experiences that were shared between all the people who value the past and look for truth in every beautiful memory always",
-              "voiceId": "ZF6FPAbjXT4488VcRRnw"
-            }
-          ]
+          "targetWordsPerParagraph": 45
         }
       }
     ]
   },
-  "versionId": "46ef28f5-0b30-43e5-b923-d27c54a749b7",
+  "versionId": "809ff926-165a-4b13-b466-f24000f533e6",
   "triggerCount": 0,
   "shared": [
     {
@@ -1434,7 +1006,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-10-29T19:06:54.000Z",
+              "updatedAt": "2025-10-30T16:43:02.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -1469,7 +1041,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-29",
+              "lastActiveAt": "2025-10-30",
               "isPending": false
             }
           }
