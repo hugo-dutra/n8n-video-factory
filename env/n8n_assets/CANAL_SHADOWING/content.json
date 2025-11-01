@@ -1,5 +1,36 @@
 [
   {
+    "theme": "Future with will going to and present continuous",
+    "mode": "Narrative: Tomorrow we are going to say goodbye for the last time",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40,
+    "published": true
+  },
+  {
+    "theme": "Conditionals first and second",
+    "mode": "Narrative: If I had taken the other train I would never have met her",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 45,
+    "published": true
+  },
+  {
+    "theme": "There is there are there was there were",
+    "mode": "Narrative: There was a light in the forest that no one could explain",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 40,
+    "published": true
+  },
+
+  {
     "theme": "Passive voice in simple present and simple past",
     "mode": "Narrative: A hidden door was discovered in the attic after many years",
     "duration": 3,
@@ -27,39 +58,12 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "Future with will going to and present continuous",
-    "mode": "Narrative: Tomorrow we are going to say goodbye for the last time",
-    "duration": 3,
-    "level": "B2",
-    "imageStyle": "",
-    "scenes": 5,
-    "targetWordsPerParagraph": 40
-  },
-  {
-    "theme": "Conditionals first and second", //Publicado
-    "mode": "Narrative: If I had taken the other train I would never have met her",
-    "duration": 3,
-    "level": "B2",
-    "imageStyle": "",
-    "scenes": 4,
-    "targetWordsPerParagraph": 45
-  },
-  {
     "theme": "Phrasal verbs take off give up find out look for",
     "mode": "Narrative: He looked for peace in places nobody would go",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
     "scenes": 5,
-    "targetWordsPerParagraph": 40
-  },
-  {
-    "theme": "There is there are there was there were",
-    "mode": "Narrative: There was a light in the forest that no one could explain",
-    "duration": 3,
-    "level": "B2",
-    "imageStyle": "",
-    "scenes": 4,
     "targetWordsPerParagraph": 40
   },
   {
@@ -223,5 +227,359 @@
     "imageStyle": "",
     "scenes": 5,
     "targetWordsPerParagraph": 45
+  },
+
+  /* ---- Novos formatos / modos ---- */
+
+  {
+    "theme": "Polite requests and offers with modals would could can", // Enviado
+    "mode": "Dialogue between man and woman: Ordering food in a crowded diner without causing confusion",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Job interview language present perfect achievements and future plans",
+    "mode": "Dialogue: A candidate explains past results and future goals in a tech interview",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Modals of deduction must might could cant in present and past",
+    "mode": "Debate: Privacy versus security in the age of smart cities",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Present perfect continuous and time expressions for since recently lately",
+    "mode": "Interview: A marathon runner talks about training setbacks and progress",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Comparatives superlatives and complex quantifiers far way considerably slightly",
+    "mode": "Panel Discussion: Cities competing to host a global expo event",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 42
+  },
+  {
+    "theme": "Passive voice in headlines and concise reporting",
+    "mode": "News Report: A bridge was closed after unusual vibrations were detected",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Phrasal verbs set 2 turn down set up back up carry on work out",
+    "mode": "Podcast: Two friends bust common productivity myths with real stories",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Used to would be going to in life changes",
+    "mode": "Diary Entry: Moving to a new city and reinventing routines",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 35
+  },
+  {
+    "theme": "Conditionals first second and third for apologies and solutions",
+    "mode": "Letter: A sincere apology for missing an important family event",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Present perfect in professional context and passive voice",
+    "mode": "Email Thread: Reporting and fixing a critical bug before release day",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Reported speech wh questions yes no questions commands",
+    "mode": "Courtroom: Cross examination reveals what witnesses actually said earlier",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Requests clarifying questions and softening language",
+    "mode": "Customer Support Chat: Troubleshooting a lost package politely and effectively",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 36
+  },
+  {
+    "theme": "Sequencers first then after that finally and imperatives",
+    "mode": "How To: Fix a noisy laptop fan without special tools at home",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 36
+  },
+  {
+    "theme": "Present perfect vs past simple travel experiences",
+    "mode": "Travel Vlog: Revisiting a childhood beach and noticing what changed",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Future forms will going to present continuous for plans and predictions",
+    "mode": "Weather Forecast: A sudden storm is going to arrive earlier than expected",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 35
+  },
+  {
+    "theme": "Obligation and advice must have to should ought to",
+    "mode": "Public Service Announcement: Heatwave safety for elderly neighbors",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 35
+  },
+  {
+    "theme": "Emphasis cleft sentences and inversion rarely little seldom",
+    "mode": "Speech: A community leader urges action after a near disaster",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 42
+  },
+  {
+    "theme": "Simple past with moral lessons and adverbs of frequency",
+    "mode": "Fable: The fox who rushed always lost what patience could gain",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Past perfect and narrative sequencing",
+    "mode": "Legend: A bell that rang only for those who had already chosen bravely",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Mixed conditionals and speculation",
+    "mode": "Sci Fi Log: If our sensors had worked we would not be drifting now",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Relative clauses restrictive and non restrictive",
+    "mode": "Stage Play: A director guides actors who doubt the script they love",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Tag questions and confirming information politely",
+    "mode": "Classroom Q and A: Checking understanding before a big science fair",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 35
+  },
+  {
+    "theme": "Question forms inversion and indirect questions",
+    "mode": "Detective Interrogation: Finding the truth without forcing answers",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Adverbs of degree and intensifiers really quite rather absolutely",
+    "mode": "Sports Commentary: An underdog team almost turns the game around",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Quantifiers and comparatives with too and enough",
+    "mode": "Negotiation: A crowded marketplace where value must be justified clearly",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Gerunds and infinitives after advise suggest recommend plan",
+    "mode": "Advice Column: Finding discipline without losing joy in study routines",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 36
+  },
+  {
+    "theme": "Obligation permission and prohibition must have to may can cannot",
+    "mode": "Medical Consultation: A patient learns what to change and what to keep",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Causative have get and letting someone do something",
+    "mode": "Tech Forum Thread: How I got my phone repaired and my data restored safely",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 36
+  },
+  {
+    "theme": "Comparatives superlatives and review language",
+    "mode": "Product Review: The camera that seemed better but taught patience instead",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 36
+  },
+  {
+    "theme": "Discourse markers however although therefore meanwhile otherwise",
+    "mode": "Conference Call: Aligning three teams under a tight deadline",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 42
+  },
+  {
+    "theme": "Hedging and stance it seems apparently arguably likely",
+    "mode": "Public Debate: Is remote work truly better for cities long term",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 42
+  },
+  {
+    "theme": "There is there are plus prepositions of place",
+    "mode": "Tourist Info Desk: Guiding a family through a museum they will remember",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 35
+  },
+  {
+    "theme": "Imperatives zero and first conditional for safety",
+    "mode": "Emergency Announcement: What to do if the alarm sounds at night",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 34
+  },
+  {
+    "theme": "Future perfect and future continuous",
+    "mode": "Startup Pitch: Where we will be by this time next year if we ship now",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Reported orders requests and suggestions",
+    "mode": "Company Memo: Lessons learned from an unexpected outage last weekend",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Relative pronouns and participle clauses",
+    "mode": "Riddle Collection: Puzzles that reveal grammar patterns when solved",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 38
+  },
+  {
+    "theme": "Time expressions meanwhile afterwards by the time ever since",
+    "mode": "Hero Journey Outline: How an ordinary plan slowly became extraordinary",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 6,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Passive with by phrases and agent omission",
+    "mode": "Documentary Voiceover: A lighthouse was kept burning through every storm",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 5,
+    "targetWordsPerParagraph": 40
+  },
+  {
+    "theme": "Prepositions of time and polite announcements",
+    "mode": "Station Announcements: Delays explained clearly and calmly during rush hour",
+    "duration": 3,
+    "level": "B2",
+    "imageStyle": "",
+    "scenes": 4,
+    "targetWordsPerParagraph": 34
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-10-29T23:21:59.000Z",
+  "updatedAt": "2025-10-31T20:14:32.000Z",
   "createdAt": "2025-10-28T22:38:18.632Z",
   "id": "wDmJOKsJMEGVwOLL",
   "name": "@UPLOAD_YOUTUBE_SHADOWING",
@@ -41,8 +41,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1856,
-        144
+        1744,
+        112
       ],
       "id": "7ec1c102-1c2b-48a3-83f1-6f49fa937392",
       "name": "@NOTIFIER"
@@ -55,7 +55,7 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1408,
+        1328,
         -96
       ],
       "id": "dd3e2eb9-da11-41c1-8e86-49316a6411a4",
@@ -69,7 +69,7 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1808,
+        1744,
         -96
       ],
       "id": "07d6e5f9-75f9-466e-aa79-3a21506f5870",
@@ -104,7 +104,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1984,
+        1920,
         -96
       ],
       "credentials": {
@@ -139,7 +139,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2160,
+        2096,
         -96
       ],
       "credentials": {
@@ -187,7 +187,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2336,
+        2272,
         -96
       ],
       "id": "71359ef6-1786-48ff-8054-7ef8100c68d5",
@@ -225,7 +225,7 @@
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        1216,
+        912,
         -96
       ]
     },
@@ -249,7 +249,7 @@
       "type": "n8n-nodes-base.youTube",
       "typeVersion": 1,
       "position": [
-        1600,
+        1536,
         -96
       ],
       "id": "6cbceea8-9b08-4fc2-bfd1-214af4e9b43e",
@@ -262,6 +262,202 @@
         }
       },
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/download/{{ $('Start').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/short_*.mp4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -432
+      ],
+      "id": "490cdf44-e7d2-48f5-a708-7f7c6b365bb5",
+      "name": "Read File Video1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1504,
+        -432
+      ],
+      "id": "e6b6f5ac-528b-43b1-857a-52c7f74c9e7f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "=PART {{ $('Loop Over Items').item.json.fileName.split('_')[1] }} {{ $('Start').item.json.output_VideoTitle}}",
+        "regionCode": "BR",
+        "categoryId": "=",
+        "binaryProperty": "=data",
+        "options": {
+          "description": "={{ $('Start').item.json.output_VideoDescription}}",
+          "notifySubscribers": false,
+          "privacyStatus": "private",
+          "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');\n\n  // data alvo: hoje + 2 dias\n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n  const y = d.getFullYear();\n  const M = pad(d.getMonth() + 1);\n  const D = pad(d.getDate());\n\n  // horário fixo: 10:00:00\n  const hh = '10';\n  const mm = '00';\n  const ss = '00';\n\n  return `${y}-${M}-${D}T${hh}:${mm}:${ss}`;\n})()\n}}\n",
+          "selfDeclaredMadeForKids": false,
+          "tags": "={{ $('Start').item.json.output_Tags_map.join(',') }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        -416
+      ],
+      "id": "7feab3fc-28e5-4107-90bf-eeeaf61cc6b7",
+      "name": "Upload short",
+      "alwaysOutputData": false,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "ThaPnNZElYZbX2i2",
+          "name": "YouTube n8n account-ENGLISH"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "SHORTS SHADOWING enviados com SUCESSO!"
+          },
+          "matchingColumns": [
+            "MESSAGE"
+          ],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1936,
+        -576
+      ],
+      "id": "2a5a6bf4-d701-435b-b496-fc152ecd1137",
+      "name": "@NOTIFIER6"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OGP1iwNUAhD04yeD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OGP1iwNUAhD04yeD",
+          "cachedResultName": "@NOTIFIER"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MESSAGE": "Erro no UPLOAD  DE SHORTS do canal SHADOWING"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MESSAGE",
+              "displayName": "MESSAGE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2160,
+        -400
+      ],
+      "id": "e48fdcb1-f9e6-407c-af20-e2bf663fb9a6",
+      "name": "@NOTIFIER1"
+    },
+    {
+      "parameters": {
+        "content": "## SHORTS processing\n",
+        "height": 400,
+        "width": 1120
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        -608
+      ],
+      "id": "7050a64d-d2fe-4de0-a3fa-c580a2d4569a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## LONG processing\n",
+        "height": 448,
+        "width": 1232,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        -176
+      ],
+      "id": "f89a6fb2-75fa-47a5-aba5-73bca88857bc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "uploadId"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        -576
+      ],
+      "id": "09fb50fa-1b2f-411d-9324-53ab6c417b11",
+      "name": "Aggregate"
     }
   ],
   "connections": {
@@ -313,6 +509,11 @@
       "main": [
         [
           {
+            "node": "Read File Video1",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Read File Video",
             "type": "main",
             "index": 0
@@ -337,6 +538,64 @@
           }
         ]
       ]
+    },
+    "Read File Video1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload short",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload short": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "@NOTIFIER1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "@NOTIFIER6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -348,44 +607,37 @@
     "Start": [
       {
         "json": {
-          "videoId": "1761691131885",
+          "videoId": "1761867116020",
           "CHANNEL_NAME": "CANAL_SHADOWING",
-          "output_VideoTitle": "Level B2 | English Shadowing Passive Voice Story Father and Daughter Adventures",
-          "output_VideoDescription": "Practice your English shadowing skills with this engaging story about a father's childhood adventures told to his daughter. Listen carefully to how the passive voice is used in both simple present and simple past tenses to describe events and experiences. This video helps you get a natural sense of how passive constructions like \"were discovered,\" \"were built,\" and \"was written\" appear in real speech. The father recounts magical moments where hidden treasures were found, secret letters were written, and childhood games were organized, all while the daughter listens with wonder. You’ll come across phrasal verbs and expressions that support storytelling and memory recall, such as \"look for,\" \"keep safe,\" and \"ask for.\" Listen once to absorb the story, then repeat aloud to practice fluency, and finally shadow with the audio to enhance your speaking skills. Improve your passive voice understanding while enjoying this heartfelt conversation between father and daughter.",
+          "output_VideoTitle": "Level B2 | English Shadowing Narrative Future Tenses Goodbye Story",
+          "output_VideoDescription": "Practice your English shadowing with this touching narrative about Daniel's farewell and future journey. Listen carefully as he uses 'will,' 'going to,' and present continuous tenses to describe his plans, feelings, and hopes for a new life. In this video, you will hear Daniel reflecting on his past, saying goodbye to friends and family, and looking forward to the future. Follow his story as he talks about leaving his hometown, making plans, and promising to work hard. This practice will help you get up to speed on future tense usage and improve your ability to express intentions and predictions naturally. Join Daniel as he figures out how to say goodbye and keep memories close while embracing change. Listen once, then repeat aloud, then shadow with the audio to improve your fluency and confidence.",
           "output_Tags_map": [
             "english shadowing",
-            "passive voice",
-            "simple present",
-            "simple past",
-            "shadowing practice",
             "B2 level",
-            "speaking practice",
+            "future tenses",
+            "will",
+            "going to",
+            "present continuous",
             "repeat after me",
-            "father and daughter",
-            "storytelling",
-            "childhood adventures",
+            "speaking practice",
             "language learning",
-            "grammar focus",
-            "listening practice",
-            "learning english",
-            "phrasal verbs",
-            "look for",
-            "keep safe",
-            "ask for",
-            "speaking skills"
+            "shadowing practice",
+            "English conversation",
+            "planning future",
+            "saying goodbye",
+            "emotion vocabulary",
+            "storytelling",
+            "listening skills",
+            "pronunciation practice",
+            "daily English",
+            "narrative mode",
+            "life changes"
           ]
-        }
-      }
-    ],
-    "Upload to youtube": [
-      {
-        "json": {
-          "uploadId": "LXINWcBl9FQ"
         }
       }
     ]
   },
-  "versionId": "ec823019-c3ba-49c5-b1d4-7d18bd3ca2ec",
+  "versionId": "0b66661b-4ea8-4378-8285-e1215869f10b",
   "triggerCount": 0,
   "shared": [
     {
@@ -409,7 +661,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-10-31T11:21:43.000Z",
+              "updatedAt": "2025-11-01T09:31:44.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -444,7 +696,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-10-31",
+              "lastActiveAt": "2025-11-01",
               "isPending": false
             }
           }
