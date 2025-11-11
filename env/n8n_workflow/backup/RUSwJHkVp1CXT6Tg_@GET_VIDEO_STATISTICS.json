@@ -1,0 +1,676 @@
+{
+  "updatedAt": "2025-11-10T22:19:44.000Z",
+  "createdAt": "2025-11-02T18:46:36.646Z",
+  "id": "RUSwJHkVp1CXT6Tg",
+  "name": "@GET_VIDEO_STATISTICS",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        -144
+      ],
+      "id": "5f9ebf7a-6fcf-4cc0-a723-3e6542506f1e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "https://youtubeanalytics.googleapis.com/v2/reports",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "ids",
+              "value": "channel==MINE"
+            },
+            {
+              "name": "startDate",
+              "value": "={{ new Date(Date.now() - 365*24*60*60*1000).toISOString().slice(0,10) }}"
+            },
+            {
+              "name": "endDate",
+              "value": "={{ new Date(Date.now() - 0*24*60*60*1000).toISOString().slice(0,10) }}"
+            },
+            {
+              "name": "dimensions",
+              "value": "video"
+            },
+            {
+              "name": "metrics",
+              "value": "views,likes,subscribersGained"
+            },
+            {
+              "name": "sort",
+              "value": "-views"
+            },
+            {
+              "name": "maxResults",
+              "value": "50"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer $ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5f7ca5ab-1f44-441a-887a-2ed0b907123b",
+      "name": "Get Video Statistics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -416,
+        -144
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account-ANCAPSU"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2a8f894-b343-4c90-b6be-2e2fddbcce54",
+              "name": "rows",
+              "value": "={{ $json.rows }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -144
+      ],
+      "id": "14f6236c-2c95-460d-81ad-165317b67aed",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "rows",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -144
+      ],
+      "id": "4850a7ef-c726-40f8-a78c-dbd606185ec6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,statistics"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.ids.join(',') }}"
+            },
+            {
+              "name": "fields",
+              "value": "items(id,snippet(title,description,tags,publishedAt,thumbnails(default,medium,high)),statistics(viewCount,likeCount,commentCount))"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer $ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        352,
+        -144
+      ],
+      "id": "30fbd58e-20cb-4152-8404-30f5a9b9a317",
+      "name": "HTTP Request",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account-ANCAPSU"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code/Function node\n * Extrai os videoIds (primeiro campo de rows) e retorna como array de strings.\n * Suporta:\n *  - A) items = [{ json: { rows: [id, views, likes, subs] }}, ...]\n *  - B) items = [{ json: [ { rows: [id, ...] }, { rows: [id, ...] }, ... ] }]\n */\n\nfunction extractIdsFromArray(arr) {\n  return arr\n    .filter(e => e && Array.isArray(e.rows) && typeof e.rows[0] !== 'undefined')\n    .map(e => String(e.rows[0]));\n}\n\nlet ids = [];\n\n// Formato B: json do primeiro item é um ARRAY com objetos { rows: [...] }\nif (Array.isArray(items?.[0]?.json) && items[0].json?.[0]?.rows) {\n  ids = extractIdsFromArray(items[0].json);\n\n// Formato A: cada item tem { json: { rows: [...] } }\n} else {\n  ids = items\n    .filter(i => i && Array.isArray(i.json?.rows))\n    .map(i => String(i.json.rows[0]));\n}\n\n// === SAÍDA ===\n// 1) Recomendada: objeto com campo \"ids\"\nreturn [{ json: { ids } }];\n\n// 2) Alternativa: se quiser que a saída seja exatamente o array de strings\n// return [{ json: ids }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -144
+      ],
+      "id": "361849a6-056f-4a96-a06a-b5ba3da362a8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (Run once for all items)\n\nconst itemsFromHttp = $(\"HTTP Request\").first().json?.items ?? [];\n\nconst mapped = itemsFromHttp.map((v) => ({  \n  titulo: v.snippet?.title ?? \"\",\n  views: Number(v.statistics?.viewCount ?? 0),        \n  likes: Number(v.statistics?.likeCount ?? 0),\n  comentarios: Number(v.statistics?.commentCount ?? 0),\n  tags: v.snippet?.tags ?? [],\n}));\n\n// O Code node precisa retornar [{ json: ... }, ...]\nreturn mapped.map((row) => ({ json: row }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -144
+      ],
+      "id": "88a9e774-9b66-4f69-9e83-7d2c0957d637",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "YXLYtONBKA8CBAmO",
+          "mode": "list",
+          "cachedResultName": "ANCAPSU_STATISTICS",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/YXLYtONBKA8CBAmO"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "data": "=titulo : {{ $json.titulo }},\nviews : {{ $json.views }},\nlikes : {{ $json.likes }},\ncomentarios : {{ $json.comentarios }},\ntags : {{ Array.isArray($json.tags) ? $json.tags.join(' | ') : String($json.tags ?? '') }}\n"
+          },
+          "matchingColumns": [
+            "data"
+          ],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -32
+      ],
+      "id": "dc7b8c6d-34e0-4d18-87e5-6bb6a6eb8429",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        768,
+        -144
+      ],
+      "id": "d8d5260d-2080-4500-aa98-a83f6426238c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YXLYtONBKA8CBAmO",
+          "mode": "list",
+          "cachedResultName": "ANCAPSU_STATISTICS",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/YXLYtONBKA8CBAmO"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -336
+      ],
+      "id": "c9e8d852-be08-4b5e-9e64-ffd93b5b056c",
+      "name": "Clear Rows"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videoCategories",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "regionCode",
+              "value": "BR"
+            },
+            {
+              "name": "maxResults",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d28daaa7-7ed1-48f9-b259-12fd9145ba3a",
+      "name": "Get Video Statistics1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -48,
+        -336
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account-ANCAPSU"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,statistics,contentDetails"
+            },
+            {
+              "name": "chart",
+              "value": "mostPopular"
+            },
+            {
+              "name": "regionCode",
+              "value": "BR"
+            },
+            {
+              "name": "videoCategoryId",
+              "value": "25"
+            },
+            {
+              "name": "maxResults",
+              "value": "25"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        352,
+        -336
+      ],
+      "id": "49f97cba-ba34-4350-8229-e34ef0095b9a",
+      "name": "HTTP Request1",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "lC6w9zooePykiKGj",
+          "name": "YouTube n8n account-ANCAPSU"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code (JavaScript)\n// Input: items[0].json = resposta do videoCategories.list\n// Output: [{ json: { videoCategoryId, categoryTitle } }]\n\nconst resp = items?.[0]?.json || {};\nconst list = Array.isArray(resp.items) ? resp.items : [];\n\nfunction isNewsPolitics(it) {\n  const assignable = it?.snippet?.assignable === true;\n  const title = String(it?.snippet?.title || '').toLowerCase();\n  // cobre \"Notícias e política\" (pt) e \"News & Politics\" (en)\n  const looksLike = /not(í|i)cias|pol(í|i)tica|news|politics/.test(title);\n  return assignable && looksLike;\n}\n\nlet cat = list.find(isNewsPolitics);\n\n// fallback (evita quebrar fluxo): assume 25 se não encontrar\nif (!cat) {\n  cat = { id: '25', snippet: { title: 'News & Politics (fallback)' } };\n}\n\nreturn [\n  {\n    json: {\n      videoCategoryId: String(cat.id),\n      categoryTitle: String(cat?.snippet?.title || 'News & Politics'),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -336
+      ],
+      "id": "9d9b8f67-b2ea-4213-80cc-c78e12daec01",
+      "name": "Filter politics"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// INPUT: items[0].json = [ { kind: \"youtube#videoListResponse\", items: [...] } ]\n// OUTPUT: 1 item com sumários por frequência e deduplicações (sem dicionários estáticos)\n\nconst TOP_N_PHRASES   = 15;   // top bigramas\nconst TOP_N_KEYWORDS  = 25;   // top palavras (unigramas)\nconst TOP_N_HASHTAGS  = 20;   // top hashtags\nconst TOP_N_CHANNELS  = 15;   // canais mais frequentes\nconst MAX_TITLE_LEN   = 120;  // para preview\n\n// stopwords básicas PT/EN (curtas, só para ruído comum; não é \"dicionário de clusterização\")\nconst STOP = new Set([\n  // PT\n  'a','o','os','as','de','do','da','dos','das','e','é','em','no','na','nos','nas','um','uma','para','por','com','sem',\n  'ao','à','às','ou','se','sao','são','que','isso','esse','essa','este','esta','esses','essas','estes','estas','mais',\n  'menos','sobre','como','já','hoje','ontem','amanha','amanhã','vc','você','vocês','pra','pro','num','numa',\n  'assista','veja','canal','inscreva','inscreva-se','shorts','ao','vivo','live','ultimas','últimas','noticias','notícias',\n  // EN\n  'the','a','an','and','or','for','to','of','in','on','at','by','with','from','as','is','are','be','this','that','these','those',\n  'it','its','you','your','we','our','they','their','he','she','his','her','them','was','were','have','has','had','will'\n]);\n\n// tokens de 2 letras úteis (sem \"dicionário\", só siglas comuns)\nconst ALLOW_TWO_LETTERS = new Set(['rj','sp','mg','pr','rs','sc','cv','pm']);\n\n// Utilidades\nconst stripUrls = (s) => s.replace(/https?:\\/\\/\\S+/g, ' ');\nconst normalize = (s) =>\n  stripUrls(String(s || ''))\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '') // sem acentos\n    .replace(/[^\\p{L}\\p{N}#@]+/gu, ' ')               // só letras/números/#/@\n    .toLowerCase();\n\nfunction extractFromVideo(v) {\n  const sn = v.snippet || {};\n  const title = sn.title || '';\n  const desc  = sn.description || '';\n  const tags  = Array.isArray(sn.tags) ? sn.tags.join(' ') : '';\n\n  const textNorm = normalize(`${title} ${desc} ${tags}`);\n\n  const parts = textNorm.split(/\\s+/).filter(Boolean);\n\n  const hashtags = [];\n  const tokens = [];\n  for (const w of parts) {\n    if (w.startsWith('#')) {\n      if (w.length > 1) hashtags.push(w);\n      continue;\n    }\n    if (STOP.has(w)) continue;\n    if (w.length === 1) continue;\n    if (w.length === 2 && !ALLOW_TWO_LETTERS.has(w)) continue;\n    // filtra números soltos longos (ex.: timestamps)\n    if (/^\\d{3,}$/.test(w)) continue;\n    tokens.push(w);\n  }\n\n  // bigramas\n  const bigrams = [];\n  for (let i = 0; i < tokens.length - 1; i++) {\n    bigrams.push(`${tokens[i]} ${tokens[i+1]}`);\n  }\n\n  return { tokens, bigrams, hashtags };\n}\n\nfunction countFreq(arr, minLen = 1) {\n  const m = new Map();\n  for (const x of arr) {\n    if (!x) continue;\n    if (x.length < minLen) continue;\n    m.set(x, (m.get(x) || 0) + 1);\n  }\n  return m;\n}\n\nfunction topN(map, n) {\n  return [...map.entries()]\n    .sort((a,b) => b[1] - a[1])\n    .slice(0, n)\n    .map(([term, count]) => ({ term, count }));\n}\n\n// -------- 1) Coleta segura dos vídeos da entrada --------\nlet responses = items[0]?.json;\nif (!responses) {\n  // fallback: alguns fluxos podem mandar direto o objeto\n  responses = items.map(i => i.json);\n}\nif (!Array.isArray(responses)) responses = [responses];\n\nconst videos = [];\nfor (const resp of responses) {\n  if (resp && resp.items && Array.isArray(resp.items)) {\n    for (const it of resp.items) {\n      if (it && it.kind === 'youtube#video') videos.push(it);\n    }\n  } else if (resp && resp.kind === 'youtube#video') {\n    videos.push(resp);\n  }\n}\n\n// remove duplicados por ID\nconst seen = new Set();\nconst uniqVideos = [];\nfor (const v of videos) {\n  const id = v.id || v.snippet?.resourceId?.videoId;\n  if (!id) continue;\n  if (seen.has(id)) continue;\n  seen.add(id);\n  uniqVideos.push(v);\n}\n\n// -------- 2) Frequências (tokens / bigramas / hashtags) --------\nconst allTokens   = [];\nconst allBigrams  = [];\nconst allHashtags = [];\n\nfor (const v of uniqVideos) {\n  const { tokens, bigrams, hashtags } = extractFromVideo(v);\n  allTokens.push(...tokens);\n  allBigrams.push(...bigrams);\n  allHashtags.push(...hashtags);\n\n  // também pega hashtags do campo tags do YT (sem # originalmente)\n  const tagList = Array.isArray(v.snippet?.tags) ? v.snippet.tags : [];\n  for (const t of tagList) {\n    const ht = '#' + normalize(t).trim().replace(/\\s+/g, '');\n    if (ht.length > 1) allHashtags.push(ht);\n  }\n}\n\nconst tokenFreq   = countFreq(allTokens, 2);\nconst bigramFreq  = countFreq(allBigrams, 5);  // evita bigrama muito curto tipo \"de a\"\nconst hashtagFreq = countFreq(allHashtags, 2);\n\n// -------- 3) Canais por frequência --------\nconst chanMap = new Map();\nfor (const v of uniqVideos) {\n  const c = v.snippet?.channelTitle || '???';\n  chanMap.set(c, (chanMap.get(c) || 0) + 1);\n}\n\n// -------- 4) Janela temporal e metadados --------\nlet minDate = null, maxDate = null;\nfor (const v of uniqVideos) {\n  const d = v.snippet?.publishedAt ? new Date(v.snippet.publishedAt) : null;\n  if (!d || isNaN(d.getTime())) continue;\n  if (!minDate || d < minDate) minDate = d;\n  if (!maxDate || d > maxDate) maxDate = d;\n}\n\nconst timeWindow = {\n  from: minDate ? minDate.toISOString() : null,\n  to:   maxDate ? maxDate.toISOString() : null,\n};\n\n// -------- 5) Saídas condensadas --------\nconst phrasesTop  = topN(bigramFreq,  TOP_N_PHRASES);\nconst keywordsTop = topN(tokenFreq,   TOP_N_KEYWORDS);\nconst hashtagsTop = topN(hashtagFreq, TOP_N_HASHTAGS);\nconst channelsTop = topN(chanMap,     TOP_N_CHANNELS).map(x => ({ channel: x.term, count: x.count }));\n\n// lista simples deduplicada de títulos para referência\nconst dedupTitles = uniqVideos.map(v => ({\n  id: v.id,\n  title: String(v.snippet?.title || '').slice(0, MAX_TITLE_LEN),\n  views: Number(v.statistics?.viewCount || 0),\n  likes: Number(v.statistics?.likeCount || 0),\n  publishedAt: v.snippet?.publishedAt || null,\n  channel: v.snippet?.channelTitle || null,\n}));\n\n// sugestão rápida para você montar metadados depois (sem “clustering”):\n// pega top bigramas + alguns keywords + hashtags, dedup e corta no tamanho\nfunction uniqKeepOrder(arr) {\n  const s = new Set(), out = [];\n  for (const x of arr) { const k = x.trim(); if (!k || s.has(k)) continue; s.add(k); out.push(k); }\n  return out;\n}\nconst suggestedTitlePhrases = phrasesTop.slice(0, 6).map(p => p.term);\nconst suggestedKeywordList  = keywordsTop.slice(0, 20).map(k => k.term);\nconst suggestedHashtags     = hashtagsTop.slice(0, 12).map(h => h.term);\n\n// mistura e deduplica para você escolher no próximo nó\nconst suggestedTags = uniqKeepOrder([\n  ...suggestedHashtags,\n  ...suggestedTitlePhrases.map(s => s.replace(/\\s+/g, '')),\n  ...suggestedKeywordList\n]).slice(0, 25);\n\nreturn [\n  {\n    json: {\n      meta: {\n        totalVideos: uniqVideos.length,\n        uniqueChannels: chanMap.size,\n        timeWindow\n      },\n      topPhrases:  phrasesTop,        // [{term:\"rio de janeiro\", count: N}, ...]\n      topKeywords: keywordsTop,       // [{term:\"tornado\", count: N}, ...]\n      topHashtags: hashtagsTop,       // [{term:\"#noticias\", count: N}, ...]\n      channelsByVolume: channelsTop,  // [{channel:\"Band Jornalismo\", count:N}, ...]\n      dedupedTitles: dedupTitles,     // lista resumida dos vídeos\n      suggestions: {\n        titlePhrases: suggestedTitlePhrases, // para título/thumbnail\n        keywords:     suggestedKeywordList,  // para descrição\n        tags:         suggestedTags          // para “tags” do vídeo\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -336
+      ],
+      "id": "a5ecaefb-fbe8-40b9-b4dd-e6137e72a983",
+      "name": "Extract top works"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -336
+      ],
+      "id": "d07ecea1-fd62-415d-a81d-27e986186bd0",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// INPUT: items[0].json = [ { meta, topPhrases, topKeywords, topHashtags, suggestions, ... } ]\n// OUTPUT: [{ json: { seo: { videoTags, hashtags, titleSeeds, descriptionKeywords }, debug: { topScored } } }]\n//\n// Dica: se quiser “forçar” foco em um tema (ex.: tornado), preencha FOCUS_HINTS.\n\nconst LIMIT_TAGS            = 30;   // máx. tags p/ YouTube\nconst CHAR_BUDGET_TAGS      = 470;  // orçamentinho de caracteres total (tags têm limite ~500 bytes)\nconst W_PHRASE              = 2.0;  // peso base de frases (bigramas)\nconst W_HASHTAG             = 1.6;  // peso base de hashtags\nconst W_KEYWORD             = 1.0;  // peso base de palavra (unigrama)\nconst W_SUG_TAG             = 1.3;  // peso extra p/ suggestions.tags\nconst W_SUG_KEYWORD         = 1.1;  // peso extra p/ suggestions.keywords\nconst W_SUG_PHRASE          = 1.6;  // peso extra p/ suggestions.titlePhrases\nconst FOCUS_BONUS           = 1.25; // bônus multiplicativo se casar com termos de foco (opcional)\n\n// Opcional: coloque palavras/frases para privilegiar tema alvo (deixe [] se não quiser viés)\nconst FOCUS_HINTS = []; // ex.: [\"tornado\", \"rio bonito\", \"iguacu\"]\n\n// --- utils ---\nconst rmAcc = s => String(s || '')\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst normalize = s => rmAcc(s)\n  .toLowerCase()\n  .replace(/[^\\p{L}\\p{N}\\s#]+/gu, ' ')\n  .replace(/\\s+/g, ' ')\n  .trim();\nconst keyNormalize = s => normalize(s).replace(/\\s+/g, ''); // une \"rio janeiro\" ~ \"riodejaneiro\"\nconst hasSpace = s => /\\s/.test(s);\nconst isEmpty = s => !s || !String(s).trim();\n\n// preferir forma \"com espaço\" (mais legível) quando houver\nfunction chooseDisplay(existing, incoming) {\n  if (!existing) return incoming;\n  const eHas = hasSpace(existing);\n  const iHas = hasSpace(incoming);\n  if (eHas && !iHas) return existing;\n  if (iHas && !eHas) return incoming;\n  // se ambos empatam, fica com o mais longo (tende a ser mais específico)\n  return incoming.length > existing.length ? incoming : existing;\n}\n\nfunction addCandidate(store, rawTerm, baseCount, weight, sourceLabel) {\n  if (isEmpty(rawTerm)) return;\n  const displayRaw = String(rawTerm).trim();\n  // remove # para pontuar de forma unificada\n  const display = displayRaw.startsWith('#') ? displayRaw.slice(1) : displayRaw;\n  const norm = normalize(display);\n  if (!norm) return;\n\n  const key = keyNormalize(norm);\n  const count = Number(baseCount || 1);\n  const score = (1 + Math.log(count + 1)) * weight; // compressão logarítmica\n\n  const focusHit = FOCUS_HINTS.some(f => norm.includes(normalize(f)));\n  const scoreWithFocus = focusHit ? score * FOCUS_BONUS : score;\n\n  if (!store.has(key)) {\n    store.set(key, {\n      key,\n      display,           // forma legível preferida (pode ser trocada)\n      score: 0,\n      totalCount: 0,\n      sources: new Set()\n    });\n  }\n  const entry = store.get(key);\n  entry.display = chooseDisplay(entry.display, display);\n  entry.score += scoreWithFocus;\n  entry.totalCount += count;\n  entry.sources.add(sourceLabel);\n}\n\nfunction rank(map) {\n  return [...map.values()].sort((a, b) => b.score - a.score);\n}\n\nfunction pickTagsForYouTube(sorted, limit = LIMIT_TAGS, charBudget = CHAR_BUDGET_TAGS) {\n  const out = [];\n  let used = 0;\n  const seen = new Set();\n  for (const e of sorted) {\n    const t = e.display;\n    if (seen.has(t)) continue;\n    if (t.length < 2) continue;       // evita ruído\n    if (out.length >= limit) break;\n    if (used + t.length > charBudget) continue;\n    out.push(t);\n    used += t.length;\n    seen.add(t);\n  }\n  return out;\n}\n\nfunction pickHashtags(sorted, limit = 12) {\n  const out = [];\n  const seen = new Set();\n  for (const e of sorted) {\n    const t = '#' + e.display.replace(/\\s+/g, '');\n    if (seen.has(t)) continue;\n    if (t.length < 3) continue;\n    out.push(t);\n    seen.add(t);\n    if (out.length >= limit) break;\n  }\n  return out;\n}\n\n// --- coleta segura do payload ---\nlet arr = items[0]?.json;\nif (!Array.isArray(arr)) arr = [arr];\nconst payload = arr[0] || {};\n\nconst topPhrases   = Array.isArray(payload.topPhrases) ? payload.topPhrases : [];\nconst topKeywords  = Array.isArray(payload.topKeywords) ? payload.topKeywords : [];\nconst topHashtags  = Array.isArray(payload.topHashtags) ? payload.topHashtags : [];\nconst suggestions  = payload.suggestions || {};\nconst sugTags      = Array.isArray(suggestions.tags) ? suggestions.tags : [];\nconst sugKeys      = Array.isArray(suggestions.keywords) ? suggestions.keywords : [];\nconst sugPhrases   = Array.isArray(suggestions.titlePhrases) ? suggestions.titlePhrases : [];\n\n// --- unificador e escore ---\nconst bag = new Map();\n\n// frases (bigramas, mais “intenção” -> peso maior)\nfor (const p of topPhrases) {\n  addCandidate(bag, p.term, p.count, W_PHRASE, 'topPhrase');\n}\n\n// keywords puras\nfor (const k of topKeywords) {\n  addCandidate(bag, k.term, k.count, W_KEYWORD, 'topKeyword');\n}\n\n// hashtags (removemos # na pontuação; voltamos a # na saída)\nfor (const h of topHashtags) {\n  addCandidate(bag, h.term, h.count, W_HASHTAG, 'topHashtag');\n}\n\n// suggestions.mix (tendem a ser bons candidatos; ganham peso extra)\nfor (const t of sugTags) {\n  addCandidate(bag, t, 1, W_SUG_TAG, 'suggestionTag');\n}\nfor (const k of sugKeys) {\n  addCandidate(bag, k, 1, W_SUG_KEYWORD, 'suggestionKeyword');\n}\nfor (const p of sugPhrases) {\n  addCandidate(bag, p, 1, W_SUG_PHRASE, 'suggestionPhrase');\n}\n\n// ranking final\nconst ranked = rank(bag);\n\n// listas finais\nconst videoTags            = pickTagsForYouTube(ranked, LIMIT_TAGS, CHAR_BUDGET_TAGS);\nconst hashtags             = pickHashtags(ranked, 12);\nconst titleSeeds           = ranked.filter(e => hasSpace(e.display)).slice(0, 6).map(e => e.display);\nconst descriptionKeywords  = ranked.slice(0, 30).map(e => e.display);\n\n// opcional: debug (top 15 com score e fontes)\nconst topScored = ranked.slice(0, 15).map(e => ({\n  term: e.display,\n  score: Number(e.score.toFixed(3)),\n  totalCount: e.totalCount,\n  sources: [...e.sources]\n}));\n\nreturn [\n  {\n    json: {\n      seo: {\n        videoTags,           // para o campo \"tags\" do YouTube (sem #)\n        hashtags,            // para título/descrição (com #)\n        titleSeeds,          // sementes de título (frases mais fortes)\n        descriptionKeywords  // palavras/frases fortes p/ usar no texto\n      },\n      debug: { topScored }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        -336
+      ],
+      "id": "0d5d72e5-1f55-4acc-98aa-90d11de3887f",
+      "name": "Code in JavaScript2"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get Video Statistics",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clear Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Statistics": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Rows": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Statistics1": {
+      "main": [
+        [
+          {
+            "node": "Filter politics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Extract top works",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter politics": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get Video Statistics1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract top works": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "60b11cbf-55aa-4740-b0e6-ee3027c25ede",
+  "versionCounter": 22,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-02T18:46:36.671Z",
+      "createdAt": "2025-11-02T18:46:36.671Z",
+      "role": "workflow:owner",
+      "workflowId": "RUSwJHkVp1CXT6Tg",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "updatedAt": "2025-11-11T11:27:01.000Z",
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-11-11",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

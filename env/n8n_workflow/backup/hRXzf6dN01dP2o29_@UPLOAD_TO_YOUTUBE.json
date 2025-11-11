@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-10-29T19:08:09.000Z",
+  "updatedAt": "2025-11-06T21:48:59.000Z",
   "createdAt": "2025-10-02T15:52:42.017Z",
   "id": "hRXzf6dN01dP2o29",
   "name": "@UPLOAD_TO_YOUTUBE",
@@ -590,7 +590,7 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "MESSAGE": "Vídeo LONGO de enviado com SUCESSO!"
+            "MESSAGE": "Vídeo LONGO enviado com SUCESSO!"
           },
           "matchingColumns": [
             "MESSAGE"
@@ -986,7 +986,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "1c9f3599-0d40-4b34-a7e0-f83fee6a1255",
+  "versionId": "df2159aa-af94-4679-8209-2bfb15eeaf45",
+  "versionCounter": 2,
   "triggerCount": 0,
   "shared": [
     {
@@ -1010,7 +1011,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-01T09:31:44.000Z",
+              "updatedAt": "2025-11-11T11:27:01.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -1045,7 +1046,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-01",
+              "lastActiveAt": "2025-11-11",
               "isPending": false
             }
           }

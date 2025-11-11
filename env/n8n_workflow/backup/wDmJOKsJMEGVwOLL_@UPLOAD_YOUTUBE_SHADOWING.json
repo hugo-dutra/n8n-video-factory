@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-10-31T20:14:32.000Z",
+  "updatedAt": "2025-11-08T01:21:10.000Z",
   "createdAt": "2025-10-28T22:38:18.632Z",
   "id": "wDmJOKsJMEGVwOLL",
   "name": "@UPLOAD_YOUTUBE_SHADOWING",
@@ -216,6 +216,9 @@
             {
               "name": "output_Tags_map",
               "type": "any"
+            },
+            {
+              "name": "output_Study_Material"
             }
           ]
         }
@@ -238,7 +241,7 @@
         "categoryId": "=",
         "binaryProperty": "=data",
         "options": {
-          "description": "={{ $('Start').item.json.output_VideoDescription}}",
+          "description": "={{ $('Start').item.json.output_VideoDescription}}\nStudy material: {{ $('Start').item.json.output_Study_Material }}",
           "notifySubscribers": false,
           "privacyStatus": "private",
           "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');\n\n  // data alvo: hoje + 2 dias\n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n  const y = d.getFullYear();\n  const M = pad(d.getMonth() + 1);\n  const D = pad(d.getDate());\n\n  // horário fixo: 10:00:00\n  const hh = '10';\n  const mm = '00';\n  const ss = '00';\n\n  return `${y}-${M}-${D}T${hh}:${mm}:${ss}`;\n})()\n}}\n",
@@ -299,7 +302,7 @@
         "categoryId": "=",
         "binaryProperty": "=data",
         "options": {
-          "description": "={{ $('Start').item.json.output_VideoDescription}}",
+          "description": "={{ $('Start').item.json.output_VideoDescription}}\nStudy Material: {{ $('Start').item.json.output_Study_Material }}",
           "notifySubscribers": false,
           "privacyStatus": "private",
           "publishAt": "={{\n(() => {\n  const pad = n => String(n).padStart(2, '0');\n\n  // data alvo: hoje + 2 dias\n  const d = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);\n  const y = d.getFullYear();\n  const M = pad(d.getMonth() + 1);\n  const D = pad(d.getDate());\n\n  // horário fixo: 10:00:00\n  const hh = '10';\n  const mm = '00';\n  const ss = '00';\n\n  return `${y}-${M}-${D}T${hh}:${mm}:${ss}`;\n})()\n}}\n",
@@ -607,37 +610,39 @@
     "Start": [
       {
         "json": {
-          "videoId": "1761867116020",
+          "videoId": "1762563384284",
           "CHANNEL_NAME": "CANAL_SHADOWING",
-          "output_VideoTitle": "Level B2 | English Shadowing Narrative Future Tenses Goodbye Story",
-          "output_VideoDescription": "Practice your English shadowing with this touching narrative about Daniel's farewell and future journey. Listen carefully as he uses 'will,' 'going to,' and present continuous tenses to describe his plans, feelings, and hopes for a new life. In this video, you will hear Daniel reflecting on his past, saying goodbye to friends and family, and looking forward to the future. Follow his story as he talks about leaving his hometown, making plans, and promising to work hard. This practice will help you get up to speed on future tense usage and improve your ability to express intentions and predictions naturally. Join Daniel as he figures out how to say goodbye and keep memories close while embracing change. Listen once, then repeat aloud, then shadow with the audio to improve your fluency and confidence.",
+          "output_VideoTitle": "Level B1 | English Shadowing Tech Interview Conditionals Practice",
+          "output_VideoDescription": "Start your English shadowing practice with this tech-focused scenario. Listen carefully, then repeat aloud, and finally shadow the conversation to improve fluency and comprehension. In this video, you will practice first and second conditionals through a simulated tech interview where a candidate explains an incident response plan if a critical API goes down and what to do if a rollback fails. The dialogue includes realistic steps such as alerting the team, investigating errors, prioritizing tasks under time pressure, and escalating when necessary. You will also come across phrasal verbs like fall behind, look for, check for, get up (an issue), and follow through. This is a great opportunity to improve your conditional sentence structures and technical vocabulary in a natural setting. Listen once, then repeat aloud, then shadow with the audio for best results.",
           "output_Tags_map": [
             "english shadowing",
-            "B2 level",
-            "future tenses",
-            "will",
-            "going to",
-            "present continuous",
+            "B1 level",
+            "conditionals practice",
+            "first conditionals",
+            "second conditionals",
+            "tech interview",
+            "incident response",
+            "rollback fails",
+            "system down",
+            "error messages",
+            "server overload",
+            "load balancer",
+            "automation tests",
+            "stakeholder communication",
+            "technical vocabulary",
+            "problem solving",
             "repeat after me",
             "speaking practice",
-            "language learning",
-            "shadowing practice",
-            "English conversation",
-            "planning future",
-            "saying goodbye",
-            "emotion vocabulary",
-            "storytelling",
-            "listening skills",
-            "pronunciation practice",
-            "daily English",
-            "narrative mode",
-            "life changes"
-          ]
+            "time pressure",
+            "critical checks"
+          ],
+          "output_Study_Material": "https://drive.google.com/file/d/1Aghsa_6iR-v7hW8hHQ7D9D2n1o5xQ0lE/view?usp=drivesdk"
         }
       }
     ]
   },
-  "versionId": "0b66661b-4ea8-4378-8285-e1215869f10b",
+  "versionId": "5ac1517d-0c07-4ee4-94ef-cdf4327a20e7",
+  "versionCounter": 6,
   "triggerCount": 0,
   "shared": [
     {
@@ -661,7 +666,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-01T09:31:44.000Z",
+              "updatedAt": "2025-11-11T11:27:01.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -696,7 +701,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-01",
+              "lastActiveAt": "2025-11-11",
               "isPending": false
             }
           }

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-11-01T10:41:07.000Z",
+  "updatedAt": "2025-11-10T22:25:06.000Z",
   "createdAt": "2025-10-16T23:15:45.583Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
@@ -230,7 +230,7 @@
       "typeVersion": 1.3,
       "position": [
         976,
-        256
+        240
       ],
       "id": "ba0edc34-0978-4d93-921d-4a822649c8d9",
       "name": "@SCENE_METADATA_MAPPER"
@@ -303,8 +303,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -48,
-        -384
+        -176,
+        -416
       ],
       "id": "d2e9e437-fef3-4aa7-84dc-3285d3fca2aa",
       "name": "@CONTENT_SHADOWING_GENERATOR",
@@ -340,8 +340,8 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        144,
-        -384
+        16,
+        -416
       ],
       "id": "bfe467c6-73b0-4e30-a0c1-89bc6f025681",
       "name": "Execute Command with OpenAI image"
@@ -404,11 +404,10 @@
       "typeVersion": 1.3,
       "position": [
         976,
-        464
+        448
       ],
       "id": "388efcf4-fd8d-425f-9853-ab96439299c2",
-      "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES",
-      "disabled": true
+      "name": "@CONTENT_SHADOWING_GENERATOR_WITHOUT_IMAGES"
     },
     {
       "parameters": {
@@ -493,8 +492,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -112,
-        -464
+        -240,
+        -496
       ],
       "id": "d3f22ac8-43f0-4af5-bcf2-cfa16a077dc3",
       "name": "Sticky Note"
@@ -575,13 +574,13 @@
     },
     {
       "parameters": {
-        "numberInputs": 3
+        "numberInputs": 4
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1536,
-        96
+        1456,
+        64
       ],
       "id": "b407126d-447a-4b7e-9d68-5086f64e408d",
       "name": "Merge"
@@ -602,7 +601,8 @@
             "CHANNEL_NAME": "={{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}",
             "output_VideoTitle": "={{ $('Aggregate').item.json.output.last().VideoTitle }}",
             "output_VideoDescription": "={{ $('Aggregate').item.json.output.last().VideoDescription }}",
-            "output_Tags_map": "={{ $('Aggregate').item.json.output.last().Tags.map(a => a) }}"
+            "output_Tags_map": "={{ $('Aggregate').item.json.output.last().Tags.map(a => a) }}",
+            "output_Study_Material": "={{ $('@STUDY_CONTENT_MATERIAL').item.json.ContentLink }}"
           },
           "matchingColumns": [
             "videoId",
@@ -656,6 +656,16 @@
               "display": true,
               "canBeUsedToMatch": true,
               "removed": false
+            },
+            {
+              "id": "output_Study_Material",
+              "displayName": "output_Study_Material",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -666,8 +676,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        1920,
-        112
+        1840,
+        96
       ],
       "name": "@UPLOAD_YOUTUBE_SHADOWING",
       "id": "5303ad5a-e0b5-47b1-8e49-7ddcc0f485cf"
@@ -681,7 +691,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        816,
+        784,
         -32
       ],
       "id": "23ed7170-d186-4fe2-94f8-7d10d47f8918",
@@ -778,7 +788,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        1008,
+        976,
         -32
       ],
       "name": "@SHADOWING-THUMBNAIL-CREATOR",
@@ -792,20 +802,20 @@
       "typeVersion": 1,
       "position": [
         1200,
-        432
+        448
       ],
       "id": "2a0424b3-7346-482e-9816-ae8f8a115a4b",
       "name": "LONG - Execute Command with Fixed Image "
     },
     {
       "parameters": {
-        "command": "=#!/usr/bin/env bash\nset -Eeuo pipefail\nexport LC_ALL=C\nexport LANG=C\n\n############# CONFIG BASE (perfil PAISAGEM) #############\nSCALE_MODE=\"${SCALE_MODE:-stretch}\"\nCANVAS_W=${CANVAS_W:-1920}\nCANVAS_H=${CANVAS_H:-1080}\nBG_COLOR=\"${BG_COLOR:-black}\"\n\nFONT_ROOT=\"${FONT_ROOT:-/home/node/assets/COMMON/fonts}\"\nFONT_FILE=\"${FONT_FILE:-$FONT_ROOT/impact.ttf}\"\nFONT_NAME=\"${FONT_NAME:-Impact}\"\nFONT_SIZE=${FONT_SIZE:-72}\nSAFE_MARGIN=${SAFE_MARGIN:-72}\n\nTEXT_OUTLINE=\"${TEXT_OUTLINE:-0.6}\"\nTEXT_SHADOW=\"${TEXT_SHADOW:-0.12}\"\n\nEDGE_FADE_SEC=\"${EDGE_FADE_SEC:-0.25}\"\nAUDIO_FADE_SEC=\"${AUDIO_FADE_SEC:-0.12}\"\n\nX264_PRESET=\"${X264_PRESET:-veryfast}\"\nX264_CRF=${X264_CRF:-21}\nAUDIO_BR=\"${AUDIO_BR:-160k}\"\n\nWAVEFORM_ENABLE=\"${WAVEFORM_ENABLE:-1}\"\nWAVEFORM_WIDTH_PCT=\"${WAVEFORM_WIDTH_PCT:-60}\"\nWAVEFORM_HEIGHT=\"${WAVEFORM_HEIGHT:-200}\"\nWAVEFORM_OPACITY=\"${WAVEFORM_OPACITY:-0.95}\"\nWAVEFORM_MARGIN_BOTTOM=\"${WAVEFORM_MARGIN_BOTTOM:-12}\"\nWAVEFORM_MODE=\"${WAVEFORM_MODE:-bar}\"\n\nCOUNTDOWN_ENABLE=\"${COUNTDOWN_ENABLE:-1}\"\nCOUNTDOWN_HEIGHT=\"${COUNTDOWN_HEIGHT:-20}\"\nCOUNTDOWN_MARGIN_BOTTOM=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"\nCOUNTDOWN_BG_COLOR=\"${COUNTDOWN_BG_COLOR:-333333}\"\n\nBASE_BG_DIR=\"${BASE_BG_DIR:-/home/node/assets/CANAL_SHADOWING}\"\nLISTEN_IMG=\"${LISTEN_IMG:-$BASE_BG_DIR/listen01.png}\"\nREPEAT_IMG=\"${REPEAT_IMG:-$BASE_BG_DIR/repeat01.png}\"\nTOGETHER_IMG=\"${TOGETHER_IMG:-$BASE_BG_DIR/talk-together01.png}\"\nSCENE_XFADE_SEC=\"${SCENE_XFADE_SEC:-0.6}\"\n\n########## CONFIG (perfil SHORTS – vertical) ##########\nSHORTS_CANVAS_W=\"${SHORTS_CANVAS_W:-1080}\"\nSHORTS_CANVAS_H=\"${SHORTS_CANVAS_H:-1920}\"\nSHORTS_FONT_SIZE=\"${SHORTS_FONT_SIZE:-80}\"\nSHORTS_SAFE_MARGIN=\"${SHORTS_SAFE_MARGIN:-80}\"\nSHORTS_WAVEFORM_WIDTH_PCT=\"${SHORTS_WAVEFORM_WIDTH_PCT:-90}\"\nSHORTS_WAVEFORM_HEIGHT=\"${SHORTS_WAVEFORM_HEIGHT:-220}\"\nSHORTS_WAVEFORM_MARGIN_BOTTOM=\"${SHORTS_WAVEFORM_MARGIN_BOTTOM:-24}\"\nSHORTS_COUNTDOWN_HEIGHT=\"${SHORTS_COUNTDOWN_HEIGHT:-24}\"\nSHORTS_COUNTDOWN_MARGIN_BOTTOM=\"${SHORTS_COUNTDOWN_MARGIN_BOTTOM:-96}\"\nSHORTS_SCALE_MODE=\"${SHORTS_SCALE_MODE:-cover}\"\nSHORTS_SCENE_XFADE_SEC=\"${SHORTS_SCENE_XFADE_SEC:-0.45}\"\n\nSHORTS_PASSES=\"${SHORTS_PASSES:-full}\"\n\nMAX_DURATION=\"${MAX_DURATION:-180}\"\nFADE_OUT_SEC=\"${FADE_OUT_SEC:-2}\"\nMAX_DURATION_SHORTS=\"${MAX_DURATION_SHORTS:-180}\"\nFADE_OUT_SHORTS_SEC=\"${FADE_OUT_SHORTS_SEC:-2}\"\n\nfor bin in ffmpeg ffprobe node; do\n  command -v \"$bin\" >/dev/null 2>&1 || { echo \"ERRO: $bin não encontrado no PATH\"; exit 1; }\ndone\n\n__LAND_CANVAS_W=\"$CANVAS_W\"\n__LAND_CANVAS_H=\"$CANVAS_H\"\n__LAND_FONT_SIZE=\"$FONT_SIZE\"\n__LAND_SAFE_MARGIN=\"$SAFE_MARGIN\"\n__LAND_WF_WPCT=\"$WAVEFORM_WIDTH_PCT\"\n__LAND_WF_H=\"$WAVEFORM_HEIGHT\"\n__LAND_WF_MB=\"$WAVEFORM_MARGIN_BOTTOM\"\n__LAND_CD_H=\"$COUNTDOWN_HEIGHT\"\n__LAND_CD_MB=\"$COUNTDOWN_MARGIN_BOTTOM\"\n__LAND_SCALE_MODE=\"$SCALE_MODE\"\n__LAND_SCENE_XF=\"$SCENE_XFADE_SEC\"\n\nset_profile() {\n  case \"$1\" in\n    LANDSCAPE)\n      CANVAS_W=\"$__LAND_CANVAS_W\"\n      CANVAS_H=\"$__LAND_CANVAS_H\"\n      FONT_SIZE=\"$__LAND_FONT_SIZE\"\n      SAFE_MARGIN=\"$__LAND_SAFE_MARGIN\"\n      WAVEFORM_WIDTH_PCT=\"$__LAND_WF_WPCT\"\n      WAVEFORM_HEIGHT=\"$__LAND_WF_H\"\n      WAVEFORM_MARGIN_BOTTOM=\"$__LAND_WF_MB\"\n      COUNTDOWN_HEIGHT=\"$__LAND_CD_H\"\n      COUNTDOWN_MARGIN_BOTTOM=\"$__LAND_CD_MB\"\n      SCALE_MODE=\"$__LAND_SCALE_MODE\"\n      SCENE_XFADE_SEC=\"$__LAND_SCENE_XF\"\n      ;;\n    SHORTS)\n      CANVAS_W=\"$SHORTS_CANVAS_W\"\n      CANVAS_H=\"$SHORTS_CANVAS_H\"\n      FONT_SIZE=\"$SHORTS_FONT_SIZE\"\n      SAFE_MARGIN=\"$SHORTS_SAFE_MARGIN\"\n      WAVEFORM_WIDTH_PCT=\"$SHORTS_WAVEFORM_WIDTH_PCT\"\n      WAVEFORM_HEIGHT=\"$SHORTS_WAVEFORM_HEIGHT\"\n      WAVEFORM_MARGIN_BOTTOM=\"$SHORTS_WAVEFORM_MARGIN_BOTTOM\"\n      COUNTDOWN_HEIGHT=\"$SHORTS_COUNTDOWN_HEIGHT\"\n      COUNTDOWN_MARGIN_BOTTOM=\"$SHORTS_COUNTDOWN_MARGIN_BOTTOM\"\n      SCALE_MODE=\"$SHORTS_SCALE_MODE\"\n      SCENE_XFADE_SEC=\"$SHORTS_SCENE_XFADE_SEC\"\n      ;;\n  esac\n  export CANVAS_W CANVAS_H FONT_SIZE SAFE_MARGIN \\\n         WAVEFORM_WIDTH_PCT WAVEFORM_HEIGHT WAVEFORM_MARGIN_BOTTOM \\\n         COUNTDOWN_HEIGHT COUNTDOWN_MARGIN_BOTTOM SCALE_MODE SCENE_XFADE_SEC\n}\n\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\nLIST=\"$TMPDIR/list.txt\"; : > \"$LIST\"\n\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"$FONT_ROOT/impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.otf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.otf\"\n  fi\nfi\nFONT_DIR=\"$(dirname \"$FONT_FILE\")\"\n\nif command -v fc-scan >/dev/null 2>&1; then\n  INTERNAL_NAME=\"$(fc-scan --format='%{family}\\n' \"$FONT_FILE\" 2>/dev/null | head -n1 || true)\"\n  if [ -n \"$INTERNAL_NAME\" ]; then\n    FONT_NAME=\"$INTERNAL_NAME\"\n  fi\nfi\n\nFONTS_ESC=\"$FONT_DIR\"\nFONTS_ESC=\"${FONTS_ESC//\\\\/\\\\\\\\}\"\nFONTS_ESC=\"${FONTS_ESC//:/\\\\:}\"\nFONTS_ESC=\"${FONTS_ESC// /\\\\ }\"\n\nclamp_start () { awk -v d=\"$1\" -v f=\"$2\" 'BEGIN{ s=d-f; if (s<0) s=0; printf \"%.3f\", s }'; }\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\nscale_to_canvas () {\n  case \"$SCALE_MODE\" in\n    cover)   echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=increase,crop=${CANVAS_W}:${CANVAS_H}\" ;;\n    stretch) echo \"scale=${CANVAS_W}:${CANVAS_H}\" ;;\n    *)       echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\" ;;\n  esac\n}\n\nmake_ass_file () {\n  local ASS=\"$1\" RAW=\"$2\" SAN TXT STYLE_OVERRIDE\n  SAN=\"$RAW\"\n  SAN=\"${SAN//\\\\/\\\\\\\\}\"\n  SAN=\"${SAN//\\{/(}\"\n  SAN=\"${SAN//\\}/)}\"\n  STYLE_OVERRIDE=\"{\\fn${FONT_NAME}\\bord${TEXT_OUTLINE}\\shad${TEXT_SHADOW}\\b0}\"\n  TXT=\"${STYLE_OVERRIDE}${SAN}\"\n\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, ${FONT_NAME}, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00404040, &H00000000, 0, 0, 0, 0, 100, 100, 0, 0, 1, ${TEXT_OUTLINE}, ${TEXT_SHADOW}, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\nmake_text_over_audio () {\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  local WF_W=$(( CANVAS_W * ${WAVEFORM_WIDTH_PCT:-60} / 100 ))\n  local WF_H=${WAVEFORM_HEIGHT:-200}\n  local REQ_MODE=\"${WAVEFORM_MODE:-bar}\"\n  local SW_MODE=\"line\"\n  local THICK_MUL=3; [ \"$REQ_MODE\" = \"line\" ] && THICK_MUL=1\n  local WF_HI=$(( WF_H * THICK_MUL ))\n\n  local WF_CHAIN=\"\"\n  if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n    WF_CHAIN=\"[0:a]showwaves=s=${WF_W}x${WF_HI}:mode=${SW_MODE}:colors=white,format=rgba,colorkey=black:similarity=0.01:blend=0,scale=${WF_W}x${WF_H},colorchannelmixer=aa=${WAVEFORM_OPACITY:-0.95}[wv];\"\n  fi\n\n  local OVERLAY_EXPR=\"x=(W-w)/2:y=H-${WAVEFORM_MARGIN_BOTTOM:-12}-h\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC}[txt];\\\n${WF_CHAIN}\\\n[txt][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  else\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC}[bg];\\\n${WF_CHAIN}\\\n[bg][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  fi\n}\n\nmake_silence_with_text () {\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  local BAR_H=\"${COUNTDOWN_HEIGHT:-20}\"\n  local BAR_MARGIN=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"\n  local BAR_W=$((CANVAS_W - 200))\n  local BAR_X=100\n  local BAR_Y=$((CANVAS_H - BAR_MARGIN - BAR_H))\n\n  local COUNTDOWN_FILTER=\"\"\n  if [ \"${COUNTDOWN_ENABLE:-1}\" -eq 1 ]; then\n    COUNTDOWN_FILTER=\"\\\ncolor=c=white:size=${BAR_W}x${BAR_H}:rate=30:duration=${DUR},format=rgba,\\\ngeq=r='255':g='255':b='255':a='if(lte(X, W*max(1 - T/${DUR}, 0)), 255, 0)'[bar];\\\n[txt]drawbox=x=${BAR_X}:y=${BAR_Y}:w=${BAR_W}:h=${BAR_H}:color=0x${COUNTDOWN_BG_COLOR}:t=fill[txtbg];\\\n[txtbg][bar]overlay=${BAR_X}:${BAR_Y},\"\n  fi\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]$(scale_to_canvas)[bg];\\\n[bg]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\nmake_scene_xfade () {\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y \\\n    -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n    -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n    -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n}\n\nIN_JSON=\"$TMPDIR/in.json\"\n# >>> CORREÇÃO: grave TODOS os itens do n8n como um array JSON válido <<<\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n\n[ -s \"$IN_JSON\" ] || { echo \"ERRO: Entrada JSON vazia\"; exit 1; }\n\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\nconst env = process.env;\nconst path = process.argv[2];\n\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = env.CHANNEL_NAME || arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = env.VIDEO_ID     || arr[0].videoId      || String(Date.now());\n\nconst outDir  = `/home/node/download/${ch}/${vid}`;\nconst outName = `shadow_${vid}.mp4`;\n\nconsole.log(`#DEST_DIR=${outDir}`);\nconsole.log(`#FINAL_OUT=${outDir}/${outName}`);\nconsole.log(`#VIDEO_ID=${vid}`);\nconsole.log(`#CHANNEL_NAME=${ch}`);\n\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '')\n                  .replace(/\\r?\\n/g, ' ')\n                  .replace(/\\|/g, '¦');\n  console.log([audio, text, scene].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nFINAL_OUT=$(grep '^#FINAL_OUT=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nVIDEO_ID=$(grep '^#VIDEO_ID=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nCHANNEL_NAME=$(grep '^#CHANNEL_NAME=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n\n[ -n \"$DEST_DIR\" ] || { echo \"Falha ao obter DEST_DIR\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\nexport VIDEO_ID CHANNEL_NAME\n\necho \"=== VARIÁVEIS EXTRAÍDAS ===\"\necho \"CHANNEL_NAME: $CHANNEL_NAME\"\necho \"VIDEO_ID: $VIDEO_ID\"\necho \"DEST_DIR: $DEST_DIR\"\necho \"==========================\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n############################\n# ===== Vídeo PRINCIPAL ===\n############################\nset_profile LANDSCAPE\n\nlast_scene=\"\"\nidx=0\nread_first_line=1\nINTRO_AUDIO_SRC=\"\"\nINTRO_TXT=\"\"\nINTRO_CLIP_LAND=\"\"\n\nexec 9< \"$DATA_FILE\"\nwhile IFS='|' read -r -u 9 SRC TXT SCENE; do\n  if [ -z \"${SRC:-}\" ]; then\n    echo \"AVISO: Linha sem arquivo de áudio (texto: ${TXT:0:50}...)\"\n    continue\n  fi\n  if [ ! -f \"$SRC\" ]; then\n    echo \"ERRO: Arquivo de áudio não encontrado: $SRC\"\n    exit 1\n  fi\n\n  DUR=$(probe_dur \"$SRC\")\n  if [ -z \"$DUR\" ] || [ \"$DUR\" = \"0\" ] || [ \"$DUR\" = \"0.000000\" ]; then\n    echo \"ERRO: Duração inválida para $SRC (dur=$DUR)\"\n    exit 1\n  fi\n\n  if [ \"${SCENE:-0}\" -eq 0 ] && [ -z \"${INTRO_AUDIO_SRC:-}\" ]; then\n    INTRO_AUDIO_SRC=\"$SRC\"\n    INTRO_TXT=\"$TXT\"\n  fi\n\n  if [ \"$read_first_line\" -eq 0 ] && [ \"$SCENE\" != \"$last_scene\" ]; then\n    XF=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_scene_${last_scene}_to_${SCENE}.mp4\"\n    make_scene_xfade \"$TOGETHER_IMG\" \"$LISTEN_IMG\" \"$XF\" \"${SCENE_XFADE_SEC:-0.6}\"\n    printf \"file '%s'\\n\" \"$XF\" >> \"$LIST\"; idx=$((idx+1))\n  fi\n  read_first_line=0\n  last_scene=\"$SCENE\"\n\n  if [ \"${SCENE:-0}\" -eq 0 ]; then\n    P0=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_intro_s0.mp4\"\n    make_text_over_audio \"$SRC\" \"$P0\" \"$TXT\" \"\"\n    INTRO_CLIP_LAND=\"$P0\"\n    printf \"file '%s'\\n\" \"$P0\" >> \"$LIST\"; idx=$((idx+1))\n  else\n    P1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_listen_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P1\" \"$TXT\" \"$LISTEN_IMG\"\n    printf \"file '%s'\\n\" \"$P1\" >> \"$LIST\"; idx=$((idx+1))\n\n    if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n      X1=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_listen_to_repeat_s${SCENE}.mp4\"\n      make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X1\" \"${SCENE_XFADE_SEC:-0.6}\"\n      printf \"file '%s'\\n\" \"$X1\" >> \"$LIST\"; idx=$((idx+1))\n    fi\n\n    PR=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_repeat_s${SCENE}.mp4\"\n    make_silence_with_text \"$PR\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n    printf \"file '%s'\\n\" \"$PR\" >> \"$LIST\"; idx=$((idx+1))\n\n    if [ \"${SCENE_XFADE_SEC:-0.6}\" != \"0\" ]; then\n      X2=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_xfade_repeat_to_together_s${SCENE}.mp4\"\n      make_scene_xfade \"$REPEAT_IMG\" \"$TOGETHER_IMG\" \"$X2\" \"${SCENE_XFADE_SEC:-0.6}\"\n      printf \"file '%s'\\n\" \"$X2\" >> \"$LIST\"; idx=$((idx+1))\n    fi\n\n    P3=\"$TMPDIR/part_$(printf \"%03d\" \"$idx\")_together_s${SCENE}.mp4\"\n    make_text_over_audio \"$SRC\" \"$P3\" \"$TXT\" \"$TOGETHER_IMG\"\n    printf \"file '%s'\\n\" \"$P3\" >> \"$LIST\"; idx=$((idx+1))\n  fi\ndone\nexec 9<&-\n\nmkdir -p \"$(dirname \"$FINAL_OUT\")\"\nffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST\" -c copy -movflags +faststart \"$FINAL_OUT\"\necho \"OK (concat): $FINAL_OUT\"\n\nget_dur() { ffprobe -v error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | awk '{printf \"%.3f\", $1}'; }\nMAIN_DUR=\"$(get_dur \"$FINAL_OUT\" || echo 0)\"\necho \"Duração final detectada (principal): ${MAIN_DUR}s\"\n\nNEEDS_TRIM=\"$(awk -v d=\"$MAIN_DUR\" -v m=\"$MAX_DURATION\" 'BEGIN{print (d>m)?1:0}')\"\nif [ \"$NEEDS_TRIM\" = \"1\" ]; then\n  FADE_ST=\"$(awk -v m=\"$MAX_DURATION\" -v f=\"$FADE_OUT_SEC\" 'BEGIN{s=m-f; if(s<0) s=0; printf \"%.3f\", s}')\"\n  TMP_TRIM=\"$TMPDIR/shadow_${VIDEO_ID}_trimmed.mp4\"\n\n  echo \"Aplicando fade-out de ${FADE_OUT_SEC}s a partir de ${FADE_ST}s e cortando em ${MAX_DURATION}s…\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y \\\n    -i \"$FINAL_OUT\" \\\n    -vf \"fade=type=out:start_time=${FADE_ST}:duration=${FADE_OUT_SEC}\" \\\n    -af \"afade=type=out:start_time=${FADE_ST}:duration=${FADE_OUT_SEC}\" \\\n    -t \"$MAX_DURATION\" \\\n    -c:v libx264 -preset \"$X264_PRESET\" -crf \"$X264_CRF\" \\\n    -c:a aac -b:a \"$AUDIO_BR\" \\\n    -pix_fmt yuv420p -movflags +faststart \\\n    \"$TMP_TRIM\"\n\n  mv -f \"$TMP_TRIM\" \"$FINAL_OUT\"\n  echo \"OK (trim+fade principal): $FINAL_OUT\"\nelse\n  echo \"Sem necessidade de fade/trim no principal (<= ${MAX_DURATION}s).\"\nfi\n\n############################\n# ========= SHORTS =========\n############################\nset_profile SHORTS\n\nSHORT_INTRO=\"\"\nif [ -n \"${INTRO_AUDIO_SRC:-}\" ]; then\n  SHORT_INTRO=\"$TMPDIR/short_intro_v.mp4\"\n  make_text_over_audio \"$INTRO_AUDIO_SRC\" \"$SHORT_INTRO\" \"$INTRO_TXT\" \"\"\nelse\n  echo \"AVISO: Não foi encontrada cena de introdução (sceneId=0). Shorts: sem intro.\"\nfi\n\nSCENES=$(awk -F'|' '$3!=\"\" && $3!=\"0\"{print $3}' \"$DATA_FILE\" | sort -n | uniq || true)\n\nfor S in $SCENES; do\n  LIST_S=\"$TMPDIR/list_short_s${S}.txt\"; : > \"$LIST_S\"\n\n  [ -n \"$SHORT_INTRO\" ] && [ -f \"$SHORT_INTRO\" ] && printf \"file '%s'\\n\" \"$SHORT_INTRO\" >> \"$LIST_S\"\n\n  while IFS='|' read -r SRC TXT SCENE; do\n    [ \"${SCENE:-}\" != \"$S\" ] && continue\n\n    DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n    [ \"$DUR\" = \"0\" ] && { echo \"AVISO: duração zero em $SRC\"; continue; }\n\n    case \"$SHORTS_PASSES\" in\n      listen)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n        ;;\n      listen_repeat)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X=\"$TMPDIR/short_s${S}_xfade_l2r_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X\" >> \"$LIST_S\"\n        fi\n        B=\"$TMPDIR/short_s${S}_repeat_$(basename \"$SRC\").mp4\"\n        make_silence_with_text \"$B\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n        printf \"file '%s'\\n\" \"$B\" >> \"$LIST_S\"\n        ;;\n      listen_together)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X=\"$TMPDIR/short_s${S}_xfade_l2t_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$LISTEN_IMG\" \"$TOGETHER_IMG\" \"$X\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X\" >> \"$LIST_S\"\n        fi\n        C=\"$TMPDIR/short_s${S}_together_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$C\" \"$TXT\" \"$TOGETHER_IMG\"\n        printf \"file '%s'\\n\" \"$C\" >> \"$LIST_S\"\n        ;;\n      full|*)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X1=\"$TMPDIR/short_s${S}_xfade_l2r_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X1\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X1\" >> \"$LIST_S\"\n        fi\n\n        B=\"$TMPDIR/short_s${S}_repeat_$(basename \"$SRC\").mp4\"\n        make_silence_with_text \"$B\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n        printf \"file '%s'\\n\" \"$B\" >> \"$LIST_S\"\n\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X2=\"$TMPDIR/short_s${S}_xfade_r2t_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$REPEAT_IMG\" \"$TOGETHER_IMG\" \"$X2\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X2\" >> \"$LIST_S\"\n        fi\n\n        C=\"$TMPDIR/short_s${S}_together_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$C\" \"$TXT\" \"$TOGETHER_IMG\"\n        printf \"file '%s'\\n\" \"$C\" >> \"$LIST_S\"\n        ;;\n    esac\n  done < \"$DATA_FILE\"\n\n  OUT_SHORT=\"/home/node/download/${CHANNEL_NAME}/${VIDEO_ID}/short_${S}_${VIDEO_ID}.mp4\"\n  mkdir -p \"$(dirname \"$OUT_SHORT\")\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST_S\" -c copy -movflags +faststart \"$OUT_SHORT\"\n  echo \"OK_SHORT_SCENE_${S}: $OUT_SHORT\"\n\n  SHORT_DUR=\"$(get_dur \"$OUT_SHORT\" || echo 0)\"\n  echo \"Dur. Short s${S}: ${SHORT_DUR}s\"\n  NEEDS_TRIM_S=\"$(awk -v d=\"$SHORT_DUR\" -v m=\"$MAX_DURATION_SHORTS\" 'BEGIN{print (d>m)?1:0}')\"\n  if [ \"$NEEDS_TRIM_S\" = \"1\" ]; then\n    FADE_ST_S=\"$(awk -v m=\"$MAX_DURATION_SHORTS\" -v f=\"$FADE_OUT_SHORTS_SEC\" 'BEGIN{s=m-f; if(s<0) s=0; printf \"%.3f\", s}')\"\n    TMP_TRIM_S=\"$TMPDIR/short_${S}_${VIDEO_ID}_trimmed.mp4\"\n    echo \"Aplicando fade-out de ${FADE_OUT_SHORTS_SEC}s a partir de ${FADE_ST_S}s e cortando em ${MAX_DURATION_SHORTS}s…\"\n\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -i \"$OUT_SHORT\" \\\n      -vf \"fade=type=out:start_time=${FADE_ST_S}:duration=${FADE_OUT_SHORTS_SEC}\" \\\n      -af \"afade=type=out:start_time=${FADE_ST_S}:duration=${FADE_OUT_SHORTS_SEC}\" \\\n      -t \"$MAX_DURATION_SHORTS\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf \"$X264_CRF\" \\\n      -c:a aac -b:a \"$AUDIO_BR\" \\\n      -pix_fmt yuv420p -movflags +faststart \\\n      \"$TMP_TRIM_S\"\n\n    mv -f \"$TMP_TRIM_S\" \"$OUT_SHORT\"\n    echo \"OK (trim+fade Short s${S}): $OUT_SHORT\"\n  else\n    echo \"Short s${S} <= ${MAX_DURATION_SHORTS}s, sem ajuste.\"\n  fi\ndone\n\nset_profile LANDSCAPE\n\necho \"\"\necho \"==========================================\"\necho \"PROCESSAMENTO CONCLUÍDO COM SUCESSO!\"\necho \"==========================================\"\necho \"CHANNEL_NAME: $CHANNEL_NAME\"\necho \"VIDEO_ID: $VIDEO_ID\"\necho \"Vídeo principal: $FINAL_OUT\"\necho \"Shorts gerados em: /home/node/download/${CHANNEL_NAME}/${VIDEO_ID}/\"\necho \"==========================================\"\n"
+        "command": "=#!/usr/bin/env bash\nset -Eeuo pipefail\nexport LC_ALL=C\nexport LANG=C\n\n############# CONFIG BASE (perfil PAISAGEM) #############\nSCALE_MODE=\"${SCALE_MODE:-stretch}\"\nCANVAS_W=${CANVAS_W:-1920}\nCANVAS_H=${CANVAS_H:-1080}\nBG_COLOR=\"${BG_COLOR:-black}\"\n\nFONT_ROOT=\"${FONT_ROOT:-/home/node/assets/COMMON/fonts}\"\nFONT_FILE=\"${FONT_FILE:-$FONT_ROOT/impact.ttf}\"\nFONT_NAME=\"${FONT_NAME:-Impact}\"\nFONT_SIZE=${FONT_SIZE:-72}\nSAFE_MARGIN=${SAFE_MARGIN:-72}\n\nTEXT_OUTLINE=\"${TEXT_OUTLINE:-0.6}\"\nTEXT_SHADOW=\"${TEXT_SHADOW:-0.12}\"\n\nEDGE_FADE_SEC=\"${EDGE_FADE_SEC:-0.25}\"\nAUDIO_FADE_SEC=\"${AUDIO_FADE_SEC:-0.12}\"\n\nX264_PRESET=\"${X264_PRESET:-veryfast}\"\nX264_CRF=${X264_CRF:-21}\nAUDIO_BR=\"${AUDIO_BR:-160k}\"\n\nWAVEFORM_ENABLE=\"${WAVEFORM_ENABLE:-1}\"\nWAVEFORM_WIDTH_PCT=\"${WAVEFORM_WIDTH_PCT:-60}\"\nWAVEFORM_HEIGHT=\"${WAVEFORM_HEIGHT:-200}\"\nWAVEFORM_OPACITY=\"${WAVEFORM_OPACITY:-0.95}\"\nWAVEFORM_MARGIN_BOTTOM=\"${WAVEFORM_MARGIN_BOTTOM:-12}\"\nWAVEFORM_MODE=\"${WAVEFORM_MODE:-bar}\"\n\nCOUNTDOWN_ENABLE=\"${COUNTDOWN_ENABLE:-1}\"\nCOUNTDOWN_HEIGHT=\"${COUNTDOWN_HEIGHT:-20}\"\nCOUNTDOWN_MARGIN_BOTTOM=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"\nCOUNTDOWN_BG_COLOR=\"${COUNTDOWN_BG_COLOR:-333333}\"\n\nBASE_BG_DIR=\"${BASE_BG_DIR:-/home/node/assets/CANAL_SHADOWING}\"\nLISTEN_IMG=\"${LISTEN_IMG:-$BASE_BG_DIR/listen01.png}\"\nREPEAT_IMG=\"${REPEAT_IMG:-$BASE_BG_DIR/repeat01.png}\"\nTOGETHER_IMG=\"${TOGETHER_IMG:-$BASE_BG_DIR/talk-together01.png}\"\nSCENE_XFADE_SEC=\"${SCENE_XFADE_SEC:-0.6}\"\n\n########## CONFIG (perfil SHORTS – vertical) ##########\nSHORTS_CANVAS_W=\"${SHORTS_CANVAS_W:-1080}\"\nSHORTS_CANVAS_H=\"${SHORTS_CANVAS_H:-1920}\"\nSHORTS_FONT_SIZE=\"${SHORTS_FONT_SIZE:-80}\"\nSHORTS_SAFE_MARGIN=\"${SHORTS_SAFE_MARGIN:-80}\"\nSHORTS_WAVEFORM_WIDTH_PCT=\"${SHORTS_WAVEFORM_WIDTH_PCT:-90}\"\nSHORTS_WAVEFORM_HEIGHT=\"${SHORTS_WAVEFORM_HEIGHT:-220}\"\nSHORTS_WAVEFORM_MARGIN_BOTTOM=\"${SHORTS_WAVEFORM_MARGIN_BOTTOM:-24}\"\nSHORTS_COUNTDOWN_HEIGHT=\"${SHORTS_COUNTDOWN_HEIGHT:-24}\"\nSHORTS_COUNTDOWN_MARGIN_BOTTOM=\"${SHORTS_COUNTDOWN_MARGIN_BOTTOM:-96}\"\nSHORTS_SCALE_MODE=\"${SHORTS_SCALE_MODE:-cover}\"\nSHORTS_SCENE_XFADE_SEC=\"${SHORTS_SCENE_XFADE_SEC:-0.45}\"\n\n# Quais passes incluir em cada Short (listen | listen_repeat | listen_together | full)\nSHORTS_PASSES=\"${SHORTS_PASSES:-full}\"\n\n# Limite e fade dos shorts\nMAX_DURATION_SHORTS=\"${MAX_DURATION_SHORTS:-175}\"\nFADE_OUT_SHORTS_SEC=\"${FADE_OUT_SHORTS_SEC:-2}\"\n\n# Dependências básicas\nfor bin in ffmpeg ffprobe node; do\n  command -v \"$bin\" >/dev/null 2>&1 || { echo \"ERRO: $bin não encontrado no PATH\"; exit 1; }\ndone\n\n# Snapshot dos valores de LANDSCAPE (usados pelo set_profile)\n__LAND_CANVAS_W=\"$CANVAS_W\"\n__LAND_CANVAS_H=\"$CANVAS_H\"\n__LAND_FONT_SIZE=\"$FONT_SIZE\"\n__LAND_SAFE_MARGIN=\"$SAFE_MARGIN\"\n__LAND_WF_WPCT=\"$WAVEFORM_WIDTH_PCT\"\n__LAND_WF_H=\"$WAVEFORM_HEIGHT\"\n__LAND_WF_MB=\"$WAVEFORM_MARGIN_BOTTOM\"\n__LAND_CD_H=\"$COUNTDOWN_HEIGHT\"\n__LAND_CD_MB=\"$COUNTDOWN_MARGIN_BOTTOM\"\n__LAND_SCALE_MODE=\"$SCALE_MODE\"\n__LAND_SCENE_XF=\"$SCENE_XFADE_SEC\"\n\nset_profile() {\n  case \"$1\" in\n    LANDSCAPE)\n      CANVAS_W=\"$__LAND_CANVAS_W\"\n      CANVAS_H=\"$__LAND_CANVAS_H\"\n      FONT_SIZE=\"$__LAND_FONT_SIZE\"\n      SAFE_MARGIN=\"$__LAND_SAFE_MARGIN\"\n      WAVEFORM_WIDTH_PCT=\"$__LAND_WF_WPCT\"\n      WAVEFORM_HEIGHT=\"$__LAND_WF_H\"\n      WAVEFORM_MARGIN_BOTTOM=\"$__LAND_WF_MB\"\n      COUNTDOWN_HEIGHT=\"$__LAND_CD_H\"\n      COUNTDOWN_MARGIN_BOTTOM=\"$__LAND_CD_MB\"\n      SCALE_MODE=\"$__LAND_SCALE_MODE\"\n      SCENE_XFADE_SEC=\"$__LAND_SCENE_XF\"\n      ;;\n    SHORTS)\n      CANVAS_W=\"$SHORTS_CANVAS_W\"\n      CANVAS_H=\"$SHORTS_CANVAS_H\"\n      FONT_SIZE=\"$SHORTS_FONT_SIZE\"\n      SAFE_MARGIN=\"$SHORTS_SAFE_MARGIN\"\n      WAVEFORM_WIDTH_PCT=\"$SHORTS_WAVEFORM_WIDTH_PCT\"\n      WAVEFORM_HEIGHT=\"$SHORTS_WAVEFORM_HEIGHT\"\n      WAVEFORM_MARGIN_BOTTOM=\"$SHORTS_WAVEFORM_MARGIN_BOTTOM\"\n      COUNTDOWN_HEIGHT=\"$SHORTS_COUNTDOWN_HEIGHT\"\n      COUNTDOWN_MARGIN_BOTTOM=\"$SHORTS_COUNTDOWN_MARGIN_BOTTOM\"\n      SCALE_MODE=\"$SHORTS_SCALE_MODE\"\n      SCENE_XFADE_SEC=\"$SHORTS_SCENE_XFADE_SEC\"\n      ;;\n  esac\n  export CANVAS_W CANVAS_H FONT_SIZE SAFE_MARGIN \\\n         WAVEFORM_WIDTH_PCT WAVEFORM_HEIGHT WAVEFORM_MARGIN_BOTTOM \\\n         COUNTDOWN_HEIGHT COUNTDOWN_MARGIN_BOTTOM SCALE_MODE SCENE_XFADE_SEC\n}\n\n# Área de trabalho temporária\nTMPROOT=\"/home/node/download\"\nmkdir -p \"$TMPROOT\"\nTMPDIR=\"$(mktemp -d \"$TMPROOT/.shadow_XXXXXX\")\"\ntrap 'rm -rf \"$TMPDIR\"' EXIT\n\n# Fonte: fallback e nome interno\nif [ ! -f \"$FONT_FILE\" ]; then\n  if   [ -f \"$FONT_ROOT/impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.ttf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.ttf\"\n  elif [ -f \"$FONT_ROOT/Impact.otf\" ]; then FONT_FILE=\"$FONT_ROOT/Impact.otf\"\n  fi\nfi\nFONT_DIR=\"$(dirname \"$FONT_FILE\")\"\nif command -v fc-scan >/dev/null 2>&1; then\n  INTERNAL_NAME=\"$(fc-scan --format='%{family}\\n' \"$FONT_FILE\" 2>/dev/null | head -n1 || true)\"\n  [ -n \"$INTERNAL_NAME\" ] && FONT_NAME=\"$INTERNAL_NAME\"\nfi\nFONTS_ESC=\"$FONT_DIR\"\nFONTS_ESC=\"${FONTS_ESC//\\\\/\\\\\\\\}\"\nFONTS_ESC=\"${FONTS_ESC//:/\\\\:}\"\nFONTS_ESC=\"${FONTS_ESC// /\\\\ }\"\n\n# Helpers\nclamp_start () { awk -v d=\"$1\" -v f=\"$2\" 'BEGIN{ s=d-f; if (s<0) s=0; printf \"%.3f\", s }'; }\nprobe_dur () { ffprobe -hide_banner -loglevel error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | tr -d '\\r' || true; }\nscale_to_canvas () {\n  case \"$SCALE_MODE\" in\n    cover)   echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=increase,crop=${CANVAS_W}:${CANVAS_H}\" ;;\n    stretch) echo \"scale=${CANVAS_W}:${CANVAS_H}\" ;;\n    *)       echo \"scale=${CANVAS_W}:${CANVAS_H}:force_original_aspect_ratio=decrease,pad=${CANVAS_W}:${CANVAS_H}:(ow-iw)/2:(oh-ih)/2:color=${BG_COLOR}\" ;;\n  esac\n}\n\nmake_ass_file () {\n  local ASS=\"$1\" RAW=\"$2\" SAN TXT STYLE_OVERRIDE\n  SAN=\"$RAW\"\n  SAN=\"${SAN//\\\\/\\\\\\\\}\"\n  SAN=\"${SAN//\\{/(}\"\n  SAN=\"${SAN//\\}/)}\"\n  STYLE_OVERRIDE=\"{\\fn${FONT_NAME}\\bord${TEXT_OUTLINE}\\shad${TEXT_SHADOW}\\b0}\"\n  TXT=\"${STYLE_OVERRIDE}${SAN}\"\n\n  cat > \"$ASS\" <<EOF\n[Script Info]\nScriptType: v4.00+\nPlayResX: ${CANVAS_W}\nPlayResY: ${CANVAS_H}\nScaledBorderAndShadow: yes\nWrapStyle: 0\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default, ${FONT_NAME}, ${FONT_SIZE}, &H00FFFFFF, &H000000FF, &H00404040, &H00000000, 0, 0, 0, 0, 100, 100, 0, 0, 1, ${TEXT_OUTLINE}, ${TEXT_SHADOW}, 5, ${SAFE_MARGIN}, ${SAFE_MARGIN}, ${SAFE_MARGIN}, 0\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\nDialogue: 0,0:00:00.00,9:59:59.99,Default,,0000,0000,0000,,${TXT}\nEOF\n}\n\nmake_text_over_audio () {\n  local SRC=\"$1\" OUT=\"$2\" TXT=\"$3\" IMG=\"$4\" DUR ASSF\n  DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  local WF_W=$(( CANVAS_W * ${WAVEFORM_WIDTH_PCT:-60} / 100 ))\n  local WF_H=${WAVEFORM_HEIGHT:-200}\n  local REQ_MODE=\"${WAVEFORM_MODE:-bar}\"\n  local SW_MODE=\"line\"\n  local THICK_MUL=3; [ \"$REQ_MODE\" = \"line\" ] && THICK_MUL=1\n  local WF_HI=$(( WF_H * THICK_MUL ))\n\n  local WF_CHAIN=\"\"\n  if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n    WF_CHAIN=\"[0:a]showwaves=s=${WF_W}x${WF_HI}:mode=${SW_MODE}:colors=white,format=rgba,colorkey=black:similarity=0.01:blend=0,scale=${WF_W}x${WF_H},colorchannelmixer=aa=${WAVEFORM_OPACITY:-0.95}[wv];\"\n  fi\n\n  local OVERLAY_EXPR=\"x=(W-w)/2:y=H-${WAVEFORM_MARGIN_BOTTOM:-12}-h\"\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC}[txt];\\\n${WF_CHAIN}\\\n[txt][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n        -filter_complex \"\\\n[1:v]$(scale_to_canvas)[bg];\\\n[bg]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  else\n    if [ \"${WAVEFORM_ENABLE:-1}\" -eq 1 ]; then\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC}[bg];\\\n${WF_CHAIN}\\\n[bg][wv]overlay=${OVERLAY_EXPR},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    else\n      ffmpeg -nostdin -hide_banner -loglevel error -y \\\n        -i \"$SRC\" -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n        -filter_complex \"\\\n[1:v]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,fps=30,setsar=1[v];\\\n[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n        -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF \\\n        -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n    fi\n  fi\n}\n\nmake_silence_with_text () {\n  local OUT=\"$1\" DUR=\"$2\" TXT=\"$3\" IMG=\"$4\" ASSF\n  ASSF=\"$OUT.ass\"; make_ass_file \"$ASSF\" \"$TXT\"\n\n  local VOUT_ST; VOUT_ST=$(clamp_start \"$DUR\" \"$EDGE_FADE_SEC\")\n  local AOUT_ST; AOUT_ST=$(clamp_start \"$DUR\" \"$AUDIO_FADE_SEC\")\n\n  local BAR_H=\"${COUNTDOWN_HEIGHT:-20}\"\n  local BAR_MARGIN=\"${COUNTDOWN_MARGIN_BOTTOM:-50}\"\n  local BAR_W=$((CANVAS_W - 200))\n  local BAR_X=100\n  local BAR_Y=$((CANVAS_H - BAR_MARGIN - BAR_H))\n\n  local COUNTDOWN_FILTER=\"\"\n  if [ \"${COUNTDOWN_ENABLE:-1}\" -eq 1 ]; then\n    COUNTDOWN_FILTER=\"\\\ncolor=c=white:size=${BAR_W}x${BAR_H}:rate=30:duration=${DUR},format=rgba,\\\ngeq=r='255':g='255':b='255':a='if(lte(X, W*max(1 - T/${DUR}, 0)), 255, 0)'[bar];\\\n[txt]drawbox=x=${BAR_X}:y=${BAR_Y}:w=${BAR_W}:h=${BAR_H}:color=0x${COUNTDOWN_BG_COLOR}:t=fill[txtbg];\\\n[txtbg][bar]overlay=${BAR_X}:${BAR_Y},\"\n  fi\n\n  if [ -n \"${IMG:-}\" ] && [ -f \"$IMG\" ]; then\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -loop 1 -t \"$DUR\" -i \"$IMG\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]$(scale_to_canvas)[bg];\\\n[bg]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  else\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -f lavfi -t \"$DUR\" -i \"color=size=${CANVAS_W}x${CANVAS_H}:rate=30:color=${BG_COLOR}\" \\\n      -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n      -filter_complex \"\\\n[0:v]ass='${ASSF}':shaping=1:fontsdir=${FONTS_ESC},fps=30,setpts=PTS-STARTPTS[txt];\\\n${COUNTDOWN_FILTER}\\\nfade=t=in:st=0:d=${EDGE_FADE_SEC},fade=t=out:st=${VOUT_ST}:d=${EDGE_FADE_SEC},format=yuv420p,setsar=1[v];\\\n[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,afade=t=in:st=0:d=${AUDIO_FADE_SEC},afade=t=out:st=${AOUT_ST}:d=${AUDIO_FADE_SEC}[a]\" \\\n      -map \"[v]\" -map \"[a]\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart \\\n      -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n  fi\n}\n\nmake_scene_xfade () {\n  local P=\"$1\" N=\"$2\" OUT=\"$3\" DUR=\"$4\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y \\\n    -loop 1 -t \"$DUR\" -i \"$P\" -loop 1 -t \"$DUR\" -i \"$N\" -f lavfi -t \"$DUR\" -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" \\\n    -filter_complex \"[0:v]$(scale_to_canvas)[a0];[1:v]$(scale_to_canvas)[a1];[a0][a1]xfade=transition=fade:duration=${DUR}:offset=0,format=yuv420p,setsar=1,fps=30[v];[2:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[a]\" \\\n    -map \"[v]\" -map \"[a]\" -c:v libx264 -preset \"$X264_PRESET\" -crf $X264_CRF -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a \"$AUDIO_BR\" -shortest \"$OUT\"\n}\n\n# ---------- Entrada do n8n (JSON como array) ----------\nIN_JSON=\"$TMPDIR/in.json\"\ncat > \"$IN_JSON\" <<'JSON'\n{{ JSON.stringify($input.all().map(i => i.json)) }}\nJSON\n[ -s \"$IN_JSON\" ] || { echo \"ERRO: Entrada JSON vazia\"; exit 1; }\n\n# ---------- Builder: extrai canal, videoId e linhas (audio|texto|sceneId) ----------\nBUILD_JS=\"$TMPDIR/build.js\"\ncat > \"$BUILD_JS\" <<'JS'\nconst fs = require('fs');\nconst env = process.env;\nconst path = process.argv[2];\n\nlet arr;\ntry { arr = JSON.parse(fs.readFileSync(path, 'utf8')); }\ncatch(e){ console.error('JSON inválido:', e.message); process.exit(2); }\n\nif (!Array.isArray(arr) || !arr.length) { console.error('JSON vazio'); process.exit(3); }\n\nconst ch  = env.CHANNEL_NAME || arr[0].CHANNEL_NAME || 'CANAL_SHADOWING';\nconst vid = env.VIDEO_ID     || arr[0].videoId      || String(Date.now());\n\nconst outDir  = `/home/node/download/${ch}/${vid}`;\n\nconsole.log(`#DEST_DIR=${outDir}`);\nconsole.log(`#VIDEO_ID=${vid}`);\nconsole.log(`#CHANNEL_NAME=${ch}`);\n\nfor (const it of arr) {\n  const scene = it.sceneId ?? 0;\n  const audio = it.videoMetaData?.file || '';\n  const text  = String(it.audioSubtitle ?? '')\n                  .replace(/\\r?\\n/g, ' ')\n                  .replace(/\\|/g, '¦');\n  console.log([audio, text, scene].join('|'));\n}\nJS\n\nTSV_RAW=\"$TMPDIR/raw.tsv\"\nnode \"$BUILD_JS\" \"$IN_JSON\" > \"$TSV_RAW\"\n\nDEST_DIR=$(grep '^#DEST_DIR=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nVIDEO_ID=$(grep '^#VIDEO_ID=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\nCHANNEL_NAME=$(grep '^#CHANNEL_NAME=' \"$TSV_RAW\" | head -n1 | cut -d'=' -f2-)\n\n[ -n \"$DEST_DIR\" ] || { echo \"Falha ao obter DEST_DIR\"; exit 1; }\nmkdir -p \"$DEST_DIR\"\nexport VIDEO_ID CHANNEL_NAME\n\necho \"=== VARIÁVEIS EXTRAÍDAS ===\"\necho \"CHANNEL_NAME: $CHANNEL_NAME\"\necho \"VIDEO_ID: $VIDEO_ID\"\necho \"DEST_DIR: $DEST_DIR\"\necho \"===========================\"\n\nDATA_FILE=\"$TMPDIR/data.tsv\"\ngrep -v '^#' \"$TSV_RAW\" > \"$DATA_FILE\"\n\n############################\n# ========= SHORTS =========\n############################\nset_profile SHORTS\n\n# Intro opcional (sceneId = 0)\nINTRO_AUDIO_SRC=\"\"\nINTRO_TXT=\"\"\nif awk -F'|' '$3==\"0\"{exit 0} END{exit 1}' \"$DATA_FILE\"; then\n  while IFS='|' read -r SRC TXT SCENE; do\n    [ \"${SCENE:-}\" = \"0\" ] || continue\n    INTRO_AUDIO_SRC=\"$SRC\"\n    INTRO_TXT=\"$TXT\"\n    break\n  done < \"$DATA_FILE\"\nfi\n\nSHORT_INTRO=\"\"\nif [ -n \"${INTRO_AUDIO_SRC:-}\" ] && [ -f \"$INTRO_AUDIO_SRC\" ]; then\n  SHORT_INTRO=\"$TMPDIR/short_intro_v.mp4\"\n  make_text_over_audio \"$INTRO_AUDIO_SRC\" \"$SHORT_INTRO\" \"$INTRO_TXT\" \"\"\nelse\n  echo \"AVISO: Não foi encontrada cena de introdução (sceneId=0). Shorts: sem intro.\"\nfi\n\n# Conjunto de cenas > 0\nSCENES=$(awk -F'|' '$3!=\"\" && $3!=\"0\"{print $3}' \"$DATA_FILE\" | sort -n | uniq || true)\n\nfor S in $SCENES; do\n  LIST_S=\"$TMPDIR/list_short_s${S}.txt\"; : > \"$LIST_S\"\n\n  [ -n \"$SHORT_INTRO\" ] && [ -f \"$SHORT_INTRO\" ] && printf \"file '%s'\\n\" \"$SHORT_INTRO\" >> \"$LIST_S\"\n\n  while IFS='|' read -r SRC TXT SCENE; do\n    [ \"${SCENE:-}\" != \"$S\" ] && continue\n\n    if [ -z \"${SRC:-}\" ] || [ ! -f \"$SRC\" ]; then\n      echo \"AVISO: Áudio ausente para cena $S (SRC='$SRC')\"\n      continue\n    fi\n\n    DUR=$(probe_dur \"$SRC\"); [ -z \"$DUR\" ] && DUR=0\n    [ \"$DUR\" = \"0\" ] && { echo \"AVISO: duração zero em $SRC\"; continue; }\n\n    case \"$SHORTS_PASSES\" in\n      listen)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n        ;;\n      listen_repeat)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X=\"$TMPDIR/short_s${S}_xfade_l2r_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X\" >> \"$LIST_S\"\n        fi\n        B=\"$TMPDIR/short_s${S}_repeat_$(basename \"$SRC\").mp4\"\n        make_silence_with_text \"$B\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n        printf \"file '%s'\\n\" \"$B\" >> \"$LIST_S\"\n        ;;\n      listen_together)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X=\"$TMPDIR/short_s${S}_xfade_l2t_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$LISTEN_IMG\" \"$TOGETHER_IMG\" \"$X\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X\" >> \"$LIST_S\"\n        fi\n        C=\"$TMPDIR/short_s${S}_together_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$C\" \"$TXT\" \"$TOGETHER_IMG\"\n        printf \"file '%s'\\n\" \"$C\" >> \"$LIST_S\"\n        ;;\n      full|*)\n        A=\"$TMPDIR/short_s${S}_listen_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$A\" \"$TXT\" \"$LISTEN_IMG\"\n        printf \"file '%s'\\n\" \"$A\" >> \"$LIST_S\"\n\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X1=\"$TMPDIR/short_s${S}_xfade_l2r_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$LISTEN_IMG\" \"$REPEAT_IMG\" \"$X1\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X1\" >> \"$LIST_S\"\n        fi\n\n        B=\"$TMPDIR/short_s${S}_repeat_$(basename \"$SRC\").mp4\"\n        make_silence_with_text \"$B\" \"$DUR\" \"$TXT\" \"$REPEAT_IMG\"\n        printf \"file '%s'\\n\" \"$B\" >> \"$LIST_S\"\n\n        if [ \"${SCENE_XFADE_SEC:-0.45}\" != \"0\" ]; then\n          X2=\"$TMPDIR/short_s${S}_xfade_r2t_$(basename \"$SRC\").mp4\"\n          make_scene_xfade \"$REPEAT_IMG\" \"$TOGETHER_IMG\" \"$X2\" \"${SCENE_XFADE_SEC:-0.45}\"\n          printf \"file '%s'\\n\" \"$X2\" >> \"$LIST_S\"\n        fi\n\n        C=\"$TMPDIR/short_s${S}_together_$(basename \"$SRC\").mp4\"\n        make_text_over_audio \"$SRC\" \"$C\" \"$TXT\" \"$TOGETHER_IMG\"\n        printf \"file '%s'\\n\" \"$C\" >> \"$LIST_S\"\n        ;;\n    esac\n  done < \"$DATA_FILE\"\n\n  OUT_SHORT=\"/home/node/download/${CHANNEL_NAME}/${VIDEO_ID}/short_${S}_${VIDEO_ID}.mp4\"\n  mkdir -p \"$(dirname \"$OUT_SHORT\")\"\n  ffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i \"$LIST_S\" -c copy -movflags +faststart \"$OUT_SHORT\"\n  echo \"OK_SHORT_SCENE_${S}: $OUT_SHORT\"\n\n  # Trim+fade se exceder o limite\n  get_dur() { ffprobe -v error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$1\" 2>/dev/null | awk '{printf \"%.3f\", $1}'; }\n  SHORT_DUR=\"$(get_dur \"$OUT_SHORT\" || echo 0)\"\n  echo \"Dur. Short s${S}: ${SHORT_DUR}s\"\n  NEEDS_TRIM_S=\"$(awk -v d=\"$SHORT_DUR\" -v m=\"$MAX_DURATION_SHORTS\" 'BEGIN{print (d>m)?1:0}')\"\n  if [ \"$NEEDS_TRIM_S\" = \"1\" ]; then\n    FADE_ST_S=\"$(awk -v m=\"$MAX_DURATION_SHORTS\" -v f=\"$FADE_OUT_SHORTS_SEC\" 'BEGIN{s=m-f; if(s<0) s=0; printf \"%.3f\", s}')\"\n    TMP_TRIM_S=\"$TMPDIR/short_${S}_${VIDEO_ID}_trimmed.mp4\"\n    echo \"Aplicando fade-out de ${FADE_OUT_SHORTS_SEC}s a partir de ${FADE_ST_S}s e cortando em ${MAX_DURATION_SHORTS}s…\"\n\n    ffmpeg -nostdin -hide_banner -loglevel error -y \\\n      -i \"$OUT_SHORT\" \\\n      -vf \"fade=type=out:start_time=${FADE_ST_S}:duration=${FADE_OUT_SHORTS_SEC}\" \\\n      -af \"afade=type=out:start_time=${FADE_ST_S}:duration=${FADE_OUT_SHORTS_SEC}\" \\\n      -t \"$MAX_DURATION_SHORTS\" \\\n      -c:v libx264 -preset \"$X264_PRESET\" -crf \"$X264_CRF\" \\\n      -c:a aac -b:a \"$AUDIO_BR\" \\\n      -pix_fmt yuv420p -movflags +faststart \\\n      \"$TMP_TRIM_S\"\n\n    mv -f \"$TMP_TRIM_S\" \"$OUT_SHORT\"\n    echo \"OK (trim+fade Short s${S}): $OUT_SHORT\"\n  else\n    echo \"Short s${S} <= ${MAX_DURATION_SHORTS}s, sem ajuste.\"\n  fi\ndone\n\necho \"\"\necho \"==========================================\"\necho \"PROCESSAMENTO DE SHORTS CONCLUÍDO!\"\necho \"==========================================\"\necho \"CHANNEL_NAME: $CHANNEL_NAME\"\necho \"VIDEO_ID: $VIDEO_ID\"\necho \"Shorts gerados em: /home/node/download/${CHANNEL_NAME}/${VIDEO_ID}/\"\necho \"==========================================\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
         1200,
-        256
+        240
       ],
       "id": "ccac43e8-7b72-4140-a45b-01d6415c0e44",
       "name": "SHORT - Execute Command with Fixed Image"
@@ -824,11 +834,95 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1728,
-        112
+        1648,
+        96
       ],
       "id": "fcee34f0-ec2a-4020-b5ee-0abb26963c89",
       "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0gGqIL1d0xVKVFJl",
+          "mode": "list"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "theme": "={{ $('START').item.json.theme }}",
+            "level": "={{ $('START').item.json.level }}",
+            "output": "={{ $json.output }}",
+            "videoId": "={{ $('Get videoId from timestamp').item.json.videoId }}",
+            "CHANNEL_NAME": "={{ $('@GLOBAL_SHADOWING').item.json.CHANNEL_NAME }}"
+          },
+          "matchingColumns": [
+            "theme",
+            "level",
+            "output",
+            "videoId",
+            "CHANNEL_NAME"
+          ],
+          "schema": [
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "level",
+              "displayName": "level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "videoId",
+              "displayName": "videoId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CHANNEL_NAME",
+              "displayName": "CHANNEL_NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        -240
+      ],
+      "name": "@STUDY_CONTENT_MATERIAL",
+      "id": "83def69e-3013-44e1-ba6b-68b448e5d9e5"
     }
   ],
   "connections": {
@@ -847,12 +941,17 @@
       "main": [
         [
           {
+            "node": "@YOUTUBE_DATA_CONTENT",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "@FORMAT_TEXT_GENERATION",
             "type": "main",
             "index": 0
           },
           {
-            "node": "@YOUTUBE_DATA_CONTENT",
+            "node": "@STUDY_CONTENT_MATERIAL",
             "type": "main",
             "index": 0
           },
@@ -916,6 +1015,11 @@
             "node": "SHORT - Execute Command with Fixed Image",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "LONG - Execute Command with Fixed Image ",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -946,12 +1050,12 @@
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Merge1",
             "type": "main",
-            "index": 0
+            "index": 1
           },
           {
-            "node": "Merge1",
+            "node": "Merge",
             "type": "main",
             "index": 1
           }
@@ -982,7 +1086,13 @@
     },
     "LONG - Execute Command with Fixed Image ": {
       "main": [
-        []
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
       ]
     },
     "SHORT - Execute Command with Fixed Image": {
@@ -991,7 +1101,7 @@
           {
             "node": "Merge",
             "type": "main",
-            "index": 1
+            "index": 2
           }
         ]
       ]
@@ -1001,6 +1111,17 @@
         [
           {
             "node": "@UPLOAD_YOUTUBE_SHADOWING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@STUDY_CONTENT_MATERIAL": {
+      "main": [
+        [
+          {
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -1019,238 +1140,19 @@
     "START": [
       {
         "json": {
-          "theme": "Polite requests and offers with modals would could can",
+          "theme": "Passive voice in simple present and simple past",
           "duration": 3,
           "level": "B2",
-          "mode": "Dialogue between man and woman: Ordering food in a crowded diner without causing confusion",
+          "mode": "Tech Interview (Postmortem): Explain how the outage was detected, how alerts were triggered, and what was remediated",
           "imageStyle": "",
           "scenes": 4,
           "targetWordsPerParagraph": 40
         }
       }
-    ],
-    "@GLOBAL_SHADOWING": [
-      {
-        "json": {
-          "CHANNEL_NAME": "CANAL_SHADOWING",
-          "PLAYLISTS": "[{\"nome\":\"justiça\",\"id\":\"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\"},{\"nome\":\"Geopolítica\",\"id\":\"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\"},{\"nome\":\"politica\",\"id\":\"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\"},{\"nome\":\"cultura e sociedade\",\"id\":\"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\"},{\"nome\":\"Liberdade e mercado\",\"id\":\"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\"},{\"nome\":\"Economia\",\"id\":\"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\"},{\"nome\":\"Corrupção\",\"id\":\"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\"},{\"nome\":\"Tecnologia\",\"id\":\"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\"}]\n",
-          "NOTIFY_NUMBERS": [
-            "5561982086449"
-          ],
-          "AVAILABLE_VOICES": [
-            {
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb",
-              "description": "deep strong eldery male narrator voice"
-            },
-            {
-              "voiceId": "SAz9YHcvj6GT2YYXdXww",
-              "description": "middle-aged female"
-            },
-            {
-              "voiceId": "ZF6FPAbjXT4488VcRRnw",
-              "description": "teenage female"
-            },
-            {
-              "voiceId": "EOVAuWqgSZN2Oel78Psj",
-              "description": "young malee"
-            }
-          ]
-        }
-      }
-    ],
-    "Get videoId from timestamp": [
-      {
-        "json": {
-          "videoId": "1761947685869"
-        }
-      }
-    ],
-    "@CONTENT_GENERATION": [
-      {
-        "json": {
-          "output": "Man: I would like to ask if you could help me choose a meal in this busy diner. I can see many people and the noise can lead to confusion. I would prefer to speak slowly and clearly so I do not disturb others. I could use your advice on which dish would suit my taste. I would be grateful for any suggestions.\n\nWoman: I can see that you are careful with your words in this crowded space. I would suggest that you try the grilled chicken dish if you enjoy light flavors. I could also offer you a hearty soup if you are hungry. I would like to remind you that we can order water at the same time. I would hope our order would be clear to the staff.\n\nMan: I can now decide that I will order the grilled chicken dish and a side salad. I would like to ask if you could suggest a drink that would match the meal. I can imagine the waiter might be busy so I would like to choose politely. I could also ask if you would like to share a dessert later if our table is quiet.\n\nWoman: I can agree with your choice for the main course and I would also choose a healthy drink to complement the meal. I would offer to order a glass of fresh juice if it is available. I can see that the waiter is moving slowly so I would request our order in a polite manner. I would hope that the clarity of our words would ease the busy atmosphere.\n\nMan: I can now speak up and tell the waiter that we are ready to order. I would ask if he could bring us two glasses of water and display the menu for a dessert option. I can make his task easier by giving clear instructions and I would not like to disturb the other patrons. I would trust that he could manage our order with ease.\n\nWoman: I would now prepare to confirm our selections and clarify any doubts with the waiter. I can ask if there is a special of the day that we might enjoy. I would suggest that we try the special if it does not cause any delay. I can see that our polite requests could lead to a smooth service and I would be happy with our decision."
-        }
-      }
-    ],
-    "Merge1": [
-      {
-        "json": {
-          "output": {
-            "VideoTitle": "Level B2 | English Shadowing Polite Requests and Offers in a Busy Diner",
-            "VideoDescription": "Practice polite requests and offers using modals like would, could, and can in this shadowing exercise. Listen carefully to the dialogue between a man and woman ordering food in a crowded diner where clear and calm communication is key. You will hear how they use polite language to get assistance, suggest dishes, and communicate with the busy waiter without causing confusion or disturbance. This dialogue will help you practice phrasing requests and offers smoothly, while managing a noisy environment.\n\nWatch how they ask for help, offer suggestions, and confirm orders, using modal verbs fluidly to keep conversation polite and effective. They build requests thoughtfully and offer choices to keep things running smoothly. You’ll also notice they keep the tone calm to ease the busy atmosphere. Shadow along to improve your speaking skills with practical phrases like \"could you help,\" \"would you like,\" and \"can I order.\"\n\nListen once, then repeat aloud, then shadow with the audio to build confidence and fluency in polite conversation settings.",
-            "Tags": [
-              "english shadowing",
-              "B2 level",
-              "polite requests",
-              "modal verbs",
-              "would could can",
-              "speaking practice",
-              "ordering food",
-              "asking for help",
-              "making offers",
-              "business english",
-              "restaurant dialogue",
-              "dialogue practice",
-              "repeat after me",
-              "busy diner",
-              "clear speech",
-              "conversation skills",
-              "communication",
-              "modals practice",
-              "shadowing exercise",
-              "fluency practice"
-            ],
-            "thumbnailText": [
-              "Listen Repeat",
-              "Shadow Together",
-              "Polite Requests"
-            ]
-          }
-        },
-        "binary": {}
-      }
-    ],
-    "@SHADOWING-THUMBNAIL-CREATOR": [
-      {
-        "json": {
-          "success": true,
-          "data": {
-            "key": {
-              "remoteJid": "556182086449@s.whatsapp.net",
-              "fromMe": true,
-              "id": "3EB0C6728E9D5280EB14E37382162D5E1937A508"
-            },
-            "pushName": "",
-            "status": "PENDING",
-            "message": {
-              "conversation": "Thumbnail Criada com sucesso"
-            },
-            "contextInfo": null,
-            "messageType": "conversation",
-            "messageTimestamp": 1761947775,
-            "instanceId": "8ea06520-c090-4e3d-9214-855b5651ce3b",
-            "source": "unknown"
-          }
-        }
-      }
-    ],
-    "@YOUTUBE_DATA_CONTENT": [
-      {
-        "json": {
-          "output": {
-            "VideoTitle": "Level B2 | English Shadowing Polite Requests and Offers in a Busy Diner",
-            "VideoDescription": "Practice polite requests and offers using modals like would, could, and can in this shadowing exercise. Listen carefully to the dialogue between a man and woman ordering food in a crowded diner where clear and calm communication is key. You will hear how they use polite language to get assistance, suggest dishes, and communicate with the busy waiter without causing confusion or disturbance. This dialogue will help you practice phrasing requests and offers smoothly, while managing a noisy environment.\n\nWatch how they ask for help, offer suggestions, and confirm orders, using modal verbs fluidly to keep conversation polite and effective. They build requests thoughtfully and offer choices to keep things running smoothly. You’ll also notice they keep the tone calm to ease the busy atmosphere. Shadow along to improve your speaking skills with practical phrases like \"could you help,\" \"would you like,\" and \"can I order.\"\n\nListen once, then repeat aloud, then shadow with the audio to build confidence and fluency in polite conversation settings.",
-            "Tags": [
-              "english shadowing",
-              "B2 level",
-              "polite requests",
-              "modal verbs",
-              "would could can",
-              "speaking practice",
-              "ordering food",
-              "asking for help",
-              "making offers",
-              "business english",
-              "restaurant dialogue",
-              "dialogue practice",
-              "repeat after me",
-              "busy diner",
-              "clear speech",
-              "conversation skills",
-              "communication",
-              "modals practice",
-              "shadowing exercise",
-              "fluency practice"
-            ],
-            "thumbnailText": [
-              "Listen Repeat",
-              "Shadow Together",
-              "Polite Requests"
-            ]
-          }
-        }
-      }
-    ],
-    "@FORMAT_TEXT_GENERATION": [
-      {
-        "json": {
-          "index": 0,
-          "introduction": true,
-          "paragraphs": [
-            {
-              "id": -1,
-              "text": "Theme: Dining Etiquette in a Busy Diner. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Breathe, articulate clearly, and keep pace.",
-              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 1,
-          "introduction": false,
-          "paragraphs": [
-            {
-              "id": 0,
-              "text": "Man: I would like to ask if you could help me choose a meal in this busy diner. I can see many people and the noise can lead to confusion. I would prefer to speak slowly and clearly so I do not disturb others. I could use your advice on which dish would suit my taste. I would be grateful for any suggestions.",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
-            },
-            {
-              "id": 1,
-              "text": "Woman: I can see that you are careful with your words in this crowded space. I would suggest that you try the grilled chicken dish if you enjoy light flavors. I could also offer you a hearty soup if you are hungry. I would like to remind you that we can order water at the same time. I would hope our order would be clear to the staff.",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 2,
-          "introduction": false,
-          "paragraphs": [
-            {
-              "id": 2,
-              "text": "Man: I can now decide that I will order the grilled chicken dish and a side salad. I would like to ask if you could suggest a drink that would match the meal. I can imagine the waiter might be busy so I would like to choose politely. I could also ask if you would like to share a dessert later if our table is quiet.",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
-            },
-            {
-              "id": 3,
-              "text": "Woman: I can agree with your choice for the main course and I would also choose a healthy drink to complement the meal. I would offer to order a glass of fresh juice if it is available. I can see that the waiter is moving slowly so I would request our order in a polite manner. I would hope that the clarity of our words would ease the busy atmosphere.",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
-            }
-          ]
-        }
-      },
-      {
-        "json": {
-          "index": 3,
-          "introduction": false,
-          "paragraphs": [
-            {
-              "id": 4,
-              "text": "Man: I can now speak up and tell the waiter that we are ready to order. I would ask if he could bring us two glasses of water and display the menu for a dessert option. I can make his task easier by giving clear instructions and I would not like to disturb the other patrons. I would trust that he could manage our order with ease.",
-              "voiceId": "EOVAuWqgSZN2Oel78Psj"
-            },
-            {
-              "id": 5,
-              "text": "Woman: I would now prepare to confirm our selections and clarify any doubts with the waiter. I can ask if there is a special of the day that we might enjoy. I would suggest that we try the special if it does not cause any delay. I can see that our polite requests could lead to a smooth service and I would be happy with our decision.",
-              "voiceId": "SAz9YHcvj6GT2YYXdXww"
-            }
-          ]
-        }
-      }
-    ],
-    "LONG - Execute Command with Fixed Image ": [
-      {
-        "json": {
-          "exitCode": 0,
-          "stderr": "",
-          "stdout": "OK: /home/node/download/CANAL_SHADOWING/1761947685869/shadow_1761947685869.mp4"
-        }
-      }
     ]
   },
-  "versionId": "2f4559b2-33f8-4695-abfe-4653e9268b0f",
+  "versionId": "55706b15-363f-4d52-a4f9-c9e9c8bc6dfa",
+  "versionCounter": 71,
   "triggerCount": 0,
   "shared": [
     {
@@ -1274,7 +1176,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-01T09:31:44.000Z",
+              "updatedAt": "2025-11-11T11:27:01.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -1309,7 +1211,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-01",
+              "lastActiveAt": "2025-11-11",
               "isPending": false
             }
           }

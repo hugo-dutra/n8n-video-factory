@@ -1,7 +1,7 @@
 [
   {
-    "theme": "Future with will going to and present continuous",
-    "mode": "Narrative: Tomorrow we are going to say goodbye for the last time",
+    "theme": "Future with will going to and present continuous",//Processed
+    "mode": "Tech Interview (Planning): Discuss roadmap changes, deployment windows and how you plan future releases",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -10,8 +10,8 @@
     "published": true
   },
   {
-    "theme": "Conditionals first and second",
-    "mode": "Narrative: If I had taken the other train I would never have met her",
+    "theme": "Conditionals first and second",//Processed
+    "mode": "Tech Interview (Incident Response): If a critical API goes down, what would you do and what if rollback fails",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -20,8 +20,8 @@
     "published": true
   },
   {
-    "theme": "There is there are there was there were",
-    "mode": "Narrative: There was a light in the forest that no one could explain",
+    "theme": "There is there are there was there were",//Processed
+    "mode": "Tech Interview (System Audit): Describe what services exist, where bottlenecks were, and what components are missing",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -29,10 +29,9 @@
     "targetWordsPerParagraph": 40,
     "published": true
   },
-
   {
-    "theme": "Passive voice in simple present and simple past",
-    "mode": "Narrative: A hidden door was discovered in the attic after many years",
+    "theme": "Passive voice in simple present and simple past",//Processed
+    "mode": "Tech Interview (Postmortem): Explain how the outage was detected, how alerts were triggered, and what was remediated",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -41,7 +40,7 @@
   },
   {
     "theme": "Present perfect and present continuous",
-    "mode": "Narrative: She has been walking the same path hoping for a sign",
+    "mode": "Tech Interview (Experience): What problems you have solved recently and what you are currently improving in production",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -50,7 +49,7 @@
   },
   {
     "theme": "Modal verbs can must should might",
-    "mode": "Narrative: The boy who might be the last to remember the truth",
+    "mode": "Tech Interview (Security): What developers must do for JWT/OAuth2, what they should log, and what might be optional",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -59,7 +58,7 @@
   },
   {
     "theme": "Phrasal verbs take off give up find out look for",
-    "mode": "Narrative: He looked for peace in places nobody would go",
+    "mode": "Tech Interview (Debugging): How you look for memory leaks, find out slow queries, and track down flaky tests",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -68,7 +67,7 @@
   },
   {
     "theme": "Gerunds and infinitives after verbs like love enjoy stop try",
-    "mode": "Narrative: She tried to forget but kept remembering instead",
+    "mode": "Tech Interview (Team Fit): Things you enjoy doing, tasks you stopped doing, and improvements you tried to introduce",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -77,7 +76,7 @@
   },
   {
     "theme": "Comparatives and superlatives plus too enough",
-    "mode": "Narrative: The river was deeper than anyone had imagined",
+    "mode": "Tech Interview (Tradeoffs): Compare SQL vs NoSQL, monolith vs microservices, and choose the most appropriate stack",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -86,7 +85,7 @@
   },
   {
     "theme": "Reported speech statements and questions",
-    "mode": "Narrative: He said he had heard voices coming from the well",
+    "mode": "Tech Interview (Stakeholders): Report what product said, what SRE asked, and how leadership framed priorities",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -95,7 +94,7 @@
   },
   {
     "theme": "Relative clauses defining and non defining",
-    "mode": "Narrative: The girl who wore red shoes changed the town forever",
+    "mode": "Tech Interview (Design): Describe components that handle requests and caches which reduce database load",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -104,7 +103,7 @@
   },
   {
     "theme": "Simple past and past continuous",
-    "mode": "Narrative: I was walking home when everything changed",
+    "mode": "Tech Interview (Root Cause): What you were deploying when the error happened and how the fix was applied later",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -113,7 +112,7 @@
   },
   {
     "theme": "Used to and would",
-    "mode": "Narrative: We used to climb the roof to watch the stars",
+    "mode": "Tech Interview (Evolution): How the team used to deploy manually and how you would automate with CI/CD now",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -122,7 +121,7 @@
   },
   {
     "theme": "So neither either too enough",
-    "mode": "Narrative: Neither of them was brave enough to open the letter",
+    "mode": "Tech Interview (Collaboration): Neither frontend nor backend owned the contract, so how did you define API boundaries",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -131,7 +130,7 @@
   },
   {
     "theme": "Wish and if only",
-    "mode": "Narrative: I wish I had told her the truth that night",
+    "mode": "Tech Interview (Retrospective): What you wish you had instrumented and if only you had added idempotency earlier",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -140,7 +139,7 @@
   },
   {
     "theme": "Quantifiers some any much many few little",
-    "mode": "Narrative: There were too many secrets for such a small town",
+    "mode": "Tech Interview (Metrics): How many requests per second, how much latency budget, and any SLOs you proposed or met",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -149,7 +148,7 @@
   },
   {
     "theme": "Articles a an the zero article",
-    "mode": "Narrative: A door the color of the sea appeared one morning",
+    "mode": "Tech Interview (API Design): Explain a versioning strategy for an API and the zero downtime migration approach",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -158,7 +157,7 @@
   },
   {
     "theme": "Adverbs of frequency and degree",
-    "mode": "Narrative: She almost always arrived before the sunrise",
+    "mode": "Tech Interview (Ops): How often deploys happen, how rarely rollbacks occur, and how strongly alerts should fire",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -167,7 +166,7 @@
   },
   {
     "theme": "Causative have and get",
-    "mode": "Narrative: He had the old watch repaired before leaving town",
+    "mode": "Tech Interview (Ownership): When you would have the CDN purge cache and how to get pipelines to run smoke tests automatically",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -176,7 +175,7 @@
   },
   {
     "theme": "Verb patterns and object complements",
-    "mode": "Narrative: They made her the keeper of the secret path",
+    "mode": "Tech Interview (Coaching): How you mentored a junior to become a reliable on-call engineer and code reviewer",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -185,7 +184,7 @@
   },
   {
     "theme": "Third conditional and mixed conditionals",
-    "mode": "Narrative: If he had looked back he might have stayed",
+    "mode": "Tech Interview (What-ifs): If you had added rate limiting earlier, how would traffic spikes have been handled differently",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -194,7 +193,7 @@
   },
   {
     "theme": "Inversion and emphasis",
-    "mode": "Narrative: Never before had the stars shone so brightly",
+    "mode": "Tech Interview (Performance): Never had the JVM heap grown so fast—explain GC tuning and profiling steps you took",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -203,7 +202,7 @@
   },
   {
     "theme": "Collocations with make and do",
-    "mode": "Narrative: He made a promise no one thought he would keep",
+    "mode": "Tech Interview (Delivery): Make a release plan, do a canary rollout, and make monitoring dashboards actionable",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -212,7 +211,7 @@
   },
   {
     "theme": "Describing people and personality",
-    "mode": "Narrative: The girl with the wild heart and quiet eyes",
+    "mode": "Tech Interview (Team Dynamics): Describe the ideal teammate for code reviews and incident collaboration under pressure",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -221,19 +220,16 @@
   },
   {
     "theme": "Narrative tenses mixed",
-    "mode": "Narrative: He had been dreaming of that moment since he was a child",
+    "mode": "Tech Interview (Career Story): Tell a story about a hard migration you led from monolith to microservices",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
     "scenes": 5,
     "targetWordsPerParagraph": 45
   },
-
-  /* ---- Novos formatos / modos ---- */
-
   {
-    "theme": "Polite requests and offers with modals would could can", // Enviado
-    "mode": "Dialogue between man and woman: Ordering food in a crowded diner without causing confusion",
+    "theme": "Polite requests and offers with modals would could can",
+    "mode": "Tech Interview (Pair Programming): Could you refactor this NestJS controller and would you add proper DTO validation",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -242,7 +238,7 @@
   },
   {
     "theme": "Job interview language present perfect achievements and future plans",
-    "mode": "Dialogue: A candidate explains past results and future goals in a tech interview",
+    "mode": "Tech Interview (Achievements): You have reduced latency by 40% and plan to roll out Kafka for async flows—explain how",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -251,7 +247,7 @@
   },
   {
     "theme": "Modals of deduction must might could cant in present and past",
-    "mode": "Debate: Privacy versus security in the age of smart cities",
+    "mode": "Tech Interview (Troubleshooting): The spike must be a thundering herd, it could be cache stampede—walk through proof steps",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -260,7 +256,7 @@
   },
   {
     "theme": "Present perfect continuous and time expressions for since recently lately",
-    "mode": "Interview: A marathon runner talks about training setbacks and progress",
+    "mode": "Tech Interview (Learning): You have been experimenting with OpenTelemetry lately—describe tracing setup end to end",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -269,7 +265,7 @@
   },
   {
     "theme": "Comparatives superlatives and complex quantifiers far way considerably slightly",
-    "mode": "Panel Discussion: Cities competing to host a global expo event",
+    "mode": "Tech Interview (Benchmarks): Which approach is considerably faster—connection pooling or per-request opens—justify with data",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -278,7 +274,7 @@
   },
   {
     "theme": "Passive voice in headlines and concise reporting",
-    "mode": "News Report: A bridge was closed after unusual vibrations were detected",
+    "mode": "Tech Interview (Status Update): Services were scaled, limits were raised, and alarms were silenced—summarize crisply",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -287,7 +283,7 @@
   },
   {
     "theme": "Phrasal verbs set 2 turn down set up back up carry on work out",
-    "mode": "Podcast: Two friends bust common productivity myths with real stories",
+    "mode": "Tech Interview (DevOps): Set up CI with Jenkins, back up databases nightly, and carry on after failed deployments safely",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -296,7 +292,7 @@
   },
   {
     "theme": "Used to would be going to in life changes",
-    "mode": "Diary Entry: Moving to a new city and reinventing routines",
+    "mode": "Tech Interview (Migration): The team used to run VMs and is going to move to Kubernetes—outline the plan and risks",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -305,7 +301,7 @@
   },
   {
     "theme": "Conditionals first second and third for apologies and solutions",
-    "mode": "Letter: A sincere apology for missing an important family event",
+    "mode": "Tech Interview (Customer Impact): If the SLA is missed, how do you communicate, and what would you change next time",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -314,7 +310,7 @@
   },
   {
     "theme": "Present perfect in professional context and passive voice",
-    "mode": "Email Thread: Reporting and fixing a critical bug before release day",
+    "mode": "Tech Interview (Releases): A new feature has been rolled out behind a flag—explain your canary and metrics checks",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -323,7 +319,7 @@
   },
   {
     "theme": "Reported speech wh questions yes no questions commands",
-    "mode": "Courtroom: Cross examination reveals what witnesses actually said earlier",
+    "mode": "Tech Interview (Cross-team): PM asked why error rates rose, SRE asked when they started—summarize the conversation clearly",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -332,7 +328,7 @@
   },
   {
     "theme": "Requests clarifying questions and softening language",
-    "mode": "Customer Support Chat: Troubleshooting a lost package politely and effectively",
+    "mode": "Tech Interview (Code Review): Could you clarify the concurrency model and would you mind adding tests for edge cases",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -341,7 +337,7 @@
   },
   {
     "theme": "Sequencers first then after that finally and imperatives",
-    "mode": "How To: Fix a noisy laptop fan without special tools at home",
+    "mode": "Tech Interview (Runbook): First take a heap dump, then check GC logs, after that scale replicas, finally verify SLOs",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -350,7 +346,7 @@
   },
   {
     "theme": "Present perfect vs past simple travel experiences",
-    "mode": "Travel Vlog: Revisiting a childhood beach and noticing what changed",
+    "mode": "Tech Interview (Cloud): You have worked with AWS and you migrated from on-prem—explain networking and IAM challenges",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -359,7 +355,7 @@
   },
   {
     "theme": "Future forms will going to present continuous for plans and predictions",
-    "mode": "Weather Forecast: A sudden storm is going to arrive earlier than expected",
+    "mode": "Tech Interview (Capacity): Traffic will double next quarter, we are going to shard the DB—walk through your plan",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -368,7 +364,7 @@
   },
   {
     "theme": "Obligation and advice must have to should ought to",
-    "mode": "Public Service Announcement: Heatwave safety for elderly neighbors",
+    "mode": "Tech Interview (Compliance): Services must encrypt at rest, logs should omit PII, and access has to be audited—explain how",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -377,7 +373,7 @@
   },
   {
     "theme": "Emphasis cleft sentences and inversion rarely little seldom",
-    "mode": "Speech: A community leader urges action after a near disaster",
+    "mode": "Tech Interview (Reliability): Rarely do we accept single points of failure—design an HA architecture for the gateway",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -386,7 +382,7 @@
   },
   {
     "theme": "Simple past with moral lessons and adverbs of frequency",
-    "mode": "Fable: The fox who rushed always lost what patience could gain",
+    "mode": "Tech Interview (Lessons): We often skipped load tests and paid for it—describe what you changed afterward",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -395,7 +391,7 @@
   },
   {
     "theme": "Past perfect and narrative sequencing",
-    "mode": "Legend: A bell that rang only for those who had already chosen bravely",
+    "mode": "Tech Interview (Timeline): The team had prepared feature flags before the release—explain the sequence and results",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -404,7 +400,7 @@
   },
   {
     "theme": "Mixed conditionals and speculation",
-    "mode": "Sci Fi Log: If our sensors had worked we would not be drifting now",
+    "mode": "Tech Interview (Hypothesis): If caches had been warmed, users would not have seen 5xx—prove or refute with metrics",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -413,7 +409,7 @@
   },
   {
     "theme": "Relative clauses restrictive and non restrictive",
-    "mode": "Stage Play: A director guides actors who doubt the script they love",
+    "mode": "Tech Interview (Data Model): Tables that store orders and indexes which speed up queries—justify your schema design",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -422,7 +418,7 @@
   },
   {
     "theme": "Tag questions and confirming information politely",
-    "mode": "Classroom Q and A: Checking understanding before a big science fair",
+    "mode": "Tech Interview (Alignment): The service needs idempotency, doesn’t it You prefer outbox pattern, don’t you Confirm tradeoffs",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -431,7 +427,7 @@
   },
   {
     "theme": "Question forms inversion and indirect questions",
-    "mode": "Detective Interrogation: Finding the truth without forcing answers",
+    "mode": "Tech Interview (DSA): Could you implement LRU in TypeScript How would you analyze time and space complexity",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -440,7 +436,7 @@
   },
   {
     "theme": "Adverbs of degree and intensifiers really quite rather absolutely",
-    "mode": "Sports Commentary: An underdog team almost turns the game around",
+    "mode": "Tech Interview (Frontend): The page is really slow on first paint—explain code splitting, memoization and hydration issues",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -449,7 +445,7 @@
   },
   {
     "theme": "Quantifiers and comparatives with too and enough",
-    "mode": "Negotiation: A crowded marketplace where value must be justified clearly",
+    "mode": "Tech Interview (Capacity): Too many open DB connections and not enough worker threads—how do you tune the pool safely",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -458,7 +454,7 @@
   },
   {
     "theme": "Gerunds and infinitives after advise suggest recommend plan",
-    "mode": "Advice Column: Finding discipline without losing joy in study routines",
+    "mode": "Tech Interview (Guidance): Recommend adding a circuit breaker, suggest retry with backoff, and plan chaos testing sessions",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -467,7 +463,7 @@
   },
   {
     "theme": "Obligation permission and prohibition must have to may can cannot",
-    "mode": "Medical Consultation: A patient learns what to change and what to keep",
+    "mode": "Tech Interview (Auth): What clients may access admin APIs, what must be forbidden, and how OIDC scopes are enforced",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -476,7 +472,7 @@
   },
   {
     "theme": "Causative have get and letting someone do something",
-    "mode": "Tech Forum Thread: How I got my phone repaired and my data restored safely",
+    "mode": "Tech Interview (Ownership Model): Get the pipeline to run DB migrations, have QA run smoke tests, and let SRE approve cutover",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -485,7 +481,7 @@
   },
   {
     "theme": "Comparatives superlatives and review language",
-    "mode": "Product Review: The camera that seemed better but taught patience instead",
+    "mode": "Tech Interview (Perf Review): Compare this quarter with the last, highlight the most impactful work, and gaps to improve",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -494,7 +490,7 @@
   },
   {
     "theme": "Discourse markers however although therefore meanwhile otherwise",
-    "mode": "Conference Call: Aligning three teams under a tight deadline",
+    "mode": "Tech Interview (Architecture): Although simple, the design scales; however, the cache may thrash—defend your choices logically",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -503,7 +499,7 @@
   },
   {
     "theme": "Hedging and stance it seems apparently arguably likely",
-    "mode": "Public Debate: Is remote work truly better for cities long term",
+    "mode": "Tech Interview (Risk): It seems the root cause is load shedding; arguably config drift—explain uncertainty and next steps",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -512,7 +508,7 @@
   },
   {
     "theme": "There is there are plus prepositions of place",
-    "mode": "Tourist Info Desk: Guiding a family through a museum they will remember",
+    "mode": "Tech Interview (Topology): There are services behind an API gateway and caches in front of the DB—explain why they are placed there",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -521,7 +517,7 @@
   },
   {
     "theme": "Imperatives zero and first conditional for safety",
-    "mode": "Emergency Announcement: What to do if the alarm sounds at night",
+    "mode": "Tech Interview (Runbook Safety): Do not deploy on red alerts; if error rate spikes, freeze releases and page on-call immediately",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -530,7 +526,7 @@
   },
   {
     "theme": "Future perfect and future continuous",
-    "mode": "Startup Pitch: Where we will be by this time next year if we ship now",
+    "mode": "Tech Interview (Roadmap): By next quarter we will have migrated to Kafka and we will be streaming audit logs—outline milestones",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -539,7 +535,7 @@
   },
   {
     "theme": "Reported orders requests and suggestions",
-    "mode": "Company Memo: Lessons learned from an unexpected outage last weekend",
+    "mode": "Tech Interview (Leadership): CTO suggested raising SLOs, security requested mTLS, and product ordered feature flags—prioritize them",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -548,7 +544,7 @@
   },
   {
     "theme": "Relative pronouns and participle clauses",
-    "mode": "Riddle Collection: Puzzles that reveal grammar patterns when solved",
+    "mode": "Tech Interview (Code Walkthrough): Modules that consume messages, services processing payments, and tasks executed asynchronously—explain flow",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -557,7 +553,7 @@
   },
   {
     "theme": "Time expressions meanwhile afterwards by the time ever since",
-    "mode": "Hero Journey Outline: How an ordinary plan slowly became extraordinary",
+    "mode": "Tech Interview (Timeline): Meanwhile QA validated, afterwards SRE tuned limits, and by the time we deployed traffic had doubled—recap clearly",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -566,7 +562,7 @@
   },
   {
     "theme": "Passive with by phrases and agent omission",
-    "mode": "Documentary Voiceover: A lighthouse was kept burning through every storm",
+    "mode": "Tech Interview (Change Log): Limits were increased by SRE and configs were updated—explain without over-attributing blame",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",
@@ -575,7 +571,7 @@
   },
   {
     "theme": "Prepositions of time and polite announcements",
-    "mode": "Station Announcements: Delays explained clearly and calmly during rush hour",
+    "mode": "Tech Interview (Coordination): At 09:00 deploy starts, by noon canary ends, during the afternoon full rollout—communicate the plan politely",
     "duration": 3,
     "level": "B2",
     "imageStyle": "",

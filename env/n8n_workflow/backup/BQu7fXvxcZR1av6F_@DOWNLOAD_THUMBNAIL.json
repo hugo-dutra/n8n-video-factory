@@ -253,6 +253,7 @@
     ]
   },
   "versionId": "3522be27-a084-4a60-9b65-dc82876ebd36",
+  "versionCounter": 1,
   "triggerCount": 0,
   "shared": [
     {
@@ -276,7 +277,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-01T09:31:44.000Z",
+              "updatedAt": "2025-11-11T11:27:01.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -311,7 +312,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-01",
+              "lastActiveAt": "2025-11-11",
               "isPending": false
             }
           }

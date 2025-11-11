@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-10-07T14:00:21.000Z",
+  "updatedAt": "2025-11-06T20:46:24.000Z",
   "createdAt": "2025-09-13T20:23:13.205Z",
   "id": "eWSuR2lrNs25cJ8B",
   "name": "@VIDEO_CUT_AGENT_DETECTOR",
@@ -19,8 +19,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        416,
-        368
+        768,
+        352
       ],
       "id": "0c6867d5-cd1f-4e53-a30c-614af24c70aa",
       "name": "OpenAI Chat Model",
@@ -39,8 +39,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        576,
-        192
+        928,
+        176
       ],
       "id": "0414f631-6539-45e9-9544-95b936139500",
       "name": "Structured Output Parser"
@@ -48,17 +48,17 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=strSubtitle: {{ $('Start').item.json.videoTranscription }}\nvideoUrl: https://www.youtube.com/watch?v={{ $('Start').item.json.videoId }} \nsecondsToRemove: {{ 17 }}\nplaylists: {{ $json.PLAYLISTS }}",
+        "text": "=strSubtitle: {{ $('Start').item.json.videoTranscription }}\nvideoUrl: https://www.youtube.com/watch?v={{ $('Start').item.json.videoId }} \nsecondsToRemove: {{ 17 }}\nplaylists: {{ $json.PLAYLISTS }}\npreviousBestVideos:{{ JSON.stringify($('Get Statistics').first().json?.statistics ?? {}) }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=# Prompt — Corte Único de Vídeo a partir de Legendas\n\nVocê é um assistente de IA especializado em analisar **legendas/transcrições de vídeos** para identificar **um único melhor momento** para cortar em um clipe curto e envolvente.\n\n---\n\n## ENTRADAS\n- **Transcrição (legendas)** do vídeo: `{strSubtitle}`\n- **URL do vídeo**: `{videoUrl}`\n- **Playlists disponíveis** (lista de objetos com `nome` e `id`): `{playlists}`\n- **Segundos a remover no final** do vídeo original (para cortar CTA genérico): `{secondsToRemove}`\n\n> **Retorne apenas *um* segmento** (máximo **1** corte).\n\n---\n\n## INSTRUÇÕES DE SEGMENTAÇÃO\n1. **Identificação do segmento**\n   - Encontre um trecho onde **um tópico/ideia-chave** seja **introduzido** e **concluído naturalmente**.\n   - Evite cortes bruscos **imediatamente antes** de começar um novo assunto.\n\n2. **Duração dinâmica (ajustar conforme a duração do vídeo)**\n   - Vídeos **curtos** (≈ até **12 min**): segmentos entre **~4–5 min** (240–300 s), **sem ultrapassar a duração real disponível**.\n   - Vídeos **médios** (≈ **13–30 min**): segmentos entre **~5–7 min** (300–420 s).\n   - Vídeos **longos** (≈ **30+ min**): segmentos entre **~8–12 min** (480–720 s).\n   - **Importante:** crie **no máximo 1** segmento, escolhendo **o mais relevante e polêmico** (por intensidade do tema, impacto emocional, humor ou controvérsia).\n   - Ao processar o **segmento final** do vídeo (neste prompt sempre haverá **um único** segmento), **exclua os últimos `{secondsToRemove}` segundos** da **duração total do vídeo** para evitar CTAs genéricos sem conteúdo relevante.\n\n---\n\n## SAÍDA DO SEGMENTO (EM PORTUGUÊS)\nPara o **único** segmento gerado, forneça os campos abaixo:\n\n### a) Título (`videoCutTitle`)\n- Em **português**, **atraente** e **diretamente conectado** ao que o orador diz.\n- Use **ALGUMAS PALAVRAS IMPORTANTES EM MAIÚSCULAS** para ênfase.\n- **Sempre** termine com **\" - CORTE!\"**.\n- **Sem palavrões**.\n- **Comprimento máximo**: **90 caracteres** (com espaços).\n- **Não inclua** os caracteres: `<`, `=`, `/`, `+`.  \n- **Estruturas e “pegadas” recomendadas (escolha a que melhor se encaixa na transcrição):**\n  1. **[PERSONAGEM] [VERBO FORTE] [ALVO] — CORTE!**  \n      Ex.: \"MINISTRO X BARRA Y — CORTE!\"\n  2. **[X] vs [Y]: [EVENTO] [VERBO/RESULTADO] — CORTE!**  \n      Ex.: \"BARROSO vs MORAES: TENSÃO EXPLODE — CORTE!\"\n  3. **[ATO/DECISÃO] [PALAVRA-GANCHO]: [PERSONAGEM] [REAÇÃO] — CORTE!**  \n      Ex.: \"VISTO NEGADO: PADILHA DESAFIA ESTADOS UNIDOS — CORTE!\"\n  4. **[INSTITUIÇÃO] EM [CRISE/QUEDA]: [PERSONAGEM] NO FOCO — CORTE!**  \n      Ex.: \"FULANO COMPLETAMENTE FERRADO: CICLANO NO LIMITE — CORTE!\"\n\n- **Orientação editorial (sempre baseada na transcrição, sem inventar):** destaque a relação de conflito e causalidade, deixando claro **quem se ferrou**, **quem ferrou quem** ou **quem foi ferrado por quem**. Use verbos fortes aceitáveis (ex.: **FERRA**, **ARRUINAR**, **EXPÕE**, **DESABA**, **ACUA**, **DETONA**, **BATE DE FRENTE**, **REAGE**, entre outros disponíveis na transcrição).\n  \n**Observação:** o **hífen** usado no sufixo **\" - CORTE!\"** é permitido.\n\n### b) Descrição (`videoCutDescription`)\n- **Resumo breve** do que é discutido no trecho.\n- Inclua **pelo menos duas referências** (diretas ou parafraseadas) da transcrição.\n- Misture **PALAVRAS-CHAVE EM MAIÚSCULAS** com outras em **minúsculas**.\n- Estimule o espectador a assistir destacando algo **intrigante** ou **útil**.\n- **No final da descrição**, inclua **exatamente** esta frase:  \n  **`Créditos para o canal @ancap_su. Veja o vídeo completo: {videoUrl}.`**\n\n### c) *Hard Hook* (`videoHardHook`)\n- **Uma** frase curta, **provocativa e polêmica** (≈ **12–15 s** quando lida em voz alta).\n- Tom **assertivo e confrontador** (pode ser jocoso/humorado conforme o conteúdo).\n- **Objetivo:** agarrar atenção **instantaneamente**, gerar **curiosidade/inquietação** e **impulsionar** o público a continuar vendo o clipe.\n- **Mencione explicitamente o tema principal** do vídeo para deixar **claro sobre o que é** e **por que importa**.\n- **Sem abreviações**: escreva **por extenso** (ex.: “Estados Unidos”, “cinco metros”, “duas horas”, etc.).\n\n### d) Tags SEO (`videoTags`)\n- **Pelo menos 20** tags **em português**, todas **claramente relacionadas** ao conteúdo do segmento.\n\n### e) Textos de Thumbnail (`thumbTexts`)\n- **Baseados estritamente** no conteúdo **real** do corte (não invente temas/frases não ditos ou não implicados).\n- **Forma e limites** (quatro strings que juntas formam **uma frase de impacto**):\n  1. **Primeira**: **2 palavras**, **máx. 17 caracteres** (com espaços).\n  2. **Segunda**: **3 palavras**, **máx. 25 caracteres** (com espaços).\n  3. **Terceira**: **3 palavras**, **máx. 25 caracteres** (com espaços).\n  4. **Quarta**: **3 palavras**, **máx. 20 caracteres** (com espaços).\n- **Linguagem simples, clara e forte**; **chamativa**; **alinhada** ao **título** e ao **assunto central**.\n- **Não repita palavras** entre as quatro strings.\n\n### f) Playlist (`playlist`)\n- Dada a lista `{playlists}`, **escolha exatamente um** objeto da lista cujo `nome` **mais se aproxima** do **tema principal** do segmento.\n- **Retorne o objeto escolhido exatamente como recebido** (com `nome` e `id`).\n\n---\n\n## FORMATO DE SAÍDA (RETORNE APENAS O ARRAY JSON)\n> **A saída deve ser um JSON válido**. **Não inclua** texto extra nem formatação Markdown. **Retorne apenas o array JSON cru.**\n\n```json\n[\n  {\n    \"videoCutStartTime\": number,\n    \"videoCutEndTime\": number,\n    \"videoCutTitle\": \"string\",\n    \"videoCutDescription\": \"string\",\n    \"videoHardHook\": \"string\",\n    \"videoTags\": [\"string\", \"...\"],\n    \"videoUrl\": \"{videoUrl}\",\n    \"thumbTexts\": [\"string\", \"string\", \"string\", \"...\"],\n    \"playlist\": { \"nome\": \"string\", \"id\": \"string\" }\n  }\n]\n```\n\n---\n\n## LEMBRETES\n- **Português apenas** para título, descrição, *hard hook* e tags.\n- Realce **PALAVRAS-CHAVE** em **MAIÚSCULAS** (quando fizer sentido).\n- **Aderência estrita** à transcrição real: **não invente** conteúdo.\n- **Máximo 1** segmento. Sempre escolha **o mais relevante/polêmico**.\n- Para o **segmento final** (neste prompt, o único), **desconte `{secondsToRemove}` segundos** do final do vídeo original.\n"
+          "systemMessage": "=# Prompt — Corte Único de Vídeo a partir de Legendas (com aprendizado por estatísticas)\n\nVocê é um assistente de IA especializado em analisar **legendas/transcrições de vídeos** para identificar **um único melhor momento** para cortar em um clipe curto e envolvente **e** em **adaptar o estilo editorial do título, hard hook e textos de thumbnail** com base no histórico de desempenho informado em `previosBestVideos`.\n\n---\n\n## ENTRADAS\n- **Transcrição (legendas)** do vídeo: `{strSubtitle}`\n- **URL do vídeo**: `{videoUrl}`\n- **Playlists disponíveis** (lista de objetos com `nome` e `id`): `{playlists}`\n- **Segundos a remover no final** do vídeo original (para cortar CTA genérico): `{secondsToRemove}`\n- **Histórico de melhores vídeos para aprendizado de estilo**: `{previosBestVideos}`\n  - Esperado: *array* de objetos com, **pelo menos**, `title` (string) e alguma(s) métrica(s) de performance como `views` (number) e/ou `ctr` (number, %), e opcionalmente `likes` (number), `retention` (number, %), `tags` (string[]), `thumbTexts` (string[]).  \n  - Ex.: `[{\"title\":\"LULA ACUADO: STF REAGE !\",\"views\":277273,\"ctr\":7.8,\"tags\":[\"política\",\"STF\",\"Lula\"]}]`\n\n> **Retorne apenas *um* segmento** (máximo **1** corte).\n\n---\n\n## INSTRUÇÕES DE SEGMENTAÇÃO\n1. **Identificação do segmento**\n   - Encontre um trecho onde **um tópico/ideia-chave** seja **introduzido** e **concluído naturalmente**.\n   - Evite cortes bruscos **imediatamente antes** de começar um novo assunto.\n\n2. **Duração dinâmica (ajustar conforme a duração do vídeo)**\n   - Vídeos **curtos** (≈ até **12 min**): segmentos entre **~4–5 min** (240–300 s), **sem ultrapassar a duração real disponível**.\n   - Vídeos **médios** (≈ **13–30 min**): segmentos entre **~5–7 min** (300–420 s).\n   - Vídeos **longos** (≈ **30+ min**): segmentos entre **~8–12 min** (480–720 s).\n   - **Importante:** crie **no máximo 1** segmento, escolhendo **o mais relevante e polêmico** (por intensidade do tema, impacto emocional, humor ou controvérsia).\n   - Ao processar o **segmento final** do vídeo (neste prompt sempre haverá **um único** segmento), **exclua os últimos `{secondsToRemove}` segundos** da **duração total do vídeo** para evitar CTAs genéricos sem conteúdo relevante.\n\n---\n\n## DIRECIONAMENTO DE ESTILO PELO `previosBestVideos`\nUse `{previosBestVideos}` **exclusivamente para inferir padrões de estilo editorial** (não para inventar fatos). Siga este procedimento:\n\n1. **Rankeie mentalmente** os itens por desempenho (ex.: `ctr` > `retention` > `views` > `likes`, na ordem do que estiver disponível).\n2. **Extraia padrões** dos títulos de maior desempenho:\n   - Comprimento médio (caracteres/palavras).\n   - Uso de **MAIÚSCULAS** parciais (palavras-gatilho), **dois-pontos**/**travessão**, pares de conflito (**X vs Y**), verbos fortes (ex.: **EXPÕE, FERRA, ACUA, DETONA, REAGE, DESABA**).\n   - Presença de nomes próprios e instituições (ex.: STF, Congresso, Estados Unidos, empresas).\n   - Estruturas recorrentes (templates).\n3. **Aplique os padrões ao novo título/hook/thumbnail**, **sem copiar** títulos antigos. Produza algo **original** e **aderente à transcrição**.\n4. **Alinhamento semântico**: se o histórico indica que **conflito explícito** e **causalidade** performam melhor, priorize esses elementos **apenas se estiverem na transcrição**.\n5. **Fallback**: se `{previosBestVideos}` estiver vazio/inválido, siga as regras editoriais gerais deste prompt.\n\n---\n\n## SAÍDA DO SEGMENTO (EM PORTUGUÊS)\nPara o **único** segmento gerado, forneça os campos abaixo:\n\n### a) Título (`videoCutTitle`)\n- Em **português**, **atraente** e **diretamente conectado** ao que o orador diz.\n- Use **ALGUMAS PALAVRAS IMPORTANTES EM MAIÚSCULAS** para ênfase.\n- **Sem palavrões**.\n- **Comprimento máximo**: **90 caracteres** (com espaços).\n- **Não inclua** os caracteres: `<`, `=`, `/`, `+`.\n- **Ajuste o estilo** (escolha de verbos, presença de “vs”, uso de dois-pontos/travessão, ênfases em MAIÚSCULAS, nomes próprios) **conforme os padrões extraídos de `previosBestVideos`**.\n- **Estruturas recomendadas (escolha a que melhor se encaixa na transcrição e no padrão histórico):**\n  1. **[PERSONAGEM] [VERBO FORTE] [ALVO]!**  \n     Ex.: \"MINISTRO X BARRA Y!\"\n  2. **[X] vs [Y]: [EVENTO] [VERBO/RESULTADO]!**  \n     Ex.: \"BARROSO vs MORAES: TENSÃO EXPLODE!\"\n  3. **[ATO/DECISÃO] [PALAVRA-GANCHO]: [PERSONAGEM] [REAÇÃO] !**  \n     Ex.: \"VISTO NEGADO: PADILHA DESAFIA ESTADOS UNIDOS !\"\n  4. **[INSTITUIÇÃO] EM [CRISE/QUEDA]: [PERSONAGEM] NO FOCO !**  \n     Ex.: \"FULANO COMPLETAMENTE FERRADO: CICLANO NO LIMITE !\"\n- **Orientação editorial (baseada na transcrição, sem inventar):** deixe claro **quem ferrou quem**, **quem expôs quem** ou **quem foi ferrado por quem**.\n\n### b) Descrição (`videoCutDescription`)\n- **Resumo breve** do que é discutido no trecho.\n- Inclua **pelo menos duas referências** (diretas ou parafraseadas) da transcrição.\n- Misture **PALAVRAS-CHAVE EM MAIÚSCULAS** com outras em **minúsculas**.\n- Estimule o espectador a assistir destacando algo **intrigante** ou **útil**.\n- **Ao final**, inclua **exatamente**:  \n  **`Créditos para o canal @ancap_su. Veja o vídeo completo: {videoUrl}.`**\n- **Se útil**, reflita termos que frequentemente aparecem nos melhores títulos de `{previosBestVideos}` (sem inventar tema).\n\n### c) *Hard Hook* (`videoHardHook`)\n- **Uma** frase curta, **provocativa e polêmica** (≈ **12–15 s** quando lida).\n- Tom **assertivo e confrontador** (pode ser jocoso/humorado conforme o conteúdo).\n- **Mencione explicitamente o tema principal** e **por que importa**.\n- **Adapte** intensidade/verbo/ênfase ao **padrão que mais performa** em `{previosBestVideos}` (conflito, reação, denúncia, “vs”, etc.).\n- **Sem abreviações** (ex.: “Estados Unidos”).\n\n### d) Tags SEO (`videoTags`)\n- **Pelo menos 20** tags **em português**, todas **claramente relacionadas** ao conteúdo do segmento.\n- **Dê preferência** a termos que aparecem recorrentemente nos vídeos de maior desempenho em `{previosBestVideos}`, desde que **relevantes** à transcrição atual.\n\n### e) Textos de Thumbnail (`thumbTexts`)\n- **Baseados estritamente** no conteúdo **real** do corte (não invente).\n- **Quatro strings** que formam **uma frase de impacto**:\n  1. **2 palavras**, **máx. 17 caracteres**;\n  2. **3 palavras**, **máx. 25 caracteres**;\n  3. **3 palavras**, **máx. 25 caracteres**;\n  4. **3 palavras**, **máx. 20 caracteres**.\n- **Linguagem simples, clara e forte**, chamativa e alinhada ao **título** e ao **assunto**.\n- **Não repita palavras** entre as quatro strings.\n- **Adapte o tom** (conflito direto, denúncia, reação) ao que mais performa em `{previosBestVideos}`, **sem copiar** textos anteriores.\n\n### f) Playlist (`playlist`)\n- Dada a lista `{playlists}`, **escolha exatamente um** objeto cujo `nome` **mais se aproxima** do **tema principal** do segmento.\n- **Retorne o objeto escolhido exatamente como recebido** (com `nome` e `id`).\n\n---\n\n## FORMATO DE SAÍDA (RETORNE APENAS O ARRAY JSON)\n> **A saída deve ser um JSON válido**. **Não inclua** texto extra nem formatação Markdown. **Retorne apenas o array JSON cru.**\n\n[\n  {\n    \"videoCutStartTime\": number,\n    \"videoCutEndTime\": number,\n    \"videoCutTitle\": \"string\",\n    \"videoCutDescription\": \"string\",\n    \"videoHardHook\": \"string\",\n    \"videoTags\": [\"string\", \"...\"],\n    \"videoUrl\": \"{videoUrl}\",\n    \"thumbTexts\": [\"string\", \"string\", \"string\", \"...\"],\n    \"playlist\": { \"nome\": \"string\", \"id\": \"string\" }\n  }\n]\n\n---\n\n## LEMBRETES\n- **Português apenas** para título, descrição, *hard hook* e tags.\n- Realce **PALAVRAS-CHAVE** em **MAIÚSCULAS** quando fizer sentido.\n- **Aderência estrita** à transcrição real: **não invente** conteúdo.\n- **Máximo 1** segmento. Sempre escolha **o mais relevante/polêmico**.\n- Para o **segmento final** (neste prompt, o único), **desconte `{secondsToRemove}` segundos** do final do vídeo original.\n- **Use `previosBestVideos` apenas para aprender padrões de estilo** (templates, ênfases, tom). **Não copie** títulos do histórico.\n"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        416,
-        0
+        768,
+        -16
       ],
       "id": "af4510b9-8889-4f62-a2b8-63c7edbbf538",
       "name": "Bot",
@@ -73,7 +73,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        64,
+        -288,
         0
       ],
       "id": "35577217-c11b-4e37-918c-340fe98c4860",
@@ -97,11 +97,93 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        240,
-        0
+        576,
+        -16
       ],
       "id": "0d4768f1-bb1b-4b96-9062-e7e800af991e",
       "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YXLYtONBKA8CBAmO",
+          "mode": "list",
+          "cachedResultName": "ANCAPSU_STATISTICS",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/YXLYtONBKA8CBAmO"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -144
+      ],
+      "id": "fb46a284-4358-4caf-9554-cd1868aa6269",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "aggregate": "={{ $('Get row(s)').item.json }}",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -144
+      ],
+      "id": "71990121-3140-4460-a8ef-75330a4537e8",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cabd4646-dcdc-4f46-bd2f-0bf6dc64b1c0",
+              "name": "statistics",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -144
+      ],
+      "id": "555af601-1ea6-4c3c-85f8-4f64ca169d5d",
+      "name": "Get Statistics"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        400,
+        -16
+      ],
+      "id": "fe3cd617-29c2-4bf3-a380-85d361ba769d",
+      "name": "Merge"
     }
   ],
   "connections": {
@@ -136,9 +218,14 @@
       "main": [
         [
           {
-            "node": "@GLOBAL_ANCAPSU",
+            "node": "Get row(s)",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -148,6 +235,50 @@
         [
           {
             "node": "Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get Statistics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Statistics": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
             "type": "main",
             "index": 0
           }
@@ -172,7 +303,8 @@
       }
     ]
   },
-  "versionId": "021a741c-4fd7-4947-ace4-045b914c1026",
+  "versionId": "bbdb035c-be32-414c-8e4e-815176cea35a",
+  "versionCounter": 3,
   "triggerCount": 0,
   "shared": [
     {
@@ -196,7 +328,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-01T09:31:44.000Z",
+              "updatedAt": "2025-11-11T11:27:01.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -231,7 +363,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-01",
+              "lastActiveAt": "2025-11-11",
               "isPending": false
             }
           }

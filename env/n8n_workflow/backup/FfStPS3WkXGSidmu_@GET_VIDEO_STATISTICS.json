@@ -1,82 +1,73 @@
 {
-  "updatedAt": "2025-11-05T08:35:04.000Z",
-  "createdAt": "2025-10-04T17:26:13.261Z",
-  "id": "JgwCIAgZpZMMdgDf",
-  "name": "@GLOBAL_ANCAPSU",
+  "updatedAt": "2025-11-02T18:46:17.000Z",
+  "createdAt": "2025-11-02T18:44:24.803Z",
+  "id": "FfStPS3WkXGSidmu",
+  "name": "@GET_VIDEO_STATISTICS",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
-      "parameters": {
-        "inputSource": "passthrough"
-      },
+      "parameters": {},
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -320,
-        16
+        -272,
+        -16
       ],
-      "id": "f0da06f1-dbb7-4b79-8114-8c18c8e083f8",
+      "id": "e0b27f89-b30e-404c-8c6f-eb24476acb7d",
       "name": "When Executed by Another Workflow"
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "f7e37d81-bccd-4770-aca6-27d43fc9d72b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
             {
-              "id": "e437a1bd-4a0b-42be-846d-caff4c5e5e74",
-              "name": "CHANNEL_NAME",
-              "value": "CANAL_ANCAPSU",
-              "type": "string"
+              "name": "videoId",
+              "value": "={{ $('Upload to youtube').item.json.uploadId }}"
             },
             {
-              "id": "5bec419c-553f-4463-a6c2-26a7b2684eb2",
-              "name": "CHANNEL_ID",
-              "value": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-              "type": "string"
-            },
-            {
-              "id": "7335c9ca-4ed6-4fd5-bb77-f694a202e523",
-              "name": "LAST_N_HOURS",
-              "value": "={{\n(() => {\n  const now = new Date();\n  const midnight = new Date(now);\n  midnight.setHours(0,0,0,0);\n  return Math.floor((now - midnight) / 3_600_000)+19;\n})()\n}}",
-              "type": "string"
-            },
-            {
-              "id": "dcbf1dee-e038-4f05-a50d-f9b0f4980282",
-              "name": "MIN_DURATION",
-              "value": "182",
-              "type": "string"
-            },
-            {
-              "id": "1f6ea11f-e6a3-421f-a25b-00f915e7381b",
-              "name": "MAX_DURATION",
-              "value": "1800",
-              "type": "string"
-            },
-            {
-              "id": "ce77e3fe-b0d5-4766-a3df-5ac2dda4f853",
-              "name": "PLAYLISTS",
-              "value": "={{\nJSON.stringify(\n  [\n    { nome: \"justiça\", id: \"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\" },\n    { nome: \"Geopolítica\", id: \"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\" },\n    { nome: \"politica\", id: \"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\" },\n    { nome: \"cultura e sociedade\", id: \"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\" },\n    { nome: \"Liberdade e mercado\", id: \"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\" },\n    { nome: \"Economia\", id: \"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\" },\n    { nome: \"Corrupção\", id: \"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\" },\n    { nome: \"Tecnologia\", id: \"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\" }\n  ]\n)\n}}\n",
-              "type": "string"
-            },
-            {
-              "id": "e7c92207-4d3a-441b-b65a-8c4437a365e5",
-              "name": "NOTIFY_NUMBERS",
-              "value": "[\"5561982086449\"]",
-              "type": "array"
+              "name": "uploadType",
+              "value": "multipart"
             }
           ]
         },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
         "options": {}
       },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "id": "c209dff7-a715-445b-a7e0-70adc9f3b68e",
+      "name": "Set Thumbnail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
-        -112,
-        16
+        288,
+        80
       ],
-      "id": "57a60776-aeed-4086-bf2e-801dfa6885fe",
-      "name": "Edit Fields"
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "ThaPnNZElYZbX2i2",
+          "name": "YouTube n8n account-ENGLISH"
+        }
+      }
     }
   ],
   "connections": {
@@ -84,7 +75,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
@@ -98,15 +89,15 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "050e67e7-0511-4090-a62b-8cd78fe067d6",
-  "versionCounter": 3,
+  "versionId": "f03c78f4-0df3-43b4-9136-3b0be61ed870",
+  "versionCounter": 1,
   "triggerCount": 0,
   "shared": [
     {
-      "updatedAt": "2025-10-04T17:26:13.284Z",
-      "createdAt": "2025-10-04T17:26:13.284Z",
+      "updatedAt": "2025-11-02T18:44:25.118Z",
+      "createdAt": "2025-11-02T18:44:25.118Z",
       "role": "workflow:owner",
-      "workflowId": "JgwCIAgZpZMMdgDf",
+      "workflowId": "FfStPS3WkXGSidmu",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "updatedAt": "2025-08-20T20:53:20.326Z",
