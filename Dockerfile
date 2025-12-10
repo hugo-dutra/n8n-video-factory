@@ -2,7 +2,7 @@
 FROM denoland/deno:bin AS denobin
 
 # --- Stage 2: imagem final n8n com yt-dlp e configs ---
-FROM n8nio/n8n:latest
+FROM n8nio/n8n:1.120.4
 
 USER root
 

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-11-08T10:34:35.000Z",
+  "updatedAt": "2025-11-13T11:43:47.000Z",
   "createdAt": "2025-10-07T19:10:41.637Z",
   "id": "GUEbV70IpFjcyX2A",
   "name": "@SET_TO_REPROCESS_STATUS",
@@ -147,6 +147,28 @@
       ],
       "id": "33be39f5-c776-4ea1-b168-586a50df60a1",
       "name": "@GLOBAL_ANCAPSU"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "video",
+        "key": "={{ $('Remote Start').item.json.videoId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -320
+      ],
+      "id": "c2c0bace-18ff-4910-821f-32d1f460ad6c",
+      "name": "Get to Process",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
     }
   ],
   "connections": {
@@ -215,14 +237,14 @@
     "Remote Start": [
       {
         "json": {
-          "videoId": "QdVpu_Ygvro",
+          "videoId": "mxhT8Y8QP_c",
           "processed": false
         }
       }
     ]
   },
-  "versionId": "d0bba2b4-ee20-401f-a734-d15f14caa0bc",
-  "versionCounter": 9,
+  "versionId": "fda2f14b-b6de-4509-8048-a6073d94536b",
+  "versionCounter": 13,
   "triggerCount": 0,
   "shared": [
     {
@@ -246,7 +268,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-11T11:27:01.000Z",
+              "updatedAt": "2025-11-15T20:10:03.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -281,7 +303,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-11",
+              "lastActiveAt": "2025-11-15",
               "isPending": false
             }
           }

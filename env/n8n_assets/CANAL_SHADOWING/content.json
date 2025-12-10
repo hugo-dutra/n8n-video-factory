@@ -39,7 +39,7 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "Present perfect and present continuous",
+    "theme": "Present perfect and present continuous",//published
     "mode": "Tech Interview (Experience): What problems you have solved recently and what you are currently improving in production",
     "duration": 3,
     "level": "B2",
@@ -48,7 +48,7 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "Modal verbs can must should might",
+    "theme": "Modal verbs can must should might",//published
     "mode": "Tech Interview (Security): What developers must do for JWT/OAuth2, what they should log, and what might be optional",
     "duration": 3,
     "level": "B2",
@@ -57,7 +57,7 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "Phrasal verbs take off give up find out look for",
+    "theme": "Phrasal verbs take off give up find out look for",//Processed
     "mode": "Tech Interview (Debugging): How you look for memory leaks, find out slow queries, and track down flaky tests",
     "duration": 3,
     "level": "B2",
@@ -66,7 +66,7 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "Gerunds and infinitives after verbs like love enjoy stop try",
+    "theme": "Gerunds and infinitives after verbs like love enjoy stop try",//Processed
     "mode": "Tech Interview (Team Fit): Things you enjoy doing, tasks you stopped doing, and improvements you tried to introduce",
     "duration": 3,
     "level": "B2",
@@ -75,7 +75,7 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "Comparatives and superlatives plus too enough",
+    "theme": "Comparatives and superlatives plus too enough",/*Processed*/
     "mode": "Tech Interview (Tradeoffs): Compare SQL vs NoSQL, monolith vs microservices, and choose the most appropriate stack",
     "duration": 3,
     "level": "B2",
@@ -120,7 +120,7 @@
     "targetWordsPerParagraph": 40
   },
   {
-    "theme": "So neither either too enough",
+    "theme": "So neither either too enough",//Published
     "mode": "Tech Interview (Collaboration): Neither frontend nor backend owned the contract, so how did you define API boundaries",
     "duration": 3,
     "level": "B2",

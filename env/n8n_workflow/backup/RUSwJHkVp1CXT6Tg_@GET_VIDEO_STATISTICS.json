@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-11-10T22:19:44.000Z",
+  "updatedAt": "2025-11-13T12:03:07.000Z",
   "createdAt": "2025-11-02T18:46:36.646Z",
   "id": "RUSwJHkVp1CXT6Tg",
   "name": "@GET_VIDEO_STATISTICS",
@@ -533,13 +533,7 @@
     },
     "Clear Rows": {
       "main": [
-        [
-          {
-            "node": "Aggregate",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Get Video Statistics1": {
@@ -604,8 +598,8 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "60b11cbf-55aa-4740-b0e6-ee3027c25ede",
-  "versionCounter": 22,
+  "versionId": "7fcdb04d-01b6-4d9e-9175-7f069a6b7dae",
+  "versionCounter": 23,
   "triggerCount": 0,
   "shared": [
     {
@@ -629,7 +623,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-11T11:27:01.000Z",
+              "updatedAt": "2025-11-15T20:10:03.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -664,7 +658,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-11",
+              "lastActiveAt": "2025-11-15",
               "isPending": false
             }
           }

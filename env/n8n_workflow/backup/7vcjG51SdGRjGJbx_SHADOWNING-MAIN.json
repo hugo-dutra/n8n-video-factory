@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-11-10T22:25:06.000Z",
+  "updatedAt": "2025-11-15T13:47:52.000Z",
   "createdAt": "2025-10-16T23:15:45.583Z",
   "id": "7vcjG51SdGRjGJbx",
   "name": "SHADOWNING-MAIN",
@@ -845,7 +845,9 @@
         "workflowId": {
           "__rl": true,
           "value": "0gGqIL1d0xVKVFJl",
-          "mode": "list"
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0gGqIL1d0xVKVFJl",
+          "cachedResultName": "@STUDY_CONTENT_MATERIAL"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -1140,19 +1142,237 @@
     "START": [
       {
         "json": {
-          "theme": "Passive voice in simple present and simple past",
+          "theme": "Gerunds and infinitives after verbs like love enjoy stop try",
           "duration": 3,
           "level": "B2",
-          "mode": "Tech Interview (Postmortem): Explain how the outage was detected, how alerts were triggered, and what was remediated",
+          "mode": "Tech Interview (Team Fit): Things you enjoy doing, tasks you stopped doing, and improvements you tried to introduce",
           "imageStyle": "",
           "scenes": 4,
           "targetWordsPerParagraph": 40
         }
       }
+    ],
+    "@GLOBAL_SHADOWING": [
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_SHADOWING",
+          "PLAYLISTS": "[{\"nome\":\"justiça\",\"id\":\"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\"},{\"nome\":\"Geopolítica\",\"id\":\"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\"},{\"nome\":\"politica\",\"id\":\"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\"},{\"nome\":\"cultura e sociedade\",\"id\":\"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\"},{\"nome\":\"Liberdade e mercado\",\"id\":\"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\"},{\"nome\":\"Economia\",\"id\":\"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\"},{\"nome\":\"Corrupção\",\"id\":\"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\"},{\"nome\":\"Tecnologia\",\"id\":\"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\"}]\n",
+          "NOTIFY_NUMBERS": [
+            "5561982086449"
+          ],
+          "AVAILABLE_VOICES": [
+            {
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb",
+              "description": "deep strong eldery male narrator voice"
+            },
+            {
+              "voiceId": "SAz9YHcvj6GT2YYXdXww",
+              "description": "middle-aged female"
+            },
+            {
+              "voiceId": "ZF6FPAbjXT4488VcRRnw",
+              "description": "teenage female"
+            },
+            {
+              "voiceId": "EOVAuWqgSZN2Oel78Psj",
+              "description": "young malee"
+            }
+          ]
+        }
+      }
+    ],
+    "Get videoId from timestamp": [
+      {
+        "json": {
+          "videoId": "1763213893571"
+        }
+      }
+    ],
+    "@CONTENT_GENERATION": [
+      {
+        "json": {
+          "output": "Interviewer: Hello and welcome to our interview today. I would like to know what you love to do in your work and what tasks you enjoy doing in your daily routine. I also ask if you have stopped doing any old habits in your career. Please tell me about improvements you tried to introduce in your team settings.\n\nCandidate: I love working on challenging projects and enjoy coding in different languages to solve problems. I love to learn new frameworks and enjoying exploring innovative ideas in my free time. I stopped using outdated processes when I realized they did not help the team. I tried to switch to agile methods and I continue to share best practices with my colleagues.\n\nInterviewer: That is interesting to hear and I would like to learn more about your approach to change management. Can you tell me if you enjoy coaching others and if you love assisting your team to overcome difficulties when they occur. I am also curious to know if you stopped doing practices that do not yield good results and if you tried to lead improvements by example.\n\nCandidate: I enjoy coaching and love to see team members grow by working on real life projects. I often enjoy mentoring newcomers and teaching them to solve problems with creative methods. I stopped following procedures that were too rigid when I discovered they were slowing down progress. I also tried to introduce flexible guidelines that encourage innovative thinking and I continue to support the team.\n\nInterviewer: Your experience sounds like it could really help promote growth within our company. I appreciate that you love to innovate and enjoy finding efficient ways to work with others. I also like that you have stopped doing practices that hinder progress and that you tried to offer alternatives when challenges arose. Your approach can contribute to a culture of continuous improvement and collaboration.\n\nCandidate: I appreciate the opportunity to share my experience and I love to be part of teams that welcome change and value open communication. I enjoy taking responsibility for improvements and I have stopped following routines that are no longer effective. I tried to guide my team by proposing new methods and I continue to use creative approaches to maintain a productive work environment."
+        }
+      }
+    ],
+    "@STUDY_CONTENT_MATERIAL": [
+      {
+        "json": {
+          "ContentLink": "https://drive.google.com/uc?id=1X-6Ta1KPPHZurj1eVAu1mEYJzSMJHdwK&export=download"
+        }
+      }
+    ],
+    "@SHADOWING-THUMBNAIL-CREATOR": [
+      {
+        "json": {
+          "success": true,
+          "data": {
+            "key": {
+              "remoteJid": "556182086449@s.whatsapp.net",
+              "fromMe": true,
+              "id": "3EB00C86EB1A0E424E954E719F533A7682B92115"
+            },
+            "pushName": "",
+            "status": "PENDING",
+            "message": {
+              "conversation": "Thumbnail Criada com sucesso"
+            },
+            "contextInfo": null,
+            "messageType": "conversation",
+            "messageTimestamp": 1763214092,
+            "instanceId": "8ea06520-c090-4e3d-9214-855b5651ce3b",
+            "source": "unknown"
+          }
+        }
+      }
+    ],
+    "@YOUTUBE_DATA_CONTENT": [
+      {
+        "json": {
+          "output": {
+            "VideoTitle": "Level B2 | English Shadowing Tech Interview Gerunds and Infinitives Practice",
+            "VideoDescription": "Practice your English shadowing skills by listening to a tech interview focused on gerunds and infinitives after verbs like love, enjoy, stop, and try. Listen first, then repeat aloud, and finally shadow the dialogue with the audio to improve your fluency. In this video, you'll hear a candidate discussing what they enjoy doing, the tasks they have stopped doing, and the improvements they tried to introduce in their team setting. The interview highlights real workplace language with useful phrasal verbs and expressions to help you keep up with everyday professional discussions. Pay attention to phrases like \"stop using,\" \"try to switch,\" and \"continue to share\" as the dialogue explores teamwork and change management. This is an excellent opportunity to figure out how gerunds and infinitives function naturally in speech and enhance your speaking confidence. Listen once, then repeat aloud, then shadow with the audio.",
+            "Tags": [
+              "english shadowing",
+              "B2 level",
+              "gerunds and infinitives",
+              "repeat after me",
+              "speaking practice",
+              "love to",
+              "enjoy doing",
+              "stop doing",
+              "try to",
+              "tech interview",
+              "team fit",
+              "workplace English",
+              "change management",
+              "improvements",
+              "coaching others",
+              "mentoring",
+              "processes",
+              "agile methods",
+              "collaboration",
+              "productive environment"
+            ],
+            "thumbnailText": [
+              "Listen Repeat",
+              "Shadow Together",
+              "Gerunds Infinitives"
+            ]
+          }
+        }
+      }
+    ],
+    "@FORMAT_TEXT_GENERATION": [
+      {
+        "json": {
+          "index": 0,
+          "introduction": true,
+          "paragraphs": [
+            {
+              "id": -1,
+              "text": "Theme: A professional interview on career evolution and change management. Shadowing in 3 passes — first, listen attentively; second, repeat after the reading; third, speak together. Breathe, articulate clearly, and keep pace. Study materials are linked in the video description.",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "index": 1,
+          "introduction": false,
+          "paragraphs": [
+            {
+              "id": 0,
+              "text": "Interviewer: Hello and welcome to our interview today. I would like to know what you love to do in your work and what tasks you enjoy doing in your daily routine. I also ask if you have stopped doing any old habits in your career. Please tell me about improvements you tried to introduce in your team settings.",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            },
+            {
+              "id": 1,
+              "text": "Candidate: I love working on challenging projects and enjoy coding in different languages to solve problems. I love to learn new frameworks and enjoying exploring innovative ideas in my free time. I stopped using outdated processes when I realized they did not help the team. I tried to switch to agile methods and I continue to share best practices with my colleagues.",
+              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "index": 2,
+          "introduction": false,
+          "paragraphs": [
+            {
+              "id": 2,
+              "text": "Interviewer: That is interesting to hear and I would like to learn more about your approach to change management. Can you tell me if you enjoy coaching others and if you love assisting your team to overcome difficulties when they occur. I am also curious to know if you stopped doing practices that do not yield good results and if you tried to lead improvements by example.",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            },
+            {
+              "id": 3,
+              "text": "Candidate: I enjoy coaching and love to see team members grow by working on real life projects. I often enjoy mentoring newcomers and teaching them to solve problems with creative methods. I stopped following procedures that were too rigid when I discovered they were slowing down progress. I also tried to introduce flexible guidelines that encourage innovative thinking and I continue to support the team.",
+              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "index": 3,
+          "introduction": false,
+          "paragraphs": [
+            {
+              "id": 4,
+              "text": "Interviewer: Your experience sounds like it could really help promote growth within our company. I appreciate that you love to innovate and enjoy finding efficient ways to work with others. I also like that you have stopped doing practices that hinder progress and that you tried to offer alternatives when challenges arose. Your approach can contribute to a culture of continuous improvement and collaboration.",
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb"
+            },
+            {
+              "id": 5,
+              "text": "Candidate: I appreciate the opportunity to share my experience and I love to be part of teams that welcome change and value open communication. I enjoy taking responsibility for improvements and I have stopped following routines that are no longer effective. I tried to guide my team by proposing new methods and I continue to use creative approaches to maintain a productive work environment.",
+              "voiceId": "EOVAuWqgSZN2Oel78Psj"
+            }
+          ]
+        }
+      }
+    ],
+    "Merge1": [
+      {
+        "json": {
+          "output": {
+            "VideoTitle": "Level B2 | English Shadowing Tech Interview Gerunds and Infinitives Practice",
+            "VideoDescription": "Practice your English shadowing skills by listening to a tech interview focused on gerunds and infinitives after verbs like love, enjoy, stop, and try. Listen first, then repeat aloud, and finally shadow the dialogue with the audio to improve your fluency. In this video, you'll hear a candidate discussing what they enjoy doing, the tasks they have stopped doing, and the improvements they tried to introduce in their team setting. The interview highlights real workplace language with useful phrasal verbs and expressions to help you keep up with everyday professional discussions. Pay attention to phrases like \"stop using,\" \"try to switch,\" and \"continue to share\" as the dialogue explores teamwork and change management. This is an excellent opportunity to figure out how gerunds and infinitives function naturally in speech and enhance your speaking confidence. Listen once, then repeat aloud, then shadow with the audio.",
+            "Tags": [
+              "english shadowing",
+              "B2 level",
+              "gerunds and infinitives",
+              "repeat after me",
+              "speaking practice",
+              "love to",
+              "enjoy doing",
+              "stop doing",
+              "try to",
+              "tech interview",
+              "team fit",
+              "workplace English",
+              "change management",
+              "improvements",
+              "coaching others",
+              "mentoring",
+              "processes",
+              "agile methods",
+              "collaboration",
+              "productive environment"
+            ],
+            "thumbnailText": [
+              "Listen Repeat",
+              "Shadow Together",
+              "Gerunds Infinitives"
+            ]
+          }
+        },
+        "binary": {}
+      }
     ]
   },
-  "versionId": "55706b15-363f-4d52-a4f9-c9e9c8bc6dfa",
-  "versionCounter": 71,
+  "versionId": "8de19af3-0a92-49c5-96e2-6f05542a1bb8",
+  "versionCounter": 76,
   "triggerCount": 0,
   "shared": [
     {
@@ -1176,7 +1396,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-11T11:27:01.000Z",
+              "updatedAt": "2025-11-15T20:10:03.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -1211,7 +1431,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-11",
+              "lastActiveAt": "2025-11-15",
               "isPending": false
             }
           }

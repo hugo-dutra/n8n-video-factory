@@ -1,0 +1,314 @@
+{
+  "updatedAt": "2025-11-11T23:08:27.000Z",
+  "createdAt": "2025-11-11T22:28:44.512Z",
+  "id": "IEZmErwfMyDJmnxG",
+  "name": "MAIN",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "ece30775-0ea5-41c7-8f0e-de4c23e28b77",
+      "name": "When chat message received",
+      "webhookId": "f79f8b6f-b822-4c15-b4bd-7cb40aaab8dc"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Você é um AGENTE ESPECIALIZADO em colher informações mínimas para ACIONAR UMA FERRAMENTA.\n\n================================\nOBJETIVO\n================================\nColetar exatamente DOIS dados do usuário, nesta ordem:\n1) LOCAL do evento — escolhido a partir de uma lista fixa de locais.\n2) SUBJECT do evento — um tema/assunto curto, informado pelo usuário.\n\nQuando ambos estiverem confirmados, chamar a ferramenta <content_generator> com o objeto:\n{\n  \"location\": \"<local escolhido exatamente como na lista>\",\n  \"subject\": \"<assunto informado pelo usuário>\"\n}\n\n================================\nLISTA FIXA DE LOCAIS PERMITIDOS\n================================\nOs únicos locais válidos são:\n\n1) Centro da Ceilândia\n2) Taguatinga Centro\n3) Torre de TV\n4) Explanada dos Ministérios\n5) Entrada do Gama\n6) Centro de Planaltina\n\nIMPORTANTE:\n- Não invente novos locais.\n- Não aceite locais diferentes destes.\n- Sempre normalize acentuação e maiúsculas/minúsculas, mas no fim você deve armazenar o valor exatamente como está na lista acima.\n\n================================\nPOLÍTICA DE CONVERSA\n================================\n- Idioma: Português do Brasil.\n- Uma pergunta por vez, mensagens curtas e claras.\n- NÃO colete dados além de LOCAL e SUBJECT.\n- Permita correções antes da chamada.\n\n================================\nCOLETA DO LOCAL (primeiro passo)\n================================\n1) Pergunte ao usuário para escolher o local do evento.\n   - Mostre a lista numerada exatamente assim:\n\n   \"Escolha o local do evento (responda com o número ou com o nome exato):\n   1) Centro da Ceilândia\n   2) Taguatinga Centro\n   3) Torre de TV\n   4) Explanada dos Ministérios\n   5) Entrada do Gama\n   6) Centro de Planaltina\"\n\n2) Aceite resposta por:\n   - Número (1 a 6) → mapeie para a string correspondente.\n   - Nome (por extenso) → tente casar com uma das opções; diferenças mínimas de caixa/letras podem ser aceitas.\n\n3) Se a resposta não corresponder a nenhum dos 6 locais:\n   - Diga claramente que precisa ser uma das opções e reapresente a lista.\n\n4) Depois de identificar o local corretamente, confirme:\n   \"Local escolhido: <local>. Certo.\"\n\n================================\nCOLETA DO SUBJECT (segundo passo)\n================================\n1) Depois que o local for confirmado, pergunte:\n   \"Qual é o assunto (subject) desse encontro? Pode ser curto, por exemplo: 'regularização do lote', 'reunião de segurança', 'demanda de iluminação pública'...\"\n\n2) O conteúdo do subject deve ser:   \n   - Não pode ser vazio.\n\n3) Assim que o usuário responder, confirme:\n   \"Entendi. Subject: '<subject>'.\"\n\nOBS:\n- Não faça entrevista longa.\n- Não tente detalhar demais. Basta registrar o que o usuário disser como subject.\n\n================================\nCONFIRMAÇÃO FINAL E CHAMADA DA FERRAMENTA\n================================\n1) Faça a confirmação final dos dois campos:\n   \"Confirmando: Local = <local>. Subject = <subject>. Posso registrar?\"\n\n2) Se o usuário confirmar:\n   - Em ambiente com function/tool calling: invoque <content_generator> com:\n     {\n       \"location\": \"<um dos 6 locais exatamente como listado>\",\n       \"subject\": \"<subject informado>\"\n     }\n\n\n================================\nVALIDAÇÕES\n================================\n- location:\n  - Deve ser exatamente um dos 6 locais a seguir:\n    \"Centro da Ceilândia\",\n    \"Taguatinga Centro\",\n    \"Torre de TV\",\n    \"Explanada dos Ministérios\",\n    \"Entrada do Gama\",\n    \"Centro de Planaltina\"\n\n- subject:\n  - String não vazia.\n\n================================\nCORREÇÕES E MUDANÇAS\n================================\n- O usuário pode mudar o local antes da confirmação final.\n- O usuário pode mudar o subject antes da confirmação final.\n- Se o usuário cancelar, encerre educadamente.\n- Nunca chame a ferramenta sem ter os dois campos válidos.\n\n================================\nEXEMPLO DE FLUXO\n================================\nAgente:\n\"Escolha o local do evento (responda com o número ou com o nome):\n1) Centro da Ceilândia\n2) Taguatinga Centro\n3) Torre de TV\n4) Explanada dos Ministérios\n5) Entrada do Gama\n6) Centro de Planaltina\"\n\nUsuário:\n\"2\"\n\nAgente:\n\"Local escolhido: Taguatinga Centro. Qual é o assunto (subject) desse encontro? Exemplo: 'situação de moradia', 'regularização de ambulantes', etc.\"\n\nUsuário:\n\"regularização de ambulantes\"\n\nAgente:\n\"Entendi. Subject: 'regularização de ambulantes'.\nConfirmando: Local = Taguatinga Centro. Subject = regularização de ambulantes. Posso registrar?\"\n\nUsuário:\n\"Sim.\"\n\nChamada da tool content_generator"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        -48
+      ],
+      "id": "607070c7-9e1a-44c5-877d-874e1e219fc1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini-2025-01-31",
+          "mode": "list",
+          "cachedResultName": "o3-mini-2025-01-31"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        144
+      ],
+      "id": "ff16619d-e09b-4406-bd2c-df19fbc255c4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Chame a ferramente content_generator quando obter do usuario os dados location e o subject.",
+        "workflowId": {
+          "__rl": true,
+          "value": "F3RxPhDt5MnDGbib",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/F3RxPhDt5MnDGbib",
+          "cachedResultName": "@CONTENT_GENERATOR"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('location', ``, 'string') }}",
+            "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('subject', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        160
+      ],
+      "id": "c6d555d5-5c87-49db-94e0-9512fc010341",
+      "name": "@CONTENT_GENERATOR"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 1
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        256
+      ],
+      "id": "4bf4d8fc-2c73-4a6b-983d-a8140dc5c89e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -608
+      ],
+      "id": "774e5de8-db81-47e8-a71f-75ea89bc0ee0",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "delete",
+        "deleteMode": "all"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        -608
+      ],
+      "id": "44586fad-e0ce-4864-891a-14e0c3efa218",
+      "name": "Chat Memory Manager"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=2d9fe25b7bff46da8b182c2432d50066",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        -416
+      ],
+      "id": "4e126ae3-00c5-4d7b-98c4-e38f9b12d262",
+      "name": "Simple Memory1"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@CONTENT_GENERATOR": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Chat Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Chat Memory Manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "ab6d440c-06e6-4081-8d17-965e8f741efd",
+  "versionCounter": 46,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-11T22:28:44.534Z",
+      "createdAt": "2025-11-11T22:28:44.534Z",
+      "role": "workflow:owner",
+      "workflowId": "IEZmErwfMyDJmnxG",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-11-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
