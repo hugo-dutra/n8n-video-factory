@@ -1,0 +1,126 @@
+version: "3.8"
+
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: n8n
+    ports:
+      - "80:5678"
+    environment:
+      TZ: America/Sao_Paulo
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      WEBHOOK_URL: http://localhost
+      NODE_FUNCTION_ALLOW_EXTERNAL: uuid
+      N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE: "true"
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_LISTEN_ADDRESS: 0.0.0.0
+      N8N_ENDPOINT_WEBHOOK: n8n
+      N8N_ENDPOINT_WEBHOOK_TEST: n8n-test
+      N8N_LOG_LEVEL: debug
+      N8N_USER_MANAGEMENT_DISABLED: "false"
+      N8N_PUBLIC_API_DISABLED: "false"
+      WHISPER_API_URL: http://whisper-api:8000
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"  
+      N8N_API_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NmI2MmJlZS1lYmIxLTRmZTUtYTUxYi1jMTE2ZWY3MDY0ZWIiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTkxOTA2fQ.rDMPb66Xspvo3x2Ie7uCx25552SgCvifCjSKCoIpbNo"
+    volumes:
+      - ./env/n8n_data:/home/node/.n8n
+      - ./env/n8n_download:/home/node/download
+      - ./env/n8n_processing:/home/node/processing
+      - ./env/n8n_workflow:/home/node/n8n_workflow
+      - ./env/n8n_assets:/home/node/assets
+    restart: unless-stopped
+    networks:
+      - default
+    depends_on:
+      - whisper-api
+
+  whisper-api:
+    build:
+      context: ./whisper
+      dockerfile: Dockerfile
+    container_name: whisper-api
+    ports:
+      - "8000:8000"
+    environment:
+      - WHISPER_MODEL=large
+      - XDG_CACHE_HOME=/root/.cache
+    volumes:
+      - whisper_cache:/root/.cache/whisper
+    restart: unless-stopped
+    networks:
+      - default  
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: >
+      /bin/sh -c 'exec redis-server --appendonly yes --save 60 1000 --loglevel warning'    
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - default    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5 
+
+  evolution-api:
+    image: atendai/evolution-api:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:    
+      AUTHENTICATION_API_KEY: "D5E14EBA3050-40E4-BF1F-DDAE98935CED"
+      CONFIG_SESSION_PHONE_VERSION: "2.3000.1025062854"
+      NODE_ENV: production
+      TZ: America/Sao_Paulo    
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: "postgresql"
+      DATABASE_CONNECTION_URI: "postgresql://hugo:123456@postgres:5432/mydatabase"    
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: "redis://redis:6379/0"
+      CACHE_LOCAL_ENABLED: "false"
+
+    depends_on:
+      - postgres
+      - redis
+
+    volumes:
+      - evolution_store:/evolution/store
+      - evolution_instances:/evolution/instances
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_db_videos
+    restart: always
+    environment:
+      POSTGRES_USER: hugo
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: mydatabase
+      TZ: America/Sao_Paulo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hugo -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  whisper_cache:
+  redis_data:
+  evolution_store:
+  evolution_instances:
+  postgres_data:
+
+networks:
+  default:
+    driver: bridge
