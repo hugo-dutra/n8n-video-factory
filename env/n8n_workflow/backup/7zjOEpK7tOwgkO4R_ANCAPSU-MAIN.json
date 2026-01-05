@@ -1,8 +1,9 @@
 {
-  "updatedAt": "2025-11-15T20:10:29.000Z",
+  "updatedAt": "2026-01-02T23:39:55.000Z",
   "createdAt": "2025-09-06T19:43:56.595Z",
   "id": "7zjOEpK7tOwgkO4R",
   "name": "ANCAPSU-MAIN",
+  "description": null,
   "active": true,
   "isArchived": false,
   "nodes": [
@@ -1304,8 +1305,8 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "processed": true,
-            "videoId": "izTgxAljPf0"
+            "processed": false,
+            "videoId": "WqdV28X5UHQ"
           },
           "matchingColumns": [],
           "schema": [
@@ -1737,8 +1738,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "1ed56cd9-c74c-4e5b-9d95-c76d1d8e3005",
-  "versionCounter": 66,
+  "versionId": "0d66294e-3d55-4264-b91f-a652ee52545b",
+  "versionCounter": 215,
   "triggerCount": 1,
   "shared": [
     {
@@ -1762,7 +1763,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "updatedAt": "2026-01-05T22:13:24.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -1797,7 +1798,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-15",
+              "lastActiveAt": "2026-01-05",
               "isPending": false
             }
           }

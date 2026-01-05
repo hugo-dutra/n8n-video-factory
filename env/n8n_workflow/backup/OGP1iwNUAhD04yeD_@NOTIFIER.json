@@ -1,8 +1,9 @@
 {
-  "updatedAt": "2025-10-29T22:29:16.000Z",
+  "updatedAt": "2025-12-10T11:34:39.000Z",
   "createdAt": "2025-10-06T11:30:11.278Z",
   "id": "OGP1iwNUAhD04yeD",
   "name": "@NOTIFIER",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -54,7 +55,7 @@
       "typeVersion": 1,
       "position": [
         704,
-        -32
+        -16
       ],
       "id": "a85fb891-92d3-4abc-9212-1b4f2cde7c9a",
       "name": "PROCESSO CONCLUÍDO",
@@ -219,8 +220,8 @@
       }
     ]
   },
-  "versionId": "455e2e0c-e61d-470d-b3e3-78145de24d50",
-  "versionCounter": 1,
+  "versionId": "3a5b5ee2-ba65-4a36-888c-14047f774f58",
+  "versionCounter": 5,
   "triggerCount": 0,
   "shared": [
     {
@@ -244,7 +245,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "updatedAt": "2026-01-05T22:13:24.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -279,7 +280,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-15",
+              "lastActiveAt": "2026-01-05",
               "isPending": false
             }
           }

@@ -1,8 +1,9 @@
 {
-  "updatedAt": "2025-10-09T00:14:03.000Z",
+  "updatedAt": "2025-11-16T19:30:52.000Z",
   "createdAt": "2025-08-20T20:52:18.959Z",
   "id": "UjPnRRupZJq5pbs0",
   "name": "@DOWNLOAD_YOUTUBE",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -199,13 +200,13 @@
     "START": [
       {
         "json": {
-          "VIDEO_ID": "97nFoYay0IQ"
+          "VIDEO_ID": "B_IIep7-Jcs"
         }
       }
     ]
   },
-  "versionId": "5d295da9-0ed0-4083-9f33-4eefba86c21e",
-  "versionCounter": 1,
+  "versionId": "05a65858-8ad9-4dcb-9da5-24b24f80ec33",
+  "versionCounter": 2,
   "triggerCount": 0,
   "shared": [
     {
@@ -229,7 +230,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "updatedAt": "2026-01-05T22:13:24.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -264,7 +265,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-15",
+              "lastActiveAt": "2026-01-05",
               "isPending": false
             }
           }

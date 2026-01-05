@@ -1,0 +1,383 @@
+{
+  "updatedAt": "2025-11-23T21:09:46.000Z",
+  "createdAt": "2025-11-23T21:09:46.343Z",
+  "id": "DCWmGfHI90g5ulhV",
+  "name": "@PROCESS_IMAGES_BLUES_COM_ALMA",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "aiAgentStarterCallout": "",
+        "promptType": "define",
+        "text": "=style: {{ $json.style }}\nlyrics: {{ $json.lyrics }}",
+        "hasOutputParser": true,
+        "notice": "",
+        "needsFallback": false,
+        "options": {
+          "systemMessage": "# Music Image Scenes Generator – Prompt Template\n\nUse este prompt como system / instruction prompt para um agente.  \nAntes de chamar o modelo, injete os valores {{style}} e {{lyrics}}.\n\n---\n\nYou are a creative visual scene designer specialized in transforming songs into deeply detailed, contemplative, cinematic image descriptions.\n\nYou will receive two variables:\n\n- style: a short description of the musical style, arrangement and mood.\n- lyrics: the full lyrics of the song.\n\nHere are the current values:\n\n- style: {{style}}\n- lyrics:\n{{lyrics}}\n\n---\n\nGOAL\n\nUsing only the information from style and lyrics, generate 4 different image descriptions, each one representing a distinct scene inspired by the song.\n\nEach description must be:\n\n- **extremely detailed**, rica em atmosfera e nuances visuais;\n- **contemplative and reflective**, evoking introspection and emotional depth;\n- centered on **places, environments, ambiences, landscapes, interior spaces**, or symbolic imagery **without religious figures, saints, crosses or explicit sacred elements**;\n- visually poetic, immersive, and emotionally evocative;\n- symbolic when appropriate, but always grounded in the emotional tone of the lyrics;\n- filled with sensory elements (light, shadows, texture, temperature, movement, ambience);\n- a complete standalone cinematic scene suitable for generating high-quality art prompts;\n- free of explicit references to “lyrics”, “song” or “artist”;\n- free of copyrighted characters or real people.\n\n---\n\nRULES\n\n- Keep the language consistent with the song’s language.\n- Avoid any explicit religious iconography (no saints, no crosses, no halos, no sacred objects).\n- Focus on contemplative visual storytelling, atmosphere, emotion and symbolism.\n- Do not include camera brands, technical jargon or model names.\n- Do not label the scenes; return only the descriptions in the array.\n- Return only the JSON array. No explanations. No markdown.\n\n---\n\nOUTPUT FORMAT (MANDATORY)\n\n[\n  \"descricao da cena 1 com muitos detalhes contemplativos\",\n  \"descricao da cena 2 com muitos detalhes contemplativos\",\n  \"descricao da cena 3 com muitos detalhes contemplativos\",\n  \"descricao da cena 4 com muitos detalhes contemplativos\"\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        -704
+      ],
+      "id": "0089977d-defe-4163-a88f-57c81bce7e8a",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "notice": "",
+        "model": {
+          "__rl": true,
+          "value": "o3-mini-2025-01-31",
+          "mode": "list",
+          "cachedResultName": "o3-mini-2025-01-31"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        -352
+      ],
+      "id": "b5b7c7e9-7a9d-4894-b5bd-14bee7a543ed",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "notice": "",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{  \n  \"cenas\":[\n    \"string\",\n    \"string\",\n    \"string\",\n    \"string\"\n  ]\n}",
+        "autoFix": true,
+        "customizeRetryPrompt": false
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        -512
+      ],
+      "id": "9f181adc-753d-4c7c-a2ff-5f118cb155b7",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.cenas",
+        "include": "noOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        -704
+      ],
+      "id": "dd19969a-69ed-40ca-9475-3fc576cd4ce1",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "splitInBatchesNotice": "",
+        "batchSize": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1808,
+        -704
+      ],
+      "id": "f070390c-8ed5-45e6-92c5-772101bf457b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "generate",
+        "model": "gpt-image-1",
+        "prompt": "=Create a scene image for a music moment, based on the information below:\n\n- music moment: {{ $json['output.cenas'] }}\n\n\n\n- Important: If the description includes people, make them look as beautiful as possible.\n\n",
+        "options": {
+          "size": "1536x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        2208,
+        -592
+      ],
+      "id": "c6a1cda7-64c8-4847-98c6-055a84e21c51",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "info": "",
+        "operation": "write",
+        "fileName": "=/home/node/download/{{ $('Start').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}_{{new Date().toDateTime().toMillis()}}.png",
+        "dataPropertyName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        -592
+      ],
+      "id": "2c4841a9-cadb-4192-8b28-1faabc9f751e",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2688,
+        -720
+      ],
+      "id": "83445a99-9830-4e31-a956-28873c13b8fb",
+      "name": "Edit Fields",
+      "disabled": false,
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b70f14fb-9a15-4185-af93-dd572382b0a9",
+              "name": "fileName",
+              "value": "={{ $('Loop Over Items').item }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "a1cdda09-ac65-4a48-b226-9c2d4fbd2ed6",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1040,
+        -704
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "lyrics",
+              "type": "any"
+            },
+            {
+              "name": "style",
+              "type": "any"
+            },
+            {
+              "name": "CHANNEL_NAME",
+              "type": "any"
+            },
+            {
+              "name": "videoId",
+              "type": "any"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "6d86ec3e-9a4a-4c84-81b7-2c26c77aff87",
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-23T21:09:46.368Z",
+      "createdAt": "2025-11-23T21:09:46.368Z",
+      "role": "workflow:owner",
+      "workflowId": "DCWmGfHI90g5ulhV",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "updatedAt": "2026-01-05T22:13:24.000Z",
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-05",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

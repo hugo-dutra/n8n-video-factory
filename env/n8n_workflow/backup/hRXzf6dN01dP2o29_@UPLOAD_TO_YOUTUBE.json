@@ -1,8 +1,9 @@
 {
-  "updatedAt": "2025-11-06T21:48:59.000Z",
+  "updatedAt": "2025-11-17T17:44:14.000Z",
   "createdAt": "2025-10-02T15:52:42.017Z",
   "id": "hRXzf6dN01dP2o29",
   "name": "@UPLOAD_TO_YOUTUBE",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -985,9 +986,222 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "df2159aa-af94-4679-8209-2bfb15eeaf45",
-  "versionCounter": 2,
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "channelId": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
+          "videoId": "Y29PxWflGj4",
+          "uploadLongVideoData": [
+            {
+              "videoCutStartTime": 145,
+              "videoCutEndTime": 193,
+              "videoCutTitle": "LEÃO SOLTO vs JAULA: A VERDADE DO LIVRE-ARBITRIO!",
+              "videoCutDescription": "Neste corte, o orador compara a liberdade rasa da natureza com a segurança de uma gaiola, usando a metáfora do leão para ilustrar o conflito entre livre-arbítrio e controle governamental. Ele destaca como viver sem garantias pode ser desafiador, mas também libertador, instigando uma reflexão sobre as promessas do governo e o verdadeiro preço da liberdade. Créditos para o canal @ancap_su. Veja o vídeo completo: https://www.youtube.com/watch?v=Y29PxWflGj4.",
+              "videoHardHook": "Você é livre ou está preso? Descubra o dilema do verdadeiro LIVRE-ARBITRIO!",
+              "videoTags": [
+                "liberdade",
+                "livre-arbítrio",
+                "leão",
+                "savana",
+                "jaula",
+                "governo",
+                "controle",
+                "conflito",
+                "debate",
+                "metáfora",
+                "Apple TV",
+                "Pluribus",
+                "ficção científica",
+                "libertarianismo",
+                "polêmica",
+                "reflexão",
+                "natureza",
+                "segurança",
+                "análise política",
+                "meme"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "thumbTexts": [
+                "LEÃO SOLTO",
+                "FORÇA NO CONFLITO",
+                "SELVA CONTRA GAIOLA",
+                "ESCOLHA SEM LIMITES"
+              ],
+              "playlist": {
+                "nome": "Liberdade e mercado",
+                "id": "PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-"
+              }
+            }
+          ],
+          "uploadShortVideoData": [
+            {
+              "videoCutStartTime": 152,
+              "videoCutEndTime": 197,
+              "videoCutTitle": "O LEÃO DA LIBERDADE vs JAULA - CORTE!",
+              "videoCutDescription": "Neste segmento, o apresentador utiliza a metáfora do LEÃO para comparar a liberdade real à segurança de estar preso em uma JAULA. Ele faz referência tanto ao leão na savana, que precisa caçar para sobreviver, quanto ao leão no zoológico, protegido mas sem LIVRE-ARBÍTRIO. Veja o vídeo completo: https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "videoHardHook": "Descubra a polêmica verdade sobre liberdade e segurança!",
+              "videoTags": [
+                "leão",
+                "liberdade",
+                "jaula",
+                "livre-arbítrio",
+                "sociedade",
+                "governo",
+                "comparação",
+                "savana",
+                "zoológico",
+                "metáfora",
+                "controverso",
+                "debate",
+                "filme",
+                "série",
+                "Pluribus",
+                "Apple TV",
+                "análise",
+                "crítica",
+                "ficção científica",
+                "social",
+                "política"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "thumbTexts": [
+                "Polêmico / Impactante"
+              ],
+              "playlist": {
+                "nome": "playlist 1",
+                "id": "playlist1"
+              },
+              "idx": 0,
+              "timeStamp": 1763400343683
+            },
+            {
+              "videoCutStartTime": 264,
+              "videoCutEndTime": 309,
+              "videoCutTitle": "CONFLITO ÉPICO: O GOVERNO vs HUMANIDADE - CORTE!",
+              "videoCutDescription": "Neste recorte polêmico, o apresentador analisa o conflito entre a personagem CAROL e o GOVERNO, contrastando a ideia de um comunismo utópico com a luta pela LIBERDADE individual. Ele menciona o 'vírus do SOCIALISMO' e critica a promessa governamental que transforma todos em 'um único ser'. Veja o vídeo completo: https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "videoHardHook": "Veja a batalha ideológica e suas consequências chocantes!",
+              "videoTags": [
+                "conflito",
+                "governo",
+                "humanidade",
+                "Carol",
+                "liberdade",
+                "comunismo",
+                "socialismo",
+                "utopia",
+                "controverso",
+                "debate",
+                "análise",
+                "série",
+                "política",
+                "Apple TV",
+                "ficção científica",
+                "libertário",
+                "análise política",
+                "crítica",
+                "ideologia",
+                "social",
+                "transformação"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "thumbTexts": [
+                "Debate Acirrado / Ideológico"
+              ],
+              "playlist": {
+                "nome": "playlist 1",
+                "id": "playlist1"
+              },
+              "idx": 1,
+              "timeStamp": 1763400344683
+            },
+            {
+              "videoCutStartTime": 368,
+              "videoCutEndTime": 418,
+              "videoCutTitle": "APPLE TV x NETFLIX: A VERDADE CHOCANTE - CORTE!",
+              "videoCutDescription": "Nesse trecho, o apresentador expõe sua OPINIÃO sobre streaming, exaltando o APPLE TV e criticando a Netflix como 'lixo esquerdista'. Ele enfatiza que o Apple TV oferece melhores SÉRIES e conceitos que desafiam o INTELLECTO, em contraste com o conteúdo inútil da Netflix. Veja o vídeo completo: https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "videoHardHook": "Descubra por que Apple TV supera a Netflix de forma impactante!",
+              "videoTags": [
+                "Apple TV",
+                "Netflix",
+                "streaming",
+                "opinião",
+                "crítica",
+                "lixo esquerdista",
+                "séries",
+                "conteúdo",
+                "debate",
+                "tecnologia",
+                "entretenimento",
+                "análise",
+                "media",
+                "review",
+                "TV",
+                "digital",
+                "contraste",
+                "informação",
+                "internet",
+                "cultura pop",
+                "impacto"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "thumbTexts": [
+                "Impacto / Verdade Revelada"
+              ],
+              "playlist": {
+                "nome": "playlist 1",
+                "id": "playlist1"
+              },
+              "idx": 2,
+              "timeStamp": 1763400345683
+            },
+            {
+              "videoCutStartTime": 423,
+              "videoCutEndTime": 468,
+              "videoCutTitle": "ADAPTAÇÃO POLÊMICA: GÊNERO E LACRAÇÃO - CORTE!",
+              "videoCutDescription": "Neste segmento, o apresentador critica a adaptação da série Foundation na Apple TV, destacando como personagens originalmente homens foram transformados em MULHERES para 'lacrar'. Ele argumenta que essa mudança tira a REALIDADE das histórias, pois personagens não precisam ser perfeitos sem LUTA. Veja o vídeo completo: https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "videoHardHook": "Entenda a controvérsia que divide fãs e críticos!",
+              "videoTags": [
+                "Foundation",
+                "adaptação",
+                "gênero",
+                "lacração",
+                "Apple TV",
+                "crítica",
+                "controverso",
+                "filme",
+                "série",
+                "polêmica",
+                "mídia",
+                "cultura",
+                "análise",
+                "debate",
+                "ficção",
+                "literatura",
+                "mudança",
+                "personagem",
+                "review",
+                "asimov",
+                "transformação"
+              ],
+              "videoUrl": "https://www.youtube.com/watch?v=Y29PxWflGj4",
+              "thumbTexts": [
+                "Polêmico / Imperdível"
+              ],
+              "playlist": {
+                "nome": "playlist 1",
+                "id": "playlist1"
+              },
+              "idx": 3,
+              "timeStamp": 1763400346683
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "versionId": "502c14ff-957a-4f17-8b6d-39e3a55663a1",
+  "versionCounter": 5,
   "triggerCount": 0,
   "shared": [
     {
@@ -1011,7 +1225,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "updatedAt": "2026-01-05T22:13:24.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -1046,7 +1260,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-15",
+              "lastActiveAt": "2026-01-05",
               "isPending": false
             }
           }

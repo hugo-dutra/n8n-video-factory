@@ -1,18 +1,18 @@
 {
-  "updatedAt": "2025-10-30T17:11:43.000Z",
+  "updatedAt": "2025-12-04T21:24:35.000Z",
   "createdAt": "2025-10-29T23:24:06.183Z",
   "id": "zhj5BKdTM2K8HPaE",
   "name": "@SHADOWING-THUMBNAIL-CREATOR",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
     {
       "parameters": {
         "resource": "image",
-        "model": "gpt-image-1",
         "prompt": "=Create a thumbnail image for a YouTube channel about English shadowing, based on the information below:\n\n- videoContent:  {{ $('Start').item.json.output }}\n- videoTitle: {{ $('Start').item.json.output_VideoDescription }}\n- videoTitle: {{ $('Start').item.json.output_VideoTitle }}\n- ThumbnailText: {{ $('Start').item.json.output_thumbnailText_join(',')}}\n\n- Important: If the description includes people, make them look as beautiful as possible.\n\n",
         "options": {
-          "size": "1536x1024"
+          "size": "1024x1024"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.openAi",
@@ -253,8 +253,8 @@
       }
     ]
   },
-  "versionId": "a85c3df0-25da-482c-b40a-9c0cacc781f7",
-  "versionCounter": 1,
+  "versionId": "cc3f5416-c5b4-43bd-bf7f-feae50f9e5f5",
+  "versionCounter": 2,
   "triggerCount": 0,
   "shared": [
     {
@@ -278,7 +278,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "updatedAt": "2026-01-05T22:13:24.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -313,7 +313,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-15",
+              "lastActiveAt": "2026-01-05",
               "isPending": false
             }
           }

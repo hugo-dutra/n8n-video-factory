@@ -1,0 +1,445 @@
+{
+  "updatedAt": "2025-11-24T23:08:05.000Z",
+  "createdAt": "2025-11-23T21:10:14.339Z",
+  "id": "K4u6F84rU1Y3LcRb",
+  "name": "@PROCESS_MUSIC_BLUES_COM_ALMA",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=style: {{ $json.style }}\nlyrics: {{ $json.lyrics }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# Music YouTube Metadata Agent – Prompt Template\n\nUse this prompt as the **system / instruction prompt** for an agent.\nInject the variables `{{style}}` and `{{lyrics}}` before calling the model.\n\n---\n\n## Prompt\n\nYou are a senior **music marketing and YouTube SEO specialist**.  \nYour job is to receive a musical style and the full lyrics of a song and then create optimized YouTube metadata.\n\n### INPUT\nYou will receive two variables:\n\n- **style**: a short description of the musical style, arrangement and mood.  \n  Example: `\"slow gospel blues, male and female vocals, intimate, nostalgic, contemplative\"`  \n- **lyrics**: the full lyrics of the song, in the original language.\n\nHere are the current values:\n\n- style: `{{style}}`\n- lyrics:  \n  ```text\n  {{lyrics}}\n  ```\n\n### GOAL\nUsing **only** the information in `style` and `lyrics`:\n\n1. Create a compelling **video title** for YouTube.\n2. Write a persuasive **video description** that:\n   - briefly contextualizes the song (style, mood, spiritual or emotional focus, atmosphere);\n   - invites the viewer to listen, reflect, and share;\n   - uses natural language, not keyword stuffing;\n   - keeps the same language used in the lyrics (if the lyrics are in Portuguese, write in Portuguese; if in English, write in English).\n3. Generate an array of **SEO-friendly tags** (keywords) for YouTube based on:\n   - musical style (e.g., “gospel blues”, “worship music”);\n   - emotional / spiritual themes present in the lyrics;\n   - likely search terms someone would use to find this kind of music;\n   - keeping the same language as the lyrics, except for universal terms such as “blues”, “gospel”, “worship”, “live session”, etc.\n\n### RULES\n\n- **Language consistency**: Use the same main language found in the lyrics for title, description, and tags.\n- **No artist name** unless it is explicitly present in the lyrics or in the style text.\n- **No hallucinations** about dates, albums, labels, platforms or collaborators.\n- Focus on **discoverability** (search) + **click-through** (curiosity & clarity).\n- The description should be **human and inviting**, not a keyword dump.\n- The output must be **valid JSON** and **parseable** on the first try.\n\n### OUTPUT FORMAT (MANDATORY)\n\nReturn **only** a JSON object, with no explanations, comments, or markdown.\n\nThe shape must be exactly:\n\n```json\n{\n  \"title\": \"string\",\n  \"description\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ]\n}\n```\n\nAdditional constraints:\n\n- `title`: \n  - max. ~80 characters;\n  - clear, emotional and clickable; avoid all-caps.\n- `description`:\n  - 2–5 short paragraphs separated by blank lines;\n  - can include a short call to action (e.g., invite to subscribe, like, or share), but **do not** invent links.\n- `tags`:\n  - array of **15 to 25** short strings;\n  - no `#` symbol, just plain keywords;\n  - do not repeat exactly the same term with minimal variations unless it is really justified.\n\nRemember: **respond only with the JSON object**, nothing else.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        -144
+      ],
+      "id": "febb1649-a36b-4b61-9f29-70af42bfefcc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini-2025-01-31",
+          "mode": "list",
+          "cachedResultName": "o3-mini-2025-01-31"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        208
+      ],
+      "id": "1a1cfd36-446b-402b-bf56-a27f65881820",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"string\",\n  \"description\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        48
+      ],
+      "id": "6fa02f25-3d98-4f44-a297-e4fd275ff7c0",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sunoapi.org/api/v1/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 772fb47df89ec346177b32c74392276d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $('Start').item.json.lyrics }}"
+            },
+            {
+              "name": "style",
+              "value": "={{ $('Start').item.json.style }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $('Start').item.json.musicaName }}\n"
+            },
+            {
+              "name": "customMode",
+              "value": "true"
+            },
+            {
+              "name": "instrumental",
+              "value": "false"
+            },
+            {
+              "name": "model",
+              "value": "V5"
+            },
+            {
+              "name": "callBackUrl",
+              "value": "https://sua-url-de-callback.com/suno"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1584,
+        -144
+      ],
+      "id": "3df5ece3-1ada-4bbe-88c8-7e944d9ac685",
+      "name": "CreateMusic"
+    },
+    {
+      "parameters": {
+        "url": "https://api.sunoapi.org/api/v1/generate/record-info",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $('CreateMusic').item.json.data.taskId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 772fb47df89ec346177b32c74392276d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1936,
+        -144
+      ],
+      "id": "a878f504-f54b-43d8-9224-3203f5044381",
+      "name": "GetMusic"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d92cd7d5-2e34-4c13-8dbe-81ac49d8594b",
+              "name": "sunoData",
+              "value": "={{ $('GetMusic').item.json.data.response.sunoData.filter(item => item.sourceStreamAudioUrl != null).first()}}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2112,
+        -144
+      ],
+      "id": "3e0ea9c1-b868-4a31-b319-bbe7ea0be2d1",
+      "name": "GetMainPayload"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('GetMainPayload').item.json.sunoData.sourceStreamAudioUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2288,
+        -144
+      ],
+      "id": "f7a05334-d0a0-48f5-be04-d02942b81df6",
+      "name": "DownloadFile"
+    },
+    {
+      "parameters": {
+        "amount": 120
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1760,
+        -144
+      ],
+      "id": "bfc568de-fa2e-4b60-98a5-81d31e4d90dc",
+      "name": "Wait 60s",
+      "webhookId": "65fb5c76-a789-4882-ae38-d065e7de62eb"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/download/{{$('Start').item.json.CHANNEL_NAME }}/{{ $('Start').item.json.videoId }}/{{ $binary.data.fileName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        -144
+      ],
+      "id": "ce8600b4-9afd-4a8f-8935-9e71d23a5399",
+      "name": "Write Files"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "lyrics",
+              "type": "any"
+            },
+            {
+              "name": "style",
+              "type": "any"
+            },
+            {
+              "name": "musicaName",
+              "type": "any"
+            },
+            {
+              "name": "CHANNEL_NAME",
+              "type": "any"
+            },
+            {
+              "name": "videoId",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "0ee92e52-8825-4375-871e-699a4e9742a4",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1040,
+        -144
+      ]
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "CreateMusic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CreateMusic": {
+      "main": [
+        [
+          {
+            "node": "Wait 60s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetMusic": {
+      "main": [
+        [
+          {
+            "node": "GetMainPayload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetMainPayload": {
+      "main": [
+        [
+          {
+            "node": "DownloadFile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DownloadFile": {
+      "main": [
+        [
+          {
+            "node": "Write Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60s": {
+      "main": [
+        [
+          {
+            "node": "GetMusic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Files": {
+      "main": [
+        []
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "3ef2ea28-3634-4c1a-a724-fe23c5c3cd3d",
+  "versionCounter": 5,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-23T21:10:14.362Z",
+      "createdAt": "2025-11-23T21:10:14.362Z",
+      "role": "workflow:owner",
+      "workflowId": "K4u6F84rU1Y3LcRb",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "updatedAt": "2026-01-05T22:13:24.000Z",
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-05",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

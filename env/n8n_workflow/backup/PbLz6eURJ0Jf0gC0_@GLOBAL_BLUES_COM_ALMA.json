@@ -1,51 +1,73 @@
 {
-  "updatedAt": "2025-08-20T21:31:26.000Z",
-  "createdAt": "2025-08-20T21:24:09.192Z",
-  "id": "DOfnd0M834V8kbv2",
-  "name": "@CREATE_FOLDER",
+  "updatedAt": "2025-11-18T16:31:23.000Z",
+  "createdAt": "2025-11-18T16:29:06.072Z",
+  "id": "PbLz6eURJ0Jf0gC0",
+  "name": "@GLOBAL_BLUES_COM_ALMA",
   "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
     {
       "parameters": {
-        "workflowInputs": {
-          "values": [
-            {
-              "name": "path"
-            }
-          ]
-        }
+        "inputSource": "passthrough"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        0,
-        0
+        -272,
+        -80
       ],
-      "id": "18de450b-fe8f-4407-af02-4d33245ccc74",
-      "name": "When Executed by Another Workflow"
+      "id": "6713f0cb-0980-47f6-84d0-1a4be3dc62bc",
+      "name": "START"
     },
     {
       "parameters": {
-        "command": "={{ 'mkdir -p ' + JSON.stringify($json.path) }}\n"
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e437a1bd-4a0b-42be-846d-caff4c5e5e74",
+              "name": "CHANNEL_NAME",
+              "value": "CANAL_BLUES_COM_ALMA",
+              "type": "string"
+            },
+            {
+              "id": "ce77e3fe-b0d5-4766-a3df-5ac2dda4f853",
+              "name": "PLAYLISTS",
+              "value": "={{\nJSON.stringify(\n  [\n    { nome: \"justiça\", id: \"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\" },\n    { nome: \"Geopolítica\", id: \"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\" },\n    { nome: \"politica\", id: \"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\" },\n    { nome: \"cultura e sociedade\", id: \"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\" },\n    { nome: \"Liberdade e mercado\", id: \"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\" },\n    { nome: \"Economia\", id: \"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\" },\n    { nome: \"Corrupção\", id: \"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\" },\n    { nome: \"Tecnologia\", id: \"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\" }\n  ]\n)\n}}\n",
+              "type": "string"
+            },
+            {
+              "id": "e7c92207-4d3a-441b-b65a-8c4437a365e5",
+              "name": "NOTIFY_NUMBERS",
+              "value": "[\"5561982086449\"]",
+              "type": "array"
+            },
+            {
+              "id": "32b1e28b-6ecc-49c9-b2f1-ca3332e20def",
+              "name": "AVAILABLE_VOICES",
+              "value": "={{ \n[\n  {\n    \"voiceId\": \"4YYIPFl9wE5c4L2eu2Gb\",\n    \"description\": \"deep strong eldery male narrator voice\"\n  },\n  {\n    \"voiceId\": \"SAz9YHcvj6GT2YYXdXww\",\n    \"description\": \"middle-aged female\"\n  },\n  {\n    \"voiceId\": \"ZF6FPAbjXT4488VcRRnw\",\n    \"description\": \"teenage female\"\n  },\n  {\n    \"voiceId\": \"EOVAuWqgSZN2Oel78Psj\",\n    \"description\": \"young malee\"\n  }\n]\n}}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        208,
-        0
+        -64,
+        -80
       ],
-      "id": "fd5ee07a-ac26-4a40-b369-1a8fb15cdff4",
-      "name": "PATH_CREATOR"
+      "id": "c4a03f92-4729-44d9-ae80-0daf349b649f",
+      "name": "Set Globals"
     }
   ],
   "connections": {
-    "When Executed by Another Workflow": {
+    "START": {
       "main": [
         [
           {
-            "node": "PATH_CREATOR",
+            "node": "Set Globals",
             "type": "main",
             "index": 0
           }
@@ -57,27 +79,17 @@
     "executionOrder": "v1"
   },
   "staticData": null,
-  "meta": {
-    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
-  },
-  "pinData": {
-    "When Executed by Another Workflow": [
-      {
-        "json": {
-          "path": "/home/node/download/new_path"
-        }
-      }
-    ]
-  },
-  "versionId": "6d884be5-295a-4b51-afae-5a4641127070",
-  "versionCounter": 1,
+  "meta": null,
+  "pinData": {},
+  "versionId": "3811fdfe-bacd-4bb7-8946-10ba5a5a2cc7",
+  "versionCounter": 5,
   "triggerCount": 0,
   "shared": [
     {
-      "updatedAt": "2025-08-20T21:24:09.208Z",
-      "createdAt": "2025-08-20T21:24:09.208Z",
+      "updatedAt": "2025-11-18T16:29:06.100Z",
+      "createdAt": "2025-11-18T16:29:06.100Z",
       "role": "workflow:owner",
-      "workflowId": "DOfnd0M834V8kbv2",
+      "workflowId": "PbLz6eURJ0Jf0gC0",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "updatedAt": "2025-08-20T20:53:20.326Z",

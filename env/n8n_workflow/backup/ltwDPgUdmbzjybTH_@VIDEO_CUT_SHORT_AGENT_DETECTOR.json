@@ -1,8 +1,9 @@
 {
-  "updatedAt": "2025-11-06T20:46:43.000Z",
+  "updatedAt": "2025-12-26T19:00:05.000Z",
   "createdAt": "2025-09-30T23:03:59.159Z",
   "id": "ltwDPgUdmbzjybTH",
   "name": "@VIDEO_CUT_SHORT_AGENT_DETECTOR",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -26,7 +27,7 @@
         "text": "=strSubtitle: {{ $json.videoTranscription }}\nvideoUrl: https://www.youtube.com/watch?v={{ $json.videoId }} \nplaylists: {{ [\"playlist 1\",\"playlist 2\"] }}\nsecondsToRemove: {{ 15 }}\n",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=You are an AI assistant specialized in analyzing video subtitles to identify the best moments for cutting videos into short, engaging clips.\n\nINSTRUCTIONS:\n1. You will receive a transcript of a video (subtitles).\n2. Your task:\n   - Identify up to *5 segments* from the provided content. Each selected segment must represent the most controversial, funny, or impactful moments in the video.\n   - Prioritize moments that are likely to trigger *strong reactions*, *spark debate*, or *provoke curiosity*.\n   - Avoid abrupt cuts before a new subject begins or in the middle of an argument.\n   - Each segment must be between 45–50 seconds.\n   - Prioritize the **most controversial or engaging** topics that are likely to capture the viewer's interest.\n   - For each segment, provide:\n     a) A title in Portuguese that is COMPELLING and directly connected to what the speaker says. Use some IMPORTANT WORDS in UPPERCASE for emphasis. Always end the title with \" - CORTE!\".\n     b) A description in Portuguese that:\n        - Briefly outlines what’s discussed in that specific segment.\n        - Includes at least TWO direct or paraphrased references from the transcript.\n        - Uses some IMPORTANT WORDS in UPPERCASE for emphasis.\n        - Encourages viewers to watch by highlighting something intriguing or beneficial in the segment.\n        - At the end of the text (videoCutDescription), include the following sentence: Veja o vídeo completo: {videoUrl}.\n     c) At least 20 SEO tags in Portuguese, each obviously related to the segment content.\n   - The output must be valid JSON and must NOT include any extra text or markdown formatting. Return only the JSON array.\n\nINPUT EXAMPLE:\n{strSubtitle}\n\nVIDEO URL EXAMPLE:\n{videoUrl}\n\nOUTPUT FORMAT (JSON Array):\n```json\n[\n  {\n    \"videoCutStartTime\": number,\n    \"videoCutEndTime\": number,\n    \"videoCutTitle\": string,\n    \"videoCutDescription\": string,\n    \"videoTags\": string[],\n    \"videoUrl\": string\n  }\n]\n\n```\n\nREQUIREMENTS:\n- Titles and descriptions in Portuguese only.\n- Highlight KEY words in UPPERCASE.\n- Each segment must have at least 20 tags.\n- Ensure the titles, descriptions, and tags align directly with the actual transcript.\n- Return only the raw JSON array in your response, nothing else.\n"
+          "systemMessage": "=You are an AI assistant specialized in analyzing video subtitles to identify the best moments for cutting videos into short, engaging clips.\n\nINSTRUCTIONS:\n1. You will receive a transcript of a video (subtitles).\n2. Your task:\n   - Identify up to *5 segments* from the provided content. Each selected segment must represent the most controversial, funny, or impactful moments in the video.\n   - Prioritize moments that are likely to trigger *strong reactions*, *spark debate*, or *provoke curiosity*.\n   - Avoid abrupt cuts before a new subject begins or in the middle of an argument.\n   - Each segment must be between 15–25 seconds.\n   - Prioritize the **most controversial or engaging** topics that are likely to capture the viewer's interest.\n   - For each segment, provide:\n     a) A title in Portuguese that is COMPELLING and directly connected to what the speaker says. Use some IMPORTANT WORDS in UPPERCASE for emphasis. Always end the title with \" - CORTE!\".\n     b) A description in Portuguese that:\n        - Briefly outlines what’s discussed in that specific segment.\n        - Includes at least TWO direct or paraphrased references from the transcript.\n        - Uses some IMPORTANT WORDS in UPPERCASE for emphasis.\n        - Encourages viewers to watch by highlighting something intriguing or beneficial in the segment.\n        - At the end of the text (videoCutDescription), include the following sentence: Veja o vídeo completo: {videoUrl}.\n     c) At least 20 SEO tags in Portuguese, each obviously related to the segment content.\n   - The output must be valid JSON and must NOT include any extra text or markdown formatting. Return only the JSON array.\n\nINPUT EXAMPLE:\n{strSubtitle}\n\nVIDEO URL EXAMPLE:\n{videoUrl}\n\nOUTPUT FORMAT (JSON Array):\n```json\n[\n  {\n    \"videoCutStartTime\": number,\n    \"videoCutEndTime\": number,\n    \"videoCutTitle\": string,\n    \"videoCutDescription\": string,\n    \"videoTags\": string[],\n    \"videoUrl\": string\n  }\n]\n\n```\n\nREQUIREMENTS:\n- Titles and descriptions in Portuguese only.\n- Highlight KEY words in UPPERCASE.\n- Each segment must have at least 20 tags.\n- Ensure the titles, descriptions, and tags align directly with the actual transcript.\n- Return only the raw JSON array in your response, nothing else.\n"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -137,8 +138,8 @@
       }
     ]
   },
-  "versionId": "498b9c2c-47e7-4d32-844b-a693d9c25a6a",
-  "versionCounter": 3,
+  "versionId": "1b24b820-3295-44be-88ff-73750a355453",
+  "versionCounter": 6,
   "triggerCount": 0,
   "shared": [
     {
@@ -162,7 +163,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2025-11-15T20:10:03.000Z",
+              "updatedAt": "2026-01-05T22:13:24.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -197,7 +198,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2025-11-15",
+              "lastActiveAt": "2026-01-05",
               "isPending": false
             }
           }
