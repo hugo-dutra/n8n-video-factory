@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-05T22:50:35.000Z",
+  "updatedAt": "2026-01-06T12:22:51.000Z",
   "createdAt": "2025-11-17T23:44:16.787Z",
   "id": "M351f6P8AKFYVXjT",
   "name": "MAIN",
@@ -7,17 +7,6 @@
   "active": false,
   "isArchived": false,
   "nodes": [
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        144,
-        80
-      ],
-      "id": "8c9f644a-790a-4d14-8808-f52192a5c602",
-      "name": "When clicking ‘Execute workflow’"
-    },
     {
       "parameters": {
         "workflowId": {
@@ -85,8 +74,8 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1520,
-        -144
+        2832,
+        -128
       ],
       "id": "aa199d88-84cd-4193-87cd-cec315b0efcd",
       "name": "Execute Command1"
@@ -131,37 +120,6 @@
       ],
       "id": "6b6a659e-359c-43f4-b2f4-8449b9ceb560",
       "name": "Variaveis da musica"
-    },
-    {
-      "parameters": {
-        "formTitle": "Input params of music here",
-        "formFields": {
-          "values": [
-            {
-              "fieldLabel": "style",
-              "placeholder": "Style music here"
-            },
-            {
-              "fieldLabel": "lyrics",
-              "placeholder": "Put lyrics here"
-            },
-            {
-              "fieldLabel": "musicName",
-              "placeholder": "Name of music"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.formTrigger",
-      "typeVersion": 2.3,
-      "position": [
-        144,
-        -144
-      ],
-      "id": "b2ba614c-8426-441a-83b0-168f84628b43",
-      "name": "Submitter",
-      "webhookId": "1cc58845-dba9-465b-ac23-f1f00a8403e1"
     },
     {
       "parameters": {
@@ -261,7 +219,7 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "FILE_PATH": "=/home/node/download/{{ $('@GLOBAL_BLUES_COM_ALMA').item.json.CHANNEL_NAME }}/{{ $('Get videoId from timestamp').item.json.videoId }}/*.mp3"
+            "FILE_PATH": "=/home/node/download/{{ $('@GLOBAL_BLUES_COM_ALMA').item.json.CHANNEL_NAME }}/{{ $('Get videoId from timestamp').item.json.videoId }}/data.mp3"
           },
           "matchingColumns": [],
           "schema": [
@@ -284,25 +242,171 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1328,
+        1600,
         -144
       ],
       "id": "070c4e09-9a5f-4ba7-b57f-45c51ca73c48",
       "name": "@VIDEO_META_DATA"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "sZXDNEUQMEUeryHZ",
+          "mode": "list",
+          "cachedResultName": "BACKGROUND_VIDEOS",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/sZXDNEUQMEUeryHZ"
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        -144
+      ],
+      "id": "ba091a8c-9d31-4da3-b7b4-6b799a320f62",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "907354c1-8922-4206-92dd-d7bf561aab29",
+              "name": "lyrics",
+              "value": "={{ $('Submitter').item.json.lyrics }}",
+              "type": "string"
+            },
+            {
+              "id": "1c0eab15-b3a2-41c7-a59f-78a868afc96c",
+              "name": "filePath",
+              "value": "={{ $json.videoMetaData.file }}",
+              "type": "string"
+            },
+            {
+              "id": "7f02d712-2cec-4306-8232-8e471471370a",
+              "name": "duration",
+              "value": "={{ $json.videoMetaData.durationSeconds }}",
+              "type": "number"
+            },
+            {
+              "id": "9de62137-d6fa-405f-b5f2-024e933af15d",
+              "name": "type",
+              "value": "={{ $json.videoMetaData.type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2096,
+        -128
+      ],
+      "id": "46dd93fe-4ded-4818-8c36-5a2d9ba7bee0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1600,
+        32
+      ],
+      "id": "246246de-1c61-47b1-a250-3007afb2485e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1888,
+        -128
+      ],
+      "id": "21b0574c-55d9-47d9-9e8c-e8c8d8272a44",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "U2B3b3K36MwEByEd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/U2B3b3K36MwEByEd",
+          "cachedResultName": "@VIDEO_META_DATA_V2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FILE_PATH": "=/home/node/assets/{{ $('@GLOBAL_BLUES_COM_ALMA').item.json.CHANNEL_NAME }}/videos/{{ $json.video_filename }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "FILE_PATH",
+              "displayName": "FILE_PATH",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        128
+      ],
+      "id": "84850ce9-2168-48cd-9422-ab8d843e7630",
+      "name": "@VIDEO_META_DATA1"
+    },
+    {
+      "parameters": {
+        "formTitle": "Input params of music here",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "style",
+              "placeholder": "Style music here"
+            },
+            {
+              "fieldLabel": "lyrics",
+              "placeholder": "Put lyrics here"
+            },
+            {
+              "fieldLabel": "musicName",
+              "placeholder": "Name of music"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        -144
+      ],
+      "id": "b2ba614c-8426-441a-83b0-168f84628b43",
+      "name": "Submitter",
+      "webhookId": "1cc58845-dba9-465b-ac23-f1f00a8403e1"
     }
   ],
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Get videoId from timestamp",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "@GLOBAL_BLUES_COM_ALMA": {
       "main": [
         [
@@ -347,22 +451,11 @@
         ]
       ]
     },
-    "Submitter": {
-      "main": [
-        [
-          {
-            "node": "Get videoId from timestamp",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "@PROCESS_MUSIC_BLUES_COM_ALMA": {
       "main": [
         [
           {
-            "node": "@VIDEO_META_DATA",
+            "node": "Get row(s)",
             "type": "main",
             "index": 0
           }
@@ -373,7 +466,79 @@
       "main": [
         [
           {
-            "node": "Execute Command1",
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "@VIDEO_META_DATA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "@VIDEO_META_DATA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@VIDEO_META_DATA1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submitter": {
+      "main": [
+        [
+          {
+            "node": "Get videoId from timestamp",
             "type": "main",
             "index": 0
           }
@@ -389,12 +554,68 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {
-    "When clicking ‘Execute workflow’": [
+    "Get videoId from timestamp": [
+      {
+        "json": {
+          "videoId": "1767699491664"
+        }
+      }
+    ],
+    "@GLOBAL_BLUES_COM_ALMA": [
+      {
+        "json": {
+          "CHANNEL_NAME": "CANAL_BLUES_COM_ALMA",
+          "PLAYLISTS": "[{\"nome\":\"justiça\",\"id\":\"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\"},{\"nome\":\"Geopolítica\",\"id\":\"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\"},{\"nome\":\"politica\",\"id\":\"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\"},{\"nome\":\"cultura e sociedade\",\"id\":\"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\"},{\"nome\":\"Liberdade e mercado\",\"id\":\"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\"},{\"nome\":\"Economia\",\"id\":\"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\"},{\"nome\":\"Corrupção\",\"id\":\"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\"},{\"nome\":\"Tecnologia\",\"id\":\"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\"}]\n",
+          "NOTIFY_NUMBERS": [
+            "5561982086449"
+          ],
+          "AVAILABLE_VOICES": [
+            {
+              "voiceId": "4YYIPFl9wE5c4L2eu2Gb",
+              "description": "deep strong eldery male narrator voice"
+            },
+            {
+              "voiceId": "SAz9YHcvj6GT2YYXdXww",
+              "description": "middle-aged female"
+            },
+            {
+              "voiceId": "ZF6FPAbjXT4488VcRRnw",
+              "description": "teenage female"
+            },
+            {
+              "voiceId": "EOVAuWqgSZN2Oel78Psj",
+              "description": "young malee"
+            }
+          ]
+        }
+      }
+    ],
+    "Execute Command": [
+      {
+        "json": {
+          "exitCode": 0,
+          "stderr": "",
+          "stdout": ""
+        }
+      }
+    ],
+    "@PROCESS_MUSIC_BLUES_COM_ALMA": [
       {
         "json": {
           "style": "A warm and emotional gospel-blues worship style rooted in evangelical church tradition, with a brighter and lively groove. Expressive vocals with gentle vibrato, rich harmonies, and a heartfelt, prayerful tone. Rhythmic blues pulse with light syncopation, soft drums, warm bass, clean electric-guitar bends, gentle organ pads, and subtle reverb for an intimate worship mood. The performance must sound unmistakably live, recorded inside a church full of people. Worship leaders speak spontaneous phrases between lines (“Obrigado, Senhor!”, “Igreja, canta comigo!”, “Aleluia!”), and the congregation responds with claps, cheers, amens, and strong “Glória a Deus!”. Deep worship moments, collective singing, emotional cries, call-and-response, and the natural ambience of a live service should be clearly present throughout.",
           "lyrics": "Porque d'Ele, por Ele, para Ele são todas as coisas, tudo o que tenho e o que sou vêm das Suas mãos bondosas, porque d'Ele, por Ele, para Ele seguem minhas histórias, nele começa, nele termina toda honra e toda glória, a Ele a glória, a Ele a glória, a Ele a glória pra sempre, amém, a Ele a glória, a Ele a glória, a Ele a glória pra sempre, amém, quão profundas, infinitas, as riquezas do Senhor, Seu saber nos ultrapassa, Seu caminho é superior, indescritíveis Seus juízos, quem conhece o Seu pensar? mesmo assim o Teu Espírito vem nos ensinar a amar, digamos: a Ele a glória, a Ele a glória, a Ele a glória pra sempre e sempre, amém, proclamemos: a Ele a glória, a Ele a glória, a Ele a glória pra sempre, pra sempre, amém, Aquele que é, que era e sempre há de ser, Rei da Glória, Rei eterno, sobre tudo o Seu poder, Te entregamos, Deus, a vida, o coração e o nosso altar, nossas vozes, nossa casa, tudo vem pra Te exaltar, a Ele a glória, a Ele a glória, a Ele a glória pra sempre, Senhor, não há outro, não há outro, não há Deus além de Ti, Rei da Glória, santo, santo, toda a terra canta assim, nunca se viu, nunca se ouviu um amor tão grande assim, Deus invencível, incomparável, és o centro até o fim, a Ele a glória, a Ele a glória, a Ele a glória também, a Ele a glória para sempre, para sempre, amém",
-          "musicName": "Toda Glória é Dele"
+          "musicName": "Toda Glória é Dele",
+          "showImageDuration": "30"
+        }
+      }
+    ],
+    "Variaveis da musica": [
+      {
+        "json": {
+          "style": "A warm and emotional gospel-blues worship style rooted in evangelical church tradition, with a brighter and lively groove. Expressive vocals with gentle vibrato, rich harmonies, and a heartfelt, prayerful tone. Rhythmic blues pulse with light syncopation, soft drums, warm bass, clean electric-guitar bends, gentle organ pads, and subtle reverb for an intimate worship mood. The performance must sound unmistakably live, recorded inside a church full of people. Worship leaders speak spontaneous phrases between lines (“Obrigado, Senhor!”, “Igreja, canta comigo!”, “Aleluia!”), and the congregation responds with claps, cheers, amens, and strong “Glória a Deus!”. Deep worship moments, collective singing, emotional cries, call-and-response, and the natural ambience of a live service should be clearly present throughout.",
+          "lyrics": "Porque d'Ele, por Ele, para Ele são todas as coisas, tudo o que tenho e o que sou vêm das Suas mãos bondosas, porque d'Ele, por Ele, para Ele seguem minhas histórias, nele começa, nele termina toda honra e toda glória, a Ele a glória, a Ele a glória, a Ele a glória pra sempre, amém, a Ele a glória, a Ele a glória, a Ele a glória pra sempre, amém, quão profundas, infinitas, as riquezas do Senhor, Seu saber nos ultrapassa, Seu caminho é superior, indescritíveis Seus juízos, quem conhece o Seu pensar? mesmo assim o Teu Espírito vem nos ensinar a amar, digamos: a Ele a glória, a Ele a glória, a Ele a glória pra sempre e sempre, amém, proclamemos: a Ele a glória, a Ele a glória, a Ele a glória pra sempre, pra sempre, amém, Aquele que é, que era e sempre há de ser, Rei da Glória, Rei eterno, sobre tudo o Seu poder, Te entregamos, Deus, a vida, o coração e o nosso altar, nossas vozes, nossa casa, tudo vem pra Te exaltar, a Ele a glória, a Ele a glória, a Ele a glória pra sempre, Senhor, não há outro, não há outro, não há Deus além de Ti, Rei da Glória, santo, santo, toda a terra canta assim, nunca se viu, nunca se ouviu um amor tão grande assim, Deus invencível, incomparável, és o centro até o fim, a Ele a glória, a Ele a glória, a Ele a glória também, a Ele a glória para sempre, para sempre, amém",
+          "musicName": "Toda Glória é Dele",
+          "showImageDuration": "30"
         }
       }
     ],
@@ -410,8 +631,8 @@
       }
     ]
   },
-  "versionId": "7629285d-97ad-474a-ab1d-85725ffc0d17",
-  "versionCounter": 195,
+  "versionId": "43750306-e407-42f0-ac9b-aa0210fee1af",
+  "versionCounter": 251,
   "triggerCount": 0,
   "shared": [
     {
@@ -435,7 +656,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2026-01-05T22:13:24.000Z",
+              "updatedAt": "2026-01-13T23:35:36.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -470,7 +691,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-05",
+              "lastActiveAt": "2026-01-13",
               "isPending": false
             }
           }

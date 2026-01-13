@@ -1,70 +1,68 @@
 {
-  "updatedAt": "2025-10-06T23:24:40.000Z",
-  "createdAt": "2025-10-06T23:23:27.957Z",
-  "id": "ZqHiPFVbZP25Eh1n",
-  "name": "My workflow",
+  "updatedAt": "2026-01-13T19:27:05.000Z",
+  "createdAt": "2026-01-13T19:02:10.471Z",
+  "id": "KOk2liA6SYCvAYG2",
+  "name": "@CONSULTAR_DESPESA",
   "description": null,
   "active": false,
-  "isArchived": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
-        "url": "https://www.googleapis.com/youtube/v3/captions/ID_DA_CAPTION:download",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "youTubeOAuth2Api",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "tfmt",
-              "value": "srt"
-            }
-          ]
-        },
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Accept",
-              "value": "application/json"
-            }
-          ]
-        },
-        "options": {}
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"dataInicio\": \"2026-01-01\",\n  \"dataFim\": \"2026-01-31\"\n}"
       },
-      "id": "f098cd6e-0b05-4666-a42a-6765c7efbfb3",
-      "name": "Set Video To Playlist",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
       "position": [
-        128,
-        -96
+        0,
+        0
       ],
-      "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "lC6w9zooePykiKGj",
-          "name": "YouTube n8n account"
-        }
-      }
+      "id": "5e399c64-c8d4-40f0-bb07-b16ef32effef",
+      "name": "When Executed by Another Workflow"
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "2q2xOFkVPxhwKYje",
+          "mode": "list",
+          "cachedResultName": "DESPESAS_FAMILIA",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/2q2xOFkVPxhwKYje"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "createdAt",
+              "condition": "gte",
+              "keyValue": "={{ $json.dataInicio }}"
+            },
+            {
+              "keyName": "createdAt",
+              "condition": "lte",
+              "keyValue": "={{ $json.dataFim }}"
+            }
+          ]
+        },
+        "limit": 2000
+      },
+      "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        -80,
-        -96
+        208,
+        0
       ],
-      "id": "a1f9e426-1237-46e6-8573-fd68ccd0f731",
-      "name": "When clicking ‘Execute workflow’"
+      "id": "e626e48a-0f17-413c-a0ec-d0b1a31fdd69",
+      "name": "Get row(s)"
     }
   ],
   "connections": {
-    "When clicking ‘Execute workflow’": {
+    "When Executed by Another Workflow": {
       "main": [
         [
           {
-            "node": "Set Video To Playlist",
+            "node": "Get row(s)",
             "type": "main",
             "index": 0
           }
@@ -77,16 +75,25 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {},
-  "versionId": "6a015c0f-f235-4eed-a8f4-f3395977ab06",
-  "versionCounter": 1,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "dataInicio": "2026-01-01",
+          "dataFim": "2026-01-31"
+        }
+      }
+    ]
+  },
+  "versionId": "6888a4b0-a369-4417-85a1-f59633490851",
+  "versionCounter": 8,
   "triggerCount": 0,
   "shared": [
     {
-      "updatedAt": "2025-10-06T23:23:27.971Z",
-      "createdAt": "2025-10-06T23:23:27.971Z",
+      "updatedAt": "2026-01-13T19:02:10.497Z",
+      "createdAt": "2026-01-13T19:02:10.497Z",
       "role": "workflow:owner",
-      "workflowId": "ZqHiPFVbZP25Eh1n",
+      "workflowId": "KOk2liA6SYCvAYG2",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "updatedAt": "2025-08-20T20:53:20.326Z",

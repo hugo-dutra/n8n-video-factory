@@ -1,91 +1,107 @@
 {
-  "updatedAt": "2025-11-13T15:34:12.000Z",
-  "createdAt": "2025-10-04T17:26:13.261Z",
-  "id": "JgwCIAgZpZMMdgDf",
-  "name": "@GLOBAL_ANCAPSU",
+  "updatedAt": "2026-01-13T17:03:36.000Z",
+  "createdAt": "2026-01-13T16:18:01.000Z",
+  "id": "VWDy92ZPSeFjbJGS",
+  "name": "@GRAVAR_DESPESA",
   "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
     {
       "parameters": {
-        "inputSource": "passthrough"
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n    \"valor\": 23.5,\n    \"descricao\": \"Uber para casa\",\n    \"categoria\": \"Transporte\",\n    \"usuario\": \"Laura\"\n}\n"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -320,
-        16
+        0,
+        0
       ],
-      "id": "f0da06f1-dbb7-4b79-8114-8c18c8e083f8",
-      "name": "When Executed by Another Workflow"
+      "id": "4baee93c-e49b-491d-a633-124844af33ae",
+      "name": "start"
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
+        "dataTableId": {
+          "__rl": true,
+          "value": "2q2xOFkVPxhwKYje",
+          "mode": "list",
+          "cachedResultName": "DESPESAS_FAMILIA",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/2q2xOFkVPxhwKYje"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "VALOR": "={{ $json.valor }}",
+            "DESCRICAO": "={{ $json.descricao }}",
+            "CATEGORIA": "={{ $json.categoria }}",
+            "USUARIO": "={{ $json.usuario }}"
+          },
+          "matchingColumns": [],
+          "schema": [
             {
-              "id": "e437a1bd-4a0b-42be-846d-caff4c5e5e74",
-              "name": "CHANNEL_NAME",
-              "value": "CANAL_ANCAPSU",
-              "type": "string"
+              "id": "VALOR",
+              "displayName": "VALOR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
             },
             {
-              "id": "5bec419c-553f-4463-a6c2-26a7b2684eb2",
-              "name": "CHANNEL_ID",
-              "value": "UCLTWPE7XrHEe8m_xAmNbQ-Q",
-              "type": "string"
+              "id": "DESCRICAO",
+              "displayName": "DESCRICAO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             },
             {
-              "id": "7335c9ca-4ed6-4fd5-bb77-f694a202e523",
-              "name": "LAST_N_HOURS",
-              "value": "={{\n(() => {\n  const now = new Date();\n  const midnight = new Date(now);\n  midnight.setHours(0,0,0,0);\n  return Math.floor((now - midnight) / 3_600_000)+19;\n})()\n}}",
-              "type": "string"
+              "id": "CATEGORIA",
+              "displayName": "CATEGORIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             },
             {
-              "id": "dcbf1dee-e038-4f05-a50d-f9b0f4980282",
-              "name": "MIN_DURATION",
-              "value": "182",
-              "type": "string"
-            },
-            {
-              "id": "1f6ea11f-e6a3-421f-a25b-00f915e7381b",
-              "name": "MAX_DURATION",
-              "value": "1900",
-              "type": "string"
-            },
-            {
-              "id": "ce77e3fe-b0d5-4766-a3df-5ac2dda4f853",
-              "name": "PLAYLISTS",
-              "value": "={{\nJSON.stringify(\n  [\n    { nome: \"justiça\", id: \"PLiSmx3iri_u6dSBifqOy7vKXg_jwKMdCC\" },\n    { nome: \"Geopolítica\", id: \"PLiSmx3iri_u6rxnKe8Wn0hDMHvW9lQtDR\" },\n    { nome: \"politica\", id: \"PLiSmx3iri_u5Md9fp1OK0P6snqkvdC--2\" },\n    { nome: \"cultura e sociedade\", id: \"PLiSmx3iri_u6jQBZ243ZlXKZxQmTgWGsP\" },\n    { nome: \"Liberdade e mercado\", id: \"PLiSmx3iri_u58mo-HoyOBRvq5UbcQtsI-\" },\n    { nome: \"Economia\", id: \"PLiSmx3iri_u5FjegpH8G1wVdNZ_OHNDo3\" },\n    { nome: \"Corrupção\", id: \"PLiSmx3iri_u7N_yRxvegkwZmxS99NhR_6\" },\n    { nome: \"Tecnologia\", id: \"PLiSmx3iri_u7UopwFnez3FERK9cZE1c6Y\" }\n  ]\n)\n}}\n",
-              "type": "string"
-            },
-            {
-              "id": "e7c92207-4d3a-441b-b65a-8c4437a365e5",
-              "name": "NOTIFY_NUMBERS",
-              "value": "[\"5561982086449\"]",
-              "type": "array"
+              "id": "USUARIO",
+              "displayName": "USUARIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             }
-          ]
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
       "position": [
-        -112,
-        16
+        208,
+        0
       ],
-      "id": "57a60776-aeed-4086-bf2e-801dfa6885fe",
-      "name": "Edit Fields"
+      "id": "34891aa7-66a8-4a7d-9111-999015a5c8f5",
+      "name": "Inserir despesa"
     }
   ],
   "connections": {
-    "When Executed by Another Workflow": {
+    "start": {
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "Inserir despesa",
             "type": "main",
             "index": 0
           }
@@ -98,16 +114,27 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {},
-  "versionId": "33eaffc8-0806-45a5-a961-8475c919d36e",
-  "versionCounter": 4,
+  "pinData": {
+    "start": [
+      {
+        "json": {
+          "valor": 120,
+          "descricao": "Uber",
+          "categoria": "Transporte",
+          "usuario": "Laura"
+        }
+      }
+    ]
+  },
+  "versionId": "dbe5231f-1d86-47ca-b695-7e77d6e42473",
+  "versionCounter": 12,
   "triggerCount": 0,
   "shared": [
     {
-      "updatedAt": "2025-10-04T17:26:13.284Z",
-      "createdAt": "2025-10-04T17:26:13.284Z",
+      "updatedAt": "2026-01-13T16:18:01.023Z",
+      "createdAt": "2026-01-13T16:18:01.023Z",
       "role": "workflow:owner",
-      "workflowId": "JgwCIAgZpZMMdgDf",
+      "workflowId": "VWDy92ZPSeFjbJGS",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "updatedAt": "2025-08-20T20:53:20.326Z",
