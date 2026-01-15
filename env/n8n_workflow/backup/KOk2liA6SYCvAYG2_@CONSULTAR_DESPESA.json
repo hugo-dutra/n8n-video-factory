@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-14T14:46:56.000Z",
+  "updatedAt": "2026-01-15T15:41:57.000Z",
   "createdAt": "2026-01-13T19:02:10.471Z",
   "id": "KOk2liA6SYCvAYG2",
   "name": "@CONSULTAR_DESPESA",
@@ -15,8 +15,8 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        0,
-        0
+        144,
+        -16
       ],
       "id": "5e399c64-c8d4-40f0-bb07-b16ef32effef",
       "name": "When Executed by Another Workflow"
@@ -50,11 +50,24 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        208,
-        0
+        352,
+        -16
       ],
       "id": "e626e48a-0f17-413c-a0ec-d0b1a31fdd69",
       "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const TZ = 'America/Sao_Paulo';\n\nreturn $input.all().map(({ json }) => {\n  const dt = json.createdAt ? new Date(json.createdAt) : null;\n  \n  const dataSP = dt\n    ? new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(dt)\n    : null;\n\n  return {\n    json: {\n      VALOR: json.VALOR ?? null,\n      DESCRICAO: json.DESCRICAO ?? null,\n      CATEGORIA: json.CATEGORIA ?? null,\n      USUARIO: json.USUARIO ?? null,\n      DATA: dataSP,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -16
+      ],
+      "id": "5a43fa34-f97c-49c8-8751-1980062e5cbf",
+      "name": "Code in JavaScript"
     }
   ],
   "connections": {
@@ -63,6 +76,17 @@
         [
           {
             "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -85,8 +109,8 @@
       }
     ]
   },
-  "versionId": "6888a4b0-a369-4417-85a1-f59633490851",
-  "versionCounter": 9,
+  "versionId": "176ed834-ba5f-496e-a629-8241a9831cd1",
+  "versionCounter": 12,
   "triggerCount": 0,
   "shared": [
     {
@@ -110,7 +134,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2026-01-14T12:01:37.000Z",
+              "updatedAt": "2026-01-15T11:12:49.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -145,7 +169,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-14",
+              "lastActiveAt": "2026-01-15",
               "isPending": false
             }
           }

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-14T14:39:58.000Z",
+  "updatedAt": "2026-01-15T15:32:29.000Z",
   "createdAt": "2026-01-13T12:48:33.379Z",
   "id": "u0XcpqzHmwxdrkid",
   "name": "FLUXO-PRINCIPAL",
@@ -12,27 +12,11 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        768,
-        -368
+        752,
+        -320
       ],
       "id": "2621969a-a402-472b-8eac-07721b9eb517",
       "name": "No Operation, do nothing"
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "gestao-financeira",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -128,
-        16
-      ],
-      "id": "8752e541-71e6-4edf-9acc-ca3d9406ef9b",
-      "name": "gestao-financeira",
-      "webhookId": "f462e97e-ae80-461e-86ed-ed77573c5bc5"
     },
     {
       "parameters": {
@@ -46,7 +30,7 @@
           "conditions": [
             {
               "id": "7bbb14e3-7ba9-47c5-9012-9b73eabf131b",
-              "leftValue": "={{ $('Switch T | I | A').item.json.remoteJid }}",
+              "leftValue": "={{ $('Switch T | I | A').item.json.grupo }}",
               "rightValue": "120363405462830176@g.us",
               "operator": {
                 "type": "string",
@@ -62,40 +46,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        768,
-        -608
+        544,
+        -464
       ],
       "id": "0fcbab0a-90f5-4e74-a2e2-778d699a00ae",
       "name": "Grupo finanças?"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "386efa26-b4f8-443b-b205-fbc18353aed1",
-              "name": "NOME",
-              "value": "={{ $('Pessoas').item.json.NOME }}",
-              "type": "string"
-            },
-            {
-              "id": "6457ae94-7db6-4498-83c8-9dcde52fd50c",
-              "name": "conversation",
-              "value": "={{ $('Extrair campos texto').item.json.conversation }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        1504,
-        -608
-      ],
-      "id": "e659ee55-4519-4fe8-a1be-4f267a44862e",
-      "name": "Edit Fields"
     },
     {
       "parameters": {
@@ -111,8 +66,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        1488,
-        -272
+        1792,
+        352
       ],
       "id": "7ed848e4-c9ff-498a-945b-d425eb9a651f",
       "name": "OpenAI Chat Model",
@@ -127,7 +82,7 @@
       "parameters": {
         "resource": "messages-api",
         "instanceName": "n8n",
-        "remoteJid": "={{ $('Extrair campos texto').item.json.grupo }}",
+        "remoteJid": "={{ $('Extrair campos').item.json.grupo }}",
         "messageText": "={{ $json.output }}",
         "options_message": {
           "quoted": {
@@ -140,8 +95,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        1984,
-        -608
+        2256,
+        -112
       ],
       "id": "073dd226-0ad3-431b-8f72-d9e6c3a859dd",
       "name": "Enviar texto",
@@ -155,16 +110,16 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Mensagem: {{ $json.conversation }}\nUsuario: {{ $json.NOME }}\n",
+        "text": "=Mensagem: {{ $json.conversation }}\nUsuario: {{ $json.nome }}\n",
         "options": {
-          "systemMessage": "=# Agente de Lançamento e Consulta de Despesas\n\n## 1) Papel do agente\n\nVocê é um **Agente de Lançamento e Consulta de Despesas**.  \nSua missão é **registrar e consultar despesas com alta precisão** e **zero chute**.\n\n- Tom: direto, prestativo, com leve humor (sem exagerar).\n- Regra de ouro: **não chamar ferramenta nenhuma** sem o usuário confirmar explicitamente.\n\n---\n\n## 1.1 Intenções possíveis do usuário\n\nO agente deve identificar claramente a intenção do usuário:\n\n### A) Lançar despesa\nExemplos:\n- “gastei 35 no mercado”\n- “lança um Uber de 22,50”\n- “pode registrar uma despesa?”\n\n➡️ Seguir o **fluxo de lançamento**.\n\n### B) Consultar despesas\nExemplos:\n- “quanto eu gastei?”\n- “ver meus gastos”\n- “consulta despesas”\n- “quanto gastei esse mês?”\n\n➡️ Seguir o **fluxo de consulta**.\n\nSe houver ambiguidade, **pergunte antes de agir**.\n\n---\n\n## 2) Entradas que você recebe (variáveis)\n\n### 2.1 Lista de categorias\n`CATEGORIAS_DISPESA` (lista de strings com nome e descrição)\n\n> Se a lista não estiver disponível, peça antes de categorizar.\n\n### 2.2 Payload de destino\nVocê deve montar o payload **exatamente conforme o modelo fornecido pela ferramenta**.  \nVocê **não inventa campos**.\n\n### 2.3 Ferramentas disponíveis\n- `gravar_despesa`\n- `consulta_despesa`\n- `calculadora`\n\n---\n\n## 3) Fluxo de Lançamento de Despesa\n\n### 3.1 Campos obrigatórios\n- Valor\n- Descrição\n- Categoria (somente da lista)\n\n### 3.2 Confirmação obrigatória\nNunca chame a ferramenta sem o usuário confirmar explicitamente.\n\nFormato padrão de confirmação:\n\n**Resumo da despesa**\n- Valor: R$ X,XX\n- Descrição: …\n- Categoria: …\n\nCategorias de despesas disponíveis: [{{ $('Aggregate').item.json.data.map(item => item.TIPO_DESPESA) }} ]\n\n**Pergunta:** Confirma o lançamento? (sim/não)\n\n---\n\n## 4) Fluxo de Consulta de Despesas\n\n### 4.1 O que coletar\nPara consultar despesas, você deve coletar **obrigatoriamente**:\n- Data inicial\n- Data final\n\nExemplos aceitos:\n- “esse mês”\n- “mês passado”\n- “de 01/01 até 31/01”\n- “últimos 7 dias”\n\n### 4.2 Normalização de período\nConverta expressões naturais em datas:\n- “esse mês” → primeiro dia do mês até hoje\n- “mês passado” → primeiro ao último dia do mês anterior\n\nSe o período não estiver claro:\n> “Qual período você quer consultar? (ex.: 01/01 a 31/01, este mês, últimos 7 dias)”\n\n---\n\n### 4.3 Confirmação antes da consulta\n\nAntes de chamar a ferramenta:\n\nData Atual: {{ new Date().toDateTime().toString().split('T')[0] }}\n\n**Resumo da consulta**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n\n**Pergunta:** Confirma a consulta? (sim/não)\n\n---\n\n### 4.4 Chamada da ferramenta de consulta\n\nSomente após confirmação explícita, chame:\n\n```json\n{\n  \"dataInicio\": \"YYYY-MM-DD\",\n  \"dataFim\": \"YYYY-MM-DD\"\n}\n```\n\n---\n\n## 4.5 Pós-consulta: cálculo do total\n\nApós receber o resultado da `consulta_despesa`:\n\n1. Extraia todos os valores individuais das despesas retornadas.\n2. **Chame obrigatoriamente a ferramenta `calculadora`** para somar os valores.\n3. Exiba ao usuário:\n   - Lista resumida das despesas (opcional, se o retorno for grande).\n   - **Total gasto no período**, com valor final formatado em reais.\n\nFormato sugerido:\n\n**Total de despesas no período**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n- Total: R$ X,XX\n\n---\n\n## 5) Regras rígidas de uso de ferramenta\n\nVocê **NÃO PODE** chamar ferramenta se:\n- faltar confirmação explícita\n- houver ambiguidade\n- campos obrigatórios estiverem ausentes\n\nVocê **DEVE** chamar ferramenta se:\n- intenção estiver clara\n- dados obrigatórios estiverem completos\n- usuário confirmar com “sim”, “ok”, “pode consultar”, “confirma”\n\n---\n\n## 6) Primeira mensagem do agente\n\nMensagem curta e objetiva:\n\n> “Bora. Você quer **lançar uma despesa** ou **consultar gastos**?”"
+          "systemMessage": "=# Agente de Lançamento e Consulta de Despesas\n\n## 1) Papel do agente\n\nVocê é um **Agente de Lançamento e Consulta de Despesas**.  \nSua missão é **registrar e consultar despesas com alta precisão** e **zero chute**.\n\n- Tom: direto, prestativo, com leve humor (sem exagerar).\n- Regra de ouro: **não chamar ferramenta nenhuma** sem o usuário confirmar explicitamente.\n\n---\n\n## 1.1 Intenções possíveis do usuário\n\nO agente deve identificar claramente a intenção do usuário:\n\n### A) Lançar despesa\nExemplos:\n- “gastei 35 no mercado”\n- “lança um Uber de 22,50”\n- “pode registrar uma despesa?”\n\n➡️ Seguir o **fluxo de lançamento**.\n\n### B) Consultar despesas\nExemplos:\n- “quanto eu gastei?”\n- “ver meus gastos”\n- “consulta despesas”\n- “quanto gastei esse mês?”\n\n➡️ Seguir o **fluxo de consulta**.\n\nSe houver ambiguidade, **pergunte antes de agir**.\n\n---\n\n## 2) Entradas que você recebe (variáveis)\n\n### 2.1 Lista de categorias\n`CATEGORIAS_DISPESA` (lista de strings com nome e descrição)\n\n> Se a lista não estiver disponível, peça antes de categorizar.\n\n### 2.2 Payload de destino\nVocê deve montar o payload **exatamente conforme o modelo fornecido pela ferramenta**.  \nVocê **não inventa campos**.\n\n### 2.3 Ferramentas disponíveis\n- `gravar_despesa`\n- `consulta_despesa`\n- `calculadora`\n\n---\n\n## 3) Fluxo de Lançamento de Despesa\n\n### 3.1 Campos obrigatórios\n- Valor\n- Descrição\n- Categoria (somente da lista)\n\nPara listar as categorias disponíveis, chame a tool: `lista_categoria_despesa`\n\n### 3.2 Confirmação obrigatória\nNunca chame a ferramenta sem o usuário confirmar explicitamente.\n\nFormato padrão de confirmação:\n\n**Resumo da despesa**\n- Valor: R$ X,XX\n- Descrição: …\n- Categoria: …\n\n**Pergunta:** Confirma o lançamento? (sim/não)\n\n---\n\n## 4) Fluxo de Consulta de Despesas\n\n### 4.1 O que coletar\nPara consultar despesas, você deve coletar **obrigatoriamente**:\n- Data inicial\n- Data final\n\nExemplos aceitos:\n- “esse mês”\n- “mês passado”\n- “de 01/01 até 31/01”\n- “últimos 7 dias”\n\n### 4.2 Normalização de período\nConverta expressões naturais em datas:\n- “esse mês” → primeiro dia do mês até hoje\n- “mês passado” → primeiro ao último dia do mês anterior\n\nSe o período não estiver claro:\n> “Qual período você quer consultar? (ex.: 01/01 a 31/01, este mês, últimos 7 dias)”\n\n---\n\n### 4.3 Confirmação antes da consulta\n\nAntes de chamar a ferramenta:\n\nData Atual: {{ new Date().toDateTime().toString().split('T')[0] }}\n\n**Resumo da consulta**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n\n**Pergunta:** Confirma a consulta? (sim/não)\n\n---\n\n### 4.4 Chamada da ferramenta de consulta\n\nSomente após confirmação explícita, chame:\n\n```json\n{\n  \"dataInicio\": \"YYYY-MM-DD\",\n  \"dataFim\": \"YYYY-MM-DD\"\n}\n```\n\n---\n\n## 4.5 Pós-consulta: cálculo do total\n\nApós receber o resultado da `consulta_despesa`:\n\n1. Extraia todos os valores individuais das despesas retornadas.\n2. **Chame obrigatoriamente a ferramenta `calculadora`** para somar os valores.\n3. Exiba ao usuário:\n   - Lista resumida das despesas (opcional, se o retorno for grande).\n   - **Total gasto no período**, com valor final formatado em reais.\n\nFormato sugerido:\n\n**Total de despesas no período**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n- Total: R$ X,XX\n\n---\n\n## 5) Regras rígidas de uso de ferramenta\n\nVocê **NÃO PODE** chamar ferramenta se:\n- faltar confirmação explícita\n- houver ambiguidade\n- campos obrigatórios estiverem ausentes\n\nVocê **DEVE** chamar ferramenta se:\n- intenção estiver clara\n- dados obrigatórios estiverem completos\n- usuário confirmar com “sim”, “ok”, “pode consultar”, “confirma”\n\n---\n\n## 6) Primeira mensagem do agente\n\nMensagem curta e objetiva:\n\n> “Bora. Você quer **lançar uma despesa** ou **consultar gastos**?”"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        1680,
-        -608
+        1952,
+        -112
       ],
       "id": "6d130fc2-8956-4b69-8fcb-1b15fd7148da",
       "name": "Agente financeiro"
@@ -173,13 +128,13 @@
       "parameters": {
         "sessionIdType": "customKey",
         "sessionKey": "={{ $('gestao-financeira').item.json.body.sender }}",
-        "contextWindowLength": 15
+        "contextWindowLength": 6
       },
       "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
       "typeVersion": 1.5,
       "position": [
-        1648,
-        -272
+        1936,
+        272
       ],
       "id": "855a3f91-4094-49af-a497-187a87b5e5ca",
       "name": "Redis Chat Memory",
@@ -258,8 +213,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        2064,
-        -272
+        2336,
+        368
       ],
       "id": "033d7889-a730-4faa-9086-f2e3ec066e84",
       "name": "@GRAVAR_DESPESA"
@@ -310,8 +265,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        1904,
-        -272
+        2192,
+        272
       ],
       "id": "a1a227d2-c5de-4f41-88bb-235b40e43730",
       "name": "@CONSULTAR_DESPESA"
@@ -321,36 +276,23 @@
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [
-        1776,
-        -272
+        2064,
+        352
       ],
       "id": "05b32cf5-c9ca-44c3-9524-f546c99f99cd",
       "name": "Calculator"
     },
     {
       "parameters": {
-        "jsCode": "/**\n * n8n Code node (JavaScript)\n * Output: { type, content, participantId, ... }\n */\n\nfunction normalizeType(messageType, messageObj) {\n  const mt = (messageType || '').toLowerCase();\n\n  if (mt === 'conversation') return 'text';\n  if (mt === 'audiomessage') return 'audio';\n  if (mt === 'imagemessage') return 'image';\n\n  if (messageObj?.conversation != null) return 'text';\n  if (messageObj?.audioMessage != null) return 'audio';\n  if (messageObj?.imageMessage != null) return 'image';\n\n  return 'unknown';\n}\n\nfunction extractContent(type, messageObj) {\n  if (!messageObj || typeof messageObj !== 'object') return '';\n\n  if (type === 'text') {\n    const text = messageObj.conversation;\n    return typeof text === 'string' ? text : '';\n  }\n\n  if (type === 'audio') {\n    const url = messageObj.audioMessage?.url;\n    return typeof url === 'string' ? url : '';\n  }\n\n  if (type === 'image') {\n    const url = messageObj.imageMessage?.url;\n    return typeof url === 'string' ? url : '';\n  }\n\n  const url =\n    messageObj?.audioMessage?.url ??\n    messageObj?.imageMessage?.url;\n\n  return typeof url === 'string' ? url : '';\n}\n\nreturn items.map((item) => {\n  const body = item.json?.body ?? {};\n  const data = body?.data ?? {};\n  const key = data?.key ?? {};\n  const messageType = data?.messageType;\n  const message = data?.message;\n\n  const type = normalizeType(messageType, message);\n  const content = extractContent(type, message);\n\n  return {\n    json: {\n      type,\n      content,\n      participantId: key?.participant || null,\n\n      // extras úteis (opcional)\n      messageId: key?.id,\n      remoteJid: key?.remoteJid,\n      fromMe: key?.fromMe,\n      sender: body?.sender,\n      timestamp: data?.messageTimestamp,\n    },\n  };\n});\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        48,
-        16
-      ],
-      "id": "8207cdb8-5696-41b1-9175-5d331df48d99",
-      "name": "Code in JavaScript"
-    },
-    {
-      "parameters": {
         "content": "## Processar mensagem de texto\n",
-        "height": 560,
-        "width": 1632
+        "height": 368,
+        "width": 592
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        560,
-        -688
+        512,
+        -544
       ],
       "id": "6ef4bb4d-e797-4694-b36f-882a1cb9507b",
       "name": "Sticky Note"
@@ -370,7 +312,7 @@
                 "conditions": [
                   {
                     "id": "3af83c90-c3b7-4c61-b4ba-2254ad09337b",
-                    "leftValue": "={{ $json.type }}",
+                    "leftValue": "={{ $('Get data from webhook').item.json.type }}",
                     "rightValue": "text",
                     "operator": {
                       "type": "string",
@@ -392,7 +334,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.type }}",
+                    "leftValue": "={{ $('Get data from webhook').item.json.type }}",
                     "rightValue": "image",
                     "operator": {
                       "type": "string",
@@ -415,7 +357,7 @@
                 "conditions": [
                   {
                     "id": "951df8c2-6f4d-4730-a1a3-29514845677d",
-                    "leftValue": "={{ $json.type }}",
+                    "leftValue": "={{ $('Get data from webhook').item.json.type }}",
                     "rightValue": "audio",
                     "operator": {
                       "type": "string",
@@ -435,7 +377,7 @@
       "typeVersion": 3.3,
       "position": [
         224,
-        0
+        -128
       ],
       "id": "f5c4b6f9-120f-4cc0-b6cc-89c95bf778a0",
       "name": "Switch T | I | A"
@@ -443,15 +385,15 @@
     {
       "parameters": {
         "content": "## Processar mensagem de  imagem",
-        "height": 544,
-        "width": 1264,
+        "height": 384,
+        "width": 1088,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        560,
-        -112
+        512,
+        -160
       ],
       "id": "40eb9e2d-8060-4b4f-bf3b-4609f6e50803",
       "name": "Sticky Note1"
@@ -459,15 +401,15 @@
     {
       "parameters": {
         "content": "## Processar mensagem de  Audio",
-        "height": 544,
-        "width": 1264,
+        "height": 448,
+        "width": 1088,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        560,
-        448
+        512,
+        240
       ],
       "id": "e0486b02-5a59-4c12-89da-567680633905",
       "name": "Sticky Note2"
@@ -501,81 +443,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        608,
-        -608
-      ],
-      "id": "e2ebab44-2f0b-4a46-bf83-65a1580425f5",
-      "name": "Extrair campos texto"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "b8512340-22bb-4e2e-aa59-182ca46c7821",
-              "name": "grupo",
-              "value": "={{ $json.remoteJid }}",
-              "type": "string"
-            },
-            {
-              "id": "296898d6-c467-47ad-9d07-f50f90631d8e",
-              "name": "participan",
-              "value": "={{ $json.participantId }}",
-              "type": "string"
-            },
-            {
-              "id": "005e7266-a721-4b84-8cb2-6dc421177a30",
-              "name": "conversation",
-              "value": "={{ $json.content }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        608,
-        704
+        576,
+        384
       ],
       "id": "acf60e5d-017d-4781-a68e-07534ebe95e7",
       "name": "Extrair campos audio1"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "b8512340-22bb-4e2e-aa59-182ca46c7821",
-              "name": "grupo",
-              "value": "={{ $json.remoteJid }}",
-              "type": "string"
-            },
-            {
-              "id": "296898d6-c467-47ad-9d07-f50f90631d8e",
-              "name": "participan",
-              "value": "={{ $json.participantId }}",
-              "type": "string"
-            },
-            {
-              "id": "005e7266-a721-4b84-8cb2-6dc421177a30",
-              "name": "conversation",
-              "value": "={{ $json.content }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        608,
-        16
-      ],
-      "id": "d54d51c2-56c6-49ae-a0c3-229538acb0f2",
-      "name": "Extrair campos imagem"
     },
     {
       "parameters": {
@@ -599,70 +471,376 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        1328,
-        -608
+        752,
+        -480
       ],
       "id": "1a01d790-5540-4f12-9db9-aa2c95af4e7e",
       "name": "Pessoas"
     },
     {
       "parameters": {
-        "operation": "get",
-        "dataTableId": {
-          "__rl": true,
-          "value": "zlghCbSqrsMr8Qvf",
-          "mode": "list",
-          "cachedResultName": "TIPOS_DESPESA_FAMILIA",
-          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/zlghCbSqrsMr8Qvf"
+        "method": "POST",
+        "url": "http://evolution-api:8080/chat/getBase64FromMediaMessage/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "D5E14EBA3050-40E4-BF1F-DDAE98935CED"
+            }
+          ]
         },
-        "matchType": "allConditions"
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        960,
-        -608
-      ],
-      "id": "6158f815-1104-43e6-82ad-34a60cf81266",
-      "name": "Tipos Despesas"
-    },
-    {
-      "parameters": {
-        "aggregate": "={{ $('Tipos Despesas').item.json.TIPO_DESPESA }}",
-        "fieldsToAggregate": {
-          "fieldToAggregate": [
-            {}
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{$json.imageRequestPayload.message}}"
+            }
           ]
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.aggregate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        -112
+      ],
+      "id": "36eee5d6-cc45-48a2-b7f6-c667f3d4dabb",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a47ca9bf-ffe2-442c-84a5-3ea7e9798a63",
+              "name": "base64",
+              "value": "=data:image/png;base64,{{ $('HTTP Request').item.json.base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "e2f7f110-3bfa-428a-8d42-d7e0fbebe9d9",
+              "name": "mediaType",
+              "value": "={{ $('HTTP Request').item.json.mediaType }}",
+              "type": "string"
+            },
+            {
+              "id": "31041ed9-dc24-4092-beec-ce9df7098bdc",
+              "name": "size.height",
+              "value": "={{ $('HTTP Request').item.json.size.height }}",
+              "type": "number"
+            },
+            {
+              "id": "e63a51ad-d262-4ac7-acf7-53a4ba122c71",
+              "name": "size.width",
+              "value": "={{ $('HTTP Request').item.json.size.width }}",
+              "type": "number"
+            },
+            {
+              "id": "d28566bf-5046-4c9d-8688-bb8fd6c508b3",
+              "name": "size.fileLength",
+              "value": "={{ $('HTTP Request').item.json.size.fileLength }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        -112
+      ],
+      "id": "78871c60-bd44-4f8e-aec8-ed0375568461",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini-2024-07-18",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI-2024-07-18"
+        },
+        "text": "Você é um agente especializado em analisar imagens de produtos. Descrevêlos juntamente com o preço. \nDescreva apenas, sem falar que esta descrevendo.\n\nEx.: Produto tal, preço tal.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        80
+      ],
+      "id": "babc8c1e-40e5-4d11-afa4-cfc4bb66ac0f",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "VYXpJ372t4VzzgvC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, idx) => {\n  const dataUrl = item.json.base64;\n\n  const match = /^data:(.+);base64,(.*)$/.exec(dataUrl);\n  const mimeType = match?.[1] ?? 'application/octet-stream';\n  const base64 = match?.[2] ?? dataUrl;\n\n  const buffer = Buffer.from(base64, 'base64');\n\n  const ext =\n    mimeType === 'image/png' ? 'png' :\n    mimeType === 'image/jpeg' ? 'jpg' :\n    'bin';\n\n  item.binary = item.binary ?? {};\n\n  // ✅ o nome do binary field é \"data\"\n  item.binary.data = {\n    data: buffer.toString('base64'),\n    mimeType,\n    fileName: `imagem-${idx}.${ext}`,\n  };\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        80
+      ],
+      "id": "270ecf6c-9758-48f4-a5a4-213a272b5600",
+      "name": "Convert base64 to binary"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "GBqsRqtBkY4PRnwS",
+          "mode": "list",
+          "cachedResultName": "PESSOAS_FAMILIA",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/GBqsRqtBkY4PRnwS"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "TELEFONE",
+              "keyValue": "={{ $('gestao-financeira').item.json.body.data.key.participant }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        1152,
-        -608
+        928,
+        -112
       ],
-      "id": "d7a7eb60-e069-48fb-abb6-751a313ed4b7",
-      "name": "Aggregate"
+      "id": "b43b66c1-a6d0-46d3-805f-2ee1b2a74bb1",
+      "name": "Pessoas1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gestao-financeira",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        -112
+      ],
+      "id": "8752e541-71e6-4edf-9acc-ca3d9406ef9b",
+      "name": "gestao-financeira",
+      "webhookId": "f462e97e-ae80-461e-86ed-ed77573c5bc5"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node (JavaScript)\n * Output: { type, content, participantId, ... , image, imageRequestPayload, instance, serverUrl, apiKey }\n */\n\nfunction normalizeType(messageType, messageObj) {\n  const mt = (messageType || '').toLowerCase();\n\n  if (mt === 'conversation') return 'text';\n  if (mt === 'audiomessage') return 'audio';\n  if (mt === 'imagemessage') return 'image';\n\n  if (messageObj?.conversation != null) return 'text';\n  if (messageObj?.audioMessage != null) return 'audio';\n  if (messageObj?.imageMessage != null) return 'image';\n\n  return 'unknown';\n}\n\nfunction extractContent(type, messageObj) {\n  if (!messageObj || typeof messageObj !== 'object') return '';\n\n  if (type === 'text') {\n    const text = messageObj.conversation;\n    return typeof text === 'string' ? text : '';\n  }\n\n  if (type === 'audio') {\n    const url = messageObj.audioMessage?.url;\n    return typeof url === 'string' ? url : '';\n  }\n\n  if (type === 'image') {\n    const url = messageObj.imageMessage?.url;\n    return typeof url === 'string' ? url : '';\n  }\n\n  const url = messageObj?.audioMessage?.url ?? messageObj?.imageMessage?.url;\n  return typeof url === 'string' ? url : '';\n}\n\n/**\n * Evolution webhook traz alguns campos binários como objeto {0:...,1:...}\n * Converte para base64 (string).\n */\nfunction objectBytesToBase64(maybeObj) {\n  if (!maybeObj || typeof maybeObj !== 'object') return maybeObj;\n  // já é Buffer?\n  if (Buffer.isBuffer(maybeObj)) return maybeObj.toString('base64');\n\n  // precisa ser um objeto com chaves numéricas\n  const keys = Object.keys(maybeObj);\n  if (!keys.length) return maybeObj;\n  const looksNumeric = keys.every((k) => String(+k) === k);\n  if (!looksNumeric) return maybeObj;\n\n  const bytes = keys\n    .map((k) => Number(k))\n    .sort((a, b) => a - b)\n    .map((k) => maybeObj[String(k)]);\n\n  return Buffer.from(bytes).toString('base64');\n}\n\nfunction normalizeImageMessage(imageMessage) {\n  if (!imageMessage || typeof imageMessage !== 'object') return null;\n\n  // shallow clone\n  const img = { ...imageMessage };\n\n  // campos que normalmente vêm como bytes-obj e é melhor enviar em base64\n  const byteFields = [\n    'mediaKey',\n    'fileSha256',\n    'fileEncSha256',\n    'jpegThumbnail',\n    'scansSidecar',\n    'midQualityFileSha256',\n  ];\n\n  for (const f of byteFields) {\n    if (img[f] != null) {\n      img[f] = objectBytesToBase64(img[f]);\n    }\n  }\n\n  // fileLength às vezes vem como {low, high...}; transforma em number simples\n  if (img.fileLength && typeof img.fileLength === 'object' && img.fileLength.low != null) {\n    img.fileLength = Number(img.fileLength.low);\n  }\n\n  // mediaKeyTimestamp idem\n  if (\n    img.mediaKeyTimestamp &&\n    typeof img.mediaKeyTimestamp === 'object' &&\n    img.mediaKeyTimestamp.low != null\n  ) {\n    img.mediaKeyTimestamp = Number(img.mediaKeyTimestamp.low);\n  }\n\n  return img;\n}\n\nreturn items.map((item) => {\n  const body = item.json?.body ?? {};\n  const data = body?.data ?? {};\n  const key = data?.key ?? {};\n  const messageType = data?.messageType;\n  const message = data?.message;\n\n  const type = normalizeType(messageType, message);\n  const content = extractContent(type, message);\n\n  const instance = body?.instance ?? null; // no seu payload: \"n8n\"\n  const serverUrl = body?.server_url ?? null; // no seu payload: \"http://localhost:8080\"\n  const apiKey = body?.apikey ?? null;\n\n  const rawImageMessage = message?.imageMessage;\n  const imageMessage = normalizeImageMessage(rawImageMessage);\n\n  // payload pronto pra usar no HTTP Request (pegar Base64)\n  const imageRequestPayload =\n    type === 'image' && imageMessage\n      ? {\n          message: {\n            key: {\n              remoteJid: key?.remoteJid,\n              id: key?.id,\n            },\n            message: {\n              imageMessage: imageMessage,\n            },\n          },\n        }\n      : null;\n\n  return {\n    json: {\n      type,\n      content,\n      participantId: key?.participant || null,\n\n      // extras úteis (mantidos)\n      messageId: key?.id,\n      remoteJid: key?.remoteJid,\n      fromMe: key?.fromMe,\n      sender: body?.sender,\n      timestamp: data?.messageTimestamp,\n\n      // ✅ novos campos pra baixar/pegar base64 da imagem depois\n      instance,\n      serverUrl,\n      apiKey,\n\n      // ✅ pacote do media (já normalizado pra base64 quando necessário)\n      image: imageMessage\n        ? {\n            url: imageMessage.url,\n            directPath: imageMessage.directPath,\n            mimetype: imageMessage.mimetype,\n            fileLength: imageMessage.fileLength,\n            width: imageMessage.width,\n            height: imageMessage.height,\n            mediaKey: imageMessage.mediaKey,\n            fileSha256: imageMessage.fileSha256,\n            fileEncSha256: imageMessage.fileEncSha256,\n          }\n        : null,\n\n      // ✅ payload pronto pra mandar no HTTP Request node\n      imageRequestPayload,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -112
+      ],
+      "id": "8207cdb8-5696-41b1-9175-5d331df48d99",
+      "name": "Get data from webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8512340-22bb-4e2e-aa59-182ca46c7821",
+              "name": "grupo",
+              "value": "={{ $json.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "296898d6-c467-47ad-9d07-f50f90631d8e",
+              "name": "participan",
+              "value": "={{ $json.participantId }}",
+              "type": "string"
+            },
+            {
+              "id": "005e7266-a721-4b84-8cb2-6dc421177a30",
+              "name": "conversation",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "9198fc1f-623b-404a-9ad4-c3c604f5e86e",
+              "name": "image",
+              "value": "={{ $json.image }}",
+              "type": "object"
+            },
+            {
+              "id": "d3cde8ae-386c-4e68-9c25-c59e5fda51d4",
+              "name": "imageRequestPayload",
+              "value": "={{ $json.imageRequestPayload }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        -112
+      ],
+      "id": "aa278c15-3e31-46dd-b84d-00efd708b491",
+      "name": "Extrair campos"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        752,
+        64
+      ],
+      "id": "f80fc813-e527-478c-8556-fb4910adf392",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7bbb14e3-7ba9-47c5-9012-9b73eabf131b",
+              "leftValue": "={{ $('Switch T | I | A').item.json.grupo }}",
+              "rightValue": "120363405462830176@g.us",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        -112
+      ],
+      "id": "601885b1-8bfe-4c19-9bf4-c56cc3e5190c",
+      "name": "Grupo finanças?1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "386efa26-b4f8-443b-b205-fbc18353aed1",
+              "name": "nome",
+              "value": "={{ $('Pessoas').item.json.NOME }}",
+              "type": "string"
+            },
+            {
+              "id": "6457ae94-7db6-4498-83c8-9dcde52fd50c",
+              "name": "conversation",
+              "value": "={{ $('Extrair campos').item.json.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        -480
+      ],
+      "id": "e659ee55-4519-4fe8-a1be-4f267a44862e",
+      "name": "Edit Fields text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "acee6e1d-6c02-4295-8bbe-17ebdbf5067b",
+              "name": "conversation",
+              "value": "={{ $json['0'].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "6e34f151-5c37-432c-b7d1-43649243db4e",
+              "name": "nome",
+              "value": "={{ $('Pessoas1').item.json.NOME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1472,
+        -112
+      ],
+      "id": "e6d1279b-83bc-4cf0-a0eb-16cf69e51ee8",
+      "name": "Edit Fields audio"
+    },
+    {
+      "parameters": {
+        "description": "tool: lista_categoria_despesa.\n\nUsada para listar as categorias de despesas. Use essa ferramenta em todos os atendimentos de cadastros de despesas para listar as categorias disponiveis.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "zyDdjzdqLB6ybfL2",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/zyDdjzdqLB6ybfL2",
+          "cachedResultName": "@LISTAR_CATEGORIA_DESPESA_FAMILIA"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2464,
+        272
+      ],
+      "id": "817993ee-d4c1-45ab-9acb-5da642c9cd21",
+      "name": "@LISTAR_CATEGORIA_DESPESA_FAMILIA"
     }
   ],
   "connections": {
-    "gestao-financeira": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Grupo finanças?": {
       "main": [
         [
           {
-            "node": "Tipos Despesas",
+            "node": "Pessoas",
             "type": "main",
             "index": 0
           }
@@ -670,17 +848,6 @@
         [
           {
             "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "Agente financeiro",
             "type": "main",
             "index": 0
           }
@@ -753,29 +920,18 @@
         ]
       ]
     },
-    "Code in JavaScript": {
-      "main": [
-        [
-          {
-            "node": "Switch T | I | A",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Switch T | I | A": {
       "main": [
         [
           {
-            "node": "Extrair campos texto",
+            "node": "Grupo finanças?",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Extrair campos imagem",
+            "node": "Grupo finanças?1",
             "type": "main",
             "index": 0
           }
@@ -789,45 +945,151 @@
         ]
       ]
     },
-    "Extrair campos texto": {
-      "main": [
-        [
-          {
-            "node": "Grupo finanças?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Pessoas": {
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "Edit Fields text",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tipos Despesas": {
+    "HTTP Request": {
       "main": [
         [
           {
-            "node": "Aggregate",
+            "node": "Pessoas1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Aggregate": {
+    "Edit Fields1": {
       "main": [
         [
           {
-            "node": "Pessoas",
+            "node": "Convert base64 to binary",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert base64 to binary": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pessoas1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestao-financeira": {
+      "main": [
+        [
+          {
+            "node": "Get data from webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get data from webhook": {
+      "main": [
+        [
+          {
+            "node": "Extrair campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair campos": {
+      "main": [
+        [
+          {
+            "node": "Switch T | I | A",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grupo finanças?1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields text": {
+      "main": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields audio": {
+      "main": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@LISTAR_CATEGORIA_DESPESA_FAMILIA": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -849,7 +1111,7 @@
             "accept": "application/json, text/plain, */*",
             "content-type": "application/json",
             "user-agent": "axios/1.13.2",
-            "content-length": "933",
+            "content-length": "8479",
             "accept-encoding": "gzip, compress, deflate, br",
             "host": "n8n:5678",
             "connection": "keep-alive"
@@ -863,59 +1125,857 @@
               "key": {
                 "remoteJid": "120363405462830176@g.us",
                 "fromMe": true,
-                "id": "3EB07A3B3F42B6D1970011",
+                "id": "AC11BD3CEA63044CDAA6A06506F565D0",
                 "participant": "33475042238618@lid",
                 "addressingMode": "lid"
               },
               "pushName": "Hugo",
               "status": "SERVER_ACK",
               "message": {
-                "conversation": "oi",
+                "imageMessage": {
+                  "interactiveAnnotations": [],
+                  "scanLengths": [
+                    14084,
+                    40512,
+                    18729,
+                    33941
+                  ],
+                  "annotations": [],
+                  "url": "https://mmg.whatsapp.net/v/t62.7118-24/615651940_2194844394380393_5714581633369765394_n.enc?ccb=11-4&oh=01_Q5Aa3gG14yey_wzfGMy6kl-XDHoqfPCS1hWIkhkVtJaExylZUA&oe=698F0E29&_nc_sid=5e03e0&mms3=true",
+                  "mimetype": "image/jpeg",
+                  "fileSha256": {
+                    "0": 82,
+                    "1": 27,
+                    "2": 133,
+                    "3": 114,
+                    "4": 61,
+                    "5": 143,
+                    "6": 131,
+                    "7": 30,
+                    "8": 222,
+                    "9": 19,
+                    "10": 14,
+                    "11": 143,
+                    "12": 164,
+                    "13": 233,
+                    "14": 247,
+                    "15": 134,
+                    "16": 101,
+                    "17": 128,
+                    "18": 116,
+                    "19": 28,
+                    "20": 211,
+                    "21": 237,
+                    "22": 48,
+                    "23": 221,
+                    "24": 213,
+                    "25": 172,
+                    "26": 97,
+                    "27": 236,
+                    "28": 0,
+                    "29": 55,
+                    "30": 146,
+                    "31": 121
+                  },
+                  "fileLength": {
+                    "low": 107266,
+                    "high": 0,
+                    "unsigned": true
+                  },
+                  "height": 1599,
+                  "width": 899,
+                  "mediaKey": {
+                    "0": 164,
+                    "1": 79,
+                    "2": 13,
+                    "3": 63,
+                    "4": 89,
+                    "5": 133,
+                    "6": 102,
+                    "7": 35,
+                    "8": 2,
+                    "9": 252,
+                    "10": 245,
+                    "11": 191,
+                    "12": 137,
+                    "13": 174,
+                    "14": 123,
+                    "15": 21,
+                    "16": 49,
+                    "17": 96,
+                    "18": 195,
+                    "19": 13,
+                    "20": 137,
+                    "21": 133,
+                    "22": 142,
+                    "23": 39,
+                    "24": 15,
+                    "25": 187,
+                    "26": 73,
+                    "27": 252,
+                    "28": 95,
+                    "29": 15,
+                    "30": 117,
+                    "31": 43
+                  },
+                  "fileEncSha256": {
+                    "0": 66,
+                    "1": 43,
+                    "2": 84,
+                    "3": 65,
+                    "4": 244,
+                    "5": 159,
+                    "6": 42,
+                    "7": 24,
+                    "8": 161,
+                    "9": 74,
+                    "10": 148,
+                    "11": 78,
+                    "12": 241,
+                    "13": 160,
+                    "14": 43,
+                    "15": 65,
+                    "16": 149,
+                    "17": 225,
+                    "18": 47,
+                    "19": 100,
+                    "20": 196,
+                    "21": 26,
+                    "22": 144,
+                    "23": 195,
+                    "24": 0,
+                    "25": 15,
+                    "26": 0,
+                    "27": 158,
+                    "28": 173,
+                    "29": 193,
+                    "30": 40,
+                    "31": 11
+                  },
+                  "directPath": "/v/t62.7118-24/615651940_2194844394380393_5714581633369765394_n.enc?ccb=11-4&oh=01_Q5Aa3gG14yey_wzfGMy6kl-XDHoqfPCS1hWIkhkVtJaExylZUA&oe=698F0E29&_nc_sid=5e03e0",
+                  "mediaKeyTimestamp": {
+                    "low": 1768402336,
+                    "high": 0,
+                    "unsigned": false
+                  },
+                  "jpegThumbnail": {
+                    "0": 255,
+                    "1": 216,
+                    "2": 255,
+                    "3": 224,
+                    "4": 0,
+                    "5": 16,
+                    "6": 74,
+                    "7": 70,
+                    "8": 73,
+                    "9": 70,
+                    "10": 0,
+                    "11": 1,
+                    "12": 1,
+                    "13": 0,
+                    "14": 0,
+                    "15": 1,
+                    "16": 0,
+                    "17": 1,
+                    "18": 0,
+                    "19": 0,
+                    "20": 255,
+                    "21": 219,
+                    "22": 0,
+                    "23": 132,
+                    "24": 0,
+                    "25": 27,
+                    "26": 27,
+                    "27": 27,
+                    "28": 27,
+                    "29": 28,
+                    "30": 27,
+                    "31": 30,
+                    "32": 33,
+                    "33": 33,
+                    "34": 30,
+                    "35": 42,
+                    "36": 45,
+                    "37": 40,
+                    "38": 45,
+                    "39": 42,
+                    "40": 61,
+                    "41": 56,
+                    "42": 51,
+                    "43": 51,
+                    "44": 56,
+                    "45": 61,
+                    "46": 93,
+                    "47": 66,
+                    "48": 71,
+                    "49": 66,
+                    "50": 71,
+                    "51": 66,
+                    "52": 93,
+                    "53": 141,
+                    "54": 88,
+                    "55": 103,
+                    "56": 88,
+                    "57": 88,
+                    "58": 103,
+                    "59": 88,
+                    "60": 141,
+                    "61": 125,
+                    "62": 151,
+                    "63": 123,
+                    "64": 115,
+                    "65": 123,
+                    "66": 151,
+                    "67": 125,
+                    "68": 224,
+                    "69": 176,
+                    "70": 156,
+                    "71": 156,
+                    "72": 176,
+                    "73": 224,
+                    "74": 255,
+                    "75": 217,
+                    "76": 206,
+                    "77": 217,
+                    "78": 255,
+                    "79": 255,
+                    "80": 255,
+                    "81": 255,
+                    "82": 255,
+                    "83": 255,
+                    "84": 255,
+                    "85": 255,
+                    "86": 255,
+                    "87": 255,
+                    "88": 255,
+                    "89": 1,
+                    "90": 27,
+                    "91": 27,
+                    "92": 27,
+                    "93": 27,
+                    "94": 28,
+                    "95": 27,
+                    "96": 30,
+                    "97": 33,
+                    "98": 33,
+                    "99": 30,
+                    "100": 42,
+                    "101": 45,
+                    "102": 40,
+                    "103": 45,
+                    "104": 42,
+                    "105": 61,
+                    "106": 56,
+                    "107": 51,
+                    "108": 51,
+                    "109": 56,
+                    "110": 61,
+                    "111": 93,
+                    "112": 66,
+                    "113": 71,
+                    "114": 66,
+                    "115": 71,
+                    "116": 66,
+                    "117": 93,
+                    "118": 141,
+                    "119": 88,
+                    "120": 103,
+                    "121": 88,
+                    "122": 88,
+                    "123": 103,
+                    "124": 88,
+                    "125": 141,
+                    "126": 125,
+                    "127": 151,
+                    "128": 123,
+                    "129": 115,
+                    "130": 123,
+                    "131": 151,
+                    "132": 125,
+                    "133": 224,
+                    "134": 176,
+                    "135": 156,
+                    "136": 156,
+                    "137": 176,
+                    "138": 224,
+                    "139": 255,
+                    "140": 217,
+                    "141": 206,
+                    "142": 217,
+                    "143": 255,
+                    "144": 255,
+                    "145": 255,
+                    "146": 255,
+                    "147": 255,
+                    "148": 255,
+                    "149": 255,
+                    "150": 255,
+                    "151": 255,
+                    "152": 255,
+                    "153": 255,
+                    "154": 255,
+                    "155": 194,
+                    "156": 0,
+                    "157": 17,
+                    "158": 8,
+                    "159": 0,
+                    "160": 60,
+                    "161": 0,
+                    "162": 33,
+                    "163": 3,
+                    "164": 1,
+                    "165": 34,
+                    "166": 0,
+                    "167": 2,
+                    "168": 17,
+                    "169": 1,
+                    "170": 3,
+                    "171": 17,
+                    "172": 1,
+                    "173": 255,
+                    "174": 196,
+                    "175": 0,
+                    "176": 47,
+                    "177": 0,
+                    "178": 0,
+                    "179": 2,
+                    "180": 3,
+                    "181": 1,
+                    "182": 0,
+                    "183": 0,
+                    "184": 0,
+                    "185": 0,
+                    "186": 0,
+                    "187": 0,
+                    "188": 0,
+                    "189": 0,
+                    "190": 0,
+                    "191": 0,
+                    "192": 0,
+                    "193": 0,
+                    "194": 0,
+                    "195": 4,
+                    "196": 2,
+                    "197": 3,
+                    "198": 5,
+                    "199": 1,
+                    "200": 1,
+                    "201": 0,
+                    "202": 3,
+                    "203": 1,
+                    "204": 1,
+                    "205": 0,
+                    "206": 0,
+                    "207": 0,
+                    "208": 0,
+                    "209": 0,
+                    "210": 0,
+                    "211": 0,
+                    "212": 0,
+                    "213": 0,
+                    "214": 0,
+                    "215": 0,
+                    "216": 0,
+                    "217": 0,
+                    "218": 1,
+                    "219": 2,
+                    "220": 3,
+                    "221": 4,
+                    "222": 255,
+                    "223": 218,
+                    "224": 0,
+                    "225": 12,
+                    "226": 3,
+                    "227": 1,
+                    "228": 0,
+                    "229": 2,
+                    "230": 16,
+                    "231": 3,
+                    "232": 16,
+                    "233": 0,
+                    "234": 0,
+                    "235": 0,
+                    "236": 118,
+                    "237": 185,
+                    "238": 226,
+                    "239": 134,
+                    "240": 178,
+                    "241": 28,
+                    "242": 176,
+                    "243": 89,
+                    "244": 38,
+                    "245": 160,
+                    "246": 199,
+                    "247": 149,
+                    "248": 153,
+                    "249": 61,
+                    "250": 29,
+                    "251": 173,
+                    "252": 139,
+                    "253": 137,
+                    "254": 205,
+                    "255": 31,
+                    "256": 22,
+                    "257": 121,
+                    "258": 215,
+                    "259": 169,
+                    "260": 7,
+                    "261": 78,
+                    "262": 84,
+                    "263": 103,
+                    "264": 141,
+                    "265": 195,
+                    "266": 60,
+                    "267": 121,
+                    "268": 185,
+                    "269": 108,
+                    "270": 24,
+                    "271": 155,
+                    "272": 206,
+                    "273": 166,
+                    "274": 61,
+                    "275": 168,
+                    "276": 153,
+                    "277": 1,
+                    "278": 175,
+                    "279": 255,
+                    "280": 196,
+                    "281": 0,
+                    "282": 37,
+                    "283": 16,
+                    "284": 0,
+                    "285": 2,
+                    "286": 2,
+                    "287": 1,
+                    "288": 3,
+                    "289": 3,
+                    "290": 4,
+                    "291": 3,
+                    "292": 0,
+                    "293": 0,
+                    "294": 0,
+                    "295": 0,
+                    "296": 0,
+                    "297": 0,
+                    "298": 0,
+                    "299": 0,
+                    "300": 1,
+                    "301": 2,
+                    "302": 0,
+                    "303": 17,
+                    "304": 3,
+                    "305": 4,
+                    "306": 18,
+                    "307": 33,
+                    "308": 16,
+                    "309": 34,
+                    "310": 49,
+                    "311": 19,
+                    "312": 20,
+                    "313": 82,
+                    "314": 145,
+                    "315": 35,
+                    "316": 97,
+                    "317": 98,
+                    "318": 255,
+                    "319": 218,
+                    "320": 0,
+                    "321": 8,
+                    "322": 1,
+                    "323": 1,
+                    "324": 0,
+                    "325": 1,
+                    "326": 63,
+                    "327": 0,
+                    "328": 140,
+                    "329": 232,
+                    "330": 56,
+                    "331": 102,
+                    "332": 17,
+                    "333": 93,
+                    "334": 88,
+                    "335": 112,
+                    "336": 102,
+                    "337": 169,
+                    "338": 27,
+                    "339": 56,
+                    "340": 220,
+                    "341": 131,
+                    "342": 133,
+                    "343": 151,
+                    "344": 150,
+                    "345": 19,
+                    "346": 83,
+                    "347": 82,
+                    "348": 73,
+                    "349": 204,
+                    "350": 198,
+                    "351": 105,
+                    "352": 143,
+                    "353": 225,
+                    "354": 200,
+                    "355": 166,
+                    "356": 38,
+                    "357": 110,
+                    "358": 223,
+                    "359": 78,
+                    "360": 170,
+                    "361": 132,
+                    "362": 246,
+                    "363": 250,
+                    "364": 127,
+                    "365": 153,
+                    "366": 140,
+                    "367": 3,
+                    "368": 175,
+                    "369": 6,
+                    "370": 101,
+                    "371": 84,
+                    "372": 111,
+                    "373": 34,
+                    "374": 224,
+                    "375": 69,
+                    "376": 216,
+                    "377": 0,
+                    "378": 241,
+                    "379": 27,
+                    "380": 79,
+                    "381": 183,
+                    "382": 155,
+                    "383": 185,
+                    "384": 95,
+                    "385": 209,
+                    "386": 250,
+                    "387": 157,
+                    "388": 184,
+                    "389": 84,
+                    "390": 44,
+                    "391": 199,
+                    "392": 140,
+                    "393": 230,
+                    "394": 27,
+                    "395": 132,
+                    "396": 200,
+                    "397": 165,
+                    "398": 10,
+                    "399": 10,
+                    "400": 134,
+                    "401": 113,
+                    "402": 50,
+                    "403": 217,
+                    "404": 117,
+                    "405": 179,
+                    "406": 66,
+                    "407": 19,
+                    "408": 232,
+                    "409": 99,
+                    "410": 219,
+                    "411": 137,
+                    "412": 187,
+                    "413": 239,
+                    "414": 238,
+                    "415": 16,
+                    "416": 249,
+                    "417": 66,
+                    "418": 187,
+                    "419": 185,
+                    "420": 220,
+                    "421": 38,
+                    "422": 93,
+                    "423": 99,
+                    "424": 227,
+                    "425": 109,
+                    "426": 130,
+                    "427": 141,
+                    "428": 79,
+                    "429": 122,
+                    "430": 126,
+                    "431": 19,
+                    "432": 80,
+                    "433": 108,
+                    "434": 40,
+                    "435": 253,
+                    "436": 194,
+                    "437": 225,
+                    "438": 31,
+                    "439": 181,
+                    "440": 9,
+                    "441": 141,
+                    "442": 144,
+                    "443": 108,
+                    "444": 2,
+                    "445": 141,
+                    "446": 147,
+                    "447": 50,
+                    "448": 27,
+                    "449": 118,
+                    "450": 232,
+                    "451": 224,
+                    "452": 189,
+                    "453": 64,
+                    "454": 29,
+                    "455": 185,
+                    "456": 4,
+                    "457": 14,
+                    "458": 38,
+                    "459": 161,
+                    "460": 138,
+                    "461": 157,
+                    "462": 187,
+                    "463": 172,
+                    "464": 244,
+                    "465": 161,
+                    "466": 242,
+                    "467": 19,
+                    "468": 201,
+                    "469": 19,
+                    "470": 194,
+                    "471": 152,
+                    "472": 196,
+                    "473": 179,
+                    "474": 146,
+                    "475": 122,
+                    "476": 92,
+                    "477": 255,
+                    "478": 196,
+                    "479": 0,
+                    "480": 25,
+                    "481": 17,
+                    "482": 0,
+                    "483": 2,
+                    "484": 3,
+                    "485": 1,
+                    "486": 0,
+                    "487": 0,
+                    "488": 0,
+                    "489": 0,
+                    "490": 0,
+                    "491": 0,
+                    "492": 0,
+                    "493": 0,
+                    "494": 0,
+                    "495": 0,
+                    "496": 0,
+                    "497": 0,
+                    "498": 0,
+                    "499": 1,
+                    "500": 16,
+                    "501": 17,
+                    "502": 32,
+                    "503": 97,
+                    "504": 255,
+                    "505": 218,
+                    "506": 0,
+                    "507": 8,
+                    "508": 1,
+                    "509": 2,
+                    "510": 1,
+                    "511": 1,
+                    "512": 63,
+                    "513": 0,
+                    "514": 148,
+                    "515": 50,
+                    "516": 225,
+                    "517": 116,
+                    "518": 172,
+                    "519": 127,
+                    "520": 255,
+                    "521": 196,
+                    "522": 0,
+                    "523": 28,
+                    "524": 17,
+                    "525": 0,
+                    "526": 1,
+                    "527": 4,
+                    "528": 3,
+                    "529": 1,
+                    "530": 0,
+                    "531": 0,
+                    "532": 0,
+                    "533": 0,
+                    "534": 0,
+                    "535": 0,
+                    "536": 0,
+                    "537": 0,
+                    "538": 0,
+                    "539": 0,
+                    "540": 0,
+                    "541": 1,
+                    "542": 0,
+                    "543": 2,
+                    "544": 16,
+                    "545": 17,
+                    "546": 3,
+                    "547": 18,
+                    "548": 33,
+                    "549": 50,
+                    "550": 255,
+                    "551": 218,
+                    "552": 0,
+                    "553": 8,
+                    "554": 1,
+                    "555": 3,
+                    "556": 1,
+                    "557": 1,
+                    "558": 63,
+                    "559": 0,
+                    "560": 163,
+                    "561": 86,
+                    "562": 170,
+                    "563": 27,
+                    "564": 65,
+                    "565": 164,
+                    "566": 21,
+                    "567": 147,
+                    "568": 186,
+                    "569": 170,
+                    "570": 71,
+                    "571": 165,
+                    "572": 63,
+                    "573": 81,
+                    "574": 230,
+                    "575": 12,
+                    "576": 255,
+                    "577": 0,
+                    "578": 255,
+                    "579": 217
+                  },
+                  "contextInfo": {
+                    "mentionedJid": [],
+                    "groupMentions": [],
+                    "statusAttributions": [],
+                    "pairedMediaType": 0,
+                    "statusSourceType": 0
+                  },
+                  "scansSidecar": {
+                    "0": 178,
+                    "1": 224,
+                    "2": 91,
+                    "3": 111,
+                    "4": 224,
+                    "5": 175,
+                    "6": 141,
+                    "7": 73,
+                    "8": 215,
+                    "9": 42,
+                    "10": 94,
+                    "11": 234,
+                    "12": 172,
+                    "13": 249,
+                    "14": 87,
+                    "15": 130,
+                    "16": 167,
+                    "17": 243,
+                    "18": 254,
+                    "19": 132,
+                    "20": 145,
+                    "21": 41,
+                    "22": 150,
+                    "23": 249,
+                    "24": 53,
+                    "25": 187,
+                    "26": 147,
+                    "27": 5,
+                    "28": 195,
+                    "29": 130,
+                    "30": 225,
+                    "31": 97,
+                    "32": 40,
+                    "33": 83,
+                    "34": 170,
+                    "35": 170,
+                    "36": 244,
+                    "37": 226,
+                    "38": 0,
+                    "39": 244
+                  },
+                  "midQualityFileSha256": {
+                    "0": 16,
+                    "1": 183,
+                    "2": 195,
+                    "3": 120,
+                    "4": 176,
+                    "5": 95,
+                    "6": 111,
+                    "7": 158,
+                    "8": 239,
+                    "9": 173,
+                    "10": 250,
+                    "11": 7,
+                    "12": 152,
+                    "13": 186,
+                    "14": 182,
+                    "15": 140,
+                    "16": 217,
+                    "17": 90,
+                    "18": 21,
+                    "19": 79,
+                    "20": 154,
+                    "21": 141,
+                    "22": 134,
+                    "23": 87,
+                    "24": 227,
+                    "25": 128,
+                    "26": 119,
+                    "27": 107,
+                    "28": 63,
+                    "29": 23,
+                    "30": 169,
+                    "31": 118
+                  }
+                },
                 "messageContextInfo": {
                   "threadId": [],
                   "messageSecret": {
-                    "0": 173,
-                    "1": 36,
-                    "2": 187,
-                    "3": 81,
-                    "4": 68,
-                    "5": 245,
-                    "6": 212,
-                    "7": 133,
-                    "8": 171,
-                    "9": 202,
-                    "10": 158,
-                    "11": 12,
-                    "12": 86,
-                    "13": 162,
-                    "14": 205,
-                    "15": 225,
-                    "16": 55,
-                    "17": 95,
-                    "18": 95,
-                    "19": 43,
-                    "20": 131,
-                    "21": 37,
-                    "22": 56,
-                    "23": 73,
-                    "24": 86,
-                    "25": 35,
-                    "26": 130,
-                    "27": 189,
-                    "28": 26,
-                    "29": 159,
-                    "30": 146,
-                    "31": 216
+                    "0": 14,
+                    "1": 237,
+                    "2": 247,
+                    "3": 164,
+                    "4": 223,
+                    "5": 223,
+                    "6": 135,
+                    "7": 60,
+                    "8": 183,
+                    "9": 203,
+                    "10": 89,
+                    "11": 14,
+                    "12": 30,
+                    "13": 24,
+                    "14": 235,
+                    "15": 135,
+                    "16": 250,
+                    "17": 112,
+                    "18": 241,
+                    "19": 18,
+                    "20": 97,
+                    "21": 251,
+                    "22": 193,
+                    "23": 7,
+                    "24": 207,
+                    "25": 130,
+                    "26": 64,
+                    "27": 236,
+                    "28": 125,
+                    "29": 75,
+                    "30": 7,
+                    "31": 153
                   }
                 }
               },
-              "messageType": "conversation",
-              "messageTimestamp": 1768336467,
+              "contextInfo": {
+                "mentionedJid": [],
+                "groupMentions": [],
+                "statusAttributions": [],
+                "pairedMediaType": 0,
+                "statusSourceType": 0
+              },
+              "messageType": "imageMessage",
+              "messageTimestamp": 1768402336,
               "instanceId": "8ea06520-c090-4e3d-9214-855b5651ce3b",
-              "source": "web"
+              "source": "android"
             },
             "destination": "http://n8n:5678/n8n/gestao-financeira",
-            "date_time": "2026-01-13T17:34:27.465Z",
+            "date_time": "2026-01-14T11:52:15.102Z",
             "sender": "556182086449@s.whatsapp.net",
             "server_url": "http://localhost:8080",
             "apikey": "A1BA94D9AEA9-4B20-815B-C1FBB28DA1C0"
@@ -926,8 +1986,8 @@
       }
     ]
   },
-  "versionId": "ad76804a-26c7-465f-9147-a5d6a5ebf396",
-  "versionCounter": 252,
+  "versionId": "c868126d-ec9d-42fd-aa81-7ce28e470e1e",
+  "versionCounter": 408,
   "triggerCount": 1,
   "shared": [
     {
@@ -951,7 +2011,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2026-01-14T12:01:37.000Z",
+              "updatedAt": "2026-01-15T11:12:49.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -986,7 +2046,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-14",
+              "lastActiveAt": "2026-01-15",
               "isPending": false
             }
           }

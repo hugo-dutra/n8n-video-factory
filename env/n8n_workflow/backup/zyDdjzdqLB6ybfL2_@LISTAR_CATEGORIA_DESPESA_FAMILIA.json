@@ -1,46 +1,77 @@
 {
-  "updatedAt": "2025-10-09T00:45:54.000Z",
-  "createdAt": "2025-10-09T00:28:02.583Z",
-  "id": "yolMk1oZPUS6wal0",
-  "name": "@COPY_FILE",
+  "updatedAt": "2026-01-14T17:51:53.000Z",
+  "createdAt": "2026-01-14T16:56:57.485Z",
+  "id": "zyDdjzdqLB6ybfL2",
+  "name": "@LISTAR_CATEGORIA_DESPESA_FAMILIA",
   "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
     {
       "parameters": {
-        "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"FILE_NAME\": \"a string\",\n  \"PATH_ORIGIN\":\"a string\",\n  \"PATH_DESTINATION\": \"a string\"\n}"
+        "inputSource": "passthrough"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        0,
+        32,
         0
       ],
-      "id": "c8a38659-8d1e-4d5d-8ba1-c1d4416400d9",
-      "name": "When Executed by Another Workflow"
+      "id": "4e055b38-5b83-466e-86c6-d827dc8a2280",
+      "name": "START"
     },
     {
       "parameters": {
-        "command": "=ts=\"$(date +%Y%m%d_%H%M%S)\"\nsrc=\"{{ $input.first().json.PATH_ORIGIN }}/{{ $input.first().json.FILE_NAME }}\"\ndst=\"{{ $input.first().json.PATH_DESTINATION }}/${ts}_{{ $input.first().json.FILE_NAME }}\"\n\nmkdir -p \"{{ $input.first().json.PATH_DESTINATION }}\"\ncp -f -- \"$src\" \"$dst\"\n\n# opcional: imprime o caminho novo (útil para o próximo nó)\necho \"$dst\"\n"
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "zlghCbSqrsMr8Qvf",
+          "mode": "list",
+          "cachedResultName": "CATEGORIA_DESPESA_FAMILIA",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/zlghCbSqrsMr8Qvf"
+        },
+        "matchType": "allConditions"
       },
-      "type": "n8n-nodes-base.executeCommand",
+      "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        208,
+        224,
         0
       ],
-      "id": "56ef2535-758a-4fc5-ba7d-2dcd0ce82d1a",
-      "name": "Execute Command"
+      "id": "7aa732da-c5fc-49f8-b2c0-0062178b1cbd",
+      "name": "Get categorias"
+    },
+    {
+      "parameters": {
+        "jsCode": "const categorias = $input.all().map(i => i.json.TIPO_DESPESA);\n\nreturn [\n  { \n    categorias,\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "614a82e3-9899-470b-9a61-7d9f9636b7e1",
+      "name": "Map Categorias"
     }
   ],
   "connections": {
-    "When Executed by Another Workflow": {
+    "START": {
       "main": [
         [
           {
-            "node": "Execute Command",
+            "node": "Get categorias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get categorias": {
+      "main": [
+        [
+          {
+            "node": "Map Categorias",
             "type": "main",
             "index": 0
           }
@@ -53,26 +84,16 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {
-    "When Executed by Another Workflow": [
-      {
-        "json": {
-          "FILE_NAME": "97nFoYay0IQ_169_469.mp4",
-          "PATH_ORIGIN": "/home/node/processing/CANAL_ANCAPSU",
-          "PATH_DESTINATION": "/home/node/processing/CANAL_ANCAPSU/DAY_SUMMARY"
-        }
-      }
-    ]
-  },
-  "versionId": "b9c2ea86-680a-4b4b-8f43-f6687cd136ea",
-  "versionCounter": 1,
+  "pinData": {},
+  "versionId": "9a7bf951-0b6a-4fe5-9c95-4048f3bff5be",
+  "versionCounter": 13,
   "triggerCount": 0,
   "shared": [
     {
-      "updatedAt": "2025-10-09T00:28:02.605Z",
-      "createdAt": "2025-10-09T00:28:02.605Z",
+      "updatedAt": "2026-01-14T16:56:57.800Z",
+      "createdAt": "2026-01-14T16:56:57.800Z",
       "role": "workflow:owner",
-      "workflowId": "yolMk1oZPUS6wal0",
+      "workflowId": "zyDdjzdqLB6ybfL2",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "updatedAt": "2025-08-20T20:53:20.326Z",
