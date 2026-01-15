@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-13T19:27:05.000Z",
+  "updatedAt": "2026-01-14T14:46:56.000Z",
   "createdAt": "2026-01-13T19:02:10.471Z",
   "id": "KOk2liA6SYCvAYG2",
   "name": "@CONSULTAR_DESPESA",
@@ -86,7 +86,7 @@
     ]
   },
   "versionId": "6888a4b0-a369-4417-85a1-f59633490851",
-  "versionCounter": 8,
+  "versionCounter": 9,
   "triggerCount": 0,
   "shared": [
     {
@@ -110,7 +110,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2026-01-13T23:35:36.000Z",
+              "updatedAt": "2026-01-14T12:01:37.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -145,7 +145,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-13",
+              "lastActiveAt": "2026-01-14",
               "isPending": false
             }
           }

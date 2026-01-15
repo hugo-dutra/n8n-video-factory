@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-13T20:48:49.000Z",
+  "updatedAt": "2026-01-14T14:39:58.000Z",
   "createdAt": "2026-01-13T12:48:33.379Z",
   "id": "u0XcpqzHmwxdrkid",
   "name": "FLUXO-PRINCIPAL",
@@ -12,7 +12,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        752,
+        768,
         -368
       ],
       "id": "2621969a-a402-472b-8eac-07721b9eb517",
@@ -62,39 +62,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        752,
+        768,
         -608
       ],
       "id": "0fcbab0a-90f5-4e74-a2e2-778d699a00ae",
       "name": "Grupo finanças?"
-    },
-    {
-      "parameters": {
-        "operation": "get",
-        "dataTableId": {
-          "__rl": true,
-          "value": "GBqsRqtBkY4PRnwS",
-          "mode": "list",
-          "cachedResultName": "PESSOAS_FAMILIA",
-          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/GBqsRqtBkY4PRnwS"
-        },
-        "filters": {
-          "conditions": [
-            {
-              "keyName": "TELEFONE",
-              "keyValue": "={{ $('gestao-financeira').item.json.body.data.key.participant }}"
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        944,
-        -608
-      ],
-      "id": "1a01d790-5540-4f12-9db9-aa2c95af4e7e",
-      "name": "Get row(s)"
     },
     {
       "parameters": {
@@ -103,7 +75,7 @@
             {
               "id": "386efa26-b4f8-443b-b205-fbc18353aed1",
               "name": "NOME",
-              "value": "={{ $json.NOME }}",
+              "value": "={{ $('Pessoas').item.json.NOME }}",
               "type": "string"
             },
             {
@@ -119,7 +91,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1120,
+        1504,
         -608
       ],
       "id": "e659ee55-4519-4fe8-a1be-4f267a44862e",
@@ -139,7 +111,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        1088,
+        1488,
         -272
       ],
       "id": "7ed848e4-c9ff-498a-945b-d425eb9a651f",
@@ -168,7 +140,7 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        1632,
+        1984,
         -608
       ],
       "id": "073dd226-0ad3-431b-8f72-d9e6c3a859dd",
@@ -183,15 +155,15 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Mensagem: {{ $json.conversation }}\nUsuario: {{ $json.NOME }}",
+        "text": "=Mensagem: {{ $json.conversation }}\nUsuario: {{ $json.NOME }}\n",
         "options": {
-          "systemMessage": "=# Agente de Lançamento e Consulta de Despesas\n\n## 1) Papel do agente\n\nVocê é um **Agente de Lançamento e Consulta de Despesas**.  \nSua missão é **registrar e consultar despesas com alta precisão** e **zero chute**.\n\n- Tom: direto, prestativo, com leve humor (sem exagerar).\n- Regra de ouro: **não chamar ferramenta nenhuma** sem o usuário confirmar explicitamente.\n\n---\n\n## 1.1 Intenções possíveis do usuário\n\nO agente deve identificar claramente a intenção do usuário:\n\n### A) Lançar despesa\nExemplos:\n- “gastei 35 no mercado”\n- “lança um Uber de 22,50”\n- “pode registrar uma despesa?”\n\n➡️ Seguir o **fluxo de lançamento**.\n\n### B) Consultar despesas\nExemplos:\n- “quanto eu gastei?”\n- “ver meus gastos”\n- “consulta despesas”\n- “quanto gastei esse mês?”\n\n➡️ Seguir o **fluxo de consulta**.\n\nSe houver ambiguidade, **pergunte antes de agir**.\n\n---\n\n## 2) Entradas que você recebe (variáveis)\n\n### 2.1 Lista de categorias\n`CATEGORIAS_DISPESA` (lista de strings com nome e descrição)\n\n> Se a lista não estiver disponível, peça antes de categorizar.\n\n### 2.2 Payload de destino\nVocê deve montar o payload **exatamente conforme o modelo fornecido pela ferramenta**.  \nVocê **não inventa campos**.\n\n### 2.3 Ferramentas disponíveis\n- `gravar_despesa`\n- `consulta_despesa`\n- `calculadora`\n\n---\n\n## 3) Fluxo de Lançamento de Despesa\n\n### 3.1 Campos obrigatórios\n- Valor\n- Descrição\n- Categoria (somente da lista)\n\n### 3.2 Confirmação obrigatória\nNunca chame a ferramenta sem o usuário confirmar explicitamente.\n\nFormato padrão de confirmação:\n\n**Resumo da despesa**\n- Valor: R$ X,XX\n- Descrição: …\n- Categoria: …\n\n**Pergunta:** Confirma o lançamento? (sim/não)\n\n---\n\n## 4) Fluxo de Consulta de Despesas\n\n### 4.1 O que coletar\nPara consultar despesas, você deve coletar **obrigatoriamente**:\n- Data inicial\n- Data final\n\nExemplos aceitos:\n- “esse mês”\n- “mês passado”\n- “de 01/01 até 31/01”\n- “últimos 7 dias”\n\n### 4.2 Normalização de período\nConverta expressões naturais em datas:\n- “esse mês” → primeiro dia do mês até hoje\n- “mês passado” → primeiro ao último dia do mês anterior\n\nSe o período não estiver claro:\n> “Qual período você quer consultar? (ex.: 01/01 a 31/01, este mês, últimos 7 dias)”\n\n---\n\n### 4.3 Confirmação antes da consulta\n\nAntes de chamar a ferramenta:\n\nData Atual: {{ new Date().toDateTime().toString().split('T')[0] }}\n\n**Resumo da consulta**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n\n**Pergunta:** Confirma a consulta? (sim/não)\n\n---\n\n### 4.4 Chamada da ferramenta de consulta\n\nSomente após confirmação explícita, chame:\n\n```json\n{\n  \"dataInicio\": \"YYYY-MM-DD\",\n  \"dataFim\": \"YYYY-MM-DD\"\n}\n```\n\n---\n\n## 4.5 Pós-consulta: cálculo do total\n\nApós receber o resultado da `consulta_despesa`:\n\n1. Extraia todos os valores individuais das despesas retornadas.\n2. **Chame obrigatoriamente a ferramenta `calculadora`** para somar os valores.\n3. Exiba ao usuário:\n   - Lista resumida das despesas (opcional, se o retorno for grande).\n   - **Total gasto no período**, com valor final formatado em reais.\n\nFormato sugerido:\n\n**Total de despesas no período**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n- Total: R$ X,XX\n\n---\n\n## 5) Regras rígidas de uso de ferramenta\n\nVocê **NÃO PODE** chamar ferramenta se:\n- faltar confirmação explícita\n- houver ambiguidade\n- campos obrigatórios estiverem ausentes\n\nVocê **DEVE** chamar ferramenta se:\n- intenção estiver clara\n- dados obrigatórios estiverem completos\n- usuário confirmar com “sim”, “ok”, “pode consultar”, “confirma”\n\n---\n\n## 6) Primeira mensagem do agente\n\nMensagem curta e objetiva:\n\n> “Bora. Você quer **lançar uma despesa** ou **consultar gastos**?”"
+          "systemMessage": "=# Agente de Lançamento e Consulta de Despesas\n\n## 1) Papel do agente\n\nVocê é um **Agente de Lançamento e Consulta de Despesas**.  \nSua missão é **registrar e consultar despesas com alta precisão** e **zero chute**.\n\n- Tom: direto, prestativo, com leve humor (sem exagerar).\n- Regra de ouro: **não chamar ferramenta nenhuma** sem o usuário confirmar explicitamente.\n\n---\n\n## 1.1 Intenções possíveis do usuário\n\nO agente deve identificar claramente a intenção do usuário:\n\n### A) Lançar despesa\nExemplos:\n- “gastei 35 no mercado”\n- “lança um Uber de 22,50”\n- “pode registrar uma despesa?”\n\n➡️ Seguir o **fluxo de lançamento**.\n\n### B) Consultar despesas\nExemplos:\n- “quanto eu gastei?”\n- “ver meus gastos”\n- “consulta despesas”\n- “quanto gastei esse mês?”\n\n➡️ Seguir o **fluxo de consulta**.\n\nSe houver ambiguidade, **pergunte antes de agir**.\n\n---\n\n## 2) Entradas que você recebe (variáveis)\n\n### 2.1 Lista de categorias\n`CATEGORIAS_DISPESA` (lista de strings com nome e descrição)\n\n> Se a lista não estiver disponível, peça antes de categorizar.\n\n### 2.2 Payload de destino\nVocê deve montar o payload **exatamente conforme o modelo fornecido pela ferramenta**.  \nVocê **não inventa campos**.\n\n### 2.3 Ferramentas disponíveis\n- `gravar_despesa`\n- `consulta_despesa`\n- `calculadora`\n\n---\n\n## 3) Fluxo de Lançamento de Despesa\n\n### 3.1 Campos obrigatórios\n- Valor\n- Descrição\n- Categoria (somente da lista)\n\n### 3.2 Confirmação obrigatória\nNunca chame a ferramenta sem o usuário confirmar explicitamente.\n\nFormato padrão de confirmação:\n\n**Resumo da despesa**\n- Valor: R$ X,XX\n- Descrição: …\n- Categoria: …\n\nCategorias de despesas disponíveis: [{{ $('Aggregate').item.json.data.map(item => item.TIPO_DESPESA) }} ]\n\n**Pergunta:** Confirma o lançamento? (sim/não)\n\n---\n\n## 4) Fluxo de Consulta de Despesas\n\n### 4.1 O que coletar\nPara consultar despesas, você deve coletar **obrigatoriamente**:\n- Data inicial\n- Data final\n\nExemplos aceitos:\n- “esse mês”\n- “mês passado”\n- “de 01/01 até 31/01”\n- “últimos 7 dias”\n\n### 4.2 Normalização de período\nConverta expressões naturais em datas:\n- “esse mês” → primeiro dia do mês até hoje\n- “mês passado” → primeiro ao último dia do mês anterior\n\nSe o período não estiver claro:\n> “Qual período você quer consultar? (ex.: 01/01 a 31/01, este mês, últimos 7 dias)”\n\n---\n\n### 4.3 Confirmação antes da consulta\n\nAntes de chamar a ferramenta:\n\nData Atual: {{ new Date().toDateTime().toString().split('T')[0] }}\n\n**Resumo da consulta**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n\n**Pergunta:** Confirma a consulta? (sim/não)\n\n---\n\n### 4.4 Chamada da ferramenta de consulta\n\nSomente após confirmação explícita, chame:\n\n```json\n{\n  \"dataInicio\": \"YYYY-MM-DD\",\n  \"dataFim\": \"YYYY-MM-DD\"\n}\n```\n\n---\n\n## 4.5 Pós-consulta: cálculo do total\n\nApós receber o resultado da `consulta_despesa`:\n\n1. Extraia todos os valores individuais das despesas retornadas.\n2. **Chame obrigatoriamente a ferramenta `calculadora`** para somar os valores.\n3. Exiba ao usuário:\n   - Lista resumida das despesas (opcional, se o retorno for grande).\n   - **Total gasto no período**, com valor final formatado em reais.\n\nFormato sugerido:\n\n**Total de despesas no período**\n- Período: DD/MM/AAAA até DD/MM/AAAA\n- Total: R$ X,XX\n\n---\n\n## 5) Regras rígidas de uso de ferramenta\n\nVocê **NÃO PODE** chamar ferramenta se:\n- faltar confirmação explícita\n- houver ambiguidade\n- campos obrigatórios estiverem ausentes\n\nVocê **DEVE** chamar ferramenta se:\n- intenção estiver clara\n- dados obrigatórios estiverem completos\n- usuário confirmar com “sim”, “ok”, “pode consultar”, “confirma”\n\n---\n\n## 6) Primeira mensagem do agente\n\nMensagem curta e objetiva:\n\n> “Bora. Você quer **lançar uma despesa** ou **consultar gastos**?”"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        1296,
+        1680,
         -608
       ],
       "id": "6d130fc2-8956-4b69-8fcb-1b15fd7148da",
@@ -206,7 +178,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
       "typeVersion": 1.5,
       "position": [
-        1216,
+        1648,
         -272
       ],
       "id": "855a3f91-4094-49af-a497-187a87b5e5ca",
@@ -286,7 +258,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        1648,
+        2064,
         -272
       ],
       "id": "033d7889-a730-4faa-9086-f2e3ec066e84",
@@ -338,7 +310,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        1488,
+        1904,
         -272
       ],
       "id": "a1a227d2-c5de-4f41-88bb-235b40e43730",
@@ -349,7 +321,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [
-        1360,
+        1776,
         -272
       ],
       "id": "05b32cf5-c9ca-44c3-9524-f546c99f99cd",
@@ -371,14 +343,14 @@
     {
       "parameters": {
         "content": "## Processar mensagem de texto\n",
-        "height": 544,
-        "width": 1328
+        "height": 560,
+        "width": 1632
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         560,
-        -672
+        -688
       ],
       "id": "6ef4bb4d-e797-4694-b36f-882a1cb9507b",
       "name": "Sticky Note"
@@ -472,7 +444,7 @@
       "parameters": {
         "content": "## Processar mensagem de  imagem",
         "height": 544,
-        "width": 1328,
+        "width": 1264,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -488,7 +460,7 @@
       "parameters": {
         "content": "## Processar mensagem de  Audio",
         "height": 544,
-        "width": 1328,
+        "width": 1264,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -529,7 +501,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        592,
+        608,
         -608
       ],
       "id": "e2ebab44-2f0b-4a46-bf83-65a1580425f5",
@@ -564,7 +536,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        592,
+        608,
         704
       ],
       "id": "acf60e5d-017d-4781-a68e-07534ebe95e7",
@@ -599,11 +571,79 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        592,
+        608,
         16
       ],
       "id": "d54d51c2-56c6-49ae-a0c3-229538acb0f2",
       "name": "Extrair campos imagem"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "GBqsRqtBkY4PRnwS",
+          "mode": "list",
+          "cachedResultName": "PESSOAS_FAMILIA",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/GBqsRqtBkY4PRnwS"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "TELEFONE",
+              "keyValue": "={{ $('gestao-financeira').item.json.body.data.key.participant }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        -608
+      ],
+      "id": "1a01d790-5540-4f12-9db9-aa2c95af4e7e",
+      "name": "Pessoas"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "zlghCbSqrsMr8Qvf",
+          "mode": "list",
+          "cachedResultName": "TIPOS_DESPESA_FAMILIA",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/zlghCbSqrsMr8Qvf"
+        },
+        "matchType": "allConditions"
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -608
+      ],
+      "id": "6158f815-1104-43e6-82ad-34a60cf81266",
+      "name": "Tipos Despesas"
+    },
+    {
+      "parameters": {
+        "aggregate": "={{ $('Tipos Despesas').item.json.TIPO_DESPESA }}",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -608
+      ],
+      "id": "d7a7eb60-e069-48fb-abb6-751a313ed4b7",
+      "name": "Aggregate"
     }
   ],
   "connections": {
@@ -622,7 +662,7 @@
       "main": [
         [
           {
-            "node": "Get row(s)",
+            "node": "Tipos Despesas",
             "type": "main",
             "index": 0
           }
@@ -630,17 +670,6 @@
         [
           {
             "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get row(s)": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -770,6 +799,39 @@
           }
         ]
       ]
+    },
+    "Pessoas": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipos Despesas": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Pessoas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -864,8 +926,8 @@
       }
     ]
   },
-  "versionId": "f53dee46-c9f4-4d3a-ae79-eb474feb53f9",
-  "versionCounter": 209,
+  "versionId": "ad76804a-26c7-465f-9147-a5d6a5ebf396",
+  "versionCounter": 252,
   "triggerCount": 1,
   "shared": [
     {
@@ -889,7 +951,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2026-01-13T23:35:36.000Z",
+              "updatedAt": "2026-01-14T12:01:37.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -924,7 +986,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-13",
+              "lastActiveAt": "2026-01-14",
               "isPending": false
             }
           }
