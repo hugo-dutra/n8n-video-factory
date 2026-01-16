@@ -1,0 +1,159 @@
+{
+  "name": "@EFFECTS_NOISE",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILENAME\": \"FILENAME_1\",\n  \"NOISE_STRENGTH \": 20,\n  \"NOISE_FLAGS \":\"u+t\",\n  \"NOISE_SEED  \" : 42\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1168,
+        -112
+      ],
+      "id": "4476772a-2261-4a12-ac18-13d1c77606bf",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "94d5dc8b-4c78-411a-b468-cf9d7b53635a",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9a6d8d1-dbd3-47e1-984a-202445146564",
+              "name": "FILENAME",
+              "value": "={{ $json.FILENAME }}",
+              "type": "string"
+            },
+            {
+              "id": "cd520121-d1dd-44d1-ae9c-0fad569de67e",
+              "name": "NOISE_STRENGTH",
+              "value": "={{ $json.NOISE_STRENGTH }}",
+              "type": "number"
+            },
+            {
+              "id": "9b755ec2-40c6-4115-9ad2-f9e6bf440fa1",
+              "name": "NOISE_FLAGS ",
+              "value": "={{ $json['NOISE_FLAGS '] }}",
+              "type": "string"
+            },
+            {
+              "id": "9a663f5c-38a1-4536-b7f8-b27ef2ff3008",
+              "name": "NOISE_SEED  ",
+              "value": "={{ $json['NOISE_SEED  '] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "319fe64b-a0ac-4cee-93b3-d08a6e2773a7",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inputs esperados:\n// FILENAME        -> ex: \"video.mp4\" (em /home/node/processing)\n// NOISE_STRENGTH  -> intensidade do ruído (número; padrão: 20)\n// NOISE_FLAGS     -> flags do noise (ex.: \"u+t\", \"g+t\", \"u\", \"g+p\"; padrão: \"u+t\")\n//                    u=uniform, g=gaussiano, p=positivo, t=temporal\n// NOISE_SEED      -> semente (inteiro; padrão: 42)\n\nconst file = $json.FILENAME;\nconst STRENGTH = Number($json.NOISE_STRENGTH ?? 20);\nconst FLAGS = ($json.NOISE_FLAGS ?? 'u+t').toString();   // ex.: 'u+t'\nconst SEED = Number($json.NOISE_SEED ?? 42);\n\nconst BASE = '/home/node/processing';\n\n// Nome de saída\nconst safe = s => s.replace(/\\.mp4$/i,'').replace(/[^A-Za-z0-9_\\-]/g,'_');\nconst flagTag = FLAGS.replace(/\\+/g,'');\nconst outFile = `${safe(file)}_NOISE${STRENGTH}_${flagTag}_SEED${SEED}.mp4`;\n\n// Comando FFmpeg: aplica ruído + mantém áudio original\nconst cmd =\n  `ffmpeg -y -i \"${BASE}/${file}\" ` +\n  `-vf \"noise=alls=${STRENGTH}:allf=${FLAGS}:all_seed=${SEED},format=yuv420p\" ` +\n  `-c:v libx264 -preset veryfast -crf 20 -movflags +faststart -c:a copy ` +\n  `\"${BASE}/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "8a297efb-b936-4bbc-8f45-651395acd939",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "content": "## 🎬 Parâmetros do efeito NOISE\n\n- **FILENAME** → nome do arquivo de vídeo de entrada  \n  - Exemplo: `video.mp4`  \n  - Local esperado: `/home/node/processing`\n\n---\n\n### 🔊 Parâmetros do filtro `noise`\n\n- **NOISE_STRENGTH** *(opcional)* → intensidade do ruído  \n  - Tipo: número inteiro  \n  - **Mínimo:** `0` (sem ruído)  \n  - **Máximo:** `100` (ruído muito forte)  \n  - **Padrão:** `20`  \n  - Observação: valores altos podem distorcer completamente a imagem  \n\n- **NOISE_FLAGS** *(opcional)* → tipo de ruído aplicado  \n  - Tipo: string (combinação de letras)  \n  - Valores aceitos:  \n    - `u` → uniforme  \n    - `g` → gaussiano  \n    - `p` → apenas valores positivos  \n    - `t` → temporal (ruído varia a cada frame)  \n  - Combinações possíveis: `u+t`, `g+t`, `u`, `g`, etc.  \n  - **Padrão:** `u+t`\n\n- **NOISE_SEED** *(opcional)* → semente do gerador de ruído  \n  - Tipo: número inteiro  \n  - **Mínimo:** `0`  \n  - **Máximo:** `2^32 - 1` (≈ 4,29 bilhões)  \n  - **Padrão:** `42`  \n  - Observação: usar o mesmo seed gera ruído idêntico em execuções diferentes  \n",
+        "height": 784,
+        "width": 560,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1008,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "aa9819c1-26df-45bb-958f-9316af0bd333",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILENAME": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "NOISE_STRENGTH": 80,
+          "NOISE_FLAGS ": "u+t",
+          "NOISE_SEED  ": 42
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a45aafaf-dbd3-4f93-88bd-894669decb56",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "Z33HIEno3bKBmwPO",
+  "tags": []
+}

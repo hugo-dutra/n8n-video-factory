@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD:env/n8n_workflow/backup/BQu7fXvxcZR1av6F_@DOWNLOAD_THUMBNAIL.json
   "updatedAt": "2025-10-10T00:23:32.000Z",
   "createdAt": "2025-08-20T21:44:14.723Z",
   "id": "BQu7fXvxcZR1av6F",
@@ -6,6 +7,8 @@
   "description": null,
   "active": false,
   "isArchived": false,
+=======
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@DOWNLOAD_THUMBNAIL.json
   "nodes": [
     {
       "parameters": {
@@ -196,6 +199,17 @@
         ]
       ]
     },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "HAS_CHANNEL_ID": {
       "main": [
         [
@@ -214,6 +228,7 @@
         ]
       ]
     },
+<<<<<<< HEAD:env/n8n_workflow/backup/BQu7fXvxcZR1av6F_@DOWNLOAD_THUMBNAIL.json
     "DOWNLOAD": {
       "main": [
         [
@@ -225,6 +240,8 @@
         ]
       ]
     },
+=======
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@DOWNLOAD_THUMBNAIL.json
     "Create Folder": {
       "main": [
         [
@@ -237,6 +254,7 @@
       ]
     }
   },
+<<<<<<< HEAD:env/n8n_workflow/backup/BQu7fXvxcZR1av6F_@DOWNLOAD_THUMBNAIL.json
   "settings": {
     "executionOrder": "v1"
   },
@@ -322,4 +340,16 @@
     }
   ],
   "tags": []
+=======
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "1tNpw8a_kRw"
+      }
+    ]
+  },
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@DOWNLOAD_THUMBNAIL.json
 }

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD:env/n8n_workflow/backup/bPkDY1rLEosPYyck_@VIDEO_SPLIT.json
   "updatedAt": "2025-10-08T11:51:36.000Z",
   "createdAt": "2025-08-21T11:01:01.535Z",
   "id": "bPkDY1rLEosPYyck",
@@ -6,11 +7,17 @@
   "description": null,
   "active": false,
   "isArchived": false,
+=======
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@VIDEO_SPLIT.json
   "nodes": [
     {
       "parameters": {
         "inputSource": "jsonExample",
+<<<<<<< HEAD:env/n8n_workflow/backup/bPkDY1rLEosPYyck_@VIDEO_SPLIT.json
         "jsonExample": "{\n  \"VIDEO_ID\": \"_LMpN6o26E0\",\n  \"BASE_PATH\": \"CANAL_ANCAPSU\",\n  \"START_TIME\": \"00:00:00\",\n  \"END_TIME\": \"00:00:13\",\n  \"PREFIX\": \"a string\"\n}"
+=======
+        "jsonExample": "{\n  \"VIDEO_ID\": \"_LMpN6o26E0\",\n  \"START_TIME\": \"00:00:00\",\n  \"END_TIME\": \"00:00:13\",\n  \"PREFIX\": \"a string\"\n}"
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@VIDEO_SPLIT.json
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
@@ -242,6 +249,7 @@
       ]
     }
   },
+<<<<<<< HEAD:env/n8n_workflow/backup/bPkDY1rLEosPYyck_@VIDEO_SPLIT.json
   "settings": {
     "executionOrder": "v1"
   },
@@ -331,4 +339,19 @@
     }
   ],
   "tags": []
+=======
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "UZKSdzKW_JI",
+        "START_TIME": "3.98",
+        "END_TIME": "53.2",
+        "PREFIX": "short_"
+      }
+    ]
+  },
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@VIDEO_SPLIT.json
 }

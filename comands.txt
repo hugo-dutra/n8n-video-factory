@@ -1,6 +1,3 @@
 Comando para forçar update de containes e libs: docker compose build --pull --no-cache
 
 docker compose up -d --no-deps --pull --build n8n
-
-docker compose build --no-cache --build-arg YTDLP_CHANNEL=nightly n8n
-docker compose up -d n8n

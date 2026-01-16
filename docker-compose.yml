@@ -21,17 +21,15 @@ services:
       N8N_RUNNERS_TASK_TIMEOUT: 900
       N8N_ENDPOINT_WEBHOOK_TEST: n8n-test
       N8N_LOG_LEVEL: debug
-      N8N_USER_MANAGEMENT_DISABLED: "false"
-      N8N_PUBLIC_API_DISABLED: "false"
+      N8N_USER_MANAGEMENT_DISABLED: "true"
       WHISPER_API_URL: http://whisper-api:8000
       REDIS_HOST: redis
-      REDIS_PORT: "6379"  
-      N8N_API_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NmI2MmJlZS1lYmIxLTRmZTUtYTUxYi1jMTE2ZWY3MDY0ZWIiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTkxOTA2fQ.rDMPb66Xspvo3x2Ie7uCx25552SgCvifCjSKCoIpbNo"
+      REDIS_PORT: "6379"      
     volumes:
       - ./env/n8n_data:/home/node/.n8n
       - ./env/n8n_download:/home/node/download
       - ./env/n8n_processing:/home/node/processing
-      - ./env/n8n_workflow:/home/node/n8n_workflow
+      - ./env/n8n_workflow:/home/node/n8n_workflow:ro
       - ./env/n8n_assets:/home/node/assets
     restart: unless-stopped
     networks:

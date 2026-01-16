@@ -259,8 +259,3 @@ dist
 env/n8n_data/**
 env/n8n_download/**
 env/n8n_processing/**
-
-env/n8n_assets/**/final_videos/
-env/n8n_assets/**/overlay_videos/
-env/n8n_assets/**/videos/
-*.mp4

@@ -1,0 +1,157 @@
+{
+  "name": "@EFFECTS_SEPIA",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FILENAME\": \"_LMpN6o26E0_00_00_00_00_00_06.mp4\",\n  \"S_INTENSITY\": 0.8\n}\n"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1168,
+        -112
+      ],
+      "id": "a52c0d4e-745f-403f-9e91-15be98e683c2",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "c2f2b746-4013-4321-a004-8370f439ebb8",
+      "name": "COMMAND"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9a6d8d1-dbd3-47e1-984a-202445146564",
+              "name": "FILENAME",
+              "value": "={{ $json.FILENAME }}",
+              "type": "string"
+            },
+            {
+              "id": "cd520121-d1dd-44d1-ae9c-0fad569de67e",
+              "name": "NOISE_STRENGTH",
+              "value": "={{ $json.NOISE_STRENGTH }}",
+              "type": "number"
+            },
+            {
+              "id": "9b755ec2-40c6-4115-9ad2-f9e6bf440fa1",
+              "name": "NOISE_FLAGS ",
+              "value": "={{ $json['NOISE_FLAGS '] }}",
+              "type": "string"
+            },
+            {
+              "id": "9a663f5c-38a1-4536-b7f8-b27ef2ff3008",
+              "name": "NOISE_SEED  ",
+              "value": "={{ $json['NOISE_SEED  '] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "7e2ed344-c66a-4aa3-93fd-aeb023b4247c",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inputs esperados:\n// FILENAME   -> ex: \"_LMpN6o26E0_00_00_00_00_00_06.mp4\" (em /home/node/processing)\n// S_INTENSITY -> intensidade do efeito (0–1, padrão 1.0)\n//               1.0 = sepia total, valores menores = mistura com original\n\nconst file = $json.FILENAME;\nconst S_INTENSITY = Number($json.S_INTENSITY ?? 1.0);\n\nconst BASE = '/home/node/processing';\n\n// Nome de saída seguro\nconst safe = s => s.replace(/\\.[A-Za-z0-9]+$/,'').replace(/[^A-Za-z0-9_\\-]/g,'_');\nconst outFile = `${safe(file)}_SEPIA_int${S_INTENSITY}.mp4`;\n\n// Matriz de cores sepia clássica (com intensidade ajustável)\nconst r = `.393*${S_INTENSITY}+.607*(1-${S_INTENSITY})`;\nconst g = `.769*${S_INTENSITY}+.231*(1-${S_INTENSITY})`;\nconst b = `.189*${S_INTENSITY}+.811*(1-${S_INTENSITY})`;\n\nconst r2 = `.349*${S_INTENSITY}+.651*(1-${S_INTENSITY})`;\nconst g2 = `.686*${S_INTENSITY}+.314*(1-${S_INTENSITY})`;\nconst b2 = `.168*${S_INTENSITY}+.832*(1-${S_INTENSITY})`;\n\nconst r3 = `.272*${S_INTENSITY}+.728*(1-${S_INTENSITY})`;\nconst g3 = `.534*${S_INTENSITY}+.466*(1-${S_INTENSITY})`;\nconst b3 = `.131*${S_INTENSITY}+.869*(1-${S_INTENSITY})`;\n\n// Filtro colorchannelmixer aplicado com blend de intensidade\nconst vf = `colorchannelmixer=${r}:${g}:${b}:0:${r2}:${g2}:${b2}:0:${r3}:${g3}:${b3}`;\n\nconst cmd =\n  `ffmpeg -y -i \"${BASE}/${file}\" ` +\n  `-vf \"${vf},format=yuv420p\" ` +\n  `-c:v libx264 -preset veryfast -crf 20 -movflags +faststart ` +\n  `-c:a copy ` +\n  `\"${BASE}/${outFile}\"`;\n\nreturn {\n  command: cmd,\n  outputFile: outFile\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "5a4e6aad-1e05-49cb-be0c-379e60a084b1",
+      "name": "C0DE"
+    },
+    {
+      "parameters": {
+        "content": "## 🎬 Parâmetros do efeito Sepia\n\n- **FILENAME** → vídeo de entrada  \n  - Exemplo: `_LMpN6o26E0_00_00_00_00_00_06.mp4`  \n  - Local: `/home/node/processing`\n\n- **S_INTENSITY** → intensidade do efeito sépia  \n  - Faixa: `0.0` a `1.0`  \n  - Padrão: `1.0` (sepia total)  \n  - `0.5` → mistura 50% original e 50% sepia  \n  - `0.0` → vídeo original (sem efeito)\n\nO efeito é criado com `colorchannelmixer`, aplicando a matriz de transformação clássica do sepia.\n",
+        "height": 368,
+        "width": 672,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1024,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "7f4c0f11-d1b2-4577-a760-d05100045036",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "START": [
+      {
+        "json": {
+          "FILENAME": "_LMpN6o26E0_00_00_00_00_00_06.mp4",
+          "S_INTENSITY": 0.8
+        }
+      }
+    ]
+  },
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "C0DE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "C0DE": {
+      "main": [
+        [
+          {
+            "node": "COMMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0e729d78-6d3d-4d46-8922-a03822743726",
+  "meta": {
+    "instanceId": "e562edbe74086864fad96dc54f91d130f73a43f334e27062d34cbaf271013692"
+  },
+  "id": "7Z0kvWSNPmZBVOmW",
+  "tags": []
+}

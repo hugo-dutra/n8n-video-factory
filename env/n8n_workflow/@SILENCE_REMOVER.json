@@ -1,0 +1,273 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "command": "=#!/usr/bin/env bash\nset -euo pipefail\nexport LC_ALL=C\n\n# ===== ENTRADAS =====\nVIDEO=\"{{ $json.videoPath }}\"     # sempre um .mp4 com vídeo e áudio\nSTART=\"{{ $json.start }}\"         # ex: 279.611\nEND=\"{{ $json.end }}\"             # ex: 281.975\n\n# ===== DEPENDÊNCIAS =====\ncommand -v ffprobe >/dev/null 2>&1 || { echo '{\"ok\":false,\"error\":\"ffprobe não encontrado\"}'; exit 1; }\ncommand -v ffmpeg  >/dev/null 2>&1 || { echo '{\"ok\":false,\"error\":\"ffmpeg não encontrado\"}'; exit 1; }\n\n# ===== VERIFICA EXISTÊNCIA =====\n[ -f \"$VIDEO\" ] || { echo '{\"ok\":false,\"error\":\"Arquivo de vídeo não encontrado\"}'; exit 1; }\n\n# ===== VERIFICA STREAMS =====\nHAS_VIDEO=\"$(ffprobe -v error -select_streams v -show_entries stream=index -of csv=p=0 \"$VIDEO\" | wc -l | tr -d ' ')\"\nHAS_AUDIO=\"$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 \"$VIDEO\" | wc -l | tr -d ' ')\"\n[ \"$HAS_VIDEO\" -gt 0 ] || { echo '{\"ok\":false,\"error\":\"O MP4 não possui trilha de vídeo\"}'; exit 1; }\n[ \"$HAS_AUDIO\" -gt 0 ] || { echo '{\"ok\":false,\"error\":\"O MP4 não possui trilha de áudio (não dá pra gerar MP3)\"}'; exit 1; }\n\n# ===== DURAÇÃO =====\nDURATION=\"$(ffprobe -v error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$VIDEO\" | tr -d '\\r')\"\nDURATION=\"$(awk -v d=\"$DURATION\" 'BEGIN{ if (d<0) d=0; printf \"%.6f\", d }')\"\n[ \"$DURATION\" = \"0.000000\" ] && { echo '{\"ok\":false,\"error\":\"Duração inválida\"}'; exit 1; }\n\n# ===== CLAMP E SANITY =====\nSTART=\"$(awk -v s=\"$START\" -v d=\"$DURATION\" 'BEGIN{ if(s<0)s=0; if(s>d)s=d; printf \"%.6f\", s }')\"\nEND=\"$(awk -v e=\"$END\" -v d=\"$DURATION\" 'BEGIN{ if(e<0)e=0; if(e>d)e=d; printf \"%.6f\", e }')\"\n\nGE=\"$(awk -v s=\"$START\" -v e=\"$END\" 'BEGIN{ print (s>=e)?1:0 }')\"\n[ \"$GE\" -eq 1 ] && { echo \"{\\\"ok\\\":false,\\\"error\\\":\\\"start>=end após clamp\\\",\\\"start\\\":$START,\\\"end\\\":$END,\\\"duration\\\":$DURATION}\"; exit 1; }\n\nKEEP_HEAD=\"$(awk -v s=\"$START\" 'BEGIN{ print (s>0.0005)?1:0 }')\"\nKEEP_TAIL=\"$(awk -v e=\"$END\" -v d=\"$DURATION\" 'BEGIN{ print (e<d-0.0005)?1:0 }')\"\n[ \"$KEEP_HEAD\" -eq 0 ] && [ \"$KEEP_TAIL\" -eq 0 ] && { echo \"{\\\"ok\\\":false,\\\"error\\\":\\\"Intervalo cobre 100% da mídia\\\",\\\"start\\\":$START,\\\"end\\\":$END,\\\"duration\\\":$DURATION}\"; exit 1; }\n\n# ===== NOMES =====\nDIR=\"$(dirname \"$VIDEO\")\"\nBASE=\"$(basename \"$VIDEO\")\"\nNAME=\"${BASE%.*}\"\n\n# Saídas finais desejadas:\nFINAL_MP4=\"$VIDEO\"           # sobrescreve o original\nFINAL_MP3=\"$DIR/${NAME}.mp3\" # mesmo nome-base, extensão .mp3\n\n# Temporários únicos (evita conflito e restos):\nTMP_TAG=\".$(date +%s%N).tmp\"\nTMP_MP4=\"$DIR/${NAME}${TMP_TAG}.mp4\"\nTMP_MP3=\"$DIR/${NAME}${TMP_TAG}.mp3\"\n\n# Limpa temporários se falhar\ncleanup() { rm -f \"$TMP_MP4\" \"$TMP_MP3\"; }\ntrap cleanup EXIT\n\n# ===== FILTER_GRAPH =====\nFILTER=\"\"\nif [ \"$KEEP_HEAD\" -eq 1 ] && [ \"$KEEP_TAIL\" -eq 1 ]; then\n  FILTER=$(printf \"\n    [0:v]trim=start=0:end=%s,setpts=PTS-STARTPTS[v0];\n    [0:a]atrim=start=0:end=%s,asetpts=PTS-STARTPTS[a0];\n    [0:v]trim=start=%s,setpts=PTS-STARTPTS[v1];\n    [0:a]atrim=start=%s,asetpts=PTS-STARTPTS[a1];\n    [v0][a0][v1][a1]concat=n=2:v=1:a=1[vout][aout];\n    [aout]asplit=2[aud_mp3][aud_mp4]\n  \" \"$START\" \"$START\" \"$END\" \"$END\")\nelif [ \"$KEEP_HEAD\" -eq 1 ]; then\n  FILTER=$(printf \"\n    [0:v]trim=start=0:end=%s,setpts=PTS-STARTPTS[vout];\n    [0:a]atrim=start=0:end=%s,asetpts=PTS-STARTPTS[aout];\n    [aout]asplit=2[aud_mp3][aud_mp4]\n  \" \"$START\" \"$START\")\nelse\n  FILTER=$(printf \"\n    [0:v]trim=start=%s,setpts=PTS-STARTPTS[vout];\n    [0:a]atrim=start=%s,asetpts=PTS-STARTPTS[aout];\n    [aout]asplit=2[aud_mp3][aud_mp4]\n  \" \"$END\" \"$END\")\nfi\n\n# ===== FFMPEG (grava em temporários) =====\nffmpeg -hide_banner -loglevel error -y \\\n  -i \"$VIDEO\" \\\n  -filter_complex \"$FILTER\" \\\n  -map \"[aud_mp3]\" -c:a libmp3lame -b:a 192k -ar 48000 -movflags +faststart \"$TMP_MP3\" \\\n  -map \"[vout]\" -map \"[aud_mp4]\" -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p \\\n  -c:a aac -b:a 192k -ar 48000 -movflags +faststart \"$TMP_MP4\"\n\n# ===== RENOMEIA ATÔMICO (sobrescreve) =====\nmv -f \"$TMP_MP3\" \"$FINAL_MP3\"\nmv -f \"$TMP_MP4\" \"$FINAL_MP4\"\n\n# ===== TAMANHOS =====\nSIZE_MP3=\"$(stat -c%s \"$FINAL_MP3\" 2>/dev/null || wc -c < \"$FINAL_MP3\")\"\nSIZE_MP4=\"$(stat -c%s \"$FINAL_MP4\" 2>/dev/null || wc -c < \"$FINAL_MP4\")\"\n\n# ===== SAÍDA JSON =====\nprintf '{\"ok\":true,\"source\":\"%s\",\"outputs\":{\"mp3\":\"%s\",\"mp4\":\"%s\"},\"overwroteSource\":true,\"removed\":{\"start\":%s,\"end\":%s},\"durationSeconds\":%s,\"codecs\":{\"video\":\"libx264\",\"audioMp3\":\"libmp3lame\",\"audioMp4\":\"aac\"},\"sizes\":{\"mp3\":%s,\"mp4\":%s}}\\n' \\\n  \"$VIDEO\" \"$FINAL_MP3\" \"$FINAL_MP4\" \"$START\" \"$END\" \"$DURATION\" \"$SIZE_MP3\" \"$SIZE_MP4\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        224
+      ],
+      "id": "6f7f48c4-fa3e-44d6-962a-39724d405c05",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"videoId\":\"video id\",\n  \"periods\": [\n    { \"startSilence\": 257.047, \"endSilence\": 259.402, \"duration\": 2.35465 },\n    { \"startSilence\": 516.407, \"endSilence\": 518.906, \"duration\": 2.49881 }\n  ]\n}"
+      },
+      "id": "46cff3ef-ccc4-47bb-a6c2-d880707a9249",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        688,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        128
+      ],
+      "id": "65351caa-58d5-435a-93c9-8f7cc9e0f09f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node (Run Once for All Items)\nconst input = items[0]?.json ?? {};\nconst arr = Array.isArray(input.periods) ? input.periods : [];\n\n// Se quiser preservar outros campos do item original, descomente:\n// const { periods, ...rest } = input;\n\n// Inverte sem mutar o array original\nconst reversed = arr.slice().reverse();\n\nreturn reversed.map((p, i) => ({\n  json: {\n    // ...rest,              // <- opcional: mantém campos do item original\n    periodIndex: i,          // índice após inverter\n    originalIndex: arr.length - 1 - i,  // índice que tinha antes\n    ...p,\n  },\n  pairedItem: { item: 0 },\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        128
+      ],
+      "id": "61ff974d-ebf9-4845-92f0-29a214e46f07",
+      "name": "Invert Array",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Junta tudo que veio nos items e extrai RESULT:\"...\"\n// Funciona mesmo com chaves malformadas igual ao seu exemplo.\n\nfunction extractResult(obj) {\n  const s = JSON.stringify(obj);\n  // casa RESULT: \"ALGUMA_COISA\" (com ou sem aspas ao redor do valor)\n  const m = s.match(/RESULT\\s*:\\s*\"([^\"]+)\"|RESULT\\s*:\\s*([A-Za-z0-9._-]+)/i);\n  return m ? (m[1] ?? m[2]) : null;\n}\n\nconst results = items\n  .map((it) => extractResult(it.json))\n  .filter((v) => v != null);\n\n// Se houver vários, pega o mais frequente (ou o primeiro)\nlet finalResult = \"SUCCESS\";\nif (results.length) {\n  const freq = results.reduce(\n    (acc, v) => ((acc[v] = (acc[v] || 0) + 1), acc),\n    {},\n  );\n  finalResult = Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0];\n}\n\nreturn [\n  {\n    json: {\n      RESULT: finalResult,\n      audio: $(\"Start\").first().json.videoId+'.audio.mp3',\n      video: $(\"Start\").first().json.videoId+'.video.mp4',\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1664,
+        32
+      ],
+      "id": "cfc7f1d8-9fb1-4d2d-8e45-7e3a24984cdb",
+      "name": "Format Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c996d418-2465-4da1-a8fe-46e162937c96",
+              "name": "=[\n  {\n    RESULT: \"SUCCESS\",\n  },\n];\n",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1504,
+        32
+      ],
+      "id": "986f8ba6-0d51-4d52-9757-a15534710f8d",
+      "name": "Get Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c7ee4cd0-8e0a-43d8-91c6-79411a610a8b",
+              "name": "start",
+              "value": "={{ $json.startSilence }}",
+              "type": "number"
+            },
+            {
+              "id": "de752580-257f-4539-ba2b-cb6b18060e75",
+              "name": "end",
+              "value": "={{ $json.endSilence }}",
+              "type": "number"
+            },
+            {
+              "id": "0c8190ba-3620-4752-b675-0b4a495b81b9",
+              "name": "audioPath",
+              "value": "=/home/node/download/CANAL_ANCAPSU/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}.mp4",
+              "type": "string"
+            },
+            {
+              "id": "a02d189b-d4a3-47f2-82c7-f02a663b6076",
+              "name": "videoPath",
+              "value": "=/home/node/download/CANAL_ANCAPSU/{{ $('Start').item.json.videoId }}/{{ $('Start').item.json.videoId }}.mp4",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1504,
+        224
+      ],
+      "id": "7906a13b-aaa6-42e6-802a-6b2eb16a7b7d",
+      "name": "Select Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "345345e6-9e10-45e9-a6e3-4c9665d9cc39",
+              "leftValue": "={{ $json.periods }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        48
+      ],
+      "id": "9d6ba318-03f4-4bd8-8895-de2be42987d7",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Get Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Select Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invert Array": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Result": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invert Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Start": [
+      {
+        "videoId": "tugq5FUmPEI",
+        "periods": []
+      }
+    ]
+  },
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}

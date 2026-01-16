@@ -1,0 +1,282 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"VIDEO_FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.mp4\",\n  \"IMAGE_FILE_NAME\":\"_LMpN6o26E0_00_00_00_00_00_13.jpg\",\n  \"IMAGE_X_POS\":0,\n  \"IMAGE_Y_POS\":0,\n  \"START_TIME_OVERLAY\":5,\n  \"END_TIME_OVERLAY\":5,\n  \"FADE_TIME\":2\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        -112
+      ],
+      "id": "bc0b43bf-5f58-451f-a27d-8d76cd6c09c6",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab7f91b9-a7d9-4a5a-b5a6-189685e0bf2d",
+              "name": "VIDEO_FILENAME",
+              "value": "={{ $('START').item.json.VIDEO_FILE_NAME}}",
+              "type": "string"
+            },
+            {
+              "id": "bdab9555-8005-4b43-900b-50618640d055",
+              "name": "IMAGE_FILENAME",
+              "value": "={{ $('START').item.json.IMAGE_FILE_NAME }}",
+              "type": "string"
+            },
+            {
+              "id": "59e4a2b5-fd22-41ed-ab39-1623a5c6441d",
+              "name": "X_POS",
+              "value": "={{ $('START').item.json.IMAGE_X_POS }}",
+              "type": "number"
+            },
+            {
+              "id": "aeb4e09c-6d54-4544-8c8e-a807a6ee4803",
+              "name": "Y_POS",
+              "value": "={{ $('START').item.json.IMAGE_Y_POS }}",
+              "type": "number"
+            },
+            {
+              "id": "c8edf05e-ad48-4bbd-883a-40131210d363",
+              "name": "START_OVERLAY",
+              "value": "={{ $('START').item.json.START_TIME_OVERLAY }}",
+              "type": "number"
+            },
+            {
+              "id": "877d68b3-7b50-4416-a77c-14055b5756fa",
+              "name": "END_OVERLAY",
+              "value": "={{ $('START').item.json.END_TIME_OVERLAY }}",
+              "type": "number"
+            },
+            {
+              "id": "5d1ea399-8699-4f80-a60c-6cd27c07cd4a",
+              "name": "FADE_TIME",
+              "value": "={{ $('START').item.json.FADE_TIME }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -112
+      ],
+      "id": "3dcd7184-a52e-4176-a158-c5c72ebf2bac",
+      "name": "VAR"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4aa43995-1d25-4eac-949f-6ed21d4ab940",
+              "name": "=RESULT",
+              "value": "={{ $json.exitCode === 0? \"SUCCESS\":\"ERROR\"}}",
+              "type": "string"
+            },
+            {
+              "id": "9f2ff60c-73ff-49b8-993b-437ec8110df2",
+              "name": "FILENAME",
+              "value": "={{ $('VAR').item.json.FILENAME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -176
+      ],
+      "id": "ead7e70c-5a63-40fb-b3e5-f2dfc4b452ff",
+      "name": "RESULT"
+    },
+    {
+      "parameters": {
+        "errorMessage": "CHANNEL ID NOT FOUND"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -16
+      ],
+      "id": "6751de47-626a-45df-801a-f7958e3bc66f",
+      "name": "ERROR"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dffd76e-b0cf-4562-a4bf-3ae398e7ba30",
+              "leftValue": "={{ $json.VIDEO_FILENAME }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "585ce6b4-75bc-4e80-afb0-3318d92c79d5",
+              "leftValue": "={{ $json.IMAGE_FILENAME }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "4069ac55-0667-4ddd-af70-6f0169698835",
+      "name": "HAS_FILENAME_ID"
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -y \\\n  -i \"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/{{ $('HAS_FILENAME_ID').item.json.VIDEO_FILENAME }}\" \\\n  -loop 1 -i \"/home/node/assets/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/overlay_images/{{ $('HAS_FILENAME_ID').item.json.IMAGE_FILENAME }}\" \\\n  -filter_complex {{ \n    (() => {\n      const src = $('HAS_FILENAME_ID').item.json;\n\n      const x = src.X_POS ?? 0;\n      const y = src.Y_POS ?? 0;\n      const s = src.START_OVERLAY;\n      const e = src.END_OVERLAY;\n      const fade = $json.FADE_TIME ?? 0;   // agora no mesmo estilo de acesso\n\n      const enable = (s !== undefined && e !== undefined)\n        ? `:enable='between(t,${s},${e})'`\n        : '';\n\n      let imgFilter = 'format=rgba[ol]';\n      if (fade > 0 && s !== undefined && e !== undefined) {\n        imgFilter = `format=rgba,fade=in:st=${s}:d=${fade}:alpha=1,fade=out:st=${e - fade}:d=${fade}:alpha=1[ol]`;\n      }\n\n      return `\"[1:v]${imgFilter};[0:v][ol]overlay=${x}:${y}${enable}\"`;\n    })()\n  }} \\\n  -c:v libx264 -pix_fmt yuv420p -c:a copy -shortest \\\n  \"/home/node/processing/{{ $('@GLOBAL_ANCAPSU').item.json.CHANNEL_NAME }}/OVERLAY_{{ $('HAS_FILENAME_ID').item.json.VIDEO_FILENAME.replace(/\\.[^.]+$/, '') }}.mp4\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -176
+      ],
+      "id": "06fab4a9-ef49-4016-ab14-d410cacc36f0",
+      "name": "OVERLAY",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        -112
+      ],
+      "id": "e6de2e98-16a8-4e7c-b528-8f74b904c2a4",
+      "name": "@GLOBAL_ANCAPSU"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "@GLOBAL_ANCAPSU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAR": {
+      "main": [
+        [
+          {
+            "node": "HAS_FILENAME_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HAS_FILENAME_ID": {
+      "main": [
+        [
+          {
+            "node": "OVERLAY",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OVERLAY": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@GLOBAL_ANCAPSU": {
+      "main": [
+        [
+          {
+            "node": "VAR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_FILE_NAME": "FADE_IN_FADE_OUT_LMpN6o26E0_00_00_00_00_00_13.mp4",
+        "IMAGE_FILE_NAME": "sirene.png",
+        "IMAGE_X_POS": 10,
+        "IMAGE_Y_POS": 15,
+        "START_TIME_OVERLAY": 5,
+        "END_TIME_OVERLAY": 10,
+        "FADE_TIME": 2
+      }
+    ]
+  },
+  "meta": {
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}

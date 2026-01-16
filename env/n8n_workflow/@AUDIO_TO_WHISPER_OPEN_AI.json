@@ -1,0 +1,183 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"VIDEO_ID\": \"a string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        144
+      ],
+      "id": "c9dd57db-0727-430e-9211-4af87e4febee",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b08217d3-fe5e-4286-a655-3e9caa5eb0d4",
+              "name": "RESPONSE",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        144
+      ],
+      "id": "9617c7cf-8aa4-4f02-b1a7-c17c33b7f048",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JgwCIAgZpZMMdgDf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JgwCIAgZpZMMdgDf",
+          "cachedResultName": "@GLOBAL_ANCAPSU"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        144
+      ],
+      "id": "969e23d9-ce01-4780-b754-3a4ed6a8fbf2",
+      "name": "Call '@GLOBAL_ANCAPSU'"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "...",
+              "value": "..."
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "name": "response_format",
+              "value": "srt"
+            },
+            {
+              "name": "language",
+              "value": "pt"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        144
+      ],
+      "id": "1c9c6c2e-9f6b-4a09-bcbb-0155df1fd997",
+      "name": "Call Open AI"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/download/{{ $json.CHANNEL_NAME }}/{{ $('START').item.json.VIDEO_ID }}/{{ $('START').item.json.VIDEO_ID }}.mp3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        768,
+        144
+      ],
+      "id": "816683e9-2f49-4603-b78f-4c440cfe289b",
+      "name": "READ"
+    }
+  ],
+  "connections": {
+    "START": {
+      "main": [
+        [
+          {
+            "node": "Call '@GLOBAL_ANCAPSU'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call '@GLOBAL_ANCAPSU'": {
+      "main": [
+        [
+          {
+            "node": "READ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Open AI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "READ": {
+      "main": [
+        [
+          {
+            "node": "Call Open AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "START": [
+      {
+        "VIDEO_ID": "POsbqYT-EuI"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
+  }
+}

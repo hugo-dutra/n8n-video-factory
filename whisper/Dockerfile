@@ -7,9 +7,13 @@ RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Instala dependências do Whisper e FastAPI
+<<<<<<< HEAD
 RUN pip install --default-timeout=100 --no-cache-dir \
     torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
+=======
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+>>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607
 RUN pip install --no-cache-dir openai-whisper fastapi uvicorn python-multipart
 
 # Define o cache do Whisper para um diretório persistente
