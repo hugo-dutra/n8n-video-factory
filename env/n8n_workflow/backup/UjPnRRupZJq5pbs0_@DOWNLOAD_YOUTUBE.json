@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD:env/n8n_workflow/backup/UjPnRRupZJq5pbs0_@DOWNLOAD_YOUTUBE.json
   "updatedAt": "2025-11-16T19:30:52.000Z",
   "createdAt": "2025-08-20T20:52:18.959Z",
   "id": "UjPnRRupZJq5pbs0",
@@ -7,8 +6,6 @@
   "description": null,
   "active": false,
   "isArchived": false,
-=======
->>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@DOWNLOAD_YOUTUBE.json
   "nodes": [
     {
       "parameters": {
@@ -49,11 +46,7 @@
     },
     {
       "parameters": {
-<<<<<<< HEAD:env/n8n_workflow/backup/UjPnRRupZJq5pbs0_@DOWNLOAD_YOUTUBE.json
         "command": "=yt-dlp \\\n  --recode-video mp4 \\\n  -o \"/home/node/download/CANAL_ANCAPSU/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{ $json.VIDEO_ID }}\"\n"
-=======
-        "command": "=yt-dlp \\\n  --recode-video mp4 \\\n  -o \"/home/node/download/{{ $json.VIDEO_ID }}/{{ $json.VIDEO_ID }}.%(ext)s\" \\\n  \"https://www.youtube.com/watch?v={{ $json.VIDEO_ID }}\"\n"
->>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@DOWNLOAD_YOUTUBE.json
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -166,17 +159,6 @@
         ]
       ]
     },
-    "DOWNLOAD": {
-      "main": [
-        [
-          {
-            "node": "RESULT",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "HAS_CHANNEL_ID": {
       "main": [
         [
@@ -194,9 +176,19 @@
           }
         ]
       ]
+    },
+    "DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "RESULT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-<<<<<<< HEAD:env/n8n_workflow/backup/UjPnRRupZJq5pbs0_@DOWNLOAD_YOUTUBE.json
   "settings": {
     "executionOrder": "v1"
   },
@@ -238,7 +230,7 @@
             "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
             "projectId": "TH7SrF7Rx9ho2z9i",
             "user": {
-              "updatedAt": "2026-01-15T11:12:49.000Z",
+              "updatedAt": "2026-01-16T10:18:10.000Z",
               "createdAt": "2025-08-20T20:52:15.066Z",
               "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
               "email": "hugo.dutra@hotmail.com",
@@ -273,7 +265,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-01-15",
+              "lastActiveAt": "2026-01-16",
               "isPending": false
             }
           }
@@ -282,16 +274,4 @@
     }
   ],
   "tags": []
-=======
-  "pinData": {
-    "START": [
-      {
-        "VIDEO_ID": "_LMpN6o26E0"
-      }
-    ]
-  },
-  "meta": {
-    "instanceId": "c5b0b17754dd8875e0a1c41ee11cdaba0d71678620daa90e860fc2877504e04a"
-  }
->>>>>>> 88a8577dc19ae8b5f2f8138156575cf24235f607:env/n8n_workflow/@DOWNLOAD_YOUTUBE.json
 }
