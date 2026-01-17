@@ -70,13 +70,13 @@ services:
       retries: 5 
 
   evolution-api:
-    image: atendai/evolution-api:latest
+    image: evoapicloud/evolution-api:latest
     restart: always
     ports:
       - "8080:8080"
     environment:    
       AUTHENTICATION_API_KEY: "D5E14EBA3050-40E4-BF1F-DDAE98935CED"
-      CONFIG_SESSION_PHONE_VERSION: "2.3000.1025062854"
+      #CONFIG_SESSION_PHONE_VERSION: "2.3000.1025110696"
       NODE_ENV: production
       TZ: America/Sao_Paulo    
       DATABASE_ENABLED: "true"
