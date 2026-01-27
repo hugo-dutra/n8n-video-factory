@@ -1,0 +1,1218 @@
+{
+  "updatedAt": "2026-01-27T01:49:11.000Z",
+  "createdAt": "2026-01-25T19:35:49.089Z",
+  "id": "4vh8A64ckYzhOj3D",
+  "name": "GESTAO-APRESENTACOES-RICARDO",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini-2025-01-31",
+          "mode": "list",
+          "cachedResultName": "o3-mini-2025-01-31"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2336,
+        80
+      ],
+      "id": "c96ff420-621f-41ce-b1ce-dcee360f0633",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "VFisRu5jSFPDZyLn",
+          "name": "n8n-despesas-familia-rodrigues-dutra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "={{ $('Extrair campos').item.json.destinatario }}",
+        "messageText": "={{ $('Agente financeiro').first().json.output }}",
+        "options_message": {
+          "quoted": {
+            "messageQuoted": {
+              "messageId": "={{ $('gestao-financeira').item.json.body.data.key.id }}"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2736,
+        -112
+      ],
+      "id": "fc5ba2b2-6fa3-475b-afe5-de7b1510c3d6",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensagem: {{ $json.conversation }}",
+        "options": {
+          "systemMessage": "=# 🤖 Prompt Template: Agente de Levantamento de Informações da dupla Ricardo e Eduardo para shows — SoraIA\n\n## 🧠 System Prompt\n\nVocê é a **SoraIA**, uma agente inteligente e especializada em atendimento para planejamento de eventos como **casamentos, festas de bodas, eventos corporativos, formaturas, confraternizações, eventos particulares, aniversários, festas de prefeitura e eventos de final de ano**.  \nSeu papel é **levantar todas as informações necessárias** para a elaboração de uma proposta personalizada para o evento desejado.\n\nVocê deve conduzir o atendimento com empatia, profissionalismo e objetividade. Sua missão é:\n\n1. Fazer perguntas **claras e diretas**, **Uma de cada vez**.\n2. Identificar e registrar todas as **informações essenciais** para a proposta.\n3. **Confirmar os dados** coletados com o cliente ao final. Sempre mostre um resumo ao usuário antes de enviar as informações.\n4. **Somente se tudo estiver correto e confirmado pelo usuário**, **chamar a ferramenta** com os dados estruturados.\n\n> **Importante:** SoraIA **não deve fornecer preços, confirmar agendas, nem dar informações adicionais**. Seu único objetivo é **levantar dados** e **encaminhar para a equipe responsável**.\n\n---\n\n## ✅ Regra crítica sobre ferramentas (OBRIGATÓRIA)\n\n- **NÃO chame nenhuma ferramenta na primeira interação.**\n- **NÃO chame ferramenta enquanto ainda existirem dados faltando** (qualquer campo essencial em aberto).\n- **Somente chame ferramenta após este checklist completo:**\n  1) Você coletou **todas** as informações necessárias do fluxo escolhido.  \n  2) Você apresentou um **resumo estruturado** (em texto) de tudo o que foi coletado.  \n  3) Você perguntou: **“Está tudo correto? Posso enviar para o escritório?”**  \n  4) O usuário respondeu com uma confirmação explícita (ex.: **“sim”, “pode enviar”, “confirmo”**).\n\n✅ Depois disso, **chame a ferramenta `finalizar_dados_atendimento`** enviando o resumo estruturado dos dados colhidos e encerre o atendimento.\n\n---\n\n## 🧭 Identificação do fluxo (logo no início)\n\nNa primeira mensagem, você deve:\n1) Se apresentar como assistente virtual da dupla Ricardo e Eduardo.  \n2) Informar que vai **apenas coletar dados** para encaminhar ao escritório.  \n3) Perguntar o **nome da pessoa** e, a partir daí, chamar a pessoa pelo nome informado.  \n4) Identificar o motivo do contato com uma pergunta objetiva, por exemplo:\n   - **“Você quer informações para um show/evento, enviar músicas/composições, ou é divulgador/radialista?”**\n\nA partir da resposta, siga **um** dos fluxos abaixo.\n\n---\n\n# Fluxo 1: Informações sobre shows e eventos\n\n## #Bloco 0 — Abordagem inicial\n\n0.1 — Se apresentar como assistente virtual e informar que vai colher informações para eventos/shows da dupla Ricardo e Eduardo.  \n0.2 — Perguntar o **nome da pessoa**(Não precisa pedir o nome completo) e, a partir daí, dirigir-se a pessoa pelo nome informado.\n\n## #Bloco 1 — Informações elementares\n\n1.1 — Qual o tipo de evento deseja que seja feito.  \n1.2 — Caso seja casamento, perguntar o nome dos noivos.  \n1.3 — Qual a data e hora do evento.  \n1.4 — Qual o nome do local ou buffet onde ocorrerá o evento.  \n1.5 — Qual a cidade onde ocorrerá.\n\n> **Regra de condução:** faça as perguntas do bloco 1 em sequência.  \n> Se o usuário responder parcialmente, faça apenas a próxima pergunta faltante.\n\n## #Bloco 2 — Informações complementares (estrutura)\n\n2.1 — Quais estruturas necessárias para a realização do evento.  \n2.1.1 — Existe equipamento de som no local que comporte uma banda?  \n**Obs:** essa informação pode ser consultada pelo usuário no contrato com o buffet.  \n2.1.2 —  \n- Existe palco no local que comporte a banda?  \n- Qual a metragem desse palco, caso esteja disponível a informação?  \n2.1.3 — Existe iluminação disponível no local direcionada para o palco?\n\n## #Bloco 3 — Formato desejado para o show/evento\n\n3.1 — Apresentar ao usuário os formatos disponíveis para show, juntamente com o link para visualização, e questionar qual dos formatos o usuário deseja.\n\n**Opções a serem apresentadas (Sempre envie com o link):**\n- 3.1.1 — **Completo:** Banda com 08 músicos (Baixo, bateria, sanfona, guitarra, violão, teclado e a dupla Ricardo e Eduardo).  \n  Link: https://abrir.link/iLTlv\n- 3.1.2 — **Intermediário:** Banda com 06 músicos (Baixo, bateria, sanfona, guitarra e a dupla Ricardo e Eduardo).  \n  Link: https://abrir.link/OulWN\n- 3.1.3 — **Acústico:** Banda com 04 músicos (Bateria eletrônica / Tajon, sanfona e a dupla Ricardo e Eduardo).  \n  Link: https://abrir.link/Xlzif\n- 3.1.4 — **Banda Baile:** 8 músicos (Bateria, baixo, guitarra, sanfona, teclado, cantora e a dupla Ricardo e Eduardo).\n\n## #Bloco 4 — Duração do show\n\n4.1 — Eventos de 1h  \n4.2 — Eventos de 1h e trinta minutos  \n4.3 — Eventos de 2h  \n4.4 — Evento de 3h (exclusivo para o caso de **Banda Baile**, item 3.1.4)\n\n---\n\n# Fluxo 2: Envio de composições e músicas inéditas\n\n- Você deve agradecer o contato e informar que a dupla, por enquanto, **não está escolhendo repertório**.  \n- Porém, caso o usuário queira enviar, você **encaminhará a música** para a dupla Ricardo e Eduardo.\n\n> Condução: colete as informações que o usuário fornecer (por exemplo, nome e forma de envio/link/arquivo, se houver).  \n> Depois, siga a etapa de **confirmação** antes de chamar a ferramenta.\n\n---\n\n# Fluxo 3: Divulgador ou radialista\n\n- Você deve pegar as informações com o usuário e, após pegar todas, **confirmar se é isso mesmo**.  \n- Na sequência, informe ao usuário que irá **encaminhar as informações** para a dupla Ricardo e Eduardo.\n\n> Condução: colete as informações que o usuário fornecer (por exemplo, nome, cidade e detalhes do contato/divulgação).  \n> Depois, siga a etapa de **confirmação** antes de chamar a ferramenta.\n\n---\n\n## ✅ Finalização do atendimento (para TODOS os fluxos)\n\nSomente após colher todas as informações necessárias com o usuário:\n\n1) Apresentar um **resumo** das informações coletadas para o usuário confirmar.  \n2) Perguntar explicitamente se está correto e se pode enviar.  \n3) Se o usuário confirmar, informar que serão enviadas para o **Rodrigo do Escritório** e que ele entrará em contato o mais breve possível.  \n4) **Chamar a ferramenta `finalizar_dados_atendimento`** com o resumo dos dados colhidos no atendimento, juntamente com o telefone do usuário: {{ $('gestao-financeira').item.json.body.data.key.remoteJid.split('@')[0] }}.\n5) Encerrar o atendimento.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        2400,
+        -112
+      ],
+      "id": "b3a07c13-2e64-4de7-a09a-1a952558c8df",
+      "name": "Agente financeiro"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('gestao-financeira').item.json.body.data.key.remoteJid }}",
+        "contextWindowLength": 30
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        2496,
+        80
+      ],
+      "id": "e48330de-2d71-428c-a209-3b7e498a9efb",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "H9ySyNyj1MBc1lrU",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Processar mensagem de texto\n",
+        "height": 368,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -544
+      ],
+      "id": "b29a8148-9214-454f-9bb6-a9a59e55e707",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3af83c90-c3b7-4c61-b4ba-2254ad09337b",
+                    "leftValue": "={{ $('Get data from webhook').item.json.type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Get data from webhook').item.json.type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a4f3285c-ce1a-49c8-ba9f-fce0921aa3cd"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "951df8c2-6f4d-4730-a1a3-29514845677d",
+                    "leftValue": "={{ $('Get data from webhook').item.json.type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1296,
+        -128
+      ],
+      "id": "e3b48075-781f-4def-b400-c834aacfbd66",
+      "name": "Switch T | I | A"
+    },
+    {
+      "parameters": {
+        "content": "## Processar mensagem de  imagem",
+        "height": 384,
+        "width": 688,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -160
+      ],
+      "id": "f8f045cf-ee13-42de-8e8c-d7b02bb94686",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Processar mensagem de  Audio",
+        "height": 416,
+        "width": 688,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        240
+      ],
+      "id": "37529c66-dd79-4942-9270-17b6c205d8c1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://evolution-api:8080/chat/getBase64FromMediaMessage/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "D5E14EBA3050-40E4-BF1F-DDAE98935CED"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{$json.imageRequestPayload.message}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1536,
+        -112
+      ],
+      "id": "0875c0cf-a7d0-4d1e-87fe-692881b833c1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a47ca9bf-ffe2-442c-84a5-3ea7e9798a63",
+              "name": "base64",
+              "value": "=data:image/png;base64,{{ $('HTTP Request').item.json.base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "e2f7f110-3bfa-428a-8d42-d7e0fbebe9d9",
+              "name": "mediaType",
+              "value": "={{ $('HTTP Request').item.json.mediaType }}",
+              "type": "string"
+            },
+            {
+              "id": "31041ed9-dc24-4092-beec-ce9df7098bdc",
+              "name": "size.height",
+              "value": "={{ $('HTTP Request').item.json.size.height }}",
+              "type": "number"
+            },
+            {
+              "id": "e63a51ad-d262-4ac7-acf7-53a4ba122c71",
+              "name": "size.width",
+              "value": "={{ $('HTTP Request').item.json.size.width }}",
+              "type": "number"
+            },
+            {
+              "id": "d28566bf-5046-4c9d-8688-bb8fd6c508b3",
+              "name": "size.fileLength",
+              "value": "={{ $('HTTP Request').item.json.size.fileLength }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1712,
+        -112
+      ],
+      "id": "0efcce20-ed8e-4798-8e33-70f381e58eb8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini-2024-07-18",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI-2024-07-18"
+        },
+        "text": "Você é um agente especializado em analisar imagens de produtos. Descrevêlos juntamente com o preço. \nDescreva apenas, sem falar que esta descrevendo.\n\nEx.: Produto tal, preço tal.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        80
+      ],
+      "id": "049f6855-a131-4bc4-947f-d8d0e8f3b1d2",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "VFisRu5jSFPDZyLn",
+          "name": "n8n-despesas-familia-rodrigues-dutra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, idx) => {\n  const dataUrl = item.json.base64;\n\n  const match = /^data:(.+);base64,(.*)$/.exec(dataUrl);\n  const mimeType = match?.[1] ?? 'application/octet-stream';\n  const base64 = match?.[2] ?? dataUrl;\n\n  const buffer = Buffer.from(base64, 'base64');\n\n  const ext =\n    mimeType === 'image/png' ? 'png' :\n    mimeType === 'image/jpeg' ? 'jpg' :\n    'bin';\n\n  item.binary = item.binary ?? {};\n\n  // ✅ o nome do binary field é \"data\"\n  item.binary.data = {\n    data: buffer.toString('base64'),\n    mimeType,\n    fileName: `imagem-${idx}.${ext}`,\n  };\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        80
+      ],
+      "id": "6b313aaa-9b80-448d-ac6d-fae01113b7b3",
+      "name": "Convert base64 to binary"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "produtor-rodrigo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        -96
+      ],
+      "id": "e13b5619-79d3-45b7-bfeb-37f956832f16",
+      "name": "gestao-financeira",
+      "webhookId": "67e4e8a9-eccf-4773-925e-b7189d05e721"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node (JavaScript)\n * Output: { type, content, participantId, ... , image, imageRequestPayload, instance, serverUrl, apiKey }\n */\n\nfunction normalizeType(messageType, messageObj) {\n  const mt = (messageType || '').toLowerCase();\n\n  if (mt === 'conversation') return 'text';\n  if (mt === 'audiomessage') return 'audio';\n  if (mt === 'imagemessage') return 'image';\n\n  if (messageObj?.conversation != null) return 'text';\n  if (messageObj?.audioMessage != null) return 'audio';\n  if (messageObj?.imageMessage != null) return 'image';\n\n  return 'unknown';\n}\n\nfunction extractContent(type, messageObj) {\n  if (!messageObj || typeof messageObj !== 'object') return '';\n\n  if (type === 'text') {\n    const text = messageObj.conversation;\n    return typeof text === 'string' ? text : '';\n  }\n\n  if (type === 'audio') {\n    const url = messageObj.audioMessage?.url;\n    return typeof url === 'string' ? url : '';\n  }\n\n  if (type === 'image') {\n    const url = messageObj.imageMessage?.url;\n    return typeof url === 'string' ? url : '';\n  }\n\n  const url = messageObj?.audioMessage?.url ?? messageObj?.imageMessage?.url;\n  return typeof url === 'string' ? url : '';\n}\n\n/**\n * Evolution webhook traz alguns campos binários como objeto {0:...,1:...}\n * Converte para base64 (string).\n */\nfunction objectBytesToBase64(maybeObj) {\n  if (!maybeObj || typeof maybeObj !== 'object') return maybeObj;\n  // já é Buffer?\n  if (Buffer.isBuffer(maybeObj)) return maybeObj.toString('base64');\n\n  // precisa ser um objeto com chaves numéricas\n  const keys = Object.keys(maybeObj);\n  if (!keys.length) return maybeObj;\n  const looksNumeric = keys.every((k) => String(+k) === k);\n  if (!looksNumeric) return maybeObj;\n\n  const bytes = keys\n    .map((k) => Number(k))\n    .sort((a, b) => a - b)\n    .map((k) => maybeObj[String(k)]);\n\n  return Buffer.from(bytes).toString('base64');\n}\n\nfunction normalizeImageMessage(imageMessage) {\n  if (!imageMessage || typeof imageMessage !== 'object') return null;\n\n  // shallow clone\n  const img = { ...imageMessage };\n\n  // campos que normalmente vêm como bytes-obj e é melhor enviar em base64\n  const byteFields = [\n    'mediaKey',\n    'fileSha256',\n    'fileEncSha256',\n    'jpegThumbnail',\n    'scansSidecar',\n    'midQualityFileSha256',\n  ];\n\n  for (const f of byteFields) {\n    if (img[f] != null) {\n      img[f] = objectBytesToBase64(img[f]);\n    }\n  }\n\n  // fileLength às vezes vem como {low, high...}; transforma em number simples\n  if (img.fileLength && typeof img.fileLength === 'object' && img.fileLength.low != null) {\n    img.fileLength = Number(img.fileLength.low);\n  }\n\n  // mediaKeyTimestamp idem\n  if (\n    img.mediaKeyTimestamp &&\n    typeof img.mediaKeyTimestamp === 'object' &&\n    img.mediaKeyTimestamp.low != null\n  ) {\n    img.mediaKeyTimestamp = Number(img.mediaKeyTimestamp.low);\n  }\n\n  return img;\n}\n\nreturn items.map((item) => {\n  const body = item.json?.body ?? {};\n  const data = body?.data ?? {};\n  const key = data?.key ?? {};\n  const messageType = data?.messageType;\n  const message = data?.message;\n\n  const type = normalizeType(messageType, message);\n  const content = extractContent(type, message);\n\n  const instance = body?.instance ?? null; // no seu payload: \"n8n\"\n  const serverUrl = body?.server_url ?? null; // no seu payload: \"http://localhost:8080\"\n  const apiKey = body?.apikey ?? null;\n\n  const rawImageMessage = message?.imageMessage;\n  const imageMessage = normalizeImageMessage(rawImageMessage);\n\n  // payload pronto pra usar no HTTP Request (pegar Base64)\n  const imageRequestPayload =\n    type === 'image' && imageMessage\n      ? {\n          message: {\n            key: {\n              remoteJid: key?.remoteJid,\n              id: key?.id,\n            },\n            message: {\n              imageMessage: imageMessage,\n            },\n          },\n        }\n      : null;\n\n  return {\n    json: {\n      type,\n      content,\n      participantId: key?.participant || null,\n\n      // extras úteis (mantidos)\n      messageId: key?.id,\n      remoteJid: key?.remoteJid,\n      fromMe: key?.fromMe,\n      sender: body?.sender,\n      timestamp: data?.messageTimestamp,\n\n      // ✅ novos campos pra baixar/pegar base64 da imagem depois\n      instance,\n      serverUrl,\n      apiKey,\n\n      // ✅ pacote do media (já normalizado pra base64 quando necessário)\n      image: imageMessage\n        ? {\n            url: imageMessage.url,\n            directPath: imageMessage.directPath,\n            mimetype: imageMessage.mimetype,\n            fileLength: imageMessage.fileLength,\n            width: imageMessage.width,\n            height: imageMessage.height,\n            mediaKey: imageMessage.mediaKey,\n            fileSha256: imageMessage.fileSha256,\n            fileEncSha256: imageMessage.fileEncSha256,\n          }\n        : null,\n\n      // ✅ payload pronto pra mandar no HTTP Request node\n      imageRequestPayload,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        -96
+      ],
+      "id": "72947a00-994c-4f57-a287-669e168b4c66",
+      "name": "Get data from webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8512340-22bb-4e2e-aa59-182ca46c7821",
+              "name": "destinatario",
+              "value": "={{ $json.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "296898d6-c467-47ad-9d07-f50f90631d8e",
+              "name": "participan",
+              "value": "={{ $json.participantId }}",
+              "type": "string"
+            },
+            {
+              "id": "005e7266-a721-4b84-8cb2-6dc421177a30",
+              "name": "conversation",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "9198fc1f-623b-404a-9ad4-c3c604f5e86e",
+              "name": "image",
+              "value": "={{ $json.image }}",
+              "type": "object"
+            },
+            {
+              "id": "d3cde8ae-386c-4e68-9c25-c59e5fda51d4",
+              "name": "imageRequestPayload",
+              "value": "={{ $json.imageRequestPayload }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        -96
+      ],
+      "id": "e32537d6-f5c8-4313-b413-10829f222726",
+      "name": "Extrair campos"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "386efa26-b4f8-443b-b205-fbc18353aed1",
+              "name": "nome",
+              "value": "={{ $('NUMEROS PERMITIDOS').item.json.NOME }}",
+              "type": "string"
+            },
+            {
+              "id": "6457ae94-7db6-4498-83c8-9dcde52fd50c",
+              "name": "conversation",
+              "value": "={{ $('Extrair campos').item.json.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        -432
+      ],
+      "id": "c0d81078-b2e0-473b-affc-56d6de6577de",
+      "name": "Edit Fields text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "acee6e1d-6c02-4295-8bbe-17ebdbf5067b",
+              "name": "conversation",
+              "value": "={{ $json['0'].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "6e34f151-5c37-432c-b7d1-43649243db4e",
+              "name": "nome",
+              "value": "={{ $('NUMEROS PERMIIDOS 1').item.json.NOME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2032,
+        -112
+      ],
+      "id": "ea2892e1-dbab-49f0-bef0-28457b434605",
+      "name": "Edit Fields audio"
+    },
+    {
+      "parameters": {
+        "content": "## Cerebro do agente",
+        "height": 384,
+        "width": 672,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        -160
+      ],
+      "id": "dac36e38-80c2-445c-9aa0-90b94447c4b9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://evolution-api:8080/chat/getBase64FromMediaMessage/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "D5E14EBA3050-40E4-BF1F-DDAE98935CED"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ { key: $('gestao-financeira').item.json.body.data.key, message: $('gestao-financeira').item.json.body.data.message } }}"
+            },
+            {
+              "name": "convertToMp4",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1536,
+        304
+      ],
+      "id": "c4dc926f-7bac-4823-9487-2e69d9def8f3",
+      "name": "HTTP Request - Get Base64 (Audio)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a47ca9bf-ffe2-442c-84a5-3ea7e9798a63",
+              "name": "base64",
+              "value": "=data:audio/mpeg;base64,{{ $('HTTP Request - Get Base64 (Audio)').item.json.base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "e2f7f110-3bfa-428a-8d42-d7e0fbebe9d9",
+              "name": "mediaType",
+              "value": "={{ $('HTTP Request - Get Base64 (Audio)').item.json.mediaType }}",
+              "type": "string"
+            },
+            {
+              "id": "d28566bf-5046-4c9d-8688-bb8fd6c508b3",
+              "name": "size.fileLength",
+              "value": "={{ $('HTTP Request - Get Base64 (Audio)').item.json.size.fileLength.low }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        304
+      ],
+      "id": "488f6ba4-5c61-4f72-879b-995b56d22b52",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, idx) => {\n  const dataUrl = item.json.base64 ?? '';\n  if (!dataUrl) return item;\n\n  // Aceita tanto \"data:...;base64,...\" quanto base64 puro\n  const match = /^data:([^;]+);base64,(.*)$/i.exec(dataUrl);\n  const mimeType = (match?.[1] || item.json.mimeType || 'application/octet-stream').trim();\n  const base64 = match?.[2] || dataUrl;\n\n  const buffer = Buffer.from(base64, 'base64');\n\n  // Mime → extensão (cobre WhatsApp + mp3)\n  const mimeToExt = {\n    'image/png': 'png',\n    'image/jpeg': 'jpg',\n    'image/jpg': 'jpg',\n    'image/webp': 'webp',\n\n    'audio/mpeg': 'mp3',\n    'audio/mp3': 'mp3',\n    'audio/ogg': 'ogg',\n    'audio/opus': 'opus',\n    'audio/ogg; codecs=opus': 'ogg', // às vezes vem assim\n    'audio/wav': 'wav',\n    'audio/x-wav': 'wav',\n    'audio/mp4': 'm4a',\n    'audio/aac': 'aac',\n    'audio/webm': 'webm',\n\n    'video/mp4': 'mp4',\n    'application/pdf': 'pdf',\n  };\n\n  // Normaliza mimeType para tentar bater no mapa mesmo se vier com parâmetros\n  const mimeKey = mimeType.toLowerCase();\n  const mimeKeyNoParams = mimeKey.split(';')[0].trim();\n\n  let ext =\n    mimeToExt[mimeKey] ||\n    mimeToExt[mimeKeyNoParams] ||\n    'bin';\n\n  // Se o Evolution mandou mimeType esquisito mas o mediaType diz audioMessage,\n  // dá pra forçar um fallback mais inteligente:\n  const mediaType = item.json.mediaType;\n  if (ext === 'bin' && mediaType === 'audioMessage') {\n    // WhatsApp quase sempre é OGG/OPUS quando é PTT\n    ext = 'ogg';\n  }\n\n  // Nome do arquivo baseado no tipo\n  const prefix =\n    mimeKeyNoParams.startsWith('image/') ? 'imagem' :\n    mimeKeyNoParams.startsWith('audio/') ? 'audio' :\n    mimeKeyNoParams.startsWith('video/') ? 'video' :\n    'arquivo';\n\n  item.binary = item.binary ?? {};\n\n  // Mantém o binary field \"data\" (igual ao teu), agora genérico\n  item.binary.data = {\n    data: buffer.toString('base64'),\n    mimeType: mimeKeyNoParams,   // sem parâmetros (mais limpo pro n8n)\n    fileName: `${prefix}-${idx}.${ext}`,\n  };\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        496
+      ],
+      "id": "cb7e4f0c-29e5-4099-99b0-1906ae432b15",
+      "name": "Convert base64 to binary1"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        496
+      ],
+      "id": "3726177f-b085-40f9-bd6d-74ab8f6fe973",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "VFisRu5jSFPDZyLn",
+          "name": "n8n-despesas-familia-rodrigues-dutra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "acee6e1d-6c02-4295-8bbe-17ebdbf5067b",
+              "name": "conversation",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "6e34f151-5c37-432c-b7d1-43649243db4e",
+              "name": "nome",
+              "value": "={{ $('NUMEROS PERMITIDOS 2').item.json.NOME }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2032,
+        288
+      ],
+      "id": "47f41b62-6401-4743-9729-c69df37be97d",
+      "name": "Edit Fields audio1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "cHBp2QZ8R27kId8j",
+          "mode": "list",
+          "cachedResultName": "NUMEROS_PERMITIDOS",
+          "cachedResultUrl": "/projects/TH7SrF7Rx9ho2z9i/datatables/cHBp2QZ8R27kId8j"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "TELEFONE",
+              "keyValue": "={{ $json.destinatario.split('@')[0] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -96
+      ],
+      "id": "2c346efe-530d-481f-896e-af2ea43f8d1e",
+      "name": "NUMEROS PERMITIDOS"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "115d8b42-112b-4811-bfd1-88d7bbc2d512",
+              "leftValue": "={{ $('NUMEROS PERMITIDOS').all().length }}",
+              "rightValue": "=1",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        -96
+      ],
+      "id": "a476de62-8dda-4ddd-bcf9-4599b551d120",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "description": "tool: finalizar_dados_atendimento\nUse essa ferramente para enviar os dados apenas depois de colher todas as informações necessarias e confirmar com usuario se todas estão corretas. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "XwhJyFAxE3CtiKWr",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/XwhJyFAxE3CtiKWr",
+          "cachedResultName": "@ENVIAR_NOTIFICACAO"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "mensagem": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('mensagem', `Ttodas as informações que foram colhidas no roteiro de atendimento.`, 'string') }}",
+            "telefone_usuario": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('telefone_usuario', `Telefone do usuário que foram colhidas as informações`, 'string') }}"
+          },
+          "matchingColumns": [
+            "mensagem"
+          ],
+          "schema": [
+            {
+              "id": "mensagem",
+              "displayName": "mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefone_usuario",
+              "displayName": "telefone_usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2672,
+        80
+      ],
+      "id": "44bca948-3133-43b9-90a8-d3b365ca7899",
+      "name": "@ENVIAR_NOTIFICACAO"
+    },
+    {
+      "parameters": {
+        "content": "## Processar entrada\n",
+        "height": 384,
+        "width": 1008
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -160
+      ],
+      "id": "7a9ed6bf-73ef-4809-8f9a-c2008a767ca2",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "134b66b8-c3f3-45a2-a8d5-33228c20a96e",
+              "leftValue": "={{ $json.body.data.key.fromMe }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        -96
+      ],
+      "id": "a641a092-ac64-4ee9-8eee-32e7ffcc2672",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        528,
+        96
+      ],
+      "id": "8d5ab8c7-a3c2-4919-aa72-4a244639e01a",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente financeiro": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch T | I | A": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request - Get Base64 (Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Convert base64 to binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert base64 to binary": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestao-financeira": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get data from webhook": {
+      "main": [
+        [
+          {
+            "node": "Extrair campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair campos": {
+      "main": [
+        [
+          {
+            "node": "NUMEROS PERMITIDOS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields text": {
+      "main": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields audio": {
+      "main": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Get Base64 (Audio)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert base64 to binary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert base64 to binary1": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields audio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields audio1": {
+      "main": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        []
+      ]
+    },
+    "NUMEROS PERMITIDOS": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch T | I | A",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "@ENVIAR_NOTIFICACAO": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente financeiro",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get data from webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "gestao-financeira": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.13.2",
+            "content-length": "647",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "n8n:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "n8n-produtor",
+            "data": {
+              "key": {
+                "remoteJid": "556182086449@s.whatsapp.net",
+                "remoteJidAlt": "33475042238618@lid",
+                "fromMe": false,
+                "id": "3EB0F20734CE2C6E3B5A01",
+                "participant": "",
+                "addressingMode": "pn"
+              },
+              "pushName": "Hugo",
+              "status": "SERVER_ACK",
+              "message": {
+                "conversation": "Ola, gostaria de fazer um casamento"
+              },
+              "messageType": "conversation",
+              "messageTimestamp": 1769446307,
+              "instanceId": "9235c77b-b190-4af9-b05e-43fb9bd5b6b6",
+              "source": "web"
+            },
+            "destination": "http://n8n:5678/n8n/produtor-rodrigo",
+            "date_time": "2026-01-26T13:51:47.583Z",
+            "sender": "556182086449@s.whatsapp.net",
+            "server_url": "http://localhost:8080",
+            "apikey": "AFC8302CAE0D-4560-8759-6C130206783F"
+          },
+          "webhookUrl": "http://localhost/n8n/produtor-rodrigo",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "7b1af4d9-198b-4531-8a8c-8c51221afcea",
+  "versionCounter": 791,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-25T19:35:49.113Z",
+      "createdAt": "2026-01-25T19:35:49.113Z",
+      "role": "workflow:owner",
+      "workflowId": "4vh8A64ckYzhOj3D",
+      "projectId": "TH7SrF7Rx9ho2z9i",
+      "project": {
+        "updatedAt": "2025-08-20T20:53:20.326Z",
+        "createdAt": "2025-08-20T20:52:17.088Z",
+        "id": "TH7SrF7Rx9ho2z9i",
+        "name": "Hugo Dutra <hugo.dutra@hotmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-08-20T20:52:17.089Z",
+            "createdAt": "2025-08-20T20:52:17.089Z",
+            "userId": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+            "projectId": "TH7SrF7Rx9ho2z9i",
+            "user": {
+              "updatedAt": "2026-01-26T22:26:02.000Z",
+              "createdAt": "2025-08-20T20:52:15.066Z",
+              "id": "96b62bee-ebb1-4fe5-a51b-c116ef7064eb",
+              "email": "hugo.dutra@hotmail.com",
+              "firstName": "Hugo",
+              "lastName": "Dutra",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-08-20T20:56:08.200Z",
+                "personalization_survey_n8n_version": "1.107.4",
+                "automationGoalDevops": [
+                  "other"
+                ],
+                "automationGoalDevopsOther": "Video As A Service",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "DOfnd0M834V8kbv2",
+                "userActivatedAt": 1755725592234,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1757188846991
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "preBuiltAgentsCalloutHttpRequest": true,
+                  "preBuiltAgentsModalCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-26",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

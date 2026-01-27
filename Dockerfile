@@ -20,10 +20,20 @@ RUN apk add --no-cache \
     dos2unix
 
 # Pacotes essenciais
-RUN apk add --no-cache ffmpeg python3 curl bash ca-certificates dos2unix \
+RUN apk add --no-cache \
+    ffmpeg \
+    python3 \
+    py3-matplotlib \
+    py3-numpy \
+    py3-pillow \
+    curl \
+    bash \
+    ca-certificates \
+    dos2unix \
   && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
        -o /usr/local/bin/yt-dlp \
   && chmod a+rx /usr/local/bin/yt-dlp
+
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN dos2unix /docker-entrypoint.sh || true \

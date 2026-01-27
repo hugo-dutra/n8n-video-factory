@@ -1,82 +1,64 @@
 {
-  "updatedAt": "2025-11-02T18:46:17.000Z",
-  "createdAt": "2025-11-02T18:44:24.803Z",
-  "id": "FfStPS3WkXGSidmu",
-  "name": "@GET_VIDEO_STATISTICS",
+  "updatedAt": "2026-01-27T01:48:27.000Z",
+  "createdAt": "2026-01-26T17:09:59.202Z",
+  "id": "XwhJyFAxE3CtiKWr",
+  "name": "@ENVIAR_NOTIFICACAO",
   "description": null,
   "active": false,
-  "isArchived": true,
+  "isArchived": false,
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "mensagem"
+            },
+            {
+              "name": "telefone_usuario"
+            }
+          ]
+        }
+      },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -272,
-        -16
+        0,
+        0
       ],
-      "id": "e0b27f89-b30e-404c-8c6f-eb24476acb7d",
-      "name": "When Executed by Another Workflow"
+      "id": "91a83908-80bb-4a72-9dbb-6dfb3b908682",
+      "name": "start"
     },
     {
       "parameters": {
-        "options": {}
+        "resource": "messages-api",
+        "instanceName": "n8n",
+        "remoteJid": "=5511984939595",
+        "messageText": "={{ $('start').item.json.mensagem }} - Telefone do usuário: {{ $('start').item.json.telefone_usuario }}",
+        "options_message": {}
       },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
       "position": [
-        -64,
-        -16
+        208,
+        0
       ],
-      "id": "f7e37d81-bccd-4770-aca6-27d43fc9d72b",
-      "name": "HTTP Request"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "youTubeOAuth2Api",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "videoId",
-              "value": "={{ $('Upload to youtube').item.json.uploadId }}"
-            },
-            {
-              "name": "uploadType",
-              "value": "multipart"
-            }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "binaryData",
-        "inputDataFieldName": "data",
-        "options": {}
-      },
-      "id": "c209dff7-a715-445b-a7e0-70adc9f3b68e",
-      "name": "Set Thumbnail",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        288,
-        80
-      ],
+      "id": "a3d11b67-8842-4034-b947-807957568692",
+      "name": "Enviar texto",
       "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "ThaPnNZElYZbX2i2",
-          "name": "YouTube n8n account-ENGLISH"
+        "evolutionApi": {
+          "id": "FEzvaAKjYtvZZ6HQ",
+          "name": "Evolution account"
         }
       }
     }
   ],
   "connections": {
-    "When Executed by Another Workflow": {
+    "start": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Enviar texto",
             "type": "main",
             "index": 0
           }
@@ -89,16 +71,25 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {},
-  "versionId": "f03c78f4-0df3-43b4-9136-3b0be61ed870",
-  "versionCounter": 1,
+  "pinData": {
+    "start": [
+      {
+        "json": {
+          "mensagem": "Resumo do atendimento:\n\n• Evento: Casamento\n• Noivos: Hugo e Ana\n• Data: 10/12/2026, com início ao meio-dia\n• Local: Ceilandia, na cidade de Ceilandia sul\n• Estruturas:\n   - Som: Disponível\n   - Palco: Sim, com 30 metros quadrados\n   - Iluminação: Não disponível\n• Formato do show: Acústico (Banda com 04 músicos – Bateria eletrônica / Tajon, sanfona e a dupla Ricardo e Eduardo) - Link: https://abrir.link/Xlzif\n• Duração do show: 1 hora e 30 minutos",
+          "telefone_usuario": "556186357902"
+        }
+      }
+    ]
+  },
+  "versionId": "605d2ee5-9a55-4ae8-b5c7-a8019d57894c",
+  "versionCounter": 9,
   "triggerCount": 0,
   "shared": [
     {
-      "updatedAt": "2025-11-02T18:44:25.118Z",
-      "createdAt": "2025-11-02T18:44:25.118Z",
+      "updatedAt": "2026-01-26T17:09:59.525Z",
+      "createdAt": "2026-01-26T17:09:59.525Z",
       "role": "workflow:owner",
-      "workflowId": "FfStPS3WkXGSidmu",
+      "workflowId": "XwhJyFAxE3CtiKWr",
       "projectId": "TH7SrF7Rx9ho2z9i",
       "project": {
         "updatedAt": "2025-08-20T20:53:20.326Z",
